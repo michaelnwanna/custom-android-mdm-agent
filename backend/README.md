@@ -1,5 +1,7 @@
 # Enrollment Backend Foundation
 
+Current Android scope: the [lab enrollment client](../docs/android-enrollment.md) implements Keystore CSR creation, pinned HTTPS and certificate installation, with separate JVM and API 34 instrumentation evidence. Combined Android/backend enrollment and device mTLS are not verified. References below to earlier slices not adding Android describe those slices, not the current repository-wide client implementation. The administrator route described first supersedes earlier statements about missing token-delivery routes.
+
 The [administrator provisioning boundary](../docs/administrator-enrollment.md) adds issuer-validated access tokens, an exact creation permission, one-time bootstrap-secret delivery and an atomic pending-enrollment/actor-audit save. Four migrations are now required. This extends the earlier library/HTTP foundation described below; it does not add browser login, a hosted identity provider, Android enrollment or a full immutable audit system.
 
 The [enrollment HTTP lab](../docs/enrollment-http.md) now exposes the existing claim/signing/completion flow through an ASP.NET Core HTTPS endpoint with bounded strict JSON parsing, bootstrap bearer authentication, process-local rate limiting and generic problem responses. See that runbook for explicit key/database/TLS configuration and verification limits. Statements below about earlier library-only slices describe their historical scope; this host does not add administrator token-delivery routes, Android enrollment or production CA integration.

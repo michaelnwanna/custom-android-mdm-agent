@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T23:40:23.179850+00:00",
+  "finishedAt": "2026-10-16T23:40:25.915546+00:00",
+  "result": "failed",
+  "error": "Recorded command failed",
+  "commands": [
+    {
+      "argv": [
+        "./gradlew",
+        "--version"
+      ],
+      "returncode": 124,
+      "stdout": "",
+      "stderr": "[Errno 13] Permission denied: './gradlew'"
+    }
+  ],
+  "inputSha256": {
+    "android/agent/build.gradle.kts": "1ba0dbcc65132ec66628625aa17c77cb3a62873cdad3f835530db2f1b546daa2",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentIdentityInstrumentedTest.kt": "d822848038a6c2d8222af09ec513cfbdd38dcddb85ca952c901e932e8a829dcb",
+    "android/agent/src/main/AndroidManifest.xml": "a3669ff5a6278fa4acf0ad8e8f53add37b4210da77ba6f470c85c29178baec46",
+    "android/agent/src/main/java/dev/fleet/agent/AndroidEnrollmentIdentity.kt": "c456bad8fa29a1e487f26f41160834dcb43d2f9a738f5cd05c42c52532879db6",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentBootstrap.kt": "c8f9b9665c16c92aba1fe31bf30af0e354a4d4c1aeb14053c00e9e778a928d9a",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentProof.kt": "343c02b0a6e2d0e1bef01e7e920e08eab25a26d87a97e957f184825fff0bf017",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentResponse.kt": "59102676faf384ed5b85eda9947f957fb237aa0823f90c51bf5cc604d8f55ee7",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentTransport.kt": "f7331739641acff3c21f79e768ecbd56ad4650d352a452c34abad214c0edc7f2",
+    "android/agent/src/main/java/dev/fleet/agent/FleetAdminReceiver.kt": "f6c58b7536af7a2fffd8657b6f0fda30ab1ca52fe362615de69d180119b7b6b5",
+    "android/agent/src/main/java/dev/fleet/agent/LabEnrollment.kt": "4017ba2c86cef888559617ba323eb59884f70dc33b9dd4d96d0bcde1da4aacea",
+    "android/agent/src/main/java/dev/fleet/agent/LabKioskController.kt": "252ccbd400909f5066f7483b66ebfeed2ff6d4f4d7f2b4a926b1fa8af7c490e1",
+    "android/agent/src/main/java/dev/fleet/agent/LabMaintenance.kt": "c498a7ae19c93da8b3f93f495a3bb23ca5d638052c16136a881a557b12785213",
+    "android/agent/src/main/java/dev/fleet/agent/LabMqttService.kt": "085c412dad4d64673c70f3cd61821afcb99a02f55ee6c847026bcd6f1c4bb1a9",
+    "android/agent/src/main/java/dev/fleet/agent/LabUpdateInstaller.kt": "76d760bd2b4cdc427240179a583557df5c8a270d3ac0263fab6ba65ea308c231",
+    "android/agent/src/main/java/dev/fleet/agent/MainActivity.kt": "afef43a4c21a6832bf8ac5601c838d674769c1966a82d45d817f82a54bafb30c",
+    "android/agent/src/main/java/dev/fleet/agent/MaintenanceProof.kt": "08e6a371e43bbb9e4b19cf0a452cf4425c0b55efbdd94a3cd1a81d9221963db7",
+    "android/agent/src/main/res/xml/device_admin.xml": "1bd02fa6728fb70187e65af59c379f2f063aa995cf87f26da9c5ff9f550d9b2b",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentBootstrapTest.kt": "39813b448e04b8a7481232793c9cdc6e4df5ac5e41ccc1823a737953cc9103a8",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentProofTest.kt": "2d068834bcb9e2238939a173dd39a07b7fc19ed0caffa00f229ae96040ccc655",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentResponseTest.kt": "f8969f8b1a21d8fc72291d1f46eba355cf0d4634e0dc62eb20f32f5ce972244c",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentTransportTest.kt": "0fcac38c26e96d5d0ef43287239e34b47e2d6529e9816faa898de5b452bd0407",
+    "android/agent/src/test/java/dev/fleet/agent/MaintenanceProofTest.kt": "b87b5561797c2f107ca9a1a813a52c86f8836a89c3b1e13ae15208111f4a102a",
+    "android/build.gradle.kts": "41cfe3c26ad4feb902ce9afd73f244fbb1d225f75136c1ba372844a0e551511c",
+    "android/gradle/wrapper/gradle-wrapper.jar": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+    "android/gradle/wrapper/gradle-wrapper.properties": "dc0c4f45f299ac2d51077dd1587e619128d091816ad9170d535a23694ddf355b",
+    "android/gradle.properties": "093ce43bdf9c26b7d8cd424a4af4410ce7e17ced2d7b0f892d551525c94b16ef",
+    "android/gradlew": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+    "android/gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "android/sample-managed-app/build.gradle.kts": "3cb421c94b3a1e7c706f70bd03d11281b6e4c6693ec4c8ee93470d1b011833a8",
+    "android/sample-managed-app/src/main/AndroidManifest.xml": "8aa79ef57998ba89e35557046f473a6aaa7f3d11334145927da7b7205a6b9429",
+    "android/sample-managed-app/src/main/java/dev/fleet/sample/MainActivity.kt": "df7b313d6afde98ea41569f1d0a3201290a57bdd843edbaea61f47ac35decc19",
+    "android/settings.gradle.kts": "8d24e364f5cae7a9f812dd5967267ff18f60c9f9182d64bfd2022acabdbe0cad",
+    "tools/check_android_enrollment.py": "034c731cedb99eb9e1205718820794a96bb84c20079b8bb9386d9c3c8feefb32",
+    "tools/test_android_enrollment.py": "8fae80c8f30fe5d053e5b0a0fced04a1b8c99c4d4c9227575b85ed844b0dd139"
+  },
+  "jvmCounters": null,
+  "serial": "emulator-5554",
+  "expectedAvd": "Pixel_8",
+  "scope": "Android JVM crypto/parser/loopback TLS, APK build/lint; optional isolated real Keystore instrumentation. No combined ASP.NET/PostgreSQL/device enrollment, mTLS, process restart or power-loss proof.",
+  "fileSha256": {
+    "command-01.json": "6946b8e0d70d9ec1f1907ac4018761a7175963768e690be67554a005292629a1"
+  }
+}

@@ -13,6 +13,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  android-enrollment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned Android SDK tools
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+      - name: Android enrollment build and JVM checks
+        run: |
+          python -m unittest discover -s tools -p test_android_enrollment.py -v
+          python tools/check_android_enrollment.py
+      - name: Retain Android enrollment evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-enrollment-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            artifacts/android-enrollment/
+            !artifacts/**/build/**
+            !artifacts/**/.gradle/**
+            !artifacts/**/.kotlin/**
   components:
     runs-on: ubuntu-24.04
     timeout-minutes: 20

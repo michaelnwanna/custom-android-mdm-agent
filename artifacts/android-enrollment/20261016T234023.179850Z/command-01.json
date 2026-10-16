@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "./gradlew",
+    "--version"
+  ],
+  "returncode": 124,
+  "stdout": "",
+  "stderr": "[Errno 13] Permission denied: './gradlew'"
+}

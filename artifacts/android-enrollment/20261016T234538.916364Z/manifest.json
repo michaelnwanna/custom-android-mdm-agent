@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T23:45:38.916364+00:00",
+  "finishedAt": "2026-10-16T23:48:59.971790+00:00",
+  "result": "passed",
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "./gradlew",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "\n------------------------------------------------------------\nGradle 8.9\n------------------------------------------------------------\n\nBuild time:    2024-07-11 14:37:41 UTC\nRevision:      d536ef36a19186ccc596d8817123e5445f30fef8\n\nKotlin:        1.9.23\nGroovy:        3.0.21\nAnt:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023\nLauncher JVM:  21.0.8 (Eclipse Adoptium 21.0.8+9-LTS)\nDaemon JVM:    /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home (no JDK specified, using current Java home)\nOS:            Mac OS X 15.7.8 x86_64\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:dependencies",
+        "--configuration",
+        "debugRuntimeClasspath",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "\n> Task :agent:dependencies\n\n------------------------------------------------------------\nProject ':agent'\n------------------------------------------------------------\n\ndebugRuntimeClasspath - Runtime classpath of '/debug'.\n+--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21\n|    +--- org.jetbrains:annotations:13.0 -> 16.0.3\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0 -> 1.8.21 (c)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0 -> 1.8.21 (c)\n+--- org.bouncycastle:bcpkix-jdk18on:1.83\n|    \\--- org.bouncycastle:bcutil-jdk18on:1.83\n|         \\--- org.bouncycastle:bcprov-jdk18on:1.83\n+--- com.squareup.moshi:moshi:1.15.2\n|    +--- com.squareup.okio:okio:3.7.0\n|    |    \\--- com.squareup.okio:okio-jvm:3.7.0\n|    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 -> 2.0.21 (*)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21\n|         +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.21 -> 2.0.21 (*)\n|         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.21\n|              \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.21 -> 2.0.21 (*)\n\\--- com.hivemq:hivemq-mqtt-client:1.3.3\n     +--- io.netty:netty-buffer:4.1.99.Final\n     |    \\--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-codec:4.1.99.Final\n     |    +--- io.netty:netty-common:4.1.99.Final\n     |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    \\--- io.netty:netty-transport:4.1.99.Final\n     |         +--- io.netty:netty-common:4.1.99.Final\n     |         +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |         \\--- io.netty:netty-resolver:4.1.99.Final\n     |              \\--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-handler:4.1.99.Final\n     |    +--- io.netty:netty-common:4.1.99.Final\n     |    +--- io.netty:netty-resolver:4.1.99.Final (*)\n     |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    +--- io.netty:netty-transport:4.1.99.Final (*)\n     |    +--- io.netty:netty-transport-native-unix-common:4.1.99.Final\n     |    |    +--- io.netty:netty-common:4.1.99.Final\n     |    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    |    \\--- io.netty:netty-transport:4.1.99.Final (*)\n     |    \\--- io.netty:netty-codec:4.1.99.Final (*)\n     +--- io.netty:netty-transport:4.1.99.Final (*)\n     +--- org.jctools:jctools-core:2.1.2\n     +--- org.jetbrains:annotations:16.0.3\n     +--- com.google.dagger:dagger:2.27\n     |    \\--- javax.inject:javax.inject:1\n     +--- io.reactivex.rxjava2:rxjava:2.2.21\n     |    \\--- org.reactivestreams:reactive-streams:1.0.3 -> 1.0.4\n     \\--- org.reactivestreams:reactive-streams:1.0.4\n\n(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.\n(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.\n\nA web-based, searchable dependency report is available by adding the --scan option.\n\nBUILD SUCCESSFUL in 16s\n1 actionable task: 1 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:testDebugUnitTest",
+        ":agent:assembleDebug",
+        ":agent:lintDebug",
+        ":agent:assembleDebugAndroidTest",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "> Task :agent:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :agent:preBuild UP-TO-DATE\n> Task :agent:preDebugBuild UP-TO-DATE\n> Task :agent:generateDebugResValues\n> Task :agent:mapDebugSourceSetPaths\n> Task :agent:generateDebugResources\n> Task :agent:checkDebugAarMetadata\n> Task :agent:packageDebugResources\n> Task :agent:mergeDebugResources\n> Task :agent:createDebugCompatibleScreenManifests\n> Task :agent:extractDeepLinksDebug\n> Task :agent:parseDebugLocalResources\n> Task :agent:processDebugMainManifest\n> Task :agent:processDebugManifest\n> Task :agent:preDebugUnitTestBuild UP-TO-DATE\n> Task :agent:javaPreCompileDebug\n> Task :agent:javaPreCompileDebugUnitTest\n> Task :agent:mergeDebugNativeDebugMetadata NO-SOURCE\n> Task :agent:mergeDebugShaders\n> Task :agent:compileDebugShaders NO-SOURCE\n> Task :agent:generateDebugAssets UP-TO-DATE\n> Task :agent:mergeDebugAssets\n> Task :agent:compressDebugAssets\n> Task :agent:desugarDebugFileDependencies\n> Task :agent:mergeDebugJniLibFolders\n> Task :agent:mergeDebugNativeLibs NO-SOURCE\n> Task :agent:stripDebugDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebug\n> Task :agent:writeDebugAppMetadata\n> Task :agent:writeDebugSigningConfigVersions\n> Task :agent:preDebugAndroidTestBuild SKIPPED\n> Task :agent:generateDebugAndroidTestResValues\n> Task :agent:extractProguardFiles\n> Task :agent:checkDebugDuplicateClasses\n> Task :agent:checkDebugAndroidTestAarMetadata\n> Task :agent:mapDebugAndroidTestSourceSetPaths\n> Task :agent:generateDebugAndroidTestResources\n> Task :agent:mergeLibDexDebug\n> Task :agent:mergeDebugAndroidTestResources\n> Task :agent:processDebugAndroidTestManifest\n> Task :agent:javaPreCompileDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestShaders\n> Task :agent:compileDebugAndroidTestShaders NO-SOURCE\n> Task :agent:processDebugManifestForPackage\n> Task :agent:generateDebugAndroidTestAssets UP-TO-DATE\n> Task :agent:mergeDebugAndroidTestAssets\n> Task :agent:compressDebugAndroidTestAssets\n> Task :agent:desugarDebugAndroidTestFileDependencies\n> Task :agent:mergeDebugAndroidTestJniLibFolders\n> Task :agent:mergeDebugAndroidTestNativeLibs NO-SOURCE\n> Task :agent:stripDebugAndroidTestDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebugAndroidTest\n> Task :agent:writeDebugAndroidTestSigningConfigVersions\n> Task :agent:checkDebugAndroidTestDuplicateClasses\n> Task :agent:mergeLibDexDebugAndroidTest\n> Task :agent:processDebugResources\n> Task :agent:processDebugAndroidTestResources\n> Task :agent:mergeExtDexDebugAndroidTest\n> Task :agent:mergeExtDexDebug\n> Task :agent:compileDebugKotlin\n> Task :agent:compileDebugJavaWithJavac NO-SOURCE\n> Task :agent:processDebugJavaRes\n> Task :agent:bundleDebugClassesToCompileJar\n> Task :agent:bundleDebugClassesToRuntimeJar\n> Task :agent:dexBuilderDebug\n> Task :agent:mergeDebugGlobalSynthetics\n> Task :agent:mergeProjectDexDebug\n> Task :agent:generateDebugAndroidTestLintModel\n> Task :agent:generateDebugLintReportModel\n> Task :agent:generateDebugUnitTestLintModel\n> Task :agent:mergeDebugJavaResource\n> Task :agent:packageDebug\n> Task :agent:createDebugApkListingFileRedirect\n> Task :agent:assembleDebug\n> Task :agent:compileDebugUnitTestKotlin\n> Task :agent:compileDebugUnitTestJavaWithJavac NO-SOURCE\n> Task :agent:processDebugUnitTestJavaRes\n> Task :agent:compileDebugAndroidTestKotlin\n> Task :agent:lintAnalyzeDebugAndroidTest\n> Task :agent:lintAnalyzeDebugUnitTest\n> Task :agent:lintAnalyzeDebug\n> Task :agent:testDebugUnitTest\n> Task :agent:compileDebugAndroidTestJavaWithJavac NO-SOURCE\n> Task :agent:dexBuilderDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestGlobalSynthetics\n> Task :agent:processDebugAndroidTestJavaRes\n> Task :agent:mergeProjectDexDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestJavaResource\n> Task :agent:packageDebugAndroidTest\n> Task :agent:createDebugAndroidTestApkListingFileRedirect\n> Task :agent:assembleDebugAndroidTest\n\n> Task :agent:lintReportDebug\nWrote HTML report to file:///Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-enrollment/20261016T234538.916364Z/inputs/android/agent/build/reports/lint-results-debug.html\n\n> Task :agent:lintDebug\n\nBUILD SUCCESSFUL in 2m 29s\n74 actionable tasks: 74 executed\n",
+      "stderr": ""
+    }
+  ],
+  "inputSha256": {
+    "android/agent/build.gradle.kts": "1ba0dbcc65132ec66628625aa17c77cb3a62873cdad3f835530db2f1b546daa2",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentIdentityInstrumentedTest.kt": "d822848038a6c2d8222af09ec513cfbdd38dcddb85ca952c901e932e8a829dcb",
+    "android/agent/src/main/AndroidManifest.xml": "a3669ff5a6278fa4acf0ad8e8f53add37b4210da77ba6f470c85c29178baec46",
+    "android/agent/src/main/java/dev/fleet/agent/AndroidEnrollmentIdentity.kt": "c456bad8fa29a1e487f26f41160834dcb43d2f9a738f5cd05c42c52532879db6",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentBootstrap.kt": "c8f9b9665c16c92aba1fe31bf30af0e354a4d4c1aeb14053c00e9e778a928d9a",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentProof.kt": "343c02b0a6e2d0e1bef01e7e920e08eab25a26d87a97e957f184825fff0bf017",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentResponse.kt": "59102676faf384ed5b85eda9947f957fb237aa0823f90c51bf5cc604d8f55ee7",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentTransport.kt": "f7331739641acff3c21f79e768ecbd56ad4650d352a452c34abad214c0edc7f2",
+    "android/agent/src/main/java/dev/fleet/agent/FleetAdminReceiver.kt": "f6c58b7536af7a2fffd8657b6f0fda30ab1ca52fe362615de69d180119b7b6b5",
+    "android/agent/src/main/java/dev/fleet/agent/LabEnrollment.kt": "4017ba2c86cef888559617ba323eb59884f70dc33b9dd4d96d0bcde1da4aacea",
+    "android/agent/src/main/java/dev/fleet/agent/LabKioskController.kt": "252ccbd400909f5066f7483b66ebfeed2ff6d4f4d7f2b4a926b1fa8af7c490e1",
+    "android/agent/src/main/java/dev/fleet/agent/LabMaintenance.kt": "c498a7ae19c93da8b3f93f495a3bb23ca5d638052c16136a881a557b12785213",
+    "android/agent/src/main/java/dev/fleet/agent/LabMqttService.kt": "085c412dad4d64673c70f3cd61821afcb99a02f55ee6c847026bcd6f1c4bb1a9",
+    "android/agent/src/main/java/dev/fleet/agent/LabUpdateInstaller.kt": "76d760bd2b4cdc427240179a583557df5c8a270d3ac0263fab6ba65ea308c231",
+    "android/agent/src/main/java/dev/fleet/agent/MainActivity.kt": "afef43a4c21a6832bf8ac5601c838d674769c1966a82d45d817f82a54bafb30c",
+    "android/agent/src/main/java/dev/fleet/agent/MaintenanceProof.kt": "08e6a371e43bbb9e4b19cf0a452cf4425c0b55efbdd94a3cd1a81d9221963db7",
+    "android/agent/src/main/res/xml/device_admin.xml": "1bd02fa6728fb70187e65af59c379f2f063aa995cf87f26da9c5ff9f550d9b2b",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentBootstrapTest.kt": "39813b448e04b8a7481232793c9cdc6e4df5ac5e41ccc1823a737953cc9103a8",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentProofTest.kt": "2d068834bcb9e2238939a173dd39a07b7fc19ed0caffa00f229ae96040ccc655",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentResponseTest.kt": "f8969f8b1a21d8fc72291d1f46eba355cf0d4634e0dc62eb20f32f5ce972244c",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentTransportTest.kt": "0fcac38c26e96d5d0ef43287239e34b47e2d6529e9816faa898de5b452bd0407",
+    "android/agent/src/test/java/dev/fleet/agent/MaintenanceProofTest.kt": "b87b5561797c2f107ca9a1a813a52c86f8836a89c3b1e13ae15208111f4a102a",
+    "android/build.gradle.kts": "41cfe3c26ad4feb902ce9afd73f244fbb1d225f75136c1ba372844a0e551511c",
+    "android/gradle/wrapper/gradle-wrapper.jar": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+    "android/gradle/wrapper/gradle-wrapper.properties": "dc0c4f45f299ac2d51077dd1587e619128d091816ad9170d535a23694ddf355b",
+    "android/gradle.properties": "093ce43bdf9c26b7d8cd424a4af4410ce7e17ced2d7b0f892d551525c94b16ef",
+    "android/gradlew": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+    "android/gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "android/sample-managed-app/build.gradle.kts": "3cb421c94b3a1e7c706f70bd03d11281b6e4c6693ec4c8ee93470d1b011833a8",
+    "android/sample-managed-app/src/main/AndroidManifest.xml": "8aa79ef57998ba89e35557046f473a6aaa7f3d11334145927da7b7205a6b9429",
+    "android/sample-managed-app/src/main/java/dev/fleet/sample/MainActivity.kt": "df7b313d6afde98ea41569f1d0a3201290a57bdd843edbaea61f47ac35decc19",
+    "android/settings.gradle.kts": "8d24e364f5cae7a9f812dd5967267ff18f60c9f9182d64bfd2022acabdbe0cad",
+    "tools/check_android_enrollment.py": "dc1591aa51f81b688943c8c43712f84c1c0c92f5f7476fa73dbb2c36adfed5ed",
+    "tools/test_android_enrollment.py": "8fae80c8f30fe5d053e5b0a0fced04a1b8c99c4d4c9227575b85ed844b0dd139"
+  },
+  "apkSha256": {},
+  "jvmCounters": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "serial": null,
+  "expectedAvd": null,
+  "scope": "Android JVM crypto/parser/loopback TLS, APK build/lint; optional isolated real Keystore instrumentation. No combined ASP.NET/PostgreSQL/device enrollment, mTLS, process restart or power-loss proof.",
+  "fileSha256": {
+    "command-01.json": "f89928e8aead9a77c62d3283684a6546558b26ccf33e47c42a88f075added3b4",
+    "command-02.json": "6d52f20f310dcab0f64db7b63f3df8e6f1f85647bbfa2aeefd41ae97c57f96bf",
+    "command-03.json": "9a523f513239be5f34068e3b4cef0ea90e7beb27ad6cad3f219c568179abd3d6",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentBootstrapTest.xml": "d4f75af57235af9999d6ebd684363615b40717204a158f4d2ab7a3cf3165be71",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentProofTest.xml": "66ef0bcc21e7202fdbe10720cd3f175eaa096778983e663115e45cd217977380",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentResponseTest.xml": "7bc06a555a46260e512808bd04bd41e3d36bf6191988e54755f8fea09ddba567",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentTransportTest.xml": "213926f58a5c70b3321a07bddd14f9a7f57f54a6edba615a0fcde105fe132fc4",
+    "jvm-results/TEST-dev.fleet.agent.MaintenanceProofTest.xml": "629e83667b87b2d6f1cb177ee68d1659aad0eb2a162d8ef27f7802b41056c5c7",
+    "jvm-results/binary/output.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "jvm-results/binary/output.bin.idx": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "jvm-results/binary/results.bin": "a6824883435655cd0221d92a601b884ef9564b6fc7edeef6e173ce2a81365fcb",
+    "reports/lint-results-debug.html": "73eaf27bd462187c7610f9ad7153f27c1e69c840d9512165cf165a03aa0a6b7c",
+    "reports/lint-results-debug.txt": "e8e51e3410c5da7fb2146ad9213a006e6694d88f863187664cacfdcd06be335e",
+    "reports/lint-results-debug.xml": "33e9d5dd860a77e7c0c9abbe017df6b88b214d292efdd592e9650a2e78a9e47a",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentBootstrapTest.html": "a2d2a3d2201db9db33f68654ed09cf7ff66c9d3a144f85692fdb910fe375f42d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentProofTest.html": "b52f490f9b3336c38315a635d2c68a5daf523e980d32a4b759ef542faa023e57",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentResponseTest.html": "dfd7402463c9662db709204edd9fb42a513a2cf28390511b9fb063967c87c306",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentTransportTest.html": "b37a3c96cdcb00496dc27822d1679ea0179acb8fb72865333c50801c4e0731e6",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.MaintenanceProofTest.html": "568c868eb52b05eb70287c6a13876fe2429ba32bebf81284cf5f184431dce484",
+    "reports/tests/testDebugUnitTest/css/base-style.css": "a10a4ef75ca2601b44bfdaf3112a5854f6376f68d7cbaf6958286f04488d293b",
+    "reports/tests/testDebugUnitTest/css/style.css": "61866908fd7eb09c79e96239f69db2e8cc5c6526cdb308eba0535ed2a0f6a263",
+    "reports/tests/testDebugUnitTest/index.html": "45bbd89b141a4b5020a85ed5958edabbb5bc506e2028806d4f22b50f92420e9b",
+    "reports/tests/testDebugUnitTest/js/report.js": "fc89c6d002d18f4662065c9887b2cda8f8486f2737d4ad0f2fdeac0ad58a44dc",
+    "reports/tests/testDebugUnitTest/packages/dev.fleet.agent.html": "0cc1fdd1f07fb762c657da2078ff4ffcc6e233a3066bf5f42ef3cd39f55698f8"
+  }
+}

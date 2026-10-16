@@ -67,6 +67,10 @@ class MainActivity : Activity() {
             text = "Stop MQTT probe"
             setOnClickListener { stopService(Intent(this@MainActivity, LabMqttService::class.java)) }
         })
+        content.addView(Button(this).apply {
+            text = "Enroll staged lab identity"
+            setOnClickListener { LabEnrollment.start(this@MainActivity) }
+        })
         setContentView(ScrollView(this).apply { addView(content) })
     }
 
@@ -92,7 +96,7 @@ class MainActivity : Activity() {
         val owner = policyManager.isDeviceOwnerApp(packageName)
         val locked = getSystemService(ActivityManager::class.java).lockTaskModeState ==
             ActivityManager.LOCK_TASK_MODE_LOCKED
-        val message = "Fleet Lab Agent\nDevice Owner: $owner\nLock task locked: $locked\n${LabKioskController.status(this)}\n${LabMaintenance.status(this)}\n${LabUpdateInstaller.status(this)}"
+        val message = "Fleet Lab Agent\nDevice Owner: $owner\nLock task locked: $locked\n${LabKioskController.status(this)}\n${LabMaintenance.status(this)}\n${LabUpdateInstaller.status(this)}\n${LabEnrollment.status(this)}"
         if (status.text.toString() != message) {
             status.text = message
         }

@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [Android enrollment client](docs/android-enrollment.md) now prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. Twenty JVM tests and an isolated API 34 Keystore scenario passed with retained build/lint evidence. The UI staging action is implemented but not runtime-verified end to end; combined Android/backend enrollment, secure production bootstrap delivery and mTLS remain unverified.
+
 The [administrator provisioning route](docs/administrator-enrollment.md) now validates issuer-signed API access tokens, requires `enrollments:create`, and atomically saves the pending credential digest and issuer/subject audit before one-time bootstrap-secret delivery. This uses a fourth database migration. It is not browser login, production identity-provider integration or secure Android token transfer; those boundaries remain unverified.
 
 The [enrollment HTTP lab](docs/enrollment-http.md) now implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate tests exercise real loopback TLS and HTTP with PostgreSQL/lab signing; combined Android enrollment and production deployment remain unverified. The backend solution now contains five live projects, including the API host.
@@ -80,6 +82,9 @@ flowchart TB
 
 	subgraph Device["Managed Android device - basic API 34 kiosk lab verified"]
 		Agent[Kotlin Device Owner agent]
+		DeviceEnrollment[Keystore enrollment client - isolated API 34 verified]
+		Agent --> DeviceEnrollment
+		DeviceEnrollment -. combined enrollment not verified .-> EnrollmentAPI
 		Room[(Room inbox and outbox - planned)]
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]

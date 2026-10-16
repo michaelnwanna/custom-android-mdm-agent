@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "ls",
+    "/sdcard"
+  ],
+  "returncode": 0,
+  "stdout": "Alarms\nAndroid\nAudiobooks\nDCIM\nDocuments\nDownload\nMovies\nMusic\nNotifications\nPictures\nPodcasts\nRecordings\nRingtones\nfleet-evidence-window.xml\nfleet-runtime-evidence.mp4\nfleet-window.xml\n",
+  "stderr": ""
+}
