@@ -1,0 +1,31 @@
+2026-10-16 23:55:09.896 EAT [48104] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-16 23:55:09.897 EAT [48104] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-5fefgije/.s.PGSQL.5432"
+2026-10-16 23:55:09.909 EAT [48107] LOG:  database system was shut down at 2026-10-16 23:55:09 EAT
+2026-10-16 23:55:09.916 EAT [48104] LOG:  database system is ready to accept connections
+2026-10-16 23:55:10.807 EAT [48113] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-16 23:55:10.807 EAT [48113] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-16 23:55:12.146 EAT [48120] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Completion"
+2026-10-16 23:55:12.146 EAT [48120] DETAIL:  Failing row contains (47e1ce03-568a-458e-9871-c36a5754b818, 546b27279de5c730375598033385d7405761e5010047d79871ab332a4bc75310, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, 9fe7a333-3e91-45e8-b977-32d24960e2b0, b0ec75a7-76a9-45cd-9f05-e3f2fa20983c, 83dbb65c9d35b8cd189f99d0c48a48b4e130a3e35ba30227a1efd634f8a177af, MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOtJqRMUfQ760p11ocw8YitqDSQRy..., 2026-10-16 15:00:00+03, {"schemaVersion":1,"deviceId":"fa9da28b-99d7-41f9-8e98-5657518f6...).
+2026-10-16 23:55:12.146 EAT [48120] STATEMENT:  UPDATE "PendingEnrollments" SET "CompletedResponseJson" = $1 WHERE "Id" = $2
+2026-10-16 23:55:12.238 EAT [48124] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-16 23:55:12.238 EAT [48124] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-16 23:55:12.404 EAT [48124] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Claim"
+2026-10-16 23:55:12.404 EAT [48124] DETAIL:  Failing row contains (1a45f3e0-1bc6-480a-b47b-7ab9013c9c30, 2b0bd38f8ac87f79e78446ea33cba7b5cd52056245fd18949cccba2196c200ae, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, null, a2e61755-c59d-4193-915b-74458cc198e1, null, null, null, null).
+2026-10-16 23:55:12.404 EAT [48124] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-16 23:55:12.407 EAT [48130] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Lifetime"
+2026-10-16 23:55:12.407 EAT [48130] DETAIL:  Failing row contains (1a45f3e0-1bc6-480a-b47b-7ab9013c9c30, 2b0bd38f8ac87f79e78446ea33cba7b5cd52056245fd18949cccba2196c200ae, 2026-10-16 15:00:00+03, 2026-10-16 15:00:00+03, null, null, null, null, null, null).
+2026-10-16 23:55:12.407 EAT [48130] STATEMENT:  UPDATE "PendingEnrollments" SET "ExpiresAt" = "IssuedAt" WHERE "Id" = $1
+2026-10-16 23:55:12.442 EAT [48128] ERROR:  duplicate key value violates unique constraint "IX_PendingEnrollments_DeviceId"
+2026-10-16 23:55:12.442 EAT [48128] DETAIL:  Key ("DeviceId")=(c7243294-9cf4-41f9-9df8-a67f779dc062) already exists.
+2026-10-16 23:55:12.442 EAT [48128] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-16 23:55:19.213 EAT [48104] LOG:  received fast shutdown request
+2026-10-16 23:55:19.214 EAT [48104] LOG:  aborting any active transactions
+2026-10-16 23:55:19.215 EAT [48104] LOG:  background worker "logical replication launcher" (PID 48110) exited with exit code 1
+2026-10-16 23:55:19.215 EAT [48105] LOG:  shutting down
+2026-10-16 23:55:19.215 EAT [48105] LOG:  checkpoint starting: shutdown immediate
+2026-10-16 23:55:19.235 EAT [48105] LOG:  checkpoint complete: wrote 58 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.010 s, total=0.020 s; sync files=50, longest=0.001 s, average=0.001 s; distance=317 kB, estimate=317 kB; lsn=0/152FCA0, redo lsn=0/152FCA0
+2026-10-16 23:55:19.242 EAT [48104] LOG:  database system is shut down

@@ -1,0 +1,9 @@
+{
+    "dotnet.defaultSolution": "backend/FleetManagement.slnx",
+    "search.exclude": {
+        "**/artifacts/**": true
+    },
+    "files.watcherExclude": {
+        "**/artifacts/**": true
+    }
+}

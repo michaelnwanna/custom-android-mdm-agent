@@ -59,6 +59,30 @@ public sealed class EnrollmentRestartTests
             await service.RegisterAsync(token.Credential);
             var claimed = await service.ClaimAsync(token.Credential.PendingEnrollmentId, token.Secret, csr, digestKey);
             Assert.Equal(EnrollmentClaimStatus.Claimed, claimed.Status);
+            Assert.True(await service.TryBeginSigningAsync(token.Credential.PendingEnrollmentId, claimed.OperationId!.Value));
+            var uncertainToken = new EnrollmentBootstrapTokens(clock).Issue(Guid.NewGuid(), digestKey, TimeSpan.FromMinutes(5));
+            await service.RegisterAsync(uncertainToken.Credential);
+            var uncertainClaim = await service.ClaimAsync(uncertainToken.Credential.PendingEnrollmentId,
+                uncertainToken.Secret, csr, digestKey);
+            Assert.True(await service.TryBeginSigningAsync(uncertainToken.Credential.PendingEnrollmentId,
+                uncertainClaim.OperationId!.Value));
+
+            using var rootKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var now = clock.GetUtcNow();
+            var rootRequest = new CertificateRequest("CN=Restart test root", rootKey, HashAlgorithmName.SHA256);
+            rootRequest.CertificateExtensions.Add(new X509BasicConstraintsExtension(true, false, 0, true));
+            rootRequest.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.KeyCertSign, true));
+            using var root = rootRequest.CreateSelfSigned(now.AddDays(-1), now.AddDays(7));
+            var request = new CertificateRequest("CN=server controlled", key, HashAlgorithmName.SHA256);
+            request.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
+            request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
+            request.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(new OidCollection { new("1.3.6.1.5.5.7.3.2") }, true));
+            var names = new SubjectAlternativeNameBuilder();
+            names.AddUri(new Uri(EnrollmentCertificateVerifier.DeviceUri(claimed.DeviceId!.Value)));
+            request.CertificateExtensions.Add(names.Build());
+            using var leaf = request.Create(root, now.AddMinutes(-1), now.AddDays(1), RandomNumberGenerator.GetBytes(16));
+            var completed = await service.CompleteAsync(token.Credential.PendingEnrollmentId, claimed.OperationId!.Value,
+                Convert.ToBase64String(leaf.RawData), [], root, TimeSpan.FromDays(2));
 
             NpgsqlConnection.ClearAllPools();
             var processInfo = new ProcessStartInfo(Path.Combine(binaryDirectory!, "pg_ctl"))
@@ -100,10 +124,21 @@ public sealed class EnrollmentRestartTests
                     "The restarted cluster must preserve private networking and durability settings.");
             }
             var reopened = new PostgresEnrollmentClaims(factory, clock);
+            Assert.False(await reopened.TryBeginSigningAsync(uncertainToken.Credential.PendingEnrollmentId,
+                uncertainClaim.OperationId.Value));
+            var uncertainWork = await reopened.ReadSigningWorkAsync(uncertainToken.Credential.PendingEnrollmentId,
+                uncertainClaim.OperationId.Value);
+            Assert.Null(uncertainWork.Response);
+            Assert.Equal(uncertainClaim.OperationId, uncertainWork.Request.OperationId);
+            Assert.Equal(uncertainClaim.DeviceId, uncertainWork.Request.DeviceId);
             var retry = await reopened.ClaimAsync(token.Credential.PendingEnrollmentId, token.Secret, csr, digestKey);
-            Assert.Equal(EnrollmentClaimStatus.InProgress, retry.Status);
+            Assert.Equal(EnrollmentClaimStatus.Completed, retry.Status);
             Assert.Equal(claimed.OperationId, retry.OperationId);
             Assert.Equal(claimed.DeviceId, retry.DeviceId);
+            Assert.Equal(completed.CertificateDer, retry.Response!.CertificateDer);
+            Assert.Equal(completed.IssuedAt, retry.Response.IssuedAt);
+            Assert.Equal(completed.ExpiresAt, retry.Response.ExpiresAt);
+            Assert.Equal(completed.IntermediateCertificatesDer, retry.Response.IntermediateCertificatesDer);
             await using (var context = factory.CreateDbContext())
             {
                 var persisted = await context.PendingEnrollments.SingleAsync(value => value.Id == token.Credential.PendingEnrollmentId);
@@ -114,6 +149,7 @@ public sealed class EnrollmentRestartTests
                 Assert.Equal(token.Credential.IssuedAt, persisted.IssuedAt);
                 Assert.Equal(token.Credential.ExpiresAt, persisted.ExpiresAt);
                 Assert.Equal(clock.GetUtcNow(), persisted.ClaimedAt);
+                Assert.True(persisted.SigningAttempted);
             }
         }
         catch (NpgsqlException)

@@ -17,7 +17,7 @@ public sealed class EnrollmentPersistenceTests
         using var context = new FleetDbContext(new DbContextOptionsBuilder<FleetDbContext>()
             .UseNpgsql("Host=localhost;Database=not_connected;Username=unused").Options);
         Assert.False(context.Database.HasPendingModelChanges());
-        Assert.Single(context.Database.GetMigrations());
+        Assert.Equal(3, context.Database.GetMigrations().Count());
         var sql = context.GetService<IMigrator>().GenerateScript();
         Assert.Contains("CREATE TABLE \"PendingEnrollments\"", sql);
         Assert.Contains("CK_Enrollment_Claim", sql);
@@ -34,6 +34,9 @@ public sealed class EnrollmentPersistenceTests
         Assert.Contains("CK_Enrollment_Claim", sql);
         Assert.Contains("CK_Enrollment_Lifetime", sql);
         Assert.Contains("CK_Enrollment_Digest", sql);
+        Assert.Contains("CK_Enrollment_Completion", sql);
+        Assert.Contains("CK_Enrollment_SigningAttempt", sql);
+        Assert.Contains("character varying(100000)", sql);
         Assert.Contains("CREATE UNIQUE INDEX \"IX_PendingEnrollments_OperationId\"", sql);
         Assert.Contains("CREATE UNIQUE INDEX \"IX_PendingEnrollments_DeviceId\"", sql);
         Assert.Contains("character varying(512)", sql);
@@ -82,6 +85,48 @@ public sealed class EnrollmentPersistenceTests
         ];
         foreach (var candidate in invalid)
             Assert.Throws<ArgumentException>(() => PendingEnrollment.Create(candidate));
+    }
+
+    [Fact]
+    public void CompletionIsBoundToClaimAndFirstResponseCannotBeReplaced()
+    {
+        var credential = Issue().Credential;
+        var pending = PendingEnrollment.Create(credential);
+        var key = CreateVerifiedKey();
+        var claim = pending.Claim(key, credential.IssuedAt);
+        var response = new EnrollmentCertificateResponse(1, claim.DeviceId!.Value, "synthetic-component-only",
+            Array.AsReadOnly(Array.Empty<string>()), credential.IssuedAt, credential.IssuedAt.AddDays(1));
+        Assert.Throws<InvalidOperationException>(() => pending.Complete(Guid.NewGuid(), response));
+        Assert.Null(pending.CompletedResponseJson);
+        Assert.Throws<InvalidOperationException>(() => pending.Complete(claim.OperationId!.Value,
+            response with { DeviceId = Guid.NewGuid() }));
+        pending.Complete(claim.OperationId!.Value, response);
+        var stored = pending.CompletedResponseJson;
+        var retry = pending.Complete(claim.OperationId.Value, response with { CertificateDer = "replacement" });
+        Assert.Equal(response.CertificateDer, retry.CertificateDer);
+        Assert.Equal(stored, pending.CompletedResponseJson);
+        var recovered = pending.Claim(key, credential.IssuedAt.AddSeconds(1));
+        Assert.Equal(EnrollmentClaimStatus.Completed, recovered.Status);
+        Assert.Equal(response.CertificateDer, recovered.Response!.CertificateDer);
+        Assert.Equal(claim.DeviceId, recovered.Response.DeviceId);
+        var conflict = pending.Claim(CreateVerifiedKey(), credential.IssuedAt.AddSeconds(2));
+        Assert.Equal(EnrollmentClaimStatus.Conflict, conflict.Status);
+        Assert.Null(conflict.Response);
+    }
+
+    [Fact]
+    public void SigningAttemptCanStartOnlyOnceForTheCommittedOperation()
+    {
+        var credential = Issue().Credential;
+        var pending = PendingEnrollment.Create(credential);
+        Assert.Throws<InvalidOperationException>(() => pending.TryBeginSigning(Guid.NewGuid()));
+        var claim = pending.Claim(CreateVerifiedKey(), credential.IssuedAt);
+        Assert.Throws<InvalidOperationException>(() => pending.TryBeginSigning(Guid.NewGuid()));
+        Assert.False(pending.SigningAttempted);
+        Assert.True(pending.TryBeginSigning(claim.OperationId!.Value));
+        Assert.True(pending.SigningAttempted);
+        Assert.False(pending.TryBeginSigning(claim.OperationId.Value));
+        Assert.Equal(claim.OperationId, pending.OperationId);
     }
 
     private static IssuedBootstrapToken Issue() => new EnrollmentBootstrapTokens(TimeProvider.System)

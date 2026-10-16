@@ -10,5 +10,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <ProjectReference Include="../../src/FleetManagement/FleetManagement.csproj" />
+    <ProjectReference Include="../FleetManagement.SignerProbe/FleetManagement.SignerProbe.csproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,11 @@
+2026-10-16 23:57:28.986 EAT [48595] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-16 23:57:28.987 EAT [48595] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-suug9v53/.s.PGSQL.5432"
+2026-10-16 23:57:29.004 EAT [48598] LOG:  database system was shut down at 2026-10-16 23:57:28 EAT
+2026-10-16 23:57:29.020 EAT [48595] LOG:  database system is ready to accept connections
+2026-10-16 23:57:36.258 EAT [48595] LOG:  received fast shutdown request
+2026-10-16 23:57:36.258 EAT [48595] LOG:  aborting any active transactions
+2026-10-16 23:57:36.259 EAT [48595] LOG:  background worker "logical replication launcher" (PID 48601) exited with exit code 1
+2026-10-16 23:57:36.259 EAT [48596] LOG:  shutting down
+2026-10-16 23:57:36.260 EAT [48596] LOG:  checkpoint starting: shutdown immediate
+2026-10-16 23:57:36.269 EAT [48596] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.004 s, total=0.011 s; sync files=11, longest=0.003 s, average=0.001 s; distance=60 kB, estimate=60 kB; lsn=0/1511978, redo lsn=0/1511978
+2026-10-16 23:57:36.276 EAT [48595] LOG:  database system is shut down

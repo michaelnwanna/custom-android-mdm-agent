@@ -17,6 +17,12 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
             table.HasCheckConstraint("CK_Enrollment_Digest", "\"TokenDigest\" ~ '^[0-9a-f]{64}$'");
             table.HasCheckConstraint("CK_Enrollment_Lifetime",
                 "\"ExpiresAt\" > \"IssuedAt\" AND \"ExpiresAt\" <= \"IssuedAt\" + interval '15 minutes'");
+            table.HasCheckConstraint("CK_Enrollment_SigningAttempt", "NOT \"SigningAttempted\" OR \"OperationId\" IS NOT NULL");
+            table.HasCheckConstraint("CK_Enrollment_Completion",
+                "\"CompletedResponseJson\" IS NULL OR (\"OperationId\" IS NOT NULL AND " +
+                "(jsonb_typeof(\"CompletedResponseJson\"::jsonb) = 'object' AND " +
+                "\"CompletedResponseJson\"::jsonb ->> 'schemaVersion' = '1' AND " +
+                "\"CompletedResponseJson\"::jsonb ->> 'deviceId' = \"DeviceId\"::text) IS TRUE)");
             table.HasCheckConstraint("CK_Enrollment_Claim",
                 "(\"OperationId\" IS NULL AND \"DeviceId\" IS NULL AND \"CsrSha256\" IS NULL AND \"SubjectPublicKeyInfoBase64\" IS NULL AND \"ClaimedAt\" IS NULL) OR " +
                 "(\"OperationId\" IS NOT NULL AND \"DeviceId\" IS NOT NULL AND \"CsrSha256\" IS NOT NULL AND \"SubjectPublicKeyInfoBase64\" IS NOT NULL AND \"ClaimedAt\" IS NOT NULL " +
@@ -28,6 +34,8 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
         enrollment.Property(value => value.TokenDigest).HasMaxLength(64).IsRequired();
         enrollment.Property(value => value.CsrSha256).HasMaxLength(64);
         enrollment.Property(value => value.SubjectPublicKeyInfoBase64).HasMaxLength(512);
+        enrollment.Property(value => value.CompletedResponseJson).HasMaxLength(100000);
+        enrollment.Property(value => value.SigningAttempted).HasDefaultValue(false);
         enrollment.HasIndex(value => value.OperationId).IsUnique();
         enrollment.HasIndex(value => value.DeviceId).IsUnique();
         enrollment.Ignore(value => value.Credential);

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Security.Cryptography.X509Certificates;
 using FleetManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,57 @@ namespace FleetManagement.Enrollment;
 
 public sealed class PostgresEnrollmentClaims(IDbContextFactory<FleetDbContext> contexts, TimeProvider clock)
 {
+    public async Task<EnrollmentSigningWork> ReadSigningWorkAsync(Guid pendingId, Guid operationId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = await contexts.CreateDbContextAsync(cancellationToken);
+        var enrollment = await context.PendingEnrollments.AsNoTracking()
+            .SingleOrDefaultAsync(value => value.Id == pendingId, cancellationToken);
+        if (enrollment?.OperationId is null || enrollment.OperationId != operationId)
+            throw new InvalidOperationException("Enrollment operation does not match its claim.");
+        return new EnrollmentSigningWork(new EnrollmentSigningRequest(operationId, enrollment.DeviceId!.Value,
+            enrollment.CsrSha256!, enrollment.SubjectPublicKeyInfoBase64!), enrollment.CompletedResponse);
+    }
+
+    public async Task<bool> TryBeginSigningAsync(Guid pendingId, Guid operationId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var context = await contexts.CreateDbContextAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        var records = await context.PendingEnrollments.FromSqlInterpolated(
+            $"SELECT * FROM \"PendingEnrollments\" WHERE \"Id\" = {pendingId} FOR UPDATE")
+            .AsTracking().ToListAsync(cancellationToken);
+        var enrollment = records.SingleOrDefault()
+            ?? throw new InvalidOperationException("Enrollment operation does not match its claim.");
+        var started = enrollment.TryBeginSigning(operationId);
+        await context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return started;
+    }
+
+    public async Task<EnrollmentCertificateResponse> CompleteAsync(Guid pendingId, Guid operationId,
+        string certificateDer, IReadOnlyList<string> intermediateCertificatesDer,
+        X509Certificate2 trustedRoot, TimeSpan maximumLifetime, CancellationToken cancellationToken = default)
+    {
+        await using var context = await contexts.CreateDbContextAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        var records = await context.PendingEnrollments.FromSqlInterpolated(
+            $"SELECT * FROM \"PendingEnrollments\" WHERE \"Id\" = {pendingId} FOR UPDATE")
+            .AsTracking().ToListAsync(cancellationToken);
+        var enrollment = records.SingleOrDefault();
+        if (enrollment?.OperationId is null || enrollment.OperationId != operationId)
+            throw new InvalidOperationException("Enrollment operation does not match its claim.");
+        if (enrollment.CompletedResponse is { } existing)
+            return existing;
+        var response = EnrollmentCertificateVerifier.Verify(enrollment.DeviceId!.Value,
+            enrollment.SubjectPublicKeyInfoBase64!, certificateDer, intermediateCertificatesDer,
+            trustedRoot, clock.GetUtcNow(), maximumLifetime);
+        var completed = enrollment.Complete(operationId, response);
+        await context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return completed;
+    }
+
     public async Task RegisterAsync(BootstrapTokenCredential credential, CancellationToken cancellationToken = default)
     {
         await using var context = await contexts.CreateDbContextAsync(cancellationToken);

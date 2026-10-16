@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl",
+    "-D",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T205603.076038Z/data",
+    "-l",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T205603.076038Z/server.log",
+    "-w",
+    "-t",
+    "60",
+    "-o",
+    "-c listen_addresses='' -c unix_socket_directories='/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-suug9v53' -c unix_socket_permissions=0700",
+    "start"
+  ],
+  "returncode": 0,
+  "stdout": "waiting for server to start....... done\nserver started\n",
+  "stderr": ""
+}

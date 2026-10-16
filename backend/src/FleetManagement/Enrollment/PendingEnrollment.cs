@@ -1,8 +1,11 @@
+using System.Text.Json;
+
 namespace FleetManagement.Enrollment;
 
-public enum EnrollmentClaimStatus { Unauthorized, Claimed, InProgress, Conflict }
+public enum EnrollmentClaimStatus { Unauthorized, Claimed, InProgress, Conflict, Completed }
 
-public sealed record EnrollmentClaim(EnrollmentClaimStatus Status, Guid? OperationId = null, Guid? DeviceId = null);
+public sealed record EnrollmentClaim(EnrollmentClaimStatus Status, Guid? OperationId = null, Guid? DeviceId = null,
+    EnrollmentCertificateResponse? Response = null);
 
 public sealed class PendingEnrollment
 {
@@ -15,6 +18,8 @@ public sealed class PendingEnrollment
     public string? CsrSha256 { get; private set; }
     public string? SubjectPublicKeyInfoBase64 { get; private set; }
     public DateTimeOffset? ClaimedAt { get; private set; }
+    public string? CompletedResponseJson { get; private set; }
+    public bool SigningAttempted { get; private set; }
 
     private PendingEnrollment() { }
 
@@ -38,9 +43,12 @@ public sealed class PendingEnrollment
     internal EnrollmentClaim Claim(VerifiedEnrollmentKey key, DateTimeOffset now)
     {
         if (OperationId is not null)
-            return new EnrollmentClaim(CsrSha256 == key.CsrSha256 ? EnrollmentClaimStatus.InProgress : EnrollmentClaimStatus.Conflict,
+            return new EnrollmentClaim(CsrSha256 == key.CsrSha256
+                    ? CompletedResponseJson is null ? EnrollmentClaimStatus.InProgress : EnrollmentClaimStatus.Completed
+                    : EnrollmentClaimStatus.Conflict,
                 CsrSha256 == key.CsrSha256 ? OperationId : null,
-                CsrSha256 == key.CsrSha256 ? DeviceId : null);
+                CsrSha256 == key.CsrSha256 ? DeviceId : null,
+                CsrSha256 == key.CsrSha256 ? CompletedResponse : null);
 
         OperationId = Guid.NewGuid();
         DeviceId = Guid.NewGuid();
@@ -48,6 +56,30 @@ public sealed class PendingEnrollment
         SubjectPublicKeyInfoBase64 = key.SubjectPublicKeyInfoBase64;
         ClaimedAt = now;
         return new EnrollmentClaim(EnrollmentClaimStatus.Claimed, OperationId, DeviceId);
+    }
+
+    internal EnrollmentCertificateResponse? CompletedResponse => CompletedResponseJson is null ? null
+        : JsonSerializer.Deserialize<EnrollmentCertificateResponse>(CompletedResponseJson, JsonSerializerOptions.Web)
+            ?? throw new InvalidOperationException("Invalid persisted enrollment completion.");
+
+    internal EnrollmentCertificateResponse Complete(Guid operationId, EnrollmentCertificateResponse response)
+    {
+        if (OperationId is null || operationId != OperationId || response.DeviceId != DeviceId)
+            throw new InvalidOperationException("Enrollment operation does not match its claim.");
+        if (CompletedResponse is { } existing)
+            return existing;
+        CompletedResponseJson = JsonSerializer.Serialize(response, JsonSerializerOptions.Web);
+        return CompletedResponse!;
+    }
+
+    internal bool TryBeginSigning(Guid operationId)
+    {
+        if (OperationId is null || OperationId != operationId)
+            throw new InvalidOperationException("Enrollment operation does not match its claim.");
+        if (SigningAttempted || CompletedResponseJson is not null)
+            return false;
+        SigningAttempted = true;
+        return true;
     }
 
     private static bool IsDigest(string? value) => value is { Length: 64 }

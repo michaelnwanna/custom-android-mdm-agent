@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/FleetManagement/FleetManagement.csproj" />
+  <Project Path="tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj" />
+  <Project Path="tests/FleetManagement.SignerProbe/FleetManagement.SignerProbe.csproj" />
+  <Project Path="tests/FleetManagement.Tests/FleetManagement.Tests.csproj" />
+</Solution>

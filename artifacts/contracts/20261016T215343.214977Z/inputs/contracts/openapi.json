@@ -1,0 +1,112 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fleet enrollment API",
+    "version": "1.0.0",
+    "description": "Contract-first enrollment foundation. No backend endpoint is implemented. All transport, authorization, cryptographic and persistence rules below require implementation and integration tests."
+  },
+  "servers": [{"url": "https://fleet.example.invalid"}],
+  "security": [{"deviceCertificate": []}],
+  "paths": {
+    "/api/v1/enrollments": {
+      "post": {
+        "operationId": "EnrollDevice",
+        "summary": "Redeem a pending enrollment for a server-assigned device identity",
+        "description": "Requires server-authenticated TLS and a short-lived one-use bearer token bound to pendingEnrollmentId. This bootstrap route does not require an existing device certificate. Enforce a 24576-byte request-body limit before JSON parsing. Validate base64 DER PKCS#10, proof-of-possession signature and P-256/SHA-256 key policy before issuance. Ignore requested CSR subject/SAN identities and derive identity from the server-assigned device ID. A successful response must follow durable enrollment completion. A concurrent or later byte-identical CSR retry with the original token may retrieve the same persisted response until the original token expires, without issuing a new certificate, identity or extending expiry. A different CSR for an already completed enrollment conflicts. Expired, invalid or wrongly bound tokens return the same generic 401. These are required server semantics, not behavior guaranteed by OpenAPI validation.",
+        "security": [{"enrollmentToken": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {"schema": {"$ref": "./http/enrollment-request-v1.schema.json"}}
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New enrollment durably completed; immutable device identity and certificate response persisted before sending.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {
+              "application/json": {"schema": {"$ref": "./http/enrollment-response-v1.schema.json"}}
+            }
+          },
+          "200": {
+            "description": "Exact CSR retry returns the original durable response, with unchanged identity, certificate and timestamps. Original token must still be within its initial lifetime.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {
+              "application/json": {"schema": {"$ref": "./http/enrollment-response-v1.schema.json"}}
+            }
+          },
+          "400": {"$ref": "#/components/responses/InvalidRequest"},
+          "401": {
+            "description": "Missing, invalid, expired or wrongly bound bootstrap credential. Do not disclose enrollment existence or token state.",
+            "headers": {
+              "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+              "WWW-Authenticate": {"required": true, "schema": {"type": "string", "const": "Bearer"}}
+            },
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "409": {
+            "description": "Authenticated pending enrollment is already completed for a different CSR, revoked, or requires administrator recovery. No replacement identity or credential is issued.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "413": {
+            "description": "Request body exceeds 24576 bytes.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "415": {
+            "description": "Request Content-Type is not application/json.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "429": {
+            "description": "Bootstrap rate limit reached. Rate limits apply before expensive CSR verification and issuance, including invalid credentials.",
+            "headers": {
+              "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+              "Retry-After": {"$ref": "#/components/headers/RetryAfter"}
+            },
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "500": {"$ref": "#/components/responses/InternalError"},
+          "503": {
+            "description": "Durable enrollment completion is unavailable. Retry the same request; never mint another identity to recover an uncertain operation.",
+            "headers": {
+              "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+              "Retry-After": {"$ref": "#/components/headers/RetryAfter"}
+            },
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "enrollmentToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Opaque cryptographically random bootstrap credential, not a JWT or console session. Store only a keyed digest server-side; never log it or put it in a URL/body. Bound to a pending enrollment and initial expiry. Consumption permits no new issuance on replay; only exact response recovery while initially valid."
+      },
+      "deviceCertificate": {
+        "type": "mutualTLS",
+        "description": "Subsequent device APIs require validated, unexpired, unrevoked device identity certificates and server-side authorization. Merely presenting a certificate is insufficient."
+      }
+    },
+    "headers": {
+      "NoStore": {"required": true, "schema": {"type": "string", "const": "no-store"}},
+      "RetryAfter": {"required": true, "schema": {"type": "integer", "minimum": 1, "maximum": 86400}}
+    },
+    "responses": {
+      "InvalidRequest": {
+        "description": "Malformed JSON, duplicate keys, schema/encoding error, invalid CSR signature or unsupported key. Return only a generic title and optional opaque trace ID.",
+        "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+        "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+      },
+      "InternalError": {
+        "description": "Unexpected failure; no exception details, CSR contents, credentials or enrollment existence disclosed.",
+        "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+        "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+      }
+    }
+  }
+}

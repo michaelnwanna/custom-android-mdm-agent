@@ -1,0 +1,67 @@
+2026-10-17 00:57:18.284 EAT [70946] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 00:57:18.285 EAT [70946] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-52ht2tiq/.s.PGSQL.5432"
+2026-10-17 00:57:18.297 EAT [70950] LOG:  database system was shut down at 2026-10-17 00:57:17 EAT
+2026-10-17 00:57:18.303 EAT [70946] LOG:  database system is ready to accept connections
+2026-10-17 00:57:19.060 EAT [70956] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:19.060 EAT [70956] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:19.224 EAT [70962] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Claim"
+2026-10-17 00:57:19.224 EAT [70962] DETAIL:  Failing row contains (3bcebfed-c2d0-463c-bcb2-d2c661d1831d, 131c061229eb4a0a9b72756b2180f0ec3b3bbc9ec4a29db4e9381dd4856c990a, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, null, 41ba1eb7-2c62-47bf-a28e-94db25a81ccd, null, null, null, null, f).
+2026-10-17 00:57:19.224 EAT [70962] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-17 00:57:19.231 EAT [70956] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Lifetime"
+2026-10-17 00:57:19.231 EAT [70956] DETAIL:  Failing row contains (3bcebfed-c2d0-463c-bcb2-d2c661d1831d, 131c061229eb4a0a9b72756b2180f0ec3b3bbc9ec4a29db4e9381dd4856c990a, 2026-10-16 15:00:00+03, 2026-10-16 15:00:00+03, null, null, null, null, null, null, f).
+2026-10-17 00:57:19.231 EAT [70956] STATEMENT:  UPDATE "PendingEnrollments" SET "ExpiresAt" = "IssuedAt" WHERE "Id" = $1
+2026-10-17 00:57:19.374 EAT [70960] ERROR:  duplicate key value violates unique constraint "IX_PendingEnrollments_DeviceId"
+2026-10-17 00:57:19.374 EAT [70960] DETAIL:  Key ("DeviceId")=(007fe336-a9fe-4afa-910d-218f3faaa2e5) already exists.
+2026-10-17 00:57:19.374 EAT [70960] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-17 00:57:19.464 EAT [70964] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:19.464 EAT [70964] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:19.954 EAT [70970] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Completion"
+2026-10-17 00:57:19.954 EAT [70970] DETAIL:  Failing row contains (acfb56c5-802d-47b5-92b8-f64f5ebdd180, b25ec1e022ff3d8a1f64f82cb45b1b9b4e57841ddcaeeba3dc3fd43061d9b421, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, 76184c89-1cf7-4deb-92d9-348597600185, 3108d07e-fb25-472a-941c-f7dbf861edfd, 64a09ed76f4aa29e96014a4380e17b3ae0c587f541854fca3b6b2ee44ec79ff1, MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEU9BjaQghuNi6bL2/NVLsNoZwKfo5..., 2026-10-16 15:00:00+03, {"schemaVersion":1,"deviceId":"932c6211-1b25-49a6-88f7-1a38682e4..., f).
+2026-10-17 00:57:19.954 EAT [70970] STATEMENT:  UPDATE "PendingEnrollments" SET "CompletedResponseJson" = $1 WHERE "Id" = $2
+2026-10-17 00:57:20.025 EAT [70974] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:20.025 EAT [70974] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:20.552 EAT [70975] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:20.552 EAT [70975] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:20.929 EAT [70976] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:20.929 EAT [70976] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:21.418 EAT [70977] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:21.418 EAT [70977] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:22.099 EAT [70978] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:22.099 EAT [70978] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:22.724 EAT [70979] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:22.724 EAT [70979] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:23.239 EAT [70982] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:23.239 EAT [70982] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:23.964 EAT [70992] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:23.964 EAT [70992] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:24.744 EAT [70993] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 00:57:24.744 EAT [70993] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 00:57:55.123 EAT [70946] LOG:  received fast shutdown request
+2026-10-17 00:57:55.124 EAT [70946] LOG:  aborting any active transactions
+2026-10-17 00:57:55.126 EAT [70946] LOG:  background worker "logical replication launcher" (PID 70953) exited with exit code 1
+2026-10-17 00:57:55.126 EAT [70948] LOG:  shutting down
+2026-10-17 00:57:55.127 EAT [70948] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 00:57:55.177 EAT [70948] LOG:  checkpoint complete: wrote 141 buffers (0.9%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.012 s, sync=0.023 s, total=0.051 s; sync files=134, longest=0.002 s, average=0.001 s; distance=1183 kB, estimate=1183 kB; lsn=0/160A078, redo lsn=0/160A078
+2026-10-17 00:57:55.186 EAT [70946] LOG:  database system is shut down

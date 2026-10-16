@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "dotnet",
+    "test",
+    "tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj",
+    "--logger",
+    "trx;LogFileName=tests.trx",
+    "--results-directory",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T210601.197550Z/backend/results",
+    "--verbosity",
+    "minimal"
+  ],
+  "returncode": 0,
+  "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T210601.197550Z/backend/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Postgres.Tests -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T210601.197550Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll\nTest run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T210601.197550Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\nResults File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T210601.197550Z/backend/results/tests.trx\n\nPassed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11, Duration: 13 s - FleetManagement.Postgres.Tests.dll (net10.0)\n",
+  "stderr": ""
+}

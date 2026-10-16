@@ -30,6 +30,10 @@ namespace FleetManagement.Persistence.Migrations
                     b.Property<DateTimeOffset?>("ClaimedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CompletedResponseJson")
+                        .HasMaxLength(100000)
+                        .HasColumnType("character varying(100000)");
+
                     b.Property<string>("CsrSha256")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -45,6 +49,11 @@ namespace FleetManagement.Persistence.Migrations
 
                     b.Property<Guid?>("OperationId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("SigningAttempted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("SubjectPublicKeyInfoBase64")
                         .HasMaxLength(512)
@@ -67,11 +76,15 @@ namespace FleetManagement.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_Enrollment_Claim", "(\"OperationId\" IS NULL AND \"DeviceId\" IS NULL AND \"CsrSha256\" IS NULL AND \"SubjectPublicKeyInfoBase64\" IS NULL AND \"ClaimedAt\" IS NULL) OR (\"OperationId\" IS NOT NULL AND \"DeviceId\" IS NOT NULL AND \"CsrSha256\" IS NOT NULL AND \"SubjectPublicKeyInfoBase64\" IS NOT NULL AND \"ClaimedAt\" IS NOT NULL AND \"OperationId\" <> '00000000-0000-0000-0000-000000000000'::uuid AND \"DeviceId\" <> '00000000-0000-0000-0000-000000000000'::uuid AND \"CsrSha256\" ~ '^[0-9a-f]{64}$' AND length(\"SubjectPublicKeyInfoBase64\") > 0 AND \"ClaimedAt\" >= \"IssuedAt\" AND \"ClaimedAt\" < \"ExpiresAt\")");
 
+                            t.HasCheckConstraint("CK_Enrollment_Completion", "\"CompletedResponseJson\" IS NULL OR (\"OperationId\" IS NOT NULL AND (jsonb_typeof(\"CompletedResponseJson\"::jsonb) = 'object' AND \"CompletedResponseJson\"::jsonb ->> 'schemaVersion' = '1' AND \"CompletedResponseJson\"::jsonb ->> 'deviceId' = \"DeviceId\"::text) IS TRUE)");
+
                             t.HasCheckConstraint("CK_Enrollment_Digest", "\"TokenDigest\" ~ '^[0-9a-f]{64}$'");
 
                             t.HasCheckConstraint("CK_Enrollment_Id", "\"Id\" <> '00000000-0000-0000-0000-000000000000'::uuid");
 
                             t.HasCheckConstraint("CK_Enrollment_Lifetime", "\"ExpiresAt\" > \"IssuedAt\" AND \"ExpiresAt\" <= \"IssuedAt\" + interval '15 minutes'");
+
+                            t.HasCheckConstraint("CK_Enrollment_SigningAttempt", "NOT \"SigningAttempted\" OR \"OperationId\" IS NOT NULL");
                         });
                 });
 #pragma warning restore 612, 618
