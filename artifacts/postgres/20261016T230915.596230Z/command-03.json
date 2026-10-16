@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/initdb",
+    "-D",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T230915.596230Z/data",
+    "--username=fleet_lab",
+    "--encoding=UTF8",
+    "--locale=C",
+    "--auth-local=trust",
+    "--auth-host=reject"
+  ],
+  "returncode": 0,
+  "stdout": "The files belonging to this database system will be owned by user \"michaelnwanna\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are disabled.\n\ncreating directory /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T230915.596230Z/data ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... Africa/Nairobi\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl -D /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T230915.596230Z/data -l logfile start\n\n",
+  "stderr": ""
+}

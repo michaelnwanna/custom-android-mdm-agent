@@ -1,0 +1,28 @@
+2026-10-17 01:57:16.615 EAT [1354] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 01:57:16.616 EAT [1354] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-i7vvqmmt/.s.PGSQL.5432"
+2026-10-17 01:57:16.647 EAT [1360] LOG:  database system was shut down at 2026-10-17 01:57:13 EAT
+2026-10-17 01:57:16.656 EAT [1354] LOG:  database system is ready to accept connections
+2026-10-17 01:58:03.126 EAT [1443] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 01:58:03.126 EAT [1443] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 01:58:05.947 EAT [1457] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Claim"
+2026-10-17 01:58:05.947 EAT [1457] DETAIL:  Failing row contains (c2b3c078-4f58-4ee1-97e3-8723bac9b845, 138d2f27f2566dbfdd7eef953dff06be98b8baf8e999b0bfc4368c9e045a7822, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, null, 8844317e-146a-4756-8a6b-de89ee9bfd39, null, null, null, null, f).
+2026-10-17 01:58:05.947 EAT [1457] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-17 01:58:05.958 EAT [1455] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Lifetime"
+2026-10-17 01:58:05.958 EAT [1455] DETAIL:  Failing row contains (c2b3c078-4f58-4ee1-97e3-8723bac9b845, 138d2f27f2566dbfdd7eef953dff06be98b8baf8e999b0bfc4368c9e045a7822, 2026-10-16 15:00:00+03, 2026-10-16 15:00:00+03, null, null, null, null, null, null, f).
+2026-10-17 01:58:05.958 EAT [1455] STATEMENT:  UPDATE "PendingEnrollments" SET "ExpiresAt" = "IssuedAt" WHERE "Id" = $1
+2026-10-17 01:58:06.276 EAT [1453] ERROR:  duplicate key value violates unique constraint "IX_PendingEnrollments_DeviceId"
+2026-10-17 01:58:06.276 EAT [1453] DETAIL:  Key ("DeviceId")=(5d76a0d3-d23c-4bc8-a910-40222b4b4fd3) already exists.
+2026-10-17 01:58:06.276 EAT [1453] STATEMENT:  UPDATE "PendingEnrollments" SET "DeviceId" = $1 WHERE "Id" = $2
+2026-10-17 01:58:06.565 EAT [1459] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 01:58:06.565 EAT [1459] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 01:58:08.430 EAT [1354] LOG:  received fast shutdown request
+2026-10-17 01:58:08.431 EAT [1354] LOG:  aborting any active transactions
+2026-10-17 01:58:08.433 EAT [1354] LOG:  background worker "logical replication launcher" (PID 1363) exited with exit code 1
+2026-10-17 01:58:08.433 EAT [1358] LOG:  shutting down
+2026-10-17 01:58:08.434 EAT [1358] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 01:58:08.462 EAT [1358] LOG:  checkpoint complete: wrote 92 buffers (0.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.009 s, sync=0.015 s, total=0.028 s; sync files=70, longest=0.001 s, average=0.001 s; distance=385 kB, estimate=385 kB; lsn=0/14FF900, redo lsn=0/14FF900
+2026-10-17 01:58:08.472 EAT [1354] LOG:  database system is shut down

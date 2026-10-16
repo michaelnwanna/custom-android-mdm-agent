@@ -96,9 +96,9 @@ def main():
         "result": "passed" if passed else "failed", "commands": records,
         "workingDirectory": "inputs/backend", "inputSha256": hashes, "testCounters": totals,
         "restartVerified": restart_verified,
-          "scope": ("Real PostgreSQL claims, lab signing, in-process enrollment HTTP and controlled fast restart; no power-loss, network TLS or device integration" if args.postgres_restart else
-              "Real PostgreSQL claims, lab signing and in-process enrollment HTTP; no server restart, network TLS or device integration" if args.postgres else
-              "Component/model, signer process, in-process HTTP and separate loopback Kestrel TLS tests plus PostgreSQL test compilation; no database execution, combined TLS/database or device integration"),
+          "scope": ("Real PostgreSQL claims, lab signing, in-process enrollment/provisioning HTTP, actor-audit rollback and controlled fast restart; no power-loss, network TLS, live identity-provider or device integration" if args.postgres_restart else
+              "Real PostgreSQL claims, lab signing, in-process enrollment/provisioning HTTP and actor-audit rollback; no server restart, network TLS, live identity-provider or device integration" if args.postgres else
+              "Component/model, signer process, administrator signed-token authorization, in-process HTTP and separate loopback Kestrel TLS tests plus PostgreSQL test compilation; no database execution, live identity-provider, combined TLS/database or device integration"),
         "resultSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                  for filename in sorted(output.rglob("*"))
                  if filename.is_file() and "inputs" not in filename.relative_to(output).parts},

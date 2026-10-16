@@ -3,11 +3,57 @@
   "info": {
     "title": "Fleet enrollment API",
     "version": "1.0.0",
-    "description": "Contract-first enrollment foundation. No backend endpoint is implemented. All transport, authorization, cryptographic and persistence rules below require implementation and integration tests."
+    "description": "Enrollment lab with implemented bootstrap redemption and administrator pending-enrollment creation. Runtime tests are separate from schema validation. Production CA, browser login, Android enrollment, revocation and device mTLS remain outside this lab."
   },
   "servers": [{"url": "https://fleet.example.invalid"}],
   "security": [{"deviceCertificate": []}],
   "paths": {
+    "/api/v1/admin/pending-enrollments": {
+      "post": {
+        "operationId": "CreatePendingEnrollment",
+        "summary": "Create a pending enrollment and deliver its bootstrap token once",
+        "description": "HTTPS only. Requires an at+jwt access token with validated OIDC issuer, API audience, lifetime and RS256/ES256 signature, one subject, and exact permission claim enrollments:create. Enforce a 1024-byte JSON body limit and reject duplicate/unknown keys. Commit the pending credential digest and issuer/subject audit together before returning the secret. Never log or store the plaintext response. No retrieval or idempotent replay is provided: a lost response leaves an expiring orphan, and retrying creates another enrollment. Process-local shared limit: ten requests per minute including unauthorized requests. Live external identity-provider integration is not established by local signed-token tests.",
+        "security": [{"administratorAccessToken": []}],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"$ref": "./http/pending-enrollment-request-v1.schema.json"}}}
+        },
+        "responses": {
+          "201": {
+            "description": "Pending enrollment and administrator audit committed; sensitive bootstrap token is delivered only in this response.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/json": {"schema": {"$ref": "./http/pending-enrollment-response-v1.schema.json"}}}
+          },
+          "400": {"$ref": "#/components/responses/InvalidRequest"},
+          "401": {
+            "description": "Missing or invalid administrator access token.",
+            "headers": {
+              "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+              "WWW-Authenticate": {"required": true, "schema": {"type": "string", "const": "Bearer"}}
+            },
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "403": {
+            "description": "Authenticated principal lacks the exact permission or required issuer/subject binding.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "413": {
+            "description": "Request body exceeds 1024 bytes.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "415": {
+            "description": "Only unencoded UTF-8 application/json is accepted.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "429": {"$ref": "#/components/responses/RetryUnavailable"},
+          "500": {"$ref": "#/components/responses/InternalError"},
+          "503": {"$ref": "#/components/responses/RetryUnavailable"}
+        }
+      }
+    },
     "/api/v1/enrollments": {
       "post": {
         "operationId": "EnrollDevice",
@@ -82,6 +128,12 @@
   },
   "components": {
     "securitySchemes": {
+      "administratorAccessToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "OIDC authority-issued at+jwt API access token with enrollments:create permission; not an ID token, device certificate or opaque bootstrap secret. Configure the trusted HTTPS authority and dedicated API audience out of band."
+      },
       "enrollmentToken": {
         "type": "http",
         "scheme": "bearer",
@@ -97,6 +149,14 @@
       "RetryAfter": {"required": true, "schema": {"type": "integer", "minimum": 1, "maximum": 86400}}
     },
     "responses": {
+      "RetryUnavailable": {
+        "description": "Rate limited or temporarily unavailable. Retrying creation may create another enrollment if the original commit succeeded but delivery failed; do not treat this operation as idempotent.",
+        "headers": {
+          "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+          "Retry-After": {"$ref": "#/components/headers/RetryAfter"}
+        },
+        "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+      },
       "InvalidRequest": {
         "description": "Malformed JSON, duplicate keys, schema/encoding error, invalid CSR signature or unsupported key. Return only a generic title and optional opaque trace ID.",
         "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},

@@ -1,0 +1,14 @@
+{
+  "schema": "http/pending-enrollment-request-v1.schema.json",
+  "valid": [{"schemaVersion": 1, "lifetimeSeconds": 60}, {"schemaVersion": 1, "lifetimeSeconds": 900}],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "missing version", "base": 0, "remove": ["schemaVersion"]},
+    {"name": "missing lifetime", "base": 0, "remove": ["lifetimeSeconds"]},
+    {"name": "short lifetime", "base": 0, "set": {"lifetimeSeconds": 59}},
+    {"name": "long lifetime", "base": 0, "set": {"lifetimeSeconds": 901}},
+    {"name": "string lifetime", "base": 0, "set": {"lifetimeSeconds": "300"}},
+    {"name": "fractional lifetime", "base": 0, "set": {"lifetimeSeconds": 60.5}},
+    {"name": "caller selected identity", "base": 0, "set": {"pendingEnrollmentId": "a9373871-de89-4723-bc55-884e76916e67"}}
+  ]
+}

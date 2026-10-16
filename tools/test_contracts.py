@@ -11,6 +11,28 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContractTests(unittest.TestCase):
+    def test_all_declared_errors_fit_problem_schema(self):
+        document = json.loads((ROOT / "contracts/openapi.json").read_text())
+        schema = json.loads((ROOT / "contracts/http/problem-v1.schema.json").read_text())
+        validator = Draft202012Validator(schema)
+        for item in document["paths"].values():
+            for operation in item.values():
+                for status in operation["responses"]:
+                    if int(status) >= 400:
+                        validator.validate({"type": "about:blank", "title": "Generic error", "status": int(status)})
+
+    def test_pending_enrollment_administrator_boundary(self):
+        document = json.loads((ROOT / "contracts/openapi.json").read_text())
+        operation = document["paths"]["/api/v1/admin/pending-enrollments"]["post"]
+        self.assertEqual(operation["security"], [{"administratorAccessToken": []}])
+        self.assertEqual(set(operation["responses"]), {"201", "400", "401", "403", "413", "415", "429", "500", "503"})
+        self.assertEqual(operation["requestBody"]["content"]["application/json"]["schema"]["$ref"],
+                         "./http/pending-enrollment-request-v1.schema.json")
+        self.assertEqual(operation["responses"]["201"]["content"]["application/json"]["schema"]["$ref"],
+                         "./http/pending-enrollment-response-v1.schema.json")
+        self.assertEqual(operation["responses"]["201"]["headers"]["Cache-Control"]["$ref"],
+                         "#/components/headers/NoStore")
+
     def test_enrollment_request_size_bounds(self):
         schema = json.loads((ROOT / "contracts/http/enrollment-request-v1.schema.json").read_text())
         validator = Draft202012Validator(schema, format_checker=FormatChecker())

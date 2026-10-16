@@ -1,5 +1,13 @@
 # Recorded Tests
 
+## Administrator Provisioning
+
+The [final component replay](../artifacts/backend/20261016T230815.907303Z/replay.html) records 140 passing .NET tests and ten tooling tests. Administrator cases exercise RS256 access-token signature, issuer, audience, expiry, token type, subject and permission checks; unconfigured denial; invalid authority configuration; and configured authority/audience validation with simulated discovery metadata. Provisioning HTTP tests verify authorized secret delivery, no-store, generic failures, disabled provisioning, strict JSON, declared/undeclared body limits, media types, rate limits and cleartext rejection. These tests do not contact a live identity provider or exercise browser login.
+
+The [final PostgreSQL replay](../artifacts/postgres/20261016T230915.596230Z/replay.html) and [nested manifest](../artifacts/postgres/20261016T230915.596230Z/backend/manifest.json) record fourteen passing integration tests and ten tooling tests, including previous enrollment/restart scenarios. The new authorized provisioning scenario verifies no mutations on unauthenticated requests, digest-only token storage, exact issuer/subject audit attribution after context reopen, and complete rollback of enrollment plus audit after a forced audit-insert error. PostgreSQL shut down cleanly. It is in-process TestServer HTTP with real database persistence, not combined network TLS/OIDC/database/device verification.
+
+The [contract replay](../artifacts/contracts/20261016T230635.620999Z/replay.html) passed eight checks, including sixteen valid and seventy-four rejection fixtures, OpenAPI administrator/bootstrap/device security separation, and shared problem-schema coverage of all declared error statuses including 403. Final input/result hashes were verified against current sources. See [administrator configuration, one-time delivery and non-idempotent retry limits](administrator-enrollment.md). Earlier passing reruns retain their original narrower results; the new audit migration is required before hosting provisioning. No Android/emulator runtime was changed for this milestone.
+
 ## Enrollment HTTP Lab
 
 Final closeout: the [contract replay](../artifacts/contracts/20261016T224405.792227Z/replay.html) passed six checks; the [final PostgreSQL replay](../artifacts/postgres/20261016T224414.780045Z/replay.html) passed thirteen integration tests and ten tooling tests using the final runner sources, including controlled restart and clean server shutdown. All five live solution projects built successfully. These supersede the earlier passing reruns below without changing their original recorded results.

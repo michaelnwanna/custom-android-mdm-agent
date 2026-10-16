@@ -1,5 +1,7 @@
 # Enrollment HTTP Lab
 
+Authorized operators can now create pending enrollments through the separate [administrator provisioning route](administrator-enrollment.md). It requires explicitly configured OIDC access-token validation and commits a minimal actor audit together with the token digest before one-time secret delivery. This supersedes the earlier absence of an administrator route described in the initial host setup below; no browser login or device-side token-transfer mechanism has been added.
+
 The [ASP.NET Core host](../backend/src/FleetManagement.Api/FleetApi.cs) implements `POST /api/v1/enrollments` using the existing PostgreSQL claims, certificate verifier, signing coordinator and private file-ledger lab signer. This is an enrollment lab, not a complete fleet-management service or production CA.
 
 ## Request Boundary
@@ -30,7 +32,7 @@ Set all five enrollment settings, using double underscores for environment varia
 | `Enrollment__CaKeyFile` | Absolute path to its private PEM key |
 | `Enrollment__LedgerDirectory` | Absolute path to a private trusted local ledger directory |
 
-Keep all file material under ignored `.lab-private` or outside the repository with owner-only access. Reuse the digest key and CA/ledger for recovery; replacing them is not a safe retry mechanism. The host does not migrate the database, generate these secrets, create pending enrollments or deliver bootstrap tokens. A trusted caller must provision pending enrollments through the existing library; there is no administrator HTTP route or automatic development credential. With no enrollment configuration the endpoint returns 503; partial configuration fails startup. Kestrel must also have a valid server TLS configuration before meaningful use.
+Keep all file material under ignored `.lab-private` or outside the repository with owner-only access. Reuse the digest key and CA/ledger for recovery; replacing them is not a safe retry mechanism. The host does not migrate the database or generate the operator's digest/CA secrets. Apply all four migrations before use. The separate [administrator route](administrator-enrollment.md) can create pending enrollments and deliver a bootstrap token once after issuer/permission validation; it has no automatic development credential. With no enrollment configuration the endpoint returns 503; partial configuration fails startup. Kestrel must also have a valid server TLS configuration before meaningful use.
 
 The configured lab signer issues one-day certificates; the completion verifier allows at most two days. Root ownership, clock, file permissions, backups and trusted filesystem integrity remain operator responsibilities. The ledger is not protected against rollback, deletion, power loss or untrusted local administrators. Request-body/header logging must remain disabled; configure any external proxy or telemetry sink to redact credentials and enrollment material too.
 

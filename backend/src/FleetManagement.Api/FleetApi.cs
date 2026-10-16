@@ -31,6 +31,12 @@ public static class FleetApi
                 limiter.Window = TimeSpan.FromMinutes(1);
                 limiter.QueueLimit = 0;
             });
+            options.AddFixedWindowLimiter("provision-enrollment", limiter =>
+            {
+                limiter.PermitLimit = 10;
+                limiter.Window = TimeSpan.FromMinutes(1);
+                limiter.QueueLimit = 0;
+            });
             options.OnRejected = async (context, cancellationToken) =>
             {
                 var seconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
@@ -40,6 +46,7 @@ public static class FleetApi
             };
         });
         ConfigureEnrollment(builder);
+        builder.AddAdministratorAuthentication();
         configure?.Invoke(builder);
         var app = builder.Build();
         app.Use(async (context, next) =>
@@ -73,7 +80,10 @@ public static class FleetApi
             }
         });
         app.UseRateLimiter();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapEnrollment();
+        app.MapPendingEnrollment();
         return app;
     }
 
@@ -101,6 +111,8 @@ public static class FleetApi
             services.GetRequiredService<X509Certificate2>(), TimeSpan.FromDays(2)));
         builder.Services.AddSingleton<IEnrollmentRedemption>(services => new EnrollmentRedemptionService(
             services.GetRequiredService<PostgresEnrollmentClaims>(), services.GetRequiredService<EnrollmentSigningCoordinator>(), digestKey));
+        builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(services => new PendingEnrollmentProvisioner(
+            services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), services.GetRequiredService<TimeProvider>(), digestKey));
     }
 
     private static void MapEnrollment(this WebApplication app)
@@ -195,10 +207,10 @@ public static class FleetApi
             .ProducesProblem(415).ProducesProblem(429).ProducesProblem(500).ProducesProblem(503);
     }
 
-    private static IResult Problem(int status)
+    internal static IResult Problem(int status)
         => Results.Problem(statusCode: status, type: "about:blank", title: status switch
         {
-            400 => "Invalid request", 401 => "Unauthorized", 409 => "Enrollment conflict",
+            400 => "Invalid request", 401 => "Unauthorized", 403 => "Forbidden", 409 => "Enrollment conflict",
             413 => "Request body too large", 415 => "Unsupported media type", 429 => "Too many requests",
             503 => "Enrollment unavailable", _ => "Internal server error"
         });

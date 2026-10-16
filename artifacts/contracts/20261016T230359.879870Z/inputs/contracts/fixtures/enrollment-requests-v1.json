@@ -1,0 +1,23 @@
+{
+  "schema": "http/enrollment-request-v1.schema.json",
+  "valid": [
+    {
+      "schemaVersion": 1,
+      "pendingEnrollmentId": "a9373871-de89-4723-bc55-884e76916e67",
+      "csrDer": "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB"
+    }
+  ],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "missing enrollment binding", "base": 0, "remove": ["pendingEnrollmentId"]},
+    {"name": "invalid pending id", "base": 0, "set": {"pendingEnrollmentId": "device-one"}},
+    {"name": "missing CSR", "base": 0, "remove": ["csrDer"]},
+    {"name": "empty CSR", "base": 0, "set": {"csrDer": ""}},
+    {"name": "PEM is not DER base64", "base": 0, "set": {"csrDer": "-----BEGIN CERTIFICATE REQUEST-----"}},
+    {"name": "invalid base64", "base": 0, "set": {"csrDer": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"}},
+    {"name": "client assigned device identity", "base": 0, "set": {"deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823"}},
+    {"name": "private key upload", "base": 0, "set": {"privateKey": "forbidden"}},
+    {"name": "body token forbidden", "base": 0, "set": {"token": "synthetic-not-a-secret"}},
+    {"name": "caller requested certificate subject", "base": 0, "set": {"subject": "admin"}}
+  ]
+}

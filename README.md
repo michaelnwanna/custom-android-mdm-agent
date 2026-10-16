@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [administrator provisioning route](docs/administrator-enrollment.md) now validates issuer-signed API access tokens, requires `enrollments:create`, and atomically saves the pending credential digest and issuer/subject audit before one-time bootstrap-secret delivery. This uses a fourth database migration. It is not browser login, production identity-provider integration or secure Android token transfer; those boundaries remain unverified.
+
 The [enrollment HTTP lab](docs/enrollment-http.md) now implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate tests exercise real loopback TLS and HTTP with PostgreSQL/lab signing; combined Android enrollment and production deployment remain unverified. The backend solution now contains five live projects, including the API host.
 
 The final local foundation regression passed [six contract checks](artifacts/contracts/20261016T215343.214977Z/replay.html), [sixty-six .NET component tests and ten tooling tests](artifacts/backend/20261016T215353.237189Z/replay.html), and [twelve PostgreSQL integration tests and ten tooling tests](artifacts/postgres/20261016T215647.644582Z/replay.html), including controlled database restart. The [foundation CI workflow and remaining MVP work](docs/foundation-ci.md) distinguish local verification from hosted CI and production readiness. For C# editing, open the four-project [backend solution](backend/FleetManagement.slnx), not the historical artifact snapshots.
@@ -46,6 +48,10 @@ flowchart TB
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]
 		EnrollmentClient[Synthetic HTTP test client]
+		OperatorToken[Operator API access token - synthetic issuer tested]
+		Provisioning[Authorized provisioning and atomic actor audit]
+		OperatorToken --> Provisioning
+		Provisioning --> EnrollmentDB
 		EnrollmentAPI[ASP.NET Core enrollment endpoint]
 		EnrollmentDB[(PostgreSQL claims and completion)]
 		LabSigner[Private ledger and caller-owned lab CA]

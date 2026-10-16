@@ -22,6 +22,29 @@ namespace FleetManagement.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
+                {
+                    b.Property<Guid>("PendingEnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Issuer")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("PendingEnrollmentId");
+
+                    b.ToTable("EnrollmentProvisioningAudits", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.PendingEnrollment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -86,6 +109,15 @@ namespace FleetManagement.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_Enrollment_SigningAttempt", "NOT \"SigningAttempted\" OR \"OperationId\" IS NOT NULL");
                         });
+                });
+
+            modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
+                {
+                    b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("PendingEnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

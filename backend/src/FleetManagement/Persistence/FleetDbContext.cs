@@ -7,9 +7,18 @@ namespace FleetManagement.Persistence;
 public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : DbContext(options)
 {
     public DbSet<PendingEnrollment> PendingEnrollments => Set<PendingEnrollment>();
+    public DbSet<EnrollmentProvisioningAudit> EnrollmentProvisioningAudits => Set<EnrollmentProvisioningAudit>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var audit = modelBuilder.Entity<EnrollmentProvisioningAudit>();
+        audit.ToTable("EnrollmentProvisioningAudits");
+        audit.HasKey(value => value.PendingEnrollmentId);
+        audit.Property(value => value.PendingEnrollmentId).ValueGeneratedNever();
+        audit.Property(value => value.Issuer).HasMaxLength(2048).IsRequired();
+        audit.Property(value => value.Subject).HasMaxLength(256).IsRequired();
+        audit.HasOne<PendingEnrollment>().WithMany().HasForeignKey(value => value.PendingEnrollmentId)
+            .OnDelete(DeleteBehavior.Restrict);
         var enrollment = modelBuilder.Entity<PendingEnrollment>();
         enrollment.ToTable("PendingEnrollments", table =>
         {

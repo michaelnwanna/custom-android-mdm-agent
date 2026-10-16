@@ -1,0 +1,14 @@
+{
+  "schema": "http/pending-enrollment-response-v1.schema.json",
+  "valid": [{"schemaVersion": 1, "pendingEnrollmentId": "a9373871-de89-4723-bc55-884e76916e67", "bootstrapToken": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "issuedAt": "2026-10-17T12:00:00Z", "expiresAt": "2026-10-17T12:05:00Z"}],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "missing secret", "base": 0, "remove": ["bootstrapToken"]},
+    {"name": "invalid identity", "base": 0, "set": {"pendingEnrollmentId": "not-a-uuid"}},
+    {"name": "short secret", "base": 0, "set": {"bootstrapToken": "short"}},
+    {"name": "invalid secret alphabet", "base": 0, "set": {"bootstrapToken": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+"}},
+    {"name": "invalid issued time", "base": 0, "set": {"issuedAt": "today"}},
+    {"name": "invalid expiry", "base": 0, "set": {"expiresAt": "tomorrow"}},
+    {"name": "unexpected private key", "base": 0, "set": {"privateKey": "forbidden"}}
+  ]
+}
