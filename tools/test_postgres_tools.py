@@ -3,12 +3,14 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
 
 import check_postgres
+import check_backend
 import install_postgres_lab
 
 
@@ -39,6 +41,11 @@ class PostgresRunnerTests(unittest.TestCase):
                         return subprocess.CompletedProcess(command, 1, "", "test shutdown failure")
                     (data / "postmaster.pid").unlink()
             if "--output-directory" in command:
+                self.assertIn("--postgres-restart", command)
+                self.assertEqual(kwargs["env"]["FLEET_TEST_POSTGRES_BIN"], str(binary_directory.resolve()))
+                data = Path(kwargs["env"]["FLEET_TEST_POSTGRES_DATA"])
+                self.assertTrue((data.parent / "restart-enabled").is_file())
+                (data / "restart.log").write_text("test restart output")
                 backend = Path(command[command.index("--output-directory") + 1])
                 backend.mkdir()
                 (backend / "manifest.json").write_text(json.dumps({"result": "passed" if backend_passes else "failed"}))
@@ -53,6 +60,8 @@ class PostgresRunnerTests(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()):
             exit_code = check_postgres.main()
         manifest = next((root / "artifacts/postgres").glob("*/manifest.json"))
+        if binaries:
+            self.assertEqual((manifest.parent / "restart.log").read_text(), "test restart output")
         return exit_code, json.loads(manifest.read_text()), socket_directory
 
     def test_success_requires_backend_pass_and_stopped_cluster(self):
@@ -126,6 +135,64 @@ class PostgresInstallerTests(unittest.TestCase):
                 self.assertEqual(install_postgres_lab.main(), 1)
                 download.assert_not_called()
             self.assertEqual(sentinel.read_text(), "existing installation")
+
+
+class BackendSelectionTests(unittest.TestCase):
+    def run_scenario(self, restart=False, restart_result=True):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "backend").mkdir()
+            (root / "tools").mkdir()
+            for filename in ("check_backend.py", "check_postgres.py", "install_postgres_lab.py", "test_postgres_tools.py"):
+                shutil.copyfile(Path(__file__).parent / filename, root / "tools" / filename)
+            commands = []
+
+            def run(command, **kwargs):
+                commands.append(command)
+                if command[:2] == ["dotnet", "test"]:
+                    results = Path(command[command.index("--results-directory") + 1])
+                    results.mkdir(parents=True)
+                    name = ("FleetManagement.Postgres.Tests.EnrollmentRestartTests.CommittedClaimSurvivesFastPostgresRestart"
+                            if restart_result else "FleetManagement.Postgres.Tests.EnrollmentClaimTests.RealPostgresMigrationConcurrencyRetryExpiryAndRollback")
+                    (results / "tests.trx").write_text(
+                        '<TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">'
+                        f'<Results><UnitTestResult testName="{name}" outcome="Passed" /></Results>'
+                        '<ResultSummary><Counters total="1" passed="1" /></ResultSummary></TestRun>')
+                return subprocess.CompletedProcess(command, 0, "test command output", "")
+
+            args = ["check_backend.py", "--postgres"] + (["--postgres-restart"] if restart else [])
+            with patch.object(check_backend, "ROOT", root), patch("sys.argv", args), \
+                    patch.object(check_backend.subprocess, "run", side_effect=run), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                exit_code = check_backend.main()
+            manifest = next((root / "artifacts/backend").glob("*/manifest.json"))
+            return exit_code, json.loads(manifest.read_text()), commands
+
+    def test_external_database_excludes_restart(self):
+        exit_code, report, commands = self.run_scenario(restart_result=False)
+        self.assertEqual(exit_code, 0)
+        test = next(command for command in commands if command[:2] == ["dotnet", "test"])
+        self.assertEqual(test[-2:], ["--filter", "FullyQualifiedName!~EnrollmentRestartTests"])
+        self.assertFalse(report["restartVerified"])
+
+    def test_managed_restart_requires_named_passing_test(self):
+        exit_code, report, commands = self.run_scenario(restart=True)
+        self.assertEqual(exit_code, 0)
+        self.assertTrue(report["restartVerified"])
+        test = next(command for command in commands if command[:2] == ["dotnet", "test"])
+        self.assertNotIn("--filter", test)
+
+    def test_missing_restart_result_cannot_pass(self):
+        exit_code, report, _ = self.run_scenario(restart=True, restart_result=False)
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(report["result"], "failed")
+        self.assertFalse(report["restartVerified"])
+
+    def test_restart_flag_without_postgres_is_rejected(self):
+        with patch("sys.argv", ["check_backend.py", "--postgres-restart"]), \
+                contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as rejected:
+            check_backend.main()
+        self.assertEqual(rejected.exception.code, 2)
 
 
 if __name__ == "__main__":

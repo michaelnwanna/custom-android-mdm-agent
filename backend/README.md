@@ -44,6 +44,8 @@ There is no signing worker, completed certificate response, audited administrato
 
 ### Real Database Gate
 
+The [controlled fast-restart run](../artifacts/postgres/20261016T154700.897152Z/replay.html) passed two integration tests and ten tooling tests. The additional test commits a claim, verifies an actual postmaster restart, then checks retained operation/device IDs, CSR digest and original expiry, with private socket and durability settings unchanged. The private runner explicitly opts in and requires the named passing TRX result. Ordinary external-database runs exclude restart tests. The [latest component regression](../artifacts/backend/20261016T155007.896710Z/replay.html) passed forty-six .NET tests and ten tooling tests. This extends context-reopen evidence to controlled fast restart, not power-loss, immediate-crash or signer recovery.
+
 The [private PostgreSQL lab guide](../docs/postgres-lab.md) provides a checksum-pinned, project-local installation and a recorded Unix-socket-only test workflow. It does not require Docker, a global service or credentials in chat. The runner retains initialization, settings, executable hashes, test results and shutdown; installation alone does not pass this gate.
 
 [EnrollmentClaimTests](tests/FleetManagement.Postgres.Tests/EnrollmentClaimTests.cs) requires `FLEET_TEST_POSTGRES`, set directly in your terminal to an authorized disposable PostgreSQL connection. Do not place credentials in Git, command arguments or chat. The test creates a randomly named `fleet_test_<UUID>` schema, applies the migration there, and drops only that schema in cleanup; the database and unrelated schemas are not deleted. It requires schema-creation privileges and must not target production.

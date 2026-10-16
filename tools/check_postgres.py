@@ -25,6 +25,7 @@ def main():
     private = ROOT / ".lab-private/postgres" / stamp
     private.mkdir(parents=True, mode=0o700, exist_ok=False)
     data = private / "data"
+    (private / "restart-enabled").touch(mode=0o600)
     server_log = private / "server.log"
     socket_directory = Path(tempfile.mkdtemp(prefix="fleet-pg-"))
     records = []
@@ -70,7 +71,9 @@ def main():
                  "SELECT version(); SHOW listen_addresses; SHOW unix_socket_permissions; SHOW fsync; SHOW synchronous_commit;"])
         env = os.environ.copy()
         env["FLEET_TEST_POSTGRES"] = f"Host={socket_directory};Database=postgres;Username=fleet_lab;Timeout=10;Command Timeout=30"
-        execute([sys.executable, ROOT / "tools/check_backend.py", "--postgres", "--output-directory", backend_bundle],
+        env["FLEET_TEST_POSTGRES_BIN"] = str(args.bin_dir.resolve())
+        env["FLEET_TEST_POSTGRES_DATA"] = str(data)
+        execute([sys.executable, ROOT / "tools/check_backend.py", "--postgres", "--postgres-restart", "--output-directory", backend_bundle],
                 env=env, timeout=600)
         cleanup = execute([args.bin_dir / "psql", "-h", socket_directory, "-U", "fleet_lab", "-d", "postgres",
                    "-X", "-v", "ON_ERROR_STOP=1", "--tuples-only", "--no-align", "-c",
@@ -92,6 +95,8 @@ def main():
             shutil.rmtree(socket_directory)
         if server_log.exists():
             shutil.copyfile(server_log, output / "server.log")
+        if (data / "restart.log").exists():
+            shutil.copyfile(data / "restart.log", output / "restart.log")
     passed = success and shutdown
     report = {
         "schemaVersion": 1, "startedAt": started.isoformat(),
@@ -101,7 +106,7 @@ def main():
         "binarySha256": {executable: hashlib.sha256((args.bin_dir / executable).read_bytes()).hexdigest()
                  for executable in ("initdb", "pg_ctl", "psql", "postgres", "pg_config")
                  if (args.bin_dir / executable).is_file()},
-        "commands": records, "scope": "Real local PostgreSQL enrollment claim integration; no signing, HTTP or power-loss guarantee",
+        "commands": records, "scope": "Real local PostgreSQL claims and controlled fast restart; no signing, HTTP or power-loss guarantee",
         "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                        for filename in sorted(output.rglob("*")) if filename.is_file()
                        and not {"bin", "obj"}.intersection(filename.relative_to(output).parts)},

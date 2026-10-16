@@ -17,8 +17,11 @@ TRX = {"test": "http://microsoft.com/schemas/VisualStudio/TeamTest/2010"}
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--postgres", action="store_true", help="Run real PostgreSQL tests using FLEET_TEST_POSTGRES; never skips")
+    parser.add_argument("--postgres-restart", action="store_true", help="Include managed private-cluster restart tests; requires --postgres")
     parser.add_argument("--output-directory", type=Path, help="New evidence directory, which must not exist")
     args = parser.parse_args()
+    if args.postgres_restart and not args.postgres:
+        parser.error("--postgres-restart requires --postgres and a runner-managed private cluster")
     started = datetime.datetime.now(datetime.timezone.utc)
     output = (args.output_directory.resolve() if args.output_directory else
               ROOT / "artifacts" / "backend" / started.strftime("%Y%m%dT%H%M%S.%fZ"))
@@ -53,6 +56,8 @@ def main():
         ["dotnet", "list", "src/FleetManagement/FleetManagement.csproj",
          "package", "--include-transitive", "--format", "json", "--no-restore"],
     ]
+    if args.postgres and not args.postgres_restart:
+        commands[3].extend(["--filter", "FullyQualifiedName!~EnrollmentRestartTests"])
     records = []
     for command in commands:
         try:
@@ -70,20 +75,29 @@ def main():
         if entry["returncode"]:
             break
     totals = None
+    restart_verified = False
     result_file = output / "results/tests.trx"
     if result_file.exists():
-        counters = ET.parse(result_file).find("test:ResultSummary/test:Counters", TRX)
+        result_tree = ET.parse(result_file)
+        counters = result_tree.find("test:ResultSummary/test:Counters", TRX)
         if counters is not None:
             totals = dict(counters.attrib)
+        restart_verified = any(
+            result.get("testName") == "FleetManagement.Postgres.Tests.EnrollmentRestartTests.CommittedClaimSurvivesFastPostgresRestart"
+            and result.get("outcome") == "Passed"
+            for result in result_tree.findall("test:Results/test:UnitTestResult", TRX))
     passed = (len(records) == len(commands) and all(entry["returncode"] == 0 for entry in records)
               and totals is not None and int(totals["total"]) > 0
-              and int(totals["passed"]) == int(totals["total"]))
+              and int(totals["passed"]) == int(totals["total"])
+              and (not args.postgres_restart or restart_verified))
     report = {
         "schemaVersion": 1, "startedAt": started.isoformat(),
         "finishedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "result": "passed" if passed else "failed", "commands": records,
         "workingDirectory": "inputs/backend", "inputSha256": hashes, "testCounters": totals,
-        "scope": ("Real PostgreSQL claim tests; no HTTP, signer or device integration" if args.postgres else
+        "restartVerified": restart_verified,
+          "scope": ("Real PostgreSQL claims and controlled fast restart; no power-loss, HTTP, signer or device integration" if args.postgres_restart else
+              "Real PostgreSQL claim tests; no server restart, HTTP, signer or device integration" if args.postgres else
               "Component/model tests and PostgreSQL test compilation only; no database execution, HTTP, signer or device integration"),
         "resultSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                  for filename in sorted(output.rglob("*"))
