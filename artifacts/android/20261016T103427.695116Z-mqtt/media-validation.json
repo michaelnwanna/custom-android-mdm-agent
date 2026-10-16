@@ -1,0 +1,22 @@
+{
+  "recordedAt" : "2026-10-16T10:35:20Z",
+  "recordings" : [
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 47.087400000000002,
+      "file" : "mqtt-lifecycle.mp4",
+      "result" : "passed"
+    }
+  ],
+  "result" : "passed",
+  "validator" : "macOS AVFoundation"
+}

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-mqtt.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.215,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"received\" value=\"5\" />\n    <string name=\"lastProbe\">probe-a8fa87f7-a2f1-478a-ae1a-201f5b75cb5d</string>\n    <string name=\"status\">MQTT probe received: 5</string>\n</map>\n"
+}

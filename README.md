@@ -6,11 +6,27 @@ A Kotlin Android Device Policy Controller with a planned C# / ASP.NET Core contr
 
 Implementation has started with a minimal Android feasibility lab: a test-only Device Owner agent, a separate versioned sample app, and a prerequisite checker. Both debug APKs compile and pass Android lint with the checksum-pinned Gradle 8.9 wrapper. Device Owner provisioning, genuine lock task mode, Home/Recents containment, and visible lab recovery passed on a reset API 34 emulator. See the [runtime verification record](docs/android-runtime-verification.md) for evidence and limits.
 
-The lab has a visible kiosk exit path and is not suitable for production device lockdown. A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verified on API 34, including negative identity/version/signer/invalid-APK checks and v2 kiosk relaunch. The [latest sixteen-checkpoint replay](artifacts/android/20261016T094840.126613Z-update/replay.html) passed with fresh builds/lint, regenerated fixtures, twenty-three unit tests, and native video validation. Persisted kiosk intent restored the sample automatically after a non-wiping cold boot, while an explicit exit remained disabled after another cold boot. The automated warm-reboot suite was blocked by Android framework startup failure, not relabeled as passing. [Recorded tests](docs/test-evidence.md) retain screenshots, video replays, platform dumps, and source build/test logs, including failures and recovery. Signed release delivery, MQTT, durable synchronization, backend services, and the web console are not implemented yet.
+Phase 1 is accepted for API 34 development feasibility under the [revised acceptance scope](docs/phase-one-acceptance.md); Phase 2 foundation work may proceed. Current-stable compatibility is deferred to hardening and remains required before broader support or production-readiness claims. Selected settings restrictions and per-device P-256 ECDSA signed maintenance exit are implemented; no unauthenticated UI exit remains. Debug/ADB pairing is still trusted lab only, not production maintenance; preserve the paired operator key securely, since key loss requires authorized trusted-emulator ADB reprovisioning, not a UI bypass. The [latest five-checkpoint maintenance replay](artifacts/android/20261016T110746.710228Z-phase-one/replay.html) and [manifest](artifacts/android/20261016T110746.710228Z-phase-one/manifest.json) passed restriction application/cleanup and unsigned, tampered, and consumed-challenge rejection, plus build/lint and native video validation. Eight JVM MaintenanceProof tests and thirty-one Python tests passed, including four new operator-pairing regression tests. The [seven-checkpoint MQTT lifecycle replay](artifacts/android/20261016T104119.390614Z-mqtt-lifecycle/replay.html) and [manifest](artifacts/android/20261016T104119.390614Z-mqtt-lifecycle/manifest.json) verify TLS roundtrip, receive/ack while the sample was foreground and LOCKED, broker-offline containment, reconnect with a fresh ACK, process-death containment without an immortal socket, explicit restart, and explicit stop. This is a test-only, user-started `START_NOT_STICKY` foreground diagnostic using anonymous synthetic probes over loopback aMQTT TLS, not production transport.
+
+A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verified on API 34, including negative identity/version/signer/invalid-APK checks and v2 kiosk relaunch. The [fresh sixteen-checkpoint update replay](artifacts/android/20261016T104623.288748Z-update/replay.html) and [manifest](artifacts/android/20261016T104623.288748Z-update/manifest.json) passed current build/lint invocations, twenty-seven Python tests, restrictions, and signed maintenance recovery. Persisted kiosk intent restored enabled and disabled state across non-wiping cold boots; the [six-checkpoint warm-reboot replay](artifacts/android/20261016T104301.613674Z-reboot/replay.html) and [manifest](artifacts/android/20261016T104301.613674Z-reboot/manifest.json) now verify two genuine warm reboots, automatic enabled restoration/Home containment, then disabled no-restoration/persisted exit. All four new bundles passed native video validation. The [earlier warm-reboot failure](artifacts/android/20261016T093407.811439Z-reboot/replay.html) remains failed; [recorded tests](docs/test-evidence.md) preserve it and other failures. These API 34 results do not establish physical-device/OEM reliability or current-stable compatibility. Production MQTT transport, signed release delivery, durable synchronization, backend services, and the web console remain planned.
+
+### Phase 2 Contract Foundation
+
+The [versioned contracts](contracts/README.md) define strict command, command-state event, durable-ingestion acknowledgement and enrollment HTTP shapes. The [OpenAPI enrollment contract](contracts/openapi.json) and [enrollment rules](contracts/enrollment.md) specify bootstrap-token/CSR boundaries, server-assigned identity and safe response recovery. The [latest recorded contract check](artifacts/contracts/20261016T125637.174195Z/replay.html) passed six unittest checks covering thirteen valid and fifty-eight rejection fixtures, OpenAPI declarations and size/chain boundaries, with exact input snapshots, hashes and dependency versions retained. The [first messaging-only run](artifacts/contracts/20261016T124733.464095Z/replay.html) remains historical evidence. Contracts alone do not establish authentication, lifecycle ordering or durable delivery.
+
+The [.NET enrollment foundation](backend/README.md) verifies PKCS#10 proof of possession and enrollment-bound bootstrap tokens, and includes an EF Core/Npgsql pending-enrollment model, migration and exclusive claim implementation fixing server identity and CSR digest. Its [forty-six-test component run](artifacts/backend/20261016T144849.949564Z/replay.html) passed alongside six installer/lifecycle tests. The [real PostgreSQL 17.11 run](artifacts/postgres/20261016T151840.312440Z/replay.html) also passed migration, eight competing claims, context-reopen retry, conflict, rollback, expiry and selected constraint checks. Sources, dependencies, hashes and TRX results are retained. The [private database workflow](docs/postgres-lab.md) uses a Unix socket without TCP; the server stopped after testing. Docker was not used or managed by this workflow, and emulators remain stopped. Same-CSR claims retain in-progress IDs, not a completed certificate response. Process-restart/power-loss recovery, HTTP endpoints/authentication, completed issuance/recovery, functional enrollment and production transport remain pending.
+
+### Current-Stable Compatibility Attempt
+
+Current-stable compatibility is a deferred hardening gate, not a Phase 2 blocker or a claimed pass. Official stable Android 17 / API 37.0 Google APIs x86_64 revision 6 (extension 22) was installed and booted on the separate `Fleet_Phase1_API37` AVD, serial `emulator-5556`, with emulator 37.2.12. SDK Command-line Tools 23 were installed with checksum verification on the Intel Mac. The original API 34 `Pixel_8` was shut down intact, without a wipe; its thirty-one Python/eight JVM passes and runtime evidence are unchanged.
+
+Earlier API 37 provisioning and media failures remain preserved in the [evidence guide](docs/test-evidence.md#android-17-current-stable-compatibility-attempt). A later [standard provisioning retry succeeded](artifacts/android/20261016T120217.950135Z-api37-platform-diagnostics/manifest.json), and Device Owner state was confirmed. After an explicitly recorded System UI ANR recovery, the [maintenance attempt](artifacts/android/20261016T120711.924506Z-phase-one/replay.html) passed restriction application, unsigned exit denial, and tampered-signature denial, then failed when UI capture exited 137 and recording finalization timed out. Android subsequently lost Activity Manager; [signed recovery failed](artifacts/android/20261016T121330.133823Z-recover/manifest.json). The AVD was stopped without wiping; authenticated exit is unconfirmed and enabled kiosk intent may restore next boot. Complete API 37 maintenance, reboot, update, MQTT, and validated-video coverage remain unverified. No root, hidden API, account/setup-check bypass, or device wipe was used; the initialization failure's cause is not proven.
+
+Further [recovery experiments](docs/test-evidence.md#controlled-recovery-experiments) found that four CPUs did not eliminate software-rendered ANRs. Host rendering exposed GLES 3.0, below the emulator's API 37 GLES 3.1 requirement, so no acceptance suites ran in that configuration. The later retained state was Device Owner present, kiosk intent disabled, and lock task `NONE`; this supersedes the earlier unknown intent warning, not the failed signed-recovery result. Both emulators are stopped. Completing the deferred hardening gate requires a stable supported current-stable runtime.
 
 ## Architecture
 
-This diagram shows the target end-to-end architecture, not a deployed system. Only the agent and sample-app feasibility modules exist today; their build and basic Device Owner/kiosk/recovery workflow are verified on one API 34 emulator. Every other component and integration shown below is planned.
+This diagram separates implemented API 34 lab diagnostics from the planned end-to-end system. The isolated loopback MQTT probe is not production transport or backend infrastructure. The numbered flow below describes the target design, not an implemented integration.
 
 ```mermaid
 flowchart TB
@@ -25,8 +41,13 @@ flowchart TB
 		Artifacts[Signed release metadata and immutable APK storage]
 	end
 
-	subgraph Transport["Device transport - planned"]
+	subgraph Transport["Production device transport - planned"]
 		Broker[MQTT broker with per-device access controls]
+	end
+
+	subgraph Diagnostics["MQTT diagnostics - implemented and API 34 verified"]
+		LabBroker[Loopback TLS amqtt synthetic probe broker]
+		LabService[HiveMQ client in user-started dataSync foreground service]
 	end
 
 	subgraph Device["Managed Android device - basic API 34 kiosk lab verified"]
@@ -39,6 +60,7 @@ flowchart TB
 	end
 
 	Admin --> Console
+	LabBroker <-->|localhost:8883 via adb reverse; synthetic probe and ack only| LabService
 	Console -->|Authenticated HTTPS actions| API
 	API -->|Transactional state, audit, and outbox writes| DB
 	DB --> Publisher

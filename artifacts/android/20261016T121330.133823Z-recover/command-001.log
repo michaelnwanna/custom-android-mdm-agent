@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "dumpsys",
+    "device_policy"
+  ],
+  "returncode": 0,
+  "seconds": 1.018,
+  "stderr": "Can't find service: device_policy\n",
+  "stdout": ""
+}

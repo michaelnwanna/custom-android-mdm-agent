@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "pidof",
+    "screenrecord"
+  ],
+  "returncode": 0,
+  "seconds": 0.885,
+  "stderr": "",
+  "stdout": "4407\n"
+}

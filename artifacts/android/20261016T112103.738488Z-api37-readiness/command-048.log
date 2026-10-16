@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "exec-out",
+    "cat",
+    "/sdcard/fleet-evidence-window.xml"
+  ],
+  "returncode": 0,
+  "seconds": 9.826,
+  "stderr": "",
+  "stdout": "cat: /sdcard/fleet-evidence-window.xml: Transport endpoint is not connected\n"
+}

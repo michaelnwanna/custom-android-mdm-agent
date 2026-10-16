@@ -1,0 +1,54 @@
+{
+  "schema": "command-v1.schema.json",
+  "valid": [
+    {
+      "schemaVersion": 1,
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "sequence": 1,
+      "type": "SET_POLICY",
+      "payload": {"policyId": "bb8a0a1f-b173-4dc9-9c92-d27a70d28626", "policyVersion": 1},
+      "issuedAt": "2026-10-16T12:00:00Z",
+      "expiresAt": "2026-10-16T13:00:00Z",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c"
+    },
+    {
+      "schemaVersion": 1,
+      "commandId": "0451e62c-b484-4c2b-bcbd-c41099fe0937",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "sequence": 2,
+      "type": "INSTALL_RELEASE",
+      "payload": {"releaseId": "7e3f4031-a755-44f0-a380-c41c716d25e5"},
+      "issuedAt": "2026-10-16T12:00:00Z",
+      "expiresAt": "2026-10-16T13:00:00Z",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c"
+    },
+    {
+      "schemaVersion": 1,
+      "commandId": "a9373871-de89-4723-bc55-884e76916e67",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "sequence": 3,
+      "type": "REQUEST_SYNC",
+      "payload": {},
+      "issuedAt": "2026-10-16T12:00:00Z",
+      "expiresAt": "2026-10-16T13:00:00Z",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c"
+    }
+  ],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "unknown command", "base": 0, "set": {"type": "EXECUTE_SHELL"}},
+    {"name": "wrong payload for command", "base": 0, "set": {"type": "INSTALL_RELEASE"}},
+    {"name": "invalid device id", "base": 0, "set": {"deviceId": "other-device"}},
+    {"name": "invalid timestamp", "base": 0, "set": {"issuedAt": "yesterday"}},
+    {"name": "timestamp missing timezone", "base": 0, "set": {"expiresAt": "2026-10-16T13:00:00"}},
+    {"name": "zero sequence", "base": 0, "set": {"sequence": 0}},
+    {"name": "boolean sequence", "base": 0, "set": {"sequence": true}},
+    {"name": "unsafe JSON sequence", "base": 0, "set": {"sequence": 9007199254740992}},
+    {"name": "unknown envelope field", "base": 0, "set": {"shell": "id"}},
+    {"name": "unknown payload field", "base": 2, "set": {"payload": {"force": true}}},
+    {"name": "missing correlation", "base": 0, "remove": ["correlationId"]},
+    {"name": "empty release id", "base": 1, "set": {"payload": {"releaseId": ""}}},
+    {"name": "zero policy version", "base": 0, "set": {"payload": {"policyId": "bb8a0a1f-b173-4dc9-9c92-d27a70d28626", "policyVersion": 0}}}
+  ]
+}

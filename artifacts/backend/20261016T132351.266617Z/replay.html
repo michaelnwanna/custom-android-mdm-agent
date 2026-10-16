@@ -1,0 +1,73 @@
+<!doctype html><html lang='en'><meta charset='utf-8'><title>Fleet backend checks</title><h1>Fleet backend checks</h1><p>failed</p><p>Component tests only; no HTTP, PostgreSQL, issuer or device integration</p><p><a href='manifest.json'>Commands, input hashes and test counters</a></p><p><a href='results/tests.trx'>TRX test results, if generated</a></p><pre>.NET SDK:
+ Version:           10.0.402
+ Commit:            a8dd0577c5
+ Workload version:  10.0.400-manifests.da132f47
+ MSBuild version:   18.9.15+a8dd0577c
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  15.7
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/sdk/10.0.402/
+
+.NET workloads installed:
+There are no installed workloads to display.
+Configured to use workload sets when installing new manifests.
+No workload sets are installed. Run &quot;dotnet workload restore&quot; to install a workload set.
+
+Host:
+  Version:      10.0.13
+  Architecture: x64
+  Commit:       4099f83977
+
+.NET SDKs installed:
+  10.0.402 [/usr/local/share/dotnet/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  None
+
+Environment variables:
+  Not set
+
+global.json file:
+  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
+
+  Determining projects to restore...
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 6.98 sec).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 7.31 sec).
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277: Found conflicts between different versions of &quot;Microsoft.EntityFrameworkCore&quot; that could not be resolved. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277: There was a conflict between &quot;Microsoft.EntityFrameworkCore, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; and &quot;Microsoft.EntityFrameworkCore, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     &quot;Microsoft.EntityFrameworkCore, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; was chosen because it was primary and &quot;Microsoft.EntityFrameworkCore, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; was not. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     References which depend on &quot;Microsoft.EntityFrameworkCore, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; [/Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.dll]. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:         /Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:           Project file item includes which caused reference &quot;/Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.dll&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:             /Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     References which depend on or have been unified to &quot;Microsoft.EntityFrameworkCore, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; []. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:         /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:           Project file item includes which caused reference &quot;/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:             /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277: Found conflicts between different versions of &quot;Microsoft.EntityFrameworkCore.Relational&quot; that could not be resolved. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277: There was a conflict between &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; and &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; was chosen because it was primary and &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; was not. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     References which depend on &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; [/Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.Relational.dll]. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:         /Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.Relational.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:           Project file item includes which caused reference &quot;/Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.Relational.dll&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:             /Users/michaelnwanna/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.4/lib/net10.0/Microsoft.EntityFrameworkCore.Relational.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:     References which depend on or have been unified to &quot;Microsoft.EntityFrameworkCore.Relational, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&quot; []. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:         /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:           Project file item includes which caused reference &quot;/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll&quot;. [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+/usr/local/share/dotnet/sdk/10.0.402/Microsoft.Common.CurrentVersion.targets(2453,5): warning MSB3277:             /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+CSC : error CS1705: Assembly &#x27;FleetManagement&#x27; with identity &#x27;FleetManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null&#x27; uses &#x27;Microsoft.EntityFrameworkCore, Version=10.0.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&#x27; which has a higher version than referenced assembly &#x27;Microsoft.EntityFrameworkCore&#x27; with identity &#x27;Microsoft.EntityFrameworkCore, Version=10.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60&#x27; [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132351.266617Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj]
+</pre></html>

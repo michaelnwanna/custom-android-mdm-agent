@@ -1,0 +1,22 @@
+{
+  "recordedAt" : "2026-10-16T10:17:42Z",
+  "recordings" : [
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 19.6677,
+      "file" : "smoke.mp4",
+      "result" : "passed"
+    }
+  ],
+  "result" : "passed",
+  "validator" : "macOS AVFoundation"
+}

@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T10:32:37.486648+00:00",
+  "serial": "emulator-5554",
+  "result": "failed",
+  "error": "Command failed (1): /usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/bin/python3.13 /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py probe\nTraceback (most recent call last):\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 77, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 73, in main\n    asyncio.run(serve() if arguments.mode == \"serve\" else probe())\n    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py\", line 725, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 49, in probe\n    from amqtt.client import MQTTClient\nModuleNotFoundError: No module named 'amqtt'\n\n",
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "reverse",
+        "tcp:8883",
+        "tcp:8883"
+      ],
+      "returncode": 0,
+      "seconds": 0.135,
+      "stderr": "",
+      "stdout": "8883\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "-T",
+        "run-as",
+        "dev.fleet.agent",
+        "tee",
+        "files/mqtt-ca.pem"
+      ],
+      "returncode": 0,
+      "seconds": 0.168,
+      "stderr": "",
+      "stdoutSha256": "83fbf2997eaa8b484d7508e34082dfbf5a2086e7fa8179e654938c1f0216e5b1"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "pm",
+        "grant",
+        "dev.fleet.agent",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "returncode": 0,
+      "seconds": 0.173,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-n",
+        "dev.fleet.agent/.MainActivity"
+      ],
+      "returncode": 0,
+      "seconds": 0.173,
+      "stderr": "",
+      "stdout": "Starting: Intent { cmp=dev.fleet.agent/.MainActivity }\nWarning: Activity not started, intent has been delivered to currently running top-most instance.\nStatus: ok\nLaunchState: UNKNOWN (0)\nActivity: dev.fleet.agent/.MainActivity\nTotalTime: 0\nWaitTime: 6\nComplete\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "pidof",
+        "screenrecord"
+      ],
+      "returncode": 1,
+      "seconds": 0.179,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "screenrecord",
+        "--time-limit",
+        "0",
+        "--size",
+        "540x1200",
+        "/sdcard/fleet-runtime-evidence.mp4"
+      ],
+      "kind": "video-start",
+      "maximumSeconds": null
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "pidof",
+        "screenrecord"
+      ],
+      "returncode": 0,
+      "seconds": 0.245,
+      "stderr": "",
+      "stdout": "7855\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "uiautomator",
+        "dump",
+        "/sdcard/fleet-evidence-window.xml"
+      ],
+      "returncode": 0,
+      "seconds": 2.615,
+      "stderr": "",
+      "stdout": "UI hierchary dumped to: /sdcard/fleet-evidence-window.xml\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "exec-out",
+        "cat",
+        "/sdcard/fleet-evidence-window.xml"
+      ],
+      "returncode": 0,
+      "seconds": 0.163,
+      "stderr": "",
+      "stdout": "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><hierarchy rotation=\"0\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.FrameLayout\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2400]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.LinearLayout\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2274]\"><node index=\"0\" text=\"\" resource-id=\"android:id/content\" class=\"android.widget.FrameLayout\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,132][1080,2274]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.ScrollView\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,132][1080,2274]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.LinearLayout\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,132][1080,1525]\"><node index=\"0\" text=\"Fleet Lab Agent&#10;Device Owner: true&#10;Lock task locked: false&#10;Kiosk intent enabled: false&#10;Kiosk disabled; no boot launch requested.&#10;Maintenance denied: valid fresh operator approval required.&#10;Lab v2 installed silently; observed version code 2.\" resource-id=\"\" class=\"android.widget.TextView\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,195][1017,706]\" /><node index=\"1\" text=\"START SAMPLE KIOSK\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,706][1017,832]\" /><node index=\"2\" text=\"REQUEST MAINTENANCE CHALLENGE\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,832][1017,958]\" /><node index=\"3\" text=\"EXIT LAB KIOSK\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,958][1017,1084]\" /><node index=\"4\" text=\"INSTALL STAGED LAB V2\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,1084][1017,1210]\" /><node index=\"5\" text=\"START MQTT PROBE\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,1210][1017,1336]\" /><node index=\"6\" text=\"STOP MQTT PROBE\" resource-id=\"\" class=\"android.widget.Button\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[63,1336][1017,1462]\" /></node></node></node></node><node index=\"1\" text=\"\" resource-id=\"android:id/statusBarBackground\" class=\"android.view.View\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,132]\" /><node index=\"2\" text=\"\" resource-id=\"android:id/navigationBarBackground\" class=\"android.view.View\" package=\"dev.fleet.agent\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,2274][1080,2400]\" /></node></hierarchy>"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "input",
+        "tap",
+        "540",
+        "1273"
+      ],
+      "returncode": 0,
+      "seconds": 0.188,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py",
+        "probe"
+      ],
+      "returncode": 1,
+      "seconds": 1.16,
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 77, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 73, in main\n    asyncio.run(serve() if arguments.mode == \"serve\" else probe())\n    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/Cellar/python@3.13/3.13.2/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py\", line 725, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py\", line 49, in probe\n    from amqtt.client import MQTTClient\nModuleNotFoundError: No module named 'amqtt'\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "exec-out",
+        "run-as",
+        "dev.fleet.agent",
+        "cat",
+        "shared_prefs/lab-mqtt.xml"
+      ],
+      "returncode": 0,
+      "seconds": 0.297,
+      "stderr": "",
+      "stdout": "cat: shared_prefs/lab-mqtt.xml: No such file or directory\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "kill",
+        "-2",
+        "7855"
+      ],
+      "returncode": 0,
+      "seconds": 0.252,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "pull",
+        "/sdcard/fleet-runtime-evidence.mp4",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T103237.486002Z-mqtt-first-probe/mqtt-first-probe.mp4"
+      ],
+      "returncode": 0,
+      "seconds": 0.147,
+      "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped. 14.0 MB/s (92396 bytes in 0.006s)\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "swift",
+        "-suppress-warnings",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/verify-recordings.swift"
+      ],
+      "returncode": 0,
+      "seconds": 2.095,
+      "stderr": "",
+      "stdout": "{\n  \"recordedAt\" : \"2026-10-16T10:32:45Z\",\n  \"recordings\" : [\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 4.4047999999999998,\n      \"file\" : \"mqtt-first-probe.mp4\",\n      \"result\" : \"passed\"\n    }\n  ],\n  \"result\" : \"passed\",\n  \"validator\" : \"macOS AVFoundation\"\n}\n"
+    }
+  ],
+  "videos": [
+    "mqtt-first-probe.mp4"
+  ],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

@@ -1,0 +1,22 @@
+{
+  "recordedAt" : "2026-10-16T10:19:58Z",
+  "recordings" : [
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 50.530755555555558,
+      "file" : "recovery.mp4",
+      "result" : "passed"
+    }
+  ],
+  "result" : "passed",
+  "validator" : "macOS AVFoundation"
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/bin/swift",
+    "-suppress-warnings",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/verify-recordings.swift"
+  ],
+  "returncode": 0,
+  "seconds": 13.759,
+  "stderr": "",
+  "stdout": "{\n  \"recordedAt\" : \"2026-10-16T12:31:05Z\",\n  \"recordings\" : [\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 26.547599999999999,\n      \"file\" : \"phase-one-maintenance.mp4\",\n      \"result\" : \"passed\"\n    }\n  ],\n  \"result\" : \"passed\",\n  \"validator\" : \"macOS AVFoundation\"\n}\n"
+}

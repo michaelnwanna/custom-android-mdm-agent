@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-kiosk.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.44,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"bootCount\" value=\"7\" />\n    <string name=\"bootStatus\">Kiosk launch requested after boot.</string>\n    <boolean name=\"enabled\" value=\"false\" />\n</map>\n"
+}

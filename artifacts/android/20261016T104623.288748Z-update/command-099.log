@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T104623.288748Z-update/smoke.mp4"
+  ],
+  "returncode": 0,
+  "seconds": 0.157,
+  "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped. 75.2 MB/s (970984 bytes in 0.012s)\n",
+  "stdout": ""
+}

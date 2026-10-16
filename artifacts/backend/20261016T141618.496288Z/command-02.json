@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/opt/python@3.13/bin/python3.13",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "../tools",
+    "-p",
+    "test_postgres_tools.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "test_backend_failure_still_stops_server_and_records_failure (test_postgres_tools.PostgresRunnerTests.test_backend_failure_still_stops_server_and_records_failure) ... ok\ntest_missing_binaries_cannot_pass (test_postgres_tools.PostgresRunnerTests.test_missing_binaries_cannot_pass) ... ok\ntest_shutdown_failure_cannot_pass_or_remove_live_socket (test_postgres_tools.PostgresRunnerTests.test_shutdown_failure_cannot_pass_or_remove_live_socket) ... ok\ntest_success_requires_backend_pass_and_stopped_cluster (test_postgres_tools.PostgresRunnerTests.test_success_requires_backend_pass_and_stopped_cluster) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.470s\n\nOK\n"
+}

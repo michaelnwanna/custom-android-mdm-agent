@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/bin/swift",
+    "-suppress-warnings",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/verify-recordings.swift"
+  ],
+  "returncode": 0,
+  "seconds": 3.896,
+  "stderr": "",
+  "stdout": "{\n  \"recordedAt\" : \"2026-10-16T10:46:09Z\",\n  \"recordings\" : [\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 6.8822999999999999,\n      \"file\" : \"after-disabled-reboot.mp4\",\n      \"result\" : \"passed\"\n    },\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 6.8822999999999999,\n      \"file\" : \"after-enabled-reboot.mp4\",\n      \"result\" : \"passed\"\n    },\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 6.8822999999999999,\n      \"file\" : \"before-enabled-reboot.mp4\",\n      \"result\" : \"passed\"\n    }\n  ],\n  \"result\" : \"passed\",\n  \"validator\" : \"macOS AVFoundation\"\n}\n"
+}

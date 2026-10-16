@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "pidof",
+    "dev.fleet.agent"
+  ],
+  "returncode": 0,
+  "seconds": 0.165,
+  "stderr": "",
+  "stdout": "6641\n"
+}

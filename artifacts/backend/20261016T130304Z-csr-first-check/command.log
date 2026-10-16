@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/src/FleetManagement/FleetManagement.csproj (in 1.28 sec).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 11.17 sec).
+  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Tests -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll
+Test run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130304Z-csr-first-check/tests.trx
+
+Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15, Duration: 1 s - FleetManagement.Tests.dll (net10.0)

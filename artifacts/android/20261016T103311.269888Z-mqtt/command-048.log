@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "openssl",
+    "dgst",
+    "-sha256",
+    "-sign",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/emulator-5554/operator.pem"
+  ],
+  "returncode": 0,
+  "seconds": 0.115,
+  "stderr": "",
+  "stdoutSha256": "a980704b3f5df5bce360f36a787555cd9b94c6eabbb90fb1630d7c88b477c776"
+}

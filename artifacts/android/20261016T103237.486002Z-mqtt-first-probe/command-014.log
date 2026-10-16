@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T103237.486002Z-mqtt-first-probe/mqtt-first-probe.mp4"
+  ],
+  "returncode": 0,
+  "seconds": 0.147,
+  "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped. 14.0 MB/s (92396 bytes in 0.006s)\n",
+  "stdout": ""
+}

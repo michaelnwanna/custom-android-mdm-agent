@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "logcat",
+    "-d",
+    "-s",
+    "DevicePolicyManager:I",
+    "*:S"
+  ],
+  "returncode": 0,
+  "seconds": 4.829,
+  "stderr": "",
+  "stdout": "--------- beginning of system\n10-16 14:54:16.821   645   645 I DevicePolicyManager: Current version 6, latest version 6, not upgrading.\n10-16 14:54:22.151   645   645 I DevicePolicyManager: Changing user restriction no_install_unknown_sources_globally on all users to: false caller: CallerIdentity[uid=1000]\n10-16 14:54:22.165   645   645 I DevicePolicyManager: Changing user restriction no_cellular_2g on all users to: false caller: CallerIdentity[uid=1000]\n10-16 14:54:24.686   645   645 I DevicePolicyManager: Migrating password complexity to policy engine\n10-16 14:54:24.686   645   645 I DevicePolicyManager: Migrating suspended packages to policy engine\n10-16 14:54:24.686   645   645 I DevicePolicyManager: Migrating set keyguard disabled features to policy engine\n10-16 14:54:24.686   645   645 I DevicePolicyManager: Migrating PERMISSION_GRANT policy to device policy engine.\n10-16 14:54:24.686   645   645 I DevicePolicyManager: Migrating application restrictions to policy engine\n10-16 14:54:27.180   645   758 I DevicePolicyManager: Changing user restriction no_factory_reset on user 0 to: false caller: CallerIdentity[uid=1000]\n"
+}

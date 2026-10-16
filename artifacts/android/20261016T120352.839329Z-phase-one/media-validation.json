@@ -1,0 +1,22 @@
+{
+  "recordedAt" : "2026-10-16T12:05:45Z",
+  "recordings" : [
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 25.397877777777779,
+      "file" : "phase-one-maintenance.mp4",
+      "result" : "passed"
+    }
+  ],
+  "result" : "passed",
+  "validator" : "macOS AVFoundation"
+}

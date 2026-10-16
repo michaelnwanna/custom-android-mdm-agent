@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "ls",
+    "/sdcard"
+  ],
+  "returncode": 1,
+  "seconds": 24.27,
+  "stderr": "ls: /sdcard: Transport endpoint is not connected\n",
+  "stdout": ""
+}

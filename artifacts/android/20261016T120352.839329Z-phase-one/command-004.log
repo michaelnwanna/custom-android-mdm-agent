@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "openssl",
+    "genpkey",
+    "-algorithm",
+    "EC",
+    "-pkeyopt",
+    "ec_paramgen_curve:P-256",
+    "-out",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/emulator-5556/operator.pem"
+  ],
+  "returncode": 0,
+  "seconds": 0.715,
+  "stderr": "",
+  "stdout": ""
+}

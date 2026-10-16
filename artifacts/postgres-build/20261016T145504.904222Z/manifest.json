@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "result": "passed",
+  "version": "17.11",
+  "sourceUrl": "https://ftp.postgresql.org/pub/source/v17.11/postgresql-17.11.tar.bz2",
+  "sourceSha256": "dd27f2b3c59e73ed14aa3324901242bf69a032a6347805f274e6260322d42979",
+  "prefix": "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11",
+  "commands": [
+    {
+      "argv": [
+        "./config.status",
+        "--config"
+      ],
+      "returncode": 0,
+      "log": "command-01.log"
+    },
+    {
+      "argv": [
+        "make",
+        "-j1"
+      ],
+      "returncode": 0,
+      "log": "command-02.log"
+    },
+    {
+      "argv": [
+        "make",
+        "install"
+      ],
+      "returncode": 0,
+      "log": "command-03.log"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/postgres",
+        "--version"
+      ],
+      "returncode": 0,
+      "log": "command-04.log"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_config",
+        "--configure"
+      ],
+      "returncode": 0,
+      "log": "command-05.log"
+    }
+  ],
+  "resumedFrom": ".lab-private/postgres-build/20261016T140455.986410Z/postgresql-17.11",
+  "scope": "Minimal local lab build without TLS/ICU/Readline; not a production server installation",
+  "fileSha256": {
+    "command-01.log": "9b50d8531bb58c5d0ebd1c97c674e659c0d246520d4efebd3a3764c34571d84e",
+    "command-02.log": "f2d0b542836bf0cda8c4bc5b211e3c0ba631738d57f4f134584da4ad7367a876",
+    "command-03.log": "c058b9c457f90aca15b77b156845a10b962aea0073a700ed6e2fa410bb6e1b54",
+    "command-04.log": "016ef00235d07eb1664b764dc7e7ab4f76986ae460d5c159a0fe682598286606",
+    "command-05.log": "0c0e19a239676a8a1ca61668b139cab589fbf290f8bfb2e94cb6c9384ea73bad",
+    "install_postgres_lab.py": "dd8af2079d1de248d06da80438478ef3058a03c9d1bfe7dd51e6f8913987e195"
+  }
+}

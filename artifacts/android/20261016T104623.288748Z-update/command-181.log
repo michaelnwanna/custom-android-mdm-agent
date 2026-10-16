@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-update.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.325,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"installerStatus\" value=\"0\" />\n    <string name=\"artifactSha256\">1c4ffd085dc4532bfc8980d65159584190d87d290b6a1a8ac291680ffadb5500</string>\n    <boolean name=\"busy\" value=\"false\" />\n    <boolean name=\"pendingUserAction\" value=\"false\" />\n    <int name=\"sessionId\" value=\"1325289794\" />\n    <string name=\"status\">Lab v2 installed silently; observed version code 2.</string>\n</map>\n"
+}

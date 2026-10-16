@@ -1,0 +1,12 @@
+{
+  "recordedAt" : "2026-10-16T11:33:30Z",
+  "recordings" : [
+    {
+      "error" : "No playable video track or positive duration",
+      "file" : "api37-provisioning-retry.mp4",
+      "result" : "failed"
+    }
+  ],
+  "result" : "failed",
+  "validator" : "macOS AVFoundation"
+}

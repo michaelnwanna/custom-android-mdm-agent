@@ -1,22 +1,6 @@
 # Offline-First Android Fleet Management
 
-Status: Implementation started. Both Android feasibility debug APKs compile and pass lint. Device Owner, genuine lock task mode, Home/Recents containment, recovery, and a locally staged agent-driven sample v1-to-v2 installation passed on API 34. Recorded regression/update runs include screenshots, MP4 replay, platform dumps, APK hashes, and build/test logs. Phase 1 remains incomplete. No benchmarks yet.
-
 Prepared: 2026-10-16.
-
-Current progress: a test-only Kotlin Device Owner agent, separate versioned sample app, verified Gradle wrapper, wrapper-aware prerequisite checker, and [feasibility guide](docs/android-feasibility.md) are present. The user authorized resetting the existing Pixel_8 AVD for the [runtime verification](docs/android-runtime-verification.md). Device Owner, actual LOCKED state, Home/Recents containment, recovery, four APK rejection cases, silent sample v1-to-v2 installation, and rendered v2 kiosk relaunch passed on API 34 / target SDK 34. Persisted kiosk intent restored the sample after a cold boot and retained explicit exit after another; the warm-reboot suite remains blocked by framework startup failure. The [evidence runner and saved replays](docs/test-evidence.md) preserve passing and failed attempts; the original manual provisioning was not recorded retrospectively. The lab has an unauthenticated exit and a debug local installer, not production lockdown or trusted remote release delivery. Settings restrictions, authenticated maintenance, MQTT, durable synchronization/session recovery, backend, and console remain unimplemented. Fresh-source build/lint, twenty-three runner unit tests, and sixteen update checkpoints passed; broader compatibility and remaining phase 1 gates are open.
-
-### Implementation Snapshot
-
-| Scope | Implemented and verified | Remaining exit criteria |
-| --- | --- | --- |
-| Android feasibility, phase 1 | Pinned build/lint, Device Owner provisioning, genuine kiosk containment, lab exit, recorded local v1-to-v2 update; persisted post-unlock kiosk intent verified enabled and disabled across cold boots | Warm-reboot suite blocked by framework startup; selected restrictions, messaging lifecycle, authenticated maintenance, broader runtime reliability |
-| Expanded update checks | Four rejection cases passed on-device, twenty-three runner unit tests, fresh-source sixteen-checkpoint update regression and native video validation | Broader compatibility and durable remote release delivery |
-| Foundation and vertical slice, phases 2-3 | Architecture and contracts planned | Enrollment/TLS/authentication, database, backend, console, end-to-end policy assignment |
-| Offline resilience and trusted updates, phases 4-5 | Requirements and failure semantics planned | Room/outbox, durable reconciliation, authenticated resumable downloads, signed release metadata, installation recovery, rollout controls |
-| Hardening and release, phase 6 | Local evidence capture and replay tooling | Authorization/revocation/load tests, compatibility, benchmarks, final demo and release checklist |
-
-No phase is complete yet. The recorded local installer is a feasibility proof, not completion of the reliable remote-update subsystem. The original 8-12 week part-time target remains a planning assumption, not a measured remaining-time estimate.
 
 ## 1. Project Goal
 
@@ -219,19 +203,19 @@ Operational metrics should include ingestion latency/errors, command-stage laten
 
 | Phase | Timing | Deliverables and acceptance gate |
 | --- | --- | --- |
-| 1. Android feasibility | Week 1 | Pin toolchains; prove Device Owner, actual lock task state, selected restrictions, sample v1-to-v2 silent update, reboot recovery, messaging lifecycle, and maintenance access. Record evidence before expanding scope. |
+| 1. Android feasibility | Week 1 | Pin toolchains; prove Device Owner, actual lock task state, selected restrictions, sample v1-to-v2 silent update, reboot recovery, diagnostic messaging lifecycle, and signed lab maintenance access on the API 34 baseline. Record evidence before expanding scope. This is a development feasibility gate, not a production-readiness or broader compatibility claim. |
 | 2. Foundation | Week 2 | Versioned contracts, migrations, TLS bootstrap/enrollment, authentication, Compose, CI foundation, and sample app. Depends on phase 1. |
 | 3. First vertical slice | Weeks 3-4 | Console assigns a policy, agent applies it, backend records observed state, and UI refreshes after reconnect. Android and ASP.NET Core work may run in parallel once contracts are agreed. |
 | 4. Offline resilience | Weeks 5-6 | Bounded telemetry spool, durable acknowledgements/deduplication, jittered reconnect, freshness/aggregates, retention, and process/broker failure tests. Depends on phase 3. |
 | 5. Verified updates | Weeks 7-8 | Signed releases, authenticated resumable delivery, installation recovery, pilot deployment/promotion, and negative integrity tests. Depends on phase 3; can partly overlap phase 4. |
-| 6. Hardening and evidence | Weeks 9-10 | Authorization/revocation tests, load simulator, failure demos, responsive UI checks, repeatable startup, and benchmark report. Depends on phases 4 and 5. |
+| 6. Hardening and evidence | Weeks 9-10 | Authorization/revocation tests, load simulator, failure demos, responsive UI checks, repeatable startup, benchmark report, and current-stable Android compatibility on a stable supported runtime. Depends on phases 4 and 5. Current-stable validation is required before broader Android support or production-readiness claims, not before foundation development. |
 | Buffer and presentation | Weeks 11-12 | Resolve compatibility issues, record demo, document limitations, and prepare an MVP release. No required additional features. |
 
 If the schedule slips, reduce dashboards, multi-site rollout ergonomics, optional Grafana, and visual polish first. Preserve Device Owner proof, durable reconciliation, update integrity, authorization boundaries, and failure tests.
 
 ## 11. Proposed Repository Layout
 
-The following layout is the target structure. The Android feasibility modules and setup documentation now exist; backend, console, contracts, infrastructure, simulator, and CI remain proposals:
+The following layout is the target repository structure:
 
 ```text
 android/
@@ -265,7 +249,7 @@ Proposed tables: devices, enrollment tokens, policies, assignments, commands, co
 - Provision a clean emulator without accounts using the documented `adb shell dpm set-device-owner <package>/<receiver>` lab flow. Confirm prerequisites, manifest receiver declarations, and recovery before applying restrictions.
 - Assert Device Owner status and `ActivityManager.LOCK_TASK_MODE_LOCKED`; test Home/Recents/settings restrictions, offline persistence, and reboot restoration.
 - Verify maintenance access and real sample-app installation without a confirmation dialog.
-- Test baseline and current stable emulator images and record exact SDK/target/dependency versions. Emulator evidence does not prove OEM, radio, battery, or physical tamper behavior.
+- Use the API 34 baseline for the Phase 1 development gate and record exact SDK/target/dependency versions. Validate current-stable Android on a stable supported emulator or dedicated lab device during hardening before broader support or production-readiness claims. A deferred compatibility check must not be counted as passed. Emulator evidence does not prove OEM, radio, battery, or physical tamper behavior.
 
 ### Automated Checks Once Components Exist
 

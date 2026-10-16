@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T112839.768880Z-api37-provisioning-retry/api37-provisioning-retry.mp4"
+  ],
+  "returncode": 0,
+  "seconds": 3.502,
+  "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped.\n",
+  "stdout": ""
+}

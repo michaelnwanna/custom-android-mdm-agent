@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-mqtt.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.185,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"received\" value=\"6\" />\n    <string name=\"lastProbe\">probe-47391044-2691-449e-af4c-9a055776ee22</string>\n    <string name=\"status\">MQTT disconnected; bounded client backoff active.</string>\n</map>\n"
+}

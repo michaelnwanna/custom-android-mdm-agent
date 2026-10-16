@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T112535.464679Z-api37-provisioning/new-api37-provisioning.mp4"
+  ],
+  "returncode": 1,
+  "seconds": 3.259,
+  "stderr": "adb: error: failed to stat remote object '/sdcard/fleet-runtime-evidence.mp4': No such file or directory\n",
+  "stdout": ""
+}

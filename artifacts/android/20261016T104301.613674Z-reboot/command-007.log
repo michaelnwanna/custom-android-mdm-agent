@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "openssl",
+    "pkey",
+    "-in",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/emulator-5554/operator.pem",
+    "-pubout",
+    "-outform",
+    "DER",
+    "-out",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/emulator-5554/operator-public.der"
+  ],
+  "returncode": 0,
+  "seconds": 0.191,
+  "stderr": "",
+  "stdout": ""
+}

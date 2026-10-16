@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "logcat",
+    "-d",
+    "-s",
+    "DevicePolicyManager:I",
+    "*:S"
+  ],
+  "returncode": 0,
+  "seconds": 1.036,
+  "stderr": "",
+  "stdout": "--------- beginning of system\n10-16 14:54:16.821   645   645 I DevicePolicyManager: Current version 6, latest version 6, not upgrading.\n"
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T122859.184041Z-phase-one/phase-one-maintenance.mp4"
+  ],
+  "returncode": 0,
+  "seconds": 0.567,
+  "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped. 3.0 MB/s (53365 bytes in 0.017s)\n",
+  "stdout": ""
+}

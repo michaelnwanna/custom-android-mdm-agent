@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T14:18:21.866742+00:00",
+  "finishedAt": "2026-10-16T14:18:21.877729+00:00",
+  "result": "failed",
+  "serverStopped": true,
+  "privateDataDirectory": "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T141821.866742Z/data",
+  "socketDirectory": "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-t4wrissw",
+  "commands": [],
+  "scope": "Real local PostgreSQL enrollment claim integration; no signing, HTTP or power-loss guarantee",
+  "fileSha256": {
+    "check_postgres.py": "7ac56bed519e8c0d641565be0e0b2cf93aea8ffcc0799db12625c0e827b22db4",
+    "failure.txt": "8e83e1522c290d0689399b127248b5ffb86ff7ae371535d81573454fd67adb72"
+  }
+}

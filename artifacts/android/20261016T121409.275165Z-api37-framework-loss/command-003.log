@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "service",
+    "check",
+    "device_policy"
+  ],
+  "returncode": 0,
+  "seconds": 0.774,
+  "stderr": "",
+  "stdout": "Service device_policy: found\n"
+}

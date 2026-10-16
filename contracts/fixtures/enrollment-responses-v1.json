@@ -1,0 +1,25 @@
+{
+  "schema": "http/enrollment-response-v1.schema.json",
+  "valid": [
+    {
+      "schemaVersion": 1,
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "certificateDer": "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB",
+      "intermediateCertificatesDer": [],
+      "issuedAt": "2026-10-16T12:00:00Z",
+      "expiresAt": "2026-10-17T12:00:00Z"
+    }
+  ],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "missing device id", "base": 0, "remove": ["deviceId"]},
+    {"name": "invalid device id", "base": 0, "set": {"deviceId": "admin"}},
+    {"name": "missing certificate", "base": 0, "remove": ["certificateDer"]},
+    {"name": "missing chain", "base": 0, "remove": ["intermediateCertificatesDer"]},
+    {"name": "invalid certificate encoding", "base": 0, "set": {"certificateDer": "not-a-certificate"}},
+    {"name": "invalid intermediate encoding", "base": 0, "set": {"intermediateCertificatesDer": ["not-a-certificate"]}},
+    {"name": "no timezone", "base": 0, "set": {"expiresAt": "2026-10-17T12:00:00"}},
+    {"name": "untrusted root update", "base": 0, "set": {"trustedRoot": "forbidden"}},
+    {"name": "private key response", "base": 0, "set": {"privateKey": "forbidden"}}
+  ]
+}

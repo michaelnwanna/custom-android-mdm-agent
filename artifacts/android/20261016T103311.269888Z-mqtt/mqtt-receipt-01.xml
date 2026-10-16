@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="lastProbe">probe-7137f77d-56f6-4da3-823d-2abf7fa99043</string>
+    <int name="received" value="2" />
+    <string name="status">MQTT probe received: 2</string>
+</map>

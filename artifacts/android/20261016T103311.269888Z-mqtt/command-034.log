@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "dumpsys",
+    "activity",
+    "services",
+    "dev.fleet.agent"
+  ],
+  "returncode": 0,
+  "seconds": 0.168,
+  "stderr": "",
+  "stdout": "ACTIVITY MANAGER SERVICES (dumpsys activity services)\n  User 0 active services:\n  * ServiceRecord{8f3e1cf u0 dev.fleet.agent/.LabMqttService}\n    intent={cmp=dev.fleet.agent/.LabMqttService}\n    packageName=dev.fleet.agent\n    processName=dev.fleet.agent\n    baseDir=/data/app/~~5_2qVE920QTTodOgpWaJuA==/dev.fleet.agent-HgQJWXtHSXmFk04dAOM71w==/base.apk\n    dataDir=/data/user/0/dev.fleet.agent\n    app=ProcessRecord{bde9779 6641:dev.fleet.agent/u0a141}\n    mAllowWhileInUsePermissionInFgsReason=PROC_STATE_TOP\n    allowUiJobScheduling=true\n    recentCallingPackage=dev.fleet.agent\n    recentCallingUid=10141\n    allowStartForeground=PROC_STATE_TOP\n    startForegroundCount=1\n    infoAllowStartForeground=[callingPackage: dev.fleet.agent; callingUid: 10141; uidState: TOP ; uidBFSL: [BFSL]; intent: Intent { cmp=dev.fleet.agent/.LabMqttService }; code:PROC_STATE_TOP; tempAllowListReason:<null>; targetSdkVersion:34; callerTargetSdkVersion:34; startForegroundCount:0; bindFromPackage:null: isBindService:false]\n    isForeground=true foregroundId=34 types=00000001 foregroundNoti=Notification(channel=lab-mqtt shortcut=null contentView=null vibrate=null sound=null defaults=0x0 flags=0x2062 color=0x00000000 vis=PRIVATE)\n    createTime=-49s636ms startingBgTimeout=--\n    lastActivity=-15s452ms restartTime=-49s633ms createdFromFg=true\n    startRequested=true delayedStop=false stopIfKilled=true callStart=true lastStartId=2\n startCommandResult=2\n"
+}

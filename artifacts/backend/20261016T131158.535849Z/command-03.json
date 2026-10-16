@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "dotnet",
+    "list",
+    "tests/FleetManagement.Tests/FleetManagement.Tests.csproj",
+    "package",
+    "--include-transitive",
+    "--format",
+    "json",
+    "--no-restore"
+  ],
+  "returncode": 0,
+  "stdout": "{\n  \"version\": 1,\n  \"parameters\": \"--include-transitive\",\n  \"projects\": [\n    {\n      \"path\": \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131158.535849Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj\",\n      \"frameworks\": [\n        {\n          \"framework\": \"net10.0\",\n          \"topLevelPackages\": [\n            {\n              \"id\": \"Microsoft.NET.Test.Sdk\",\n              \"requestedVersion\": \"17.14.1\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"xunit\",\n              \"requestedVersion\": \"2.9.3\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.runner.visualstudio\",\n              \"requestedVersion\": \"3.1.5\",\n              \"resolvedVersion\": \"3.1.5\"\n            }\n          ],\n          \"transitivePackages\": [\n            {\n              \"id\": \"Microsoft.CodeCoverage\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Microsoft.TestPlatform.ObjectModel\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Microsoft.TestPlatform.TestHost\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Newtonsoft.Json\",\n              \"resolvedVersion\": \"13.0.3\"\n            },\n            {\n              \"id\": \"xunit.abstractions\",\n              \"resolvedVersion\": \"2.0.3\"\n            },\n            {\n              \"id\": \"xunit.analyzers\",\n              \"resolvedVersion\": \"1.18.0\"\n            },\n            {\n              \"id\": \"xunit.assert\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.core\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.extensibility.core\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.extensibility.execution\",\n              \"resolvedVersion\": \"2.9.3\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n",
+  "stderr": ""
+}

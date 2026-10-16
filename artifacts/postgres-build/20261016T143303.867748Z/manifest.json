@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "result": "failed",
+  "version": "17.11",
+  "sourceUrl": "https://ftp.postgresql.org/pub/source/v17.11/postgresql-17.11.tar.bz2",
+  "sourceSha256": "dd27f2b3c59e73ed14aa3324901242bf69a032a6347805f274e6260322d42979",
+  "prefix": "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11",
+  "commands": [
+    {
+      "argv": [
+        "./config.status",
+        "--config"
+      ],
+      "returncode": 0,
+      "log": "command-01.log"
+    },
+    {
+      "argv": [
+        "make",
+        "-j4"
+      ],
+      "returncode": 2,
+      "log": "command-02.log"
+    }
+  ],
+  "resumedFrom": ".lab-private/postgres-build/20261016T140455.986410Z/postgresql-17.11",
+  "scope": "Minimal local lab build without TLS/ICU/Readline; not a production server installation",
+  "fileSha256": {
+    "command-01.log": "9b50d8531bb58c5d0ebd1c97c674e659c0d246520d4efebd3a3764c34571d84e",
+    "command-02.log": "36edfa6c53344da540121eaae540823e1ed9388b42283567b560b603815e1a12",
+    "failure.txt": "71ae9f18cb6d75ae6ce8d55023249a36bae5675307741fb63fc3f67e7fe92a85",
+    "install_postgres_lab.py": "fbf905119d07dbb19a694443f3421abe5cce35772e80e5d163ff4939046adb86"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "emu",
+    "avd",
+    "name"
+  ],
+  "returncode": 0,
+  "seconds": 0.398,
+  "stderr": "",
+  "stdout": "Fleet_Phase1_API37\r\nOK\r\n"
+}

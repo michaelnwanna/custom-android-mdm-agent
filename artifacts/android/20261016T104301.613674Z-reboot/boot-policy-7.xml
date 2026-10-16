@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="bootCount" value="7" />
+    <string name="bootStatus">Kiosk launch requested after boot.</string>
+    <set name="ownedRestrictions">
+        <string>no_config_wifi</string>
+        <string>no_control_apps</string>
+        <string>no_config_mobile_networks</string>
+    </set>
+    <boolean name="enabled" value="true" />
+</map>

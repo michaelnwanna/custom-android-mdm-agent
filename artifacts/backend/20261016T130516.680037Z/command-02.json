@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "dotnet",
+    "test",
+    "tests/FleetManagement.Tests/FleetManagement.Tests.csproj",
+    "--logger",
+    "trx;LogFileName=tests.trx",
+    "--results-directory",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/results",
+    "--verbosity",
+    "minimal"
+  ],
+  "returncode": 0,
+  "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 285 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 888 ms).\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Tests -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll\nTest run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\nResults File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T130516.680037Z/results/tests.trx\n\nPassed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15, Duration: 692 ms - FleetManagement.Tests.dll (net10.0)\n",
+  "stderr": ""
+}

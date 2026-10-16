@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-kiosk.xml"
+  ],
+  "returncode": 0,
+  "seconds": 2.913,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <boolean name=\"enabled\" value=\"false\" />\n</map>\n"
+}

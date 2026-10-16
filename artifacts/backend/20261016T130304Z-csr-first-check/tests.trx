@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="898d55a1-c08d-4a32-97ab-3dbe3a3948c4" name="@Michaels-MacBook-Pro 2026-10-16 16:04:22" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T16:04:22.8683830+03:00" queuing="2026-10-16T16:04:22.8683840+03:00" start="2026-10-16T16:04:12.9157640+03:00" finish="2026-10-16T16:04:23.2927940+03:00" />
+  <TestSettings name="default" id="e8c754be-0351-45a8-8e21-92e6a6ad085c">
+    <Deployment runDeploymentRoot="_Michaels-MacBook-Pro_2026-10-16_16_04_22" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="06bfdf2f-e48b-4104-8ffe-11ecdb108a9f" testId="41770977-87ce-51de-35e9-fee2971c4aa8" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.ValidP256Sha256CsrReturnsVerifiedKeyAndExactDigest" computerName="Michaels-MacBook-Pro" duration="00:00:00.0542955" startTime="2026-10-16T16:04:22.0157480+03:00" endTime="2026-10-16T16:04:22.0286710+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06bfdf2f-e48b-4104-8ffe-11ecdb108a9f" />
+    <UnitTestResult executionId="4526203b-4639-4291-ada5-fe98c990a561" testId="f8d12881-7f26-7411-2074-c987822437cb" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.RsaKeyIsRejected" computerName="Michaels-MacBook-Pro" duration="00:00:00.8571076" startTime="2026-10-16T16:04:22.0296440+03:00" endTime="2026-10-16T16:04:22.7255210+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4526203b-4639-4291-ada5-fe98c990a561" />
+    <UnitTestResult executionId="b87c0108-deaa-4ad9-a764-fe29ebf73226" testId="54c7eb74-4778-8e0c-9ca1-f18b292f9cd9" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.TamperedSignatureIsRejected" computerName="Michaels-MacBook-Pro" duration="00:00:00.0351032" startTime="2026-10-16T16:04:22.8331470+03:00" endTime="2026-10-16T16:04:22.8865410+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b87c0108-deaa-4ad9-a764-fe29ebf73226" />
+    <UnitTestResult executionId="4c8f69d6-434c-4d01-a8af-ef0b4d872fc5" testId="619263d8-be77-58d3-fd01-8839307fccd5" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.EncodedSizeLimitsAreEnforced(length: 60)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0012606" startTime="2026-10-16T16:04:22.0138890+03:00" endTime="2026-10-16T16:04:22.0141720+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c8f69d6-434c-4d01-a8af-ef0b4d872fc5" />
+    <UnitTestResult executionId="eec45aa0-c0fe-4e6e-8cb5-054b7d52eee5" testId="0241d7c0-4b19-b200-fb3c-d5586eb9e5fa" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.Sha384SignatureIsRejectedEvenWithP256Key" computerName="Michaels-MacBook-Pro" duration="00:00:00.2612939" startTime="2026-10-16T16:04:21.6974230+03:00" endTime="2026-10-16T16:04:21.7821080+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eec45aa0-c0fe-4e6e-8cb5-054b7d52eee5" />
+    <UnitTestResult executionId="08c342c4-28b7-459f-8f27-60be83d770af" testId="6ada8477-da8c-753d-5343-cf97c210d6c9" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;not-base64&quot;)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0006514" startTime="2026-10-16T16:04:21.9655260+03:00" endTime="2026-10-16T16:04:21.9658360+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08c342c4-28b7-459f-8f27-60be83d770af" />
+    <UnitTestResult executionId="a5b15f1d-5dee-4866-8a27-b7bbc955d9a5" testId="62a2e1d8-d180-c848-f212-a3a1f37319ac" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;&quot;)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0003660" startTime="2026-10-16T16:04:21.9476330+03:00" endTime="2026-10-16T16:04:21.9483200+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5b15f1d-5dee-4866-8a27-b7bbc955d9a5" />
+    <UnitTestResult executionId="90289b7a-feb9-4d7a-9b6f-577a26e2b904" testId="72c83838-b843-724d-eb78-87bc478904df" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.TrailingDerDataIsRejected" computerName="Michaels-MacBook-Pro" duration="00:00:00.0220352" startTime="2026-10-16T16:04:22.7925150+03:00" endTime="2026-10-16T16:04:22.8130980+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90289b7a-feb9-4d7a-9b6f-577a26e2b904" />
+    <UnitTestResult executionId="0a30b318-c446-4a86-94da-9fdcaa4e1495" testId="2cf596bb-dcba-013a-e986-af641cb2939c" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.EncodedSizeLimitsAreEnforced(length: 16388)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0017920" startTime="2026-10-16T16:04:22.0147160+03:00" endTime="2026-10-16T16:04:22.0150030+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a30b318-c446-4a86-94da-9fdcaa4e1495" />
+    <UnitTestResult executionId="bc6b3ecf-d99a-4e77-868e-3cc2b655f15f" testId="ccb84c8d-39ea-eda8-ddab-ad51ce3bdf49" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.P384KeyIsRejectedEvenWithSha256Signature" computerName="Michaels-MacBook-Pro" duration="00:00:00.0297058" startTime="2026-10-16T16:04:22.8886610+03:00" endTime="2026-10-16T16:04:22.9161110+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc6b3ecf-d99a-4e77-868e-3cc2b655f15f" />
+    <UnitTestResult executionId="840e857f-dffc-42d1-8f06-6f57dd126420" testId="92b2dee1-93aa-edf0-0232-1d05ea3061a1" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.WrongSigningKeyIsRejected" computerName="Michaels-MacBook-Pro" duration="00:00:00.0203505" startTime="2026-10-16T16:04:22.9175700+03:00" endTime="2026-10-16T16:04:22.9371560+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="840e857f-dffc-42d1-8f06-6f57dd126420" />
+    <UnitTestResult executionId="597a185b-2063-41a8-b461-0dda6ab7f13c" testId="959b6964-4e46-aa3c-8e4a-56c824682b8c" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: null)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0001519" startTime="2026-10-16T16:04:21.9726000+03:00" endTime="2026-10-16T16:04:21.9729650+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="597a185b-2063-41a8-b461-0dda6ab7f13c" />
+    <UnitTestResult executionId="5247070d-b556-409c-95b7-f6cd072be8d7" testId="5259963b-5589-07b8-8be4-a127acf8673e" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU&quot;···)" computerName="Michaels-MacBook-Pro" duration="00:00:00.0032588" startTime="2026-10-16T16:04:21.9921540+03:00" endTime="2026-10-16T16:04:21.9926140+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5247070d-b556-409c-95b7-f6cd072be8d7" />
+    <UnitTestResult executionId="4ad7787b-9d85-46b5-8c79-128eb01795ee" testId="7796591f-b341-d7fb-e9a3-9bf74ed07ed0" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.WhitespaceIsRejectedEvenWhenBase64DecoderWouldAcceptIt" computerName="Michaels-MacBook-Pro" duration="00:00:00.0178518" startTime="2026-10-16T16:04:22.8147170+03:00" endTime="2026-10-16T16:04:22.8321240+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ad7787b-9d85-46b5-8c79-128eb01795ee" />
+    <UnitTestResult executionId="faef9724-aa15-49f5-ba16-f80d8de21663" testId="eab0410d-b8de-8139-c10b-bcec70a8174a" testName="FleetManagement.Tests.EnrollmentCsrVerifierTests.RequestedSubjectAndSanAreNotReturnedAsAuthority" computerName="Michaels-MacBook-Pro" duration="00:00:00.0645598" startTime="2026-10-16T16:04:22.7603700+03:00" endTime="2026-10-16T16:04:22.7911090+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="faef9724-aa15-49f5-ba16-f80d8de21663" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.RequestedSubjectAndSanAreNotReturnedAsAuthority" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="eab0410d-b8de-8139-c10b-bcec70a8174a">
+      <Execution id="faef9724-aa15-49f5-ba16-f80d8de21663" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="RequestedSubjectAndSanAreNotReturnedAsAuthority" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.EncodedSizeLimitsAreEnforced(length: 16388)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="2cf596bb-dcba-013a-e986-af641cb2939c">
+      <Execution id="0a30b318-c446-4a86-94da-9fdcaa4e1495" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="EncodedSizeLimitsAreEnforced" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.ValidP256Sha256CsrReturnsVerifiedKeyAndExactDigest" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="41770977-87ce-51de-35e9-fee2971c4aa8">
+      <Execution id="06bfdf2f-e48b-4104-8ffe-11ecdb108a9f" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="ValidP256Sha256CsrReturnsVerifiedKeyAndExactDigest" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;not-base64&quot;)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="6ada8477-da8c-753d-5343-cf97c210d6c9">
+      <Execution id="08c342c4-28b7-459f-8f27-60be83d770af" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="InvalidEncodingOrNonCsrIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.EncodedSizeLimitsAreEnforced(length: 60)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="619263d8-be77-58d3-fd01-8839307fccd5">
+      <Execution id="4c8f69d6-434c-4d01-a8af-ef0b4d872fc5" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="EncodedSizeLimitsAreEnforced" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.WrongSigningKeyIsRejected" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="92b2dee1-93aa-edf0-0232-1d05ea3061a1">
+      <Execution id="840e857f-dffc-42d1-8f06-6f57dd126420" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="WrongSigningKeyIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.TamperedSignatureIsRejected" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="54c7eb74-4778-8e0c-9ca1-f18b292f9cd9">
+      <Execution id="b87c0108-deaa-4ad9-a764-fe29ebf73226" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="TamperedSignatureIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.Sha384SignatureIsRejectedEvenWithP256Key" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="0241d7c0-4b19-b200-fb3c-d5586eb9e5fa">
+      <Execution id="eec45aa0-c0fe-4e6e-8cb5-054b7d52eee5" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="Sha384SignatureIsRejectedEvenWithP256Key" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;&quot;)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="62a2e1d8-d180-c848-f212-a3a1f37319ac">
+      <Execution id="a5b15f1d-5dee-4866-8a27-b7bbc955d9a5" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="InvalidEncodingOrNonCsrIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.RsaKeyIsRejected" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="f8d12881-7f26-7411-2074-c987822437cb">
+      <Execution id="4526203b-4639-4291-ada5-fe98c990a561" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="RsaKeyIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: null)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="959b6964-4e46-aa3c-8e4a-56c824682b8c">
+      <Execution id="597a185b-2063-41a8-b461-0dda6ab7f13c" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="InvalidEncodingOrNonCsrIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.P384KeyIsRejectedEvenWithSha256Signature" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="ccb84c8d-39ea-eda8-ddab-ad51ce3bdf49">
+      <Execution id="bc6b3ecf-d99a-4e77-868e-3cc2b655f15f" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="P384KeyIsRejectedEvenWithSha256Signature" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.TrailingDerDataIsRejected" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="72c83838-b843-724d-eb78-87bc478904df">
+      <Execution id="90289b7a-feb9-4d7a-9b6f-577a26e2b904" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="TrailingDerDataIsRejected" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.WhitespaceIsRejectedEvenWhenBase64DecoderWouldAcceptIt" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="7796591f-b341-d7fb-e9a3-9bf74ed07ed0">
+      <Execution id="4ad7787b-9d85-46b5-8c79-128eb01795ee" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="WhitespaceIsRejectedEvenWhenBase64DecoderWouldAcceptIt" />
+    </UnitTest>
+    <UnitTest name="FleetManagement.Tests.EnrollmentCsrVerifierTests.InvalidEncodingOrNonCsrIsRejected(value: &quot;QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU&quot;···)" storage="/users/michaelnwanna/documents/projects/github/custom-android-mdm-agent/backend/tests/fleetmanagement.tests/bin/debug/net10.0/fleetmanagement.tests.dll" id="5259963b-5589-07b8-8be4-a127acf8673e">
+      <Execution id="5247070d-b556-409c-95b7-f6cd072be8d7" />
+      <TestMethod codeBase="/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="FleetManagement.Tests.EnrollmentCsrVerifierTests" name="InvalidEncodingOrNonCsrIsRejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="41770977-87ce-51de-35e9-fee2971c4aa8" executionId="06bfdf2f-e48b-4104-8ffe-11ecdb108a9f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8d12881-7f26-7411-2074-c987822437cb" executionId="4526203b-4639-4291-ada5-fe98c990a561" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54c7eb74-4778-8e0c-9ca1-f18b292f9cd9" executionId="b87c0108-deaa-4ad9-a764-fe29ebf73226" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="619263d8-be77-58d3-fd01-8839307fccd5" executionId="4c8f69d6-434c-4d01-a8af-ef0b4d872fc5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0241d7c0-4b19-b200-fb3c-d5586eb9e5fa" executionId="eec45aa0-c0fe-4e6e-8cb5-054b7d52eee5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ada8477-da8c-753d-5343-cf97c210d6c9" executionId="08c342c4-28b7-459f-8f27-60be83d770af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62a2e1d8-d180-c848-f212-a3a1f37319ac" executionId="a5b15f1d-5dee-4866-8a27-b7bbc955d9a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72c83838-b843-724d-eb78-87bc478904df" executionId="90289b7a-feb9-4d7a-9b6f-577a26e2b904" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2cf596bb-dcba-013a-e986-af641cb2939c" executionId="0a30b318-c446-4a86-94da-9fdcaa4e1495" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ccb84c8d-39ea-eda8-ddab-ad51ce3bdf49" executionId="bc6b3ecf-d99a-4e77-868e-3cc2b655f15f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92b2dee1-93aa-edf0-0232-1d05ea3061a1" executionId="840e857f-dffc-42d1-8f06-6f57dd126420" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="959b6964-4e46-aa3c-8e4a-56c824682b8c" executionId="597a185b-2063-41a8-b461-0dda6ab7f13c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5259963b-5589-07b8-8be4-a127acf8673e" executionId="5247070d-b556-409c-95b7-f6cd072be8d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7796591f-b341-d7fb-e9a3-9bf74ed07ed0" executionId="4ad7787b-9d85-46b5-8c79-128eb01795ee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eab0410d-b8de-8139-c10b-bcec70a8174a" executionId="faef9724-aa15-49f5-ba16-f80d8de21663" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="15" executed="15" passed="15" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.15] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.13)
+[xUnit.net 00:00:01.87]   Discovering: FleetManagement.Tests
+[xUnit.net 00:00:02.67]   Discovered:  FleetManagement.Tests
+[xUnit.net 00:00:03.18]   Starting:    FleetManagement.Tests
+[xUnit.net 00:00:05.20]   Finished:    FleetManagement.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

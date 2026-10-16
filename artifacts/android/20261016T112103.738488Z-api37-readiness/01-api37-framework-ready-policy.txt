@@ -1,0 +1,240 @@
+Current Device Policy Manager state:
+  Immutable state:
+    mHasFeature=true
+    mIsWatch=false
+    mIsAutomotive=false
+    mHasTelephonyFeature=true
+    mSafetyChecker=null
+  
+  
+  
+  Enabled Device Admins (User 0, provisioningState: 0):
+  
+    mPasswordOwner=-1
+    mPasswordTokenHandle=0
+    mAppsSuspended=false
+    mUserSetupComplete=true
+    mAffiliationIds={}
+    mNewUserDisclaimer=null
+  
+  
+  Constants:
+    DAS_DIED_SERVICE_RECONNECT_BACKOFF_SEC: 3600
+    DAS_DIED_SERVICE_RECONNECT_BACKOFF_INCREASE: 2.0
+    DAS_DIED_SERVICE_RECONNECT_MAX_BACKOFF_SEC: 86400
+    DAS_DIED_SERVICE_STABLE_CONNECTION_THRESHOLD_SEC: 120
+  
+  Stats:
+    LockGuard.guard(): count=337, total=1.6ms, avg=0.005ms, max calls/s=44 max dur/s=0.3ms max time=0.3ms
+  
+  Local Policies: 
+    User 0:
+      UserRestrictionPolicyKey userRestriction_no_factory_reset
+        Per-admin Policy:
+          null
+        Resolved Policy (MostRestrictive):
+          null
+      
+  
+  Global Policies: 
+    UserRestrictionPolicyKey userRestriction_no_factory_reset
+      Per-admin Policy:
+        null
+      Resolved Policy (MostRestrictive):
+        null
+    
+  
+  Default admin policy size limit: -1
+  Current admin policy size limit: -1
+  Admin Policies size: 
+
+Encryption Status: per-user
+Logout user: -10000
+
+no pending user created callback tokens
+
+Device policy cache:
+  Screen capture disallowed users: []
+  Password quality: {0=0}
+  Permission policy: {0=0}
+  Content protection policy: {}
+  Admin can grant sensors permission: false
+  Shortcuts overrides: {}
+
+Device state cache:
+  Device provisioned: true
+  Device Owner Type: -1
+  Has PO:
+
+PersonalAppsSuspensionHelper
+  critical packages: 7 apps
+    0: com.google.android.apps.wellbeing
+    1: com.android.vending
+    2: com.google.android.gms
+    3: com.android.systemui
+    4: com.android.settings
+    5: com.google.android.apps.pixelmigrate
+    6: com.google.android.apps.restore
+  launcher packages: 2 apps
+    0: com.google.android.apps.nexuslauncher
+    1: com.android.settings
+  accessibility services: empty
+  input method packages: 2 apps
+    0: com.google.android.inputmethod.latin
+    1: com.google.android.tts
+  SMS package: com.google.android.apps.messaging
+  Settings package: com.android.settings
+  Packages subject to suspension: 16 apps
+    0: com.google.android.youtube
+    1: com.google.android.googlequicksearchbox
+    2: com.google.android.glasses.companion
+    3: com.google.android.apps.safetyhub
+    4: com.android.camera2
+    5: com.google.android.deskclock
+    6: com.google.android.gm
+    7: com.google.android.apps.bard
+    8: com.google.android.apps.docs
+    9: com.google.android.apps.maps
+    10: com.google.android.contacts
+    11: com.android.chrome
+    12: com.google.android.apps.photos
+    13: com.google.android.calendar
+    14: com.google.android.documentsui
+    15: com.google.android.apps.youtube.music
+Subscription changed listener : null
+DPM global setting ALLOW_WORK_PROFILE_TELEPHONY_FOR_NON_DPM_ROLE_HOLDERS : null
+OverlayPackagesProvider
+  required_apps_managed_device: 10 apps
+    0: com.android.documentsui
+    1: com.android.providers.downloads
+    2: com.android.providers.downloads.ui
+    3: com.android.contacts
+    4: com.android.stk
+    5: com.android.webview
+    6: com.android.cellbroadcastreceiver
+    7: com.android.dialer
+    8: com.android.settings
+    9: com.android.systemui
+  required_apps_managed_user: 9 apps
+    0: com.android.documentsui
+    1: com.android.providers.downloads
+    2: com.android.providers.downloads.ui
+    3: com.android.contacts
+    4: com.android.stk
+    5: com.android.webview
+    6: com.android.dialer
+    7: com.android.settings
+    8: com.android.systemui
+  required_apps_managed_profile: 7 apps
+    0: com.android.documentsui
+    1: com.android.providers.downloads
+    2: com.android.providers.downloads.ui
+    3: com.android.contacts
+    4: com.android.webview
+    5: com.android.settings
+    6: com.android.systemui
+  disallowed_apps_managed_device: empty
+  disallowed_apps_managed_user: empty
+  disallowed_apps_managed_device: empty
+  vendor_required_apps_managed_device: 28 apps
+    0: com.google.android.googlequicksearchbox
+    1: com.android.launcher
+    2: com.google.android.apps.messaging
+    3: com.google.android.trichromelibrary
+    4: com.google.android.apps.safetyhub
+    5: com.android.vending
+    6: com.google.android.apps.accessibility.voiceaccess
+    7: com.google.android.launcher
+    8: com.android.settings.intelligence
+    9: com.google.android.apps.searchlite
+    10: com.google.android.setupwizard
+    11: com.google.android.apps.wellbeing
+    12: com.google.android.dialer
+    13: com.google.android.apps.nbu.files
+    14: com.google.android.apps.tips
+    15: com.google.android.webview
+    16: com.google.android.contacts
+    17: com.google.android.apps.internal.gyotaku
+    18: com.google.android.gms
+    19: com.google.android.apps.nexuslauncher
+    20: com.google.android.documentsui
+    21: com.google.android.apps.internal.betterbug
+    22: com.google.android.settings.intelligence
+    23: com.google.android.projection.gearhead
+    24: com.google.android.apps.tycho
+    25: com.google.android.apps.assistant
+    26: com.google.android.cellbroadcastreceiver
+    27: com.google.android.GoogleCamera
+  vendor_required_apps_managed_user: 15 apps
+    0: com.google.android.googlequicksearchbox
+    1: com.android.launcher
+    2: com.google.android.apps.messaging
+    3: com.google.android.trichromelibrary
+    4: com.android.vending
+    5: com.google.android.apps.accessibility.voiceaccess
+    6: com.google.android.launcher
+    7: com.google.android.apps.wellbeing
+    8: com.google.android.dialer
+    9: com.google.android.apps.nbu.files
+    10: com.google.android.webview
+    11: com.google.android.contacts
+    12: com.google.android.gms
+    13: com.google.android.documentsui
+    14: com.google.android.apps.pixel.creativeassistant
+  vendor_required_apps_managed_profile: 24 apps
+    0: com.google.android.googlequicksearchbox
+    1: com.google.android.trichromelibrary
+    2: com.google.android.apps.internal.nexusuploader
+    3: com.google.inputmethod.ink.strokes.showcase
+    4: com.android.vending
+    5: com.google.android.apps.accessibility.voiceaccess
+    6: com.google.android.as
+    7: com.android.ramdump
+    8: com.google.android.apps.searchlite
+    9: com.google.android.netgrapher
+    10: com.google.android.volta
+    11: com.google.android.apps.wellbeing
+    12: com.google.android.apps.nbu.files
+    13: com.google.android.apps.overlay
+    14: com.google.android.webview
+    15: com.google.android.contacts
+    16: com.google.android.apps.internal.gyotaku
+    17: com.google.android.gms
+    18: com.google.android.documentsui
+    19: com.google.android.apps.internal.betterbug
+    20: com.google.android.projection.gearhead
+    21: com.google.android.apps.assistant
+    22: com.google.android.apps.pixel.creativeassistant
+    23: com.google.mds
+  vendor_disallowed_apps_managed_user: 1 app
+    0: com.google.android.apps.healthdata
+  vendor_disallowed_apps_managed_device: 1 app
+    0: com.google.android.apps.healthdata
+  vendor_disallowed_apps_managed_profile: 2 apps
+    0: com.google.android.apps.stargate
+    1: com.google.android.apps.healthdata
+
+Other overlayable app resources
+  cross_profile_apps: empty
+  vendor_cross_profile_apps: 5 apps
+    0: com.google.android.googlequicksearchbox
+    1: com.google.android.inputmethod.latin
+    2: com.google.android.projection.gearhead
+    3: com.google.android.inputmethod.latin.dev
+    4: com.google.android.inputmethod.latin.canary
+  config_packagesExemptFromSuspension: 7 apps
+    0: com.google.android.apps.wellbeing
+    1: com.android.vending
+    2: com.google.android.gms
+    3: com.android.systemui
+    4: com.android.settings
+    5: com.google.android.apps.pixelmigrate
+    6: com.google.android.apps.restore
+  policy_exempt_apps: empty
+  vendor_policy_exempt_apps: empty
+  application_hidden_policy_exempt_apps: 4 apps
+    0: com.android.systemui
+    1: com.android.nfc
+    2: com.android.settings
+    3: com.android.providers.settings
+

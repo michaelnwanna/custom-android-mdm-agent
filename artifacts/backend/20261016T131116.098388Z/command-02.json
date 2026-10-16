@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "dotnet",
+    "test",
+    "tests/FleetManagement.Tests/FleetManagement.Tests.csproj",
+    "--logger",
+    "trx;LogFileName=tests.trx",
+    "--results-directory",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131116.098388Z/results",
+    "--verbosity",
+    "minimal"
+  ],
+  "returncode": 1,
+  "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131116.098388Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 586 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131116.098388Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 1.58 sec).\n/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131116.098388Z/inputs/backend/src/FleetManagement/Enrollment/EnrollmentBootstrapTokens.cs(84,35): error CS0117: 'Convert' does not contain a definition for 'TryFromHexString' [/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T131116.098388Z/inputs/backend/src/FleetManagement/FleetManagement.csproj]\n",
+  "stderr": ""
+}

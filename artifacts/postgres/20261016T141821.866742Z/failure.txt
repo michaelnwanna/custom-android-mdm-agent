@@ -1,0 +1,1 @@
+Missing PostgreSQL executable: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/initdb

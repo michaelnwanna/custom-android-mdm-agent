@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "run-as",
+    "dev.fleet.agent",
+    "sh",
+    "-c",
+    "'test -f files/maintenance-public.der && echo present'"
+  ],
+  "returncode": 0,
+  "seconds": 0.168,
+  "stderr": "",
+  "stdout": "present\n"
+}

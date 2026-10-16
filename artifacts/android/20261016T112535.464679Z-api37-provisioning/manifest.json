@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T11:25:35.478453+00:00",
+  "serial": "emulator-5556",
+  "result": "failed",
+  "error": "Command failed (255): /Users/michaelnwanna/Library/Android/sdk/platform-tools/adb -s emulator-5556 shell dpm set-device-owner dev.fleet.agent/.FleetAdminReceiver\n\nException occurred while executing 'set-device-owner':\njava.lang.IllegalStateException: Not allowed to set the device owner because there are already some accounts on the device.\n\tat com.android.server.wm.Task$$ExternalSyntheticBUOutline4.m(R8$$SyntheticClass:0)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.enforceCanSetDeviceOwnerLocked(DevicePolicyManagerService.java:10610)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.setDeviceOwner(DevicePolicyManagerService.java:9323)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.runSetDeviceOwner(DevicePolicyManagerServiceShellCommand.java:286)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.onCommand(DevicePolicyManagerServiceShellCommand.java:106)\n\tat com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)\n\tat android.os.ShellCommand.exec(ShellCommand.java:39)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.onShellCommand(DevicePolicyManagerService.java:11030)\n\tat android.os.Binder.shellCommand(Binder.java:1088)\n\tat android.os.Binder.onTransact(Binder.java:946)\n\tat android.app.admin.IDevicePolicyManager$Stub.onTransact(IDevicePolicyManager.java:6772)\n\tat android.os.Binder.execTransactInternal(Binder.java:1369)\n\tat android.os.Binder.execTransact(Binder.java:1323)\n\n",
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "returncode": 0,
+      "seconds": 0.755,
+      "stderr": "",
+      "stdout": "Fleet_Phase1_API37\r\nOK\r\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "ro.build.fingerprint"
+      ],
+      "returncode": 0,
+      "seconds": 1.03,
+      "stderr": "",
+      "stdout": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.019/15611780:userdebug/dev-keys\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "dumpsys",
+        "account"
+      ],
+      "returncode": 0,
+      "seconds": 2.588,
+      "stderr": "",
+      "stdout": "User UserInfo{0:Owner:4c13}:\n  Accounts: 0\n  \n  AccountId, Action_Type, timestamp, UID, TableName, Key\n  Accounts History\n  \n  Active Sessions: 0\n  \n  RegisteredServicesCache: 4 services\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.pop3}, ComponentInfo{com.google.android.gm/com.android.email.service.Pop3AuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n    ServiceInfo: AuthenticatorDescription {type=com.google}, ComponentInfo{com.google.android.gms/com.google.android.gms.auth.account.authenticator.GoogleAccountAuthenticatorService}, uid 10224, lastUpdateTime 1792149614765\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.exchange}, ComponentInfo{com.google.android.gm/com.android.email.service.EasAuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.legacyimap}, ComponentInfo{com.google.android.gm/com.android.email.service.LegacyImapAuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n  \n  Account visibility:\n  \n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "pidof",
+        "screenrecord"
+      ],
+      "returncode": 1,
+      "seconds": 1.603,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "screenrecord",
+        "--time-limit",
+        "0",
+        "--size",
+        "540x1200",
+        "/sdcard/fleet-runtime-evidence.mp4"
+      ],
+      "kind": "video-start",
+      "maximumSeconds": null
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "pidof",
+        "screenrecord"
+      ],
+      "returncode": 0,
+      "seconds": 3.481,
+      "stderr": "",
+      "stdout": "2636\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "install",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/android/agent/build/outputs/apk/debug/agent-debug.apk"
+      ],
+      "returncode": 0,
+      "seconds": 50.225,
+      "stderr": "",
+      "stdout": "Performing Streamed Install\nSuccess\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "install",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T104623.288748Z-update/sample-v1.apk"
+      ],
+      "returncode": 0,
+      "seconds": 16.749,
+      "stderr": "",
+      "stdout": "Performing Streamed Install\nSuccess\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "dpm",
+        "set-device-owner",
+        "dev.fleet.agent/.FleetAdminReceiver"
+      ],
+      "returncode": 255,
+      "seconds": 11.118,
+      "stderr": "\nException occurred while executing 'set-device-owner':\njava.lang.IllegalStateException: Not allowed to set the device owner because there are already some accounts on the device.\n\tat com.android.server.wm.Task$$ExternalSyntheticBUOutline4.m(R8$$SyntheticClass:0)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.enforceCanSetDeviceOwnerLocked(DevicePolicyManagerService.java:10610)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.setDeviceOwner(DevicePolicyManagerService.java:9323)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.runSetDeviceOwner(DevicePolicyManagerServiceShellCommand.java:286)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.onCommand(DevicePolicyManagerServiceShellCommand.java:106)\n\tat com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)\n\tat android.os.ShellCommand.exec(ShellCommand.java:39)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.onShellCommand(DevicePolicyManagerService.java:11030)\n\tat android.os.Binder.shellCommand(Binder.java:1088)\n\tat android.os.Binder.onTransact(Binder.java:946)\n\tat android.app.admin.IDevicePolicyManager$Stub.onTransact(IDevicePolicyManager.java:6772)\n\tat android.os.Binder.execTransactInternal(Binder.java:1369)\n\tat android.os.Binder.execTransact(Binder.java:1323)\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "pull",
+        "/sdcard/fleet-runtime-evidence.mp4",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T112535.464679Z-api37-provisioning/new-api37-provisioning.mp4"
+      ],
+      "returncode": 1,
+      "seconds": 3.259,
+      "stderr": "adb: error: failed to stat remote object '/sdcard/fleet-runtime-evidence.mp4': No such file or directory\n",
+      "stdout": ""
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

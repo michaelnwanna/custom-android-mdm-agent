@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T12:21:01.380962+00:00",
+  "serial": "emulator-5556",
+  "result": "failed",
+  "error": "Command failed (1): /Users/michaelnwanna/Library/Android/sdk/platform-tools/adb -s emulator-5556 shell ls /sdcard\nls: /sdcard: Transport endpoint is not connected\n\n",
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "wait-for-device"
+      ],
+      "returncode": 0,
+      "seconds": 0.532,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "returncode": 0,
+      "seconds": 0.47,
+      "stderr": "",
+      "stdout": "Fleet_Phase1_API37\r\nOK\r\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.858,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.985,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.846,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.979,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 1.426,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.868,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 1.297,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 1.091,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.913,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 0.67,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 1.305,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 1.781,
+      "stderr": "",
+      "stdout": "\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "seconds": 2.889,
+      "stderr": "",
+      "stdout": "1\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "service",
+        "check",
+        "activity"
+      ],
+      "returncode": 0,
+      "seconds": 2.798,
+      "stderr": "",
+      "stdout": "Service activity: found\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "service",
+        "check",
+        "device_policy"
+      ],
+      "returncode": 0,
+      "seconds": 1.572,
+      "stderr": "",
+      "stdout": "Service device_policy: found\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "ls",
+        "/sdcard"
+      ],
+      "returncode": 1,
+      "seconds": 24.27,
+      "stderr": "ls: /sdcard: Transport endpoint is not connected\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "logcat",
+        "-d",
+        "-b",
+        "crash",
+        "-t",
+        "100"
+      ],
+      "returncode": 0,
+      "seconds": 3.6,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

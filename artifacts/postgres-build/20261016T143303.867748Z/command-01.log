@@ -1,0 +1,1 @@
+'--prefix=/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11' '--without-icu' '--without-readline' '--without-gssapi' '--without-lz4' '--without-zstd'

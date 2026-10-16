@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "service",
+    "check",
+    "activity"
+  ],
+  "returncode": 0,
+  "seconds": 2.798,
+  "stderr": "",
+  "stdout": "Service activity: found\n"
+}

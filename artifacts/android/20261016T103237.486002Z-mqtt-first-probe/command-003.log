@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "pm",
+    "grant",
+    "dev.fleet.agent",
+    "android.permission.POST_NOTIFICATIONS"
+  ],
+  "returncode": 0,
+  "seconds": 0.173,
+  "stderr": "",
+  "stdout": ""
+}

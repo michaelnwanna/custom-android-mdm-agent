@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet Android test replay</title>
+<style>body{font:16px Georgia,serif;max-width:1100px;margin:24px auto;padding:0 16px;background:#f4f6f7;color:#182322}video{width:270px;max-width:100%}main{display:flex;flex-wrap:wrap;gap:20px}figure{margin:0;width:260px}img{width:100%;height:auto}figcaption{padding:8px 0}a{color:#006655}</style>
+<h1>Fleet Android test replay</h1><p>2026-10-16T11:28:39.775452+00:00 | emulator-5556 | <strong>failed</strong></p>
+<p>New recorded rerun of the lab checks. <a href="manifest.json">Assertions and command transcript</a></p>
+<p>Command failed (255): /Users/michaelnwanna/Library/Android/sdk/platform-tools/adb -s emulator-5556 shell dpm set-device-owner dev.fleet.agent/.FleetAdminReceiver
+
+Exception occurred while executing &#x27;set-device-owner&#x27;:
+java.lang.IllegalStateException: Not allowed to set the device owner because there are already some accounts on the device.
+	at com.android.server.wm.Task$$ExternalSyntheticBUOutline4.m(R8$$SyntheticClass:0)
+	at com.android.server.devicepolicy.DevicePolicyManagerService.enforceCanSetDeviceOwnerLocked(DevicePolicyManagerService.java:10610)
+	at com.android.server.devicepolicy.DevicePolicyManagerService.setDeviceOwner(DevicePolicyManagerService.java:9323)
+	at com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.runSetDeviceOwner(DevicePolicyManagerServiceShellCommand.java:286)
+	at com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.onCommand(DevicePolicyManagerServiceShellCommand.java:106)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:39)
+	at com.android.server.devicepolicy.DevicePolicyManagerService.onShellCommand(DevicePolicyManagerService.java:11030)
+	at android.os.Binder.shellCommand(Binder.java:1088)
+	at android.os.Binder.onTransact(Binder.java:946)
+	at android.app.admin.IDevicePolicyManager$Stub.onTransact(IDevicePolicyManager.java:6772)
+	at android.os.Binder.execTransactInternal(Binder.java:1369)
+	at android.os.Binder.execTransact(Binder.java:1323)
+
+dev.fleet.agent/.FleetAdminReceiver was already an admin for user 0. No need to set it again.
+</p><p><a href="api37-provisioning-retry.mp4">api37-provisioning-retry.mp4</a></p><video controls preload="metadata" src="api37-provisioning-retry.mp4"></video><main></main></html>

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "-T",
+    "run-as",
+    "dev.fleet.agent",
+    "tee",
+    "files/mqtt-ca.pem"
+  ],
+  "returncode": 0,
+  "seconds": 0.173,
+  "stderr": "",
+  "stdoutSha256": "83fbf2997eaa8b484d7508e34082dfbf5a2086e7fa8179e654938c1f0216e5b1"
+}

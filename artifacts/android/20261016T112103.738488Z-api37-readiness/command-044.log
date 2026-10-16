@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "getprop",
+    "ro.build.fingerprint"
+  ],
+  "returncode": 0,
+  "seconds": 1.972,
+  "stderr": "",
+  "stdout": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.019/15611780:userdebug/dev-keys\n"
+}

@@ -1,0 +1,1 @@
+Build command failed with code 2: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres-build/20261016T143940.919838Z/command-02.log

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "exec-out",
+    "screencap",
+    "-p"
+  ],
+  "returncode": 0,
+  "seconds": 6.093,
+  "stderr": "",
+  "stdoutSha256": "ceefa3b7fb1e023b89c8ae95d57168f1f25da42d1f67709dd952416215aaa627"
+}

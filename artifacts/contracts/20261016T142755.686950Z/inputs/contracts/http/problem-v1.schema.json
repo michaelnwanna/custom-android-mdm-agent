@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fleet:problem:v1",
+  "title": "Fleet HTTP problem v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "title", "status"],
+  "properties": {
+    "type": {"type": "string", "const": "about:blank"},
+    "title": {"type": "string", "minLength": 1, "maxLength": 128},
+    "status": {"type": "integer", "enum": [400, 401, 409, 413, 415, 429, 500, 503]},
+    "traceId": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$"}
+  }
+}

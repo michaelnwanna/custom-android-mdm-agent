@@ -1,8 +1,13 @@
 .gradle/
 **/build/
+**/bin/
+**/obj/
 local.properties
 *.jks
 *.keystore
 .idea/
 .DS_Store
 __pycache__/
+.lab-private/
+*.p12
+*.pfx

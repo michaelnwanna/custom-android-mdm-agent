@@ -3,11 +3,13 @@ package dev.fleet.agent
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.admin.DevicePolicyManager
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 
 class MainActivity : Activity() {
@@ -35,8 +37,16 @@ class MainActivity : Activity() {
             setOnClickListener { startKiosk() }
         })
         content.addView(Button(this).apply {
+            text = "Request maintenance challenge"
+            setOnClickListener { LabMaintenance.request(this@MainActivity) }
+        })
+        content.addView(Button(this).apply {
             text = "Exit lab kiosk"
             setOnClickListener {
+                if (!LabMaintenance.authorizeExit(this@MainActivity)) {
+                    refreshStatus()
+                    return@setOnClickListener
+                }
                 try {
                     LabKioskController.disable(this@MainActivity)
                 } catch (exception: RuntimeException) {
@@ -49,7 +59,15 @@ class MainActivity : Activity() {
             text = "Install staged lab v2"
             setOnClickListener { LabUpdateInstaller.install(this@MainActivity) }
         })
-        setContentView(content)
+        content.addView(Button(this).apply {
+            text = "Start MQTT probe"
+            setOnClickListener { startForegroundService(Intent(this@MainActivity, LabMqttService::class.java)) }
+        })
+        content.addView(Button(this).apply {
+            text = "Stop MQTT probe"
+            setOnClickListener { stopService(Intent(this@MainActivity, LabMqttService::class.java)) }
+        })
+        setContentView(ScrollView(this).apply { addView(content) })
     }
 
     override fun onResume() {
@@ -74,7 +92,7 @@ class MainActivity : Activity() {
         val owner = policyManager.isDeviceOwnerApp(packageName)
         val locked = getSystemService(ActivityManager::class.java).lockTaskModeState ==
             ActivityManager.LOCK_TASK_MODE_LOCKED
-        val message = "Fleet Lab Agent\nDevice Owner: $owner\nLock task locked: $locked\n${LabKioskController.status(this)}\n${LabUpdateInstaller.status(this)}"
+        val message = "Fleet Lab Agent\nDevice Owner: $owner\nLock task locked: $locked\n${LabKioskController.status(this)}\n${LabMaintenance.status(this)}\n${LabUpdateInstaller.status(this)}"
         if (status.text.toString() != message) {
             status.text = message
         }

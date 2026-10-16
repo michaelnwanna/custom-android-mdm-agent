@@ -1,0 +1,64 @@
+{
+  "schema": "command-event-v1.schema.json",
+  "valid": [
+    {
+      "schemaVersion": 1,
+      "eventId": "ec648da6-0fde-4239-9305-2026e89d5911",
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c",
+      "recordedAt": "2026-10-16T12:01:00Z",
+      "state": "received"
+    },
+    {
+      "schemaVersion": 1,
+      "eventId": "8e93f588-5fde-45a0-b331-033d6051a1d5",
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c",
+      "recordedAt": "2026-10-16T12:02:00Z",
+      "state": "failed",
+      "error": {"code": "POLICY_NOT_APPLIED"}
+    },
+    {
+      "schemaVersion": 1,
+      "eventId": "b19e7a16-45e6-439d-8617-44d8041e1ab8",
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c",
+      "recordedAt": "2026-10-16T12:02:00Z",
+      "state": "running"
+    },
+    {
+      "schemaVersion": 1,
+      "eventId": "7218b1ac-a42f-4c59-aa17-09d614857ccc",
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c",
+      "recordedAt": "2026-10-16T12:02:00Z",
+      "state": "succeeded"
+    },
+    {
+      "schemaVersion": 1,
+      "eventId": "a7a199d6-9493-4c9c-9c42-046fa5eef12c",
+      "commandId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "correlationId": "374823b7-0e54-4893-b661-e638cc03310c",
+      "recordedAt": "2026-10-16T13:01:00Z",
+      "state": "expired"
+    }
+  ],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "server-only pending state", "base": 0, "set": {"state": "pending"}},
+    {"name": "unknown state", "base": 0, "set": {"state": "cancelled"}},
+    {"name": "failed without reason", "base": 1, "remove": ["error"]},
+    {"name": "error on successful event", "base": 3, "set": {"error": {"code": "FAILED"}}},
+    {"name": "freeform error code", "base": 1, "set": {"error": {"code": "secret details"}}},
+    {"name": "empty error code", "base": 1, "set": {"error": {"code": ""}}},
+    {"name": "unbounded error details", "base": 1, "set": {"error": {"code": "FAILED", "detail": "not allowed"}}},
+    {"name": "invalid event id", "base": 0, "set": {"eventId": ""}},
+    {"name": "missing command id", "base": 0, "remove": ["commandId"]},
+    {"name": "server receipt on device event", "base": 0, "set": {"receivedAt": "2026-10-16T12:01:01Z"}}
+  ]
+}

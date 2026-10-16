@@ -1,0 +1,870 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ./src/backend generated-headers
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../include/catalog generated-headers
+make[2]: Nothing to be done for `generated-headers'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nodes generated-header-symlinks
+make[2]: Nothing to be done for `generated-header-symlinks'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utils generated-header-symlinks
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C adt jsonpath_gram.h
+make[3]: `jsonpath_gram.h' is up to date.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C src install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C common install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 644  libpgcommon.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgcommon.a'
+/usr/local/bin/ginstall -c -m 644  libpgcommon_shlib.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgcommon_shlib.a'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C port install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 644  libpgport.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgport.a'
+/usr/local/bin/ginstall -c -m 644  libpgport_shlib.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgport_shlib.a'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C timezone install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/port all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/common all
+make[3]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+./zic -d '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezone'  ./data/tzdata.zi
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tznames install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/usr/local/bin/ginstall -c -m 644 ./Africa.txt ./America.txt ./Antarctica.txt ./Asia.txt ./Atlantic.txt ./Australia.txt ./Etc.txt ./Europe.txt ./Indian.txt ./Pacific.txt '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/usr/local/bin/ginstall -c -m 644 ./Default ./Australia ./India '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backend install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/port all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/common all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../include/catalog generated-headers
+make[3]: Nothing to be done for `generated-headers'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utils generated-header-symlinks
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C adt jsonpath_gram.h
+make[4]: `jsonpath_gram.h' is up to date.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C access all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C brin all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C gin all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C gist all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C hash all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C heap all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C index all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nbtree all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C rmgrdesc all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C spgist all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sequence all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C table all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tablesample all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C transam all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C archive all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backup all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C bootstrap all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C catalog all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C parser all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C commands all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C executor all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C foreign all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C lib all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C libpq all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C main all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nodes all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C optimizer all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C geqo all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C path all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C plan all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C prep all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C util all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C partitioning all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C port all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C postmaster all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C regex all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C replication all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C logical all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C rewrite all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C statistics all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C storage all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C aio all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C buffer all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C file all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C freespace all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ipc all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C large_object all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C lmgr all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C page all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C smgr all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sync all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tcop all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tsearch all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utils all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C activity all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C adt all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C cache all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C error all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C fmgr all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C hash all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C init all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C mb all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C misc all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C mmgr all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C resowner all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sort all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C time all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C adt jsonpath_gram.h
+make[4]: `jsonpath_gram.h' is up to date.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/timezone all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C jit all
+make[3]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c  postgres '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/postgres'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C access install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C brin install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C common install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C gin install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C gist install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C hash install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C heap install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C index install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nbtree install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C rmgrdesc install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C spgist install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sequence install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C table install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tablesample install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C transam install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C archive install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backup install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C bootstrap install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C catalog install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C parser install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C commands install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C executor install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C foreign install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C lib install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C libpq install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C main install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C nodes install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C optimizer install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C geqo install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C path install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C plan install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C prep install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C util install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C partitioning install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C port install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C postmaster install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C regex install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C replication install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C logical install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C rewrite install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C statistics install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C storage install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C aio install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C buffer install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C file install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C freespace install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ipc install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C large_object install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C lmgr install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C page install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C smgr install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sync install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tcop install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tsearch install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utils install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C activity install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C adt install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C cache install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C error install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C fmgr install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C hash install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C init install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C mb install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C misc install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C mmgr install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C resowner install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C sort install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C time install
+make[4]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/timezone install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+./zic -d '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezone'  ./data/tzdata.zi
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tznames install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/usr/local/bin/ginstall -c -m 644 ./Africa.txt ./America.txt ./Antarctica.txt ./Asia.txt ./Atlantic.txt ./Australia.txt ./Etc.txt ./Europe.txt ./Indian.txt ./Pacific.txt '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/usr/local/bin/ginstall -c -m 644 ./Default ./Australia ./India '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/timezonesets'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C jit install
+make[3]: Nothing to be done for `install'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C catalog install-data
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c -m 644 ./system_functions.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/system_functions.sql'
+/usr/local/bin/ginstall -c -m 644 ./system_views.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/system_views.sql'
+/usr/local/bin/ginstall -c -m 644 ./information_schema.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/information_schema.sql'
+/usr/local/bin/ginstall -c -m 644 ./sql_features.txt '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/sql_features.txt'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C tsearch install-data
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/tsearch_data'
+/usr/local/bin/ginstall -c -m 644 ./dicts/synonym_sample.syn ./dicts/thesaurus_sample.ths ./dicts/hunspell_sample.affix ./dicts/ispell_sample.affix ./dicts/ispell_sample.dict ./dicts/hunspell_sample_long.affix ./dicts/hunspell_sample_long.dict ./dicts/hunspell_sample_num.affix ./dicts/hunspell_sample_num.dict '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/tsearch_data/'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utils install-data
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c -m 644 ./errcodes.txt '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/errcodes.txt'
+/usr/local/bin/ginstall -c -m 644 ./libpq/pg_hba.conf.sample '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/pg_hba.conf.sample'
+/usr/local/bin/ginstall -c -m 644 ./libpq/pg_ident.conf.sample '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/pg_ident.conf.sample'
+/usr/local/bin/ginstall -c -m 644 ./utils/misc/postgresql.conf.sample '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/postgresql.conf.sample'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backend/utils/mb/conversion_procs install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C cyrillic_and_mic install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  cyrillic_and_mic.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/cyrillic_and_mic.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C euc_cn_and_mic install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  euc_cn_and_mic.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/euc_cn_and_mic.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C euc_jp_and_sjis install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  euc_jp_and_sjis.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/euc_jp_and_sjis.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C euc_kr_and_mic install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  euc_kr_and_mic.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/euc_kr_and_mic.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C euc_tw_and_big5 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  euc_tw_and_big5.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/euc_tw_and_big5.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C latin2_and_win1250 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  latin2_and_win1250.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/latin2_and_win1250.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C latin_and_mic install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  latin_and_mic.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/latin_and_mic.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_big5 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_big5.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_big5.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_cyrillic install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_cyrillic.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_cyrillic.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_euc_cn install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_euc_cn.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_euc_cn.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_euc_jp install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_euc_jp.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_euc_jp.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_euc_kr install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_euc_kr.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_euc_kr.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_euc_tw install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_euc_tw.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_euc_tw.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_gb18030 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_gb18030.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_gb18030.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_gbk install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_gbk.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_gbk.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_iso8859 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_iso8859.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_iso8859.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_iso8859_1 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_iso8859_1.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_iso8859_1.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_johab install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_johab.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_johab.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_sjis install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_sjis.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_sjis.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_win install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_win.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_win.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_uhc install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_uhc.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_uhc.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_euc2004 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_euc2004.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_euc2004.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C utf8_and_sjis2004 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  utf8_and_sjis2004.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/utf8_and_sjis2004.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C euc2004_sjis2004 install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  euc2004_sjis2004.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/euc2004_sjis2004.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backend/snowball install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/tsearch_data'
+/usr/local/bin/ginstall -c -m 755  dict_snowball.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/dict_snowball.dylib'
+/usr/local/bin/ginstall -c -m 644 snowball_create.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c -m 644 ./stopwords/danish.stop ./stopwords/dutch.stop ./stopwords/english.stop ./stopwords/finnish.stop ./stopwords/french.stop ./stopwords/german.stop ./stopwords/hungarian.stop ./stopwords/italian.stop ./stopwords/nepali.stop ./stopwords/norwegian.stop ./stopwords/portuguese.stop ./stopwords/russian.stop ./stopwords/spanish.stop ./stopwords/swedish.stop ./stopwords/turkish.stop '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/tsearch_data'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C include install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/libpq' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal/libpq'
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/access '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/archive '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/bootstrap '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/catalog '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/commands '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/common '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/datatype '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/executor '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/fe_utils '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/foreign '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/jit '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/lib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/libpq '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/mb '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/nodes '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/optimizer '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/parser '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/partitioning '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/postmaster '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/regex '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/replication '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/rewrite '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/statistics '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/storage '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/tcop '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/snowball '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/snowball/libstemmer '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/tsearch '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/tsearch/dicts '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/utils '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/atomics '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32 '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32_msvc '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32_msvc/sys '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32/arpa '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32/netinet '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/port/win32/sys '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/portability
+/usr/local/bin/ginstall -c -m 644 ./postgres_ext.h   '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 ./libpq/libpq-fs.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/libpq'
+/usr/local/bin/ginstall -c -m 644 pg_config.h     '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 pg_config_ext.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 pg_config_os.h  '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 ./pg_config_manual.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 ./c.h            '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./port.h         '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./postgres_fe.h  '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./libpq/pqcomm.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal/libpq'
+/usr/local/bin/ginstall -c -m 644 ./libpq/protocol.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal/libpq'
+/usr/local/bin/ginstall -c -m 644 pg_config.h     '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/usr/local/bin/ginstall -c -m 644 pg_config_ext.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/usr/local/bin/ginstall -c -m 644 pg_config_os.h  '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/usr/local/bin/ginstall -c -m 644 nodes/nodetags.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server/nodes'
+/usr/local/bin/ginstall -c -m 644 utils/errcodes.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server/utils'
+/usr/local/bin/ginstall -c -m 644 utils/fmgroids.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server/utils'
+/usr/local/bin/ginstall -c -m 644 utils/fmgrprotos.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server/utils'
+/usr/local/bin/ginstall -c -m 644 ./*.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+for dir in access archive bootstrap catalog commands common datatype executor fe_utils foreign jit lib libpq mb nodes optimizer parser partitioning postmaster regex replication rewrite statistics storage tcop snowball snowball/libstemmer tsearch tsearch/dicts utils port port/atomics port/win32 port/win32_msvc port/win32_msvc/sys port/win32/arpa port/win32/netinet port/win32/sys portability; do \
+	  /usr/local/bin/ginstall -c -m 644 ./$dir/*.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'/$dir || exit; \
+	done
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C catalog install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/usr/local/bin/ginstall -c -m 644 postgres.bki '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/postgres.bki'
+/usr/local/bin/ginstall -c -m 644 system_constraints.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/system_constraints.sql'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C interfaces install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C libpq install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig' 
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c -m 755  libpq.5.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpq.5.dylib'
+cd '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' && \
+	rm -f libpq.dylib && \
+	ln -s libpq.5.dylib libpq.dylib
+/usr/local/bin/ginstall -c -m 644  libpq.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpq.a'
+/usr/local/bin/ginstall -c -m 644 libpq.pc '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig/libpq.pc'
+/usr/local/bin/ginstall -c -m 644 ./libpq-fe.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 ./libpq-events.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/usr/local/bin/ginstall -c -m 644 ./libpq-int.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./fe-auth-sasl.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./pqexpbuffer.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/internal'
+/usr/local/bin/ginstall -c -m 644 ./pg_service.conf.sample '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/pg_service.conf.sample'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ecpg install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C include install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/informix/esql'
+/usr/local/bin/ginstall -c -m 644 ./ecpgerrno.h ./ecpglib.h ./ecpgtype.h ./sqlca.h ./sql3types.h ./ecpg_informix.h ./pgtypes_error.h ./pgtypes_numeric.h ./pgtypes_timestamp.h ./pgtypes_date.h ./pgtypes_interval.h ./pgtypes.h ./sqlda.h ./sqlda-compat.h ./sqlda-native.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/'
+/usr/local/bin/ginstall -c -m 644 ./datetime.h ./decimal.h ./sqltypes.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/informix/esql/'
+/usr/local/bin/ginstall -c -m 644 ../../../../src/interfaces/ecpg/include/ecpg_config.h '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pgtypeslib install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/common all
+make[5]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig' 
+/usr/local/bin/ginstall -c -m 755  libpgtypes.3.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgtypes.3.dylib'
+cd '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' && \
+	rm -f libpgtypes.dylib && \
+	ln -s libpgtypes.3.dylib libpgtypes.dylib
+/usr/local/bin/ginstall -c -m 644  libpgtypes.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgtypes.a'
+/usr/local/bin/ginstall -c -m 644 libpgtypes.pc '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig/libpgtypes.pc'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ecpglib install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[6]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[6]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/ecpg/pgtypeslib all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/port all
+make[6]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/common all
+make[6]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig' 
+/usr/local/bin/ginstall -c -m 755  libecpg.6.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libecpg.6.dylib'
+cd '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' && \
+	rm -f libecpg.dylib && \
+	ln -s libecpg.6.dylib libecpg.dylib
+/usr/local/bin/ginstall -c -m 644  libecpg.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libecpg.a'
+/usr/local/bin/ginstall -c -m 644 libecpg.pc '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig/libecpg.pc'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C compatlib install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/ecpg/ecpglib all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[7]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[7]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/ecpg/pgtypeslib all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/port all
+make[7]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/common all
+make[7]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/ecpg/pgtypeslib all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/port all
+make[6]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/common all
+make[6]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig' 
+/usr/local/bin/ginstall -c -m 755  libecpg_compat.3.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libecpg_compat.3.dylib'
+cd '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib' && \
+	rm -f libecpg_compat.dylib && \
+	ln -s libecpg_compat.3.dylib libecpg_compat.dylib
+/usr/local/bin/ginstall -c -m 644  libecpg_compat.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libecpg_compat.a'
+/usr/local/bin/ginstall -c -m 644 libecpg_compat.pc '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pkgconfig/libecpg_compat.pc'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C preproc install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/common all
+make[5]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  ecpg '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backend/replication/libpqwalreceiver install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  libpqwalreceiver.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpqwalreceiver.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C backend/replication/pgoutput install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  pgoutput.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgoutput.dylib'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C fe_utils install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 644  libpgfeutils.a '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/libpgfeutils.a'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C bin install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C initdb install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  initdb '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/initdb'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_amcheck install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_amcheck '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_amcheck'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_archivecleanup install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_archivecleanup '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_archivecleanup'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_basebackup install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_basebackup '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_basebackup'
+/usr/local/bin/ginstall -c  pg_createsubscriber '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_createsubscriber'
+/usr/local/bin/ginstall -c  pg_receivewal '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_receivewal'
+/usr/local/bin/ginstall -c  pg_recvlogical '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_recvlogical'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_checksums install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_checksums '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_checksums'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_combinebackup install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_combinebackup '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_combinebackup'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_config install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c -m 755 pg_config '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_config'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_controldata install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_controldata '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_controldata'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_ctl install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_ctl '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_dump install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_dump '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/pg_dump
+/usr/local/bin/ginstall -c  pg_restore '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/pg_restore
+/usr/local/bin/ginstall -c  pg_dumpall '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/pg_dumpall
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_resetwal install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_resetwal '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_resetwal'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_rewind install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_rewind '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_rewind'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_test_fsync install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_test_fsync '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_test_fsync'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_test_timing install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_test_timing '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_test_timing'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_upgrade install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_upgrade '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_upgrade'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_verifybackup install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_verifybackup '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_verifybackup'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_waldump install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_waldump '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_waldump'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pg_walsummary install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pg_walsummary '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_walsummary'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pgbench install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  pgbench '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pgbench'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C psql install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share'
+/usr/local/bin/ginstall -c  psql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/psql'
+/usr/local/bin/ginstall -c -m 644 ./psqlrc.sample '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/psqlrc.sample'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C scripts install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[5]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/fe_utils all
+make[4]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'
+/usr/local/bin/ginstall -c  createdb   '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/createdb
+/usr/local/bin/ginstall -c  dropdb     '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/dropdb
+/usr/local/bin/ginstall -c  createuser '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/createuser
+/usr/local/bin/ginstall -c  dropuser   '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/dropuser
+/usr/local/bin/ginstall -c  clusterdb  '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/clusterdb
+/usr/local/bin/ginstall -c  vacuumdb   '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/vacuumdb
+/usr/local/bin/ginstall -c  reindexdb  '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/reindexdb
+/usr/local/bin/ginstall -c  pg_isready '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin'/pg_isready
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C pl install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C plpgsql install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C src install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib'
+/usr/local/bin/ginstall -c -m 755  plpgsql.dylib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/plpgsql.dylib'
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/extension'
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/usr/local/bin/ginstall -c -m 644 ./plpgsql.control ./plpgsql--1.0.sql '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/share/extension/'
+/usr/local/bin/ginstall -c -m 644 './plpgsql.h' '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/include/server'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C makefiles install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/makefiles'
+/usr/local/bin/ginstall -c -m 644 ./pgxs.mk '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/makefiles/'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C test/regress install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../contrib/spi
+make[3]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/test/regress'
+/usr/local/bin/ginstall -c  pg_regress '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/test/regress/pg_regress'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C test/isolation install
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/interfaces/libpq all
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[4]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/port all
+make[3]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C ../../../src/common all
+make[3]: Nothing to be done for `all'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/test/isolation'
+/usr/local/bin/ginstall -c  pg_isolation_regress '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/test/isolation/pg_isolation_regress'
+/usr/local/bin/ginstall -c  isolationtester '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/test/isolation/isolationtester'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C test/perl install
+make[2]: Nothing to be done for `install'.
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src'
+/usr/local/bin/ginstall -c -m 644 Makefile.global '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/Makefile.global'
+/usr/local/bin/ginstall -c -m 644 Makefile.port '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/Makefile.port'
+/usr/local/bin/ginstall -c -m 644 ./Makefile.shlib '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/Makefile.shlib'
+/usr/local/bin/ginstall -c -m 644 ./nls-global.mk '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/src/nls-global.mk'
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -C config install
+/usr/local/bin/gmkdir -p '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/config'
+/usr/local/bin/ginstall -c -m 755 ./install-sh '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/config/install-sh'
+/usr/local/bin/ginstall -c -m 755 ./missing '/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/lib/pgxs/config/missing'

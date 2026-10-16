@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -41,6 +42,14 @@ def lock_state(activity):
 def resumed_package(activity):
     match = re.search(r"topResumedActivity=.*?\bu\d+ ([\w.]+)/", activity)
     return match.group(1) if match else None
+
+
+def effective_restrictions(state):
+    user = re.search(r"UserInfo\{0:.*?(?=\n  UserInfo\{|\nDevice properties:|\Z)", state, re.S)
+    effective = re.search(r"Effective restrictions:\s*\n((?:[ \t]{6,}[^\n]*\n)*)", user.group() if user else "")
+    if effective is None:
+        raise AssertionError("Missing user 0 effective restriction section")
+    return set(re.findall(r"^\s+(no_[a-z_]+)(?:=true)?\s*$", effective.group(1), re.M))
 
 
 class EvidenceRun:
@@ -106,7 +115,7 @@ class EvidenceRun:
         deadline = time.monotonic() + timeout
         while True:
             activity = self.activity()
-            if lock_state(activity) == "NONE":
+            if lock_state(activity) == "NONE" and resumed_package(activity) is not None:
                 package = resumed_package(activity)
                 if package not in (AGENT, "com.android.launcher3"):
                     raise AssertionError(f"Unexpected unlocked foreground package: {package}")
@@ -125,6 +134,187 @@ class EvidenceRun:
     def click(self, label):
         horizontal, vertical = button_center(self.ui(), label)
         self.device("shell", "input", "tap", str(horizontal), str(vertical))
+
+    def pair_operator(self):
+        directory = ROOT / ".lab-private" / self.serial
+        directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+        private = directory / "operator.pem"
+        public = directory / "operator-public.der"
+        if not private.exists():
+            self.command(["openssl", "genpkey", "-algorithm", "EC", "-pkeyopt",
+                          "ec_paramgen_curve:P-256", "-out", str(private)])
+            private.chmod(0o600)
+        self.command(["openssl", "pkey", "-in", str(private), "-pubout", "-outform", "DER", "-out", str(public)])
+        present = self.device("shell", "run-as", AGENT, "sh", "-c",
+                      "'test -f files/maintenance-public.der && echo present'", check=False).strip()
+        existing = (self.device("exec-out", "run-as", AGENT, "cat", "files/maintenance-public.der",
+                    binary=True) if present == "present" else b"")
+        if existing and existing != public.read_bytes():
+            raise AssertionError("Paired operator key differs; refusing automatic key replacement")
+        if not existing:
+            if lock_state(self.activity()) != "NONE":
+                raise AssertionError("Pair the operator key before entering kiosk")
+            self.device("shell", "run-as", AGENT, "mkdir", "-p", "files")
+            self.device("shell", "-T", "run-as", AGENT, "tee", "files/maintenance-public.der",
+                        binary=True, input_data=public.read_bytes())
+
+    def maintenance_exit(self):
+        self.pair_operator()
+        self.click("Request maintenance challenge")
+        self.wait_text("Maintenance challenge ready")
+        challenge = self.device("exec-out", "run-as", AGENT, "cat", "files/maintenance-challenge.txt", binary=True)
+        directory = ROOT / ".lab-private" / self.serial
+        signature = self.command(["openssl", "dgst", "-sha256", "-sign", str(directory / "operator.pem")],
+                                 binary=True, input_data=challenge)
+        self.device("shell", "-T", "run-as", AGENT, "tee", "files/maintenance-response.sig",
+                    binary=True, input_data=signature)
+        self.click("Exit lab kiosk")
+        self.wait_kiosk_exit()
+        self.wait_text("Maintenance exit authenticated.")
+
+    def assert_restrictions(self, enabled):
+        state = effective_restrictions(self.device("shell", "dumpsys", "user"))
+        for name in ("no_config_wifi", "no_config_mobile_networks", "no_control_apps"):
+            if (name in state) != enabled:
+                raise AssertionError(f"Restriction {name} did not match enabled={enabled}")
+
+    def phase_one(self):
+        self.command([sys.executable, "-m", "unittest", "discover", "-s", "tools", "-p", "test_android_evidence.py", "-v"])
+        self.command([str(ROOT / "android/gradlew"), "-p", str(ROOT / "android"), ":agent:testDebugUnitTest",
+                      ":agent:assembleDebug", ":agent:lintDebug", "--console", "plain"], timeout=600)
+        artifact = self.output / "agent-debug.apk"
+        shutil.copy2(ROOT / "android/agent/build/outputs/apk/debug/agent-debug.apk", artifact)
+        self.device("install", "-r", "-t", str(artifact), timeout=180)
+        self.pair_operator()
+        self.device("shell", "am", "start", "-W", "-n", AGENT + "/.MainActivity")
+        self.wait_activity("NONE", AGENT)
+        self.start_video("phase-one-maintenance")
+        self.click("Start sample kiosk")
+        self.wait_activity("LOCKED", SAMPLE)
+        self.assert_restrictions(True)
+        self.checkpoint("settings-restrictions-applied")
+        self.click("Lab management")
+        self.wait_activity("LOCKED", AGENT)
+        self.click("Exit lab kiosk")
+        self.wait_text("Maintenance denied:")
+        self.wait_activity("LOCKED", AGENT)
+        self.checkpoint("unsigned-exit-denied")
+        self.click("Request maintenance challenge")
+        self.wait_text("Maintenance challenge ready")
+        self.device("shell", "-T", "run-as", AGENT, "tee", "files/maintenance-response.sig",
+                    binary=True, input_data=b"invalid-signature")
+        self.click("Exit lab kiosk")
+        self.wait_text("Maintenance denied:")
+        self.wait_activity("LOCKED", AGENT)
+        self.checkpoint("tampered-signature-denied")
+        self.maintenance_exit()
+        self.assert_restrictions(False)
+        self.checkpoint("signed-exit-restores-restrictions")
+        self.click("Exit lab kiosk")
+        self.wait_text("Maintenance denied:")
+        self.checkpoint("consumed-challenge-denied")
+
+    def mqtt_probe(self):
+        response = json.loads(self.command([str(ROOT / ".lab-private/mqtt-venv/bin/python"),
+                                           str(ROOT / "tools/mqtt_lab.py"), "probe"], timeout=45))
+        if response.get("result") != "passed" or not response.get("acknowledgedOverTls"):
+            raise AssertionError("MQTT probe did not receive a TLS acknowledgement")
+        state = self.device("exec-out", "run-as", AGENT, "cat", "shared_prefs/lab-mqtt.xml")
+        observed = ET.fromstring(state).find("string[@name='lastProbe']")
+        if observed is None or observed.text != response["probe"]:
+            raise AssertionError("Agent did not persist the acknowledged probe")
+        self.output.joinpath(f"mqtt-receipt-{len(self.steps):02d}.xml").write_text(state)
+
+    def wait_mqtt_status(self, expected, timeout=90):
+        deadline = time.monotonic() + timeout
+        while True:
+            state = self.device("exec-out", "run-as", AGENT, "cat", "shared_prefs/lab-mqtt.xml")
+            status = ET.fromstring(state).find("string[@name='status']")
+            if status is not None and expected in (status.text or ""):
+                return
+            if time.monotonic() >= deadline:
+                raise AssertionError(f"MQTT status did not reach: {expected}")
+            time.sleep(0.5)
+
+    def start_lab_broker(self, segment):
+        log = self.output.joinpath(f"mqtt-broker-{segment}.log").open("w")
+        process = subprocess.Popen([str(ROOT / ".lab-private/mqtt-venv/bin/python"),
+                                    str(ROOT / "tools/mqtt_lab.py"), "serve"], cwd=ROOT,
+                                   stdout=log, stderr=subprocess.STDOUT)
+        log.close()
+        deadline = time.monotonic() + 30
+        while True:
+            try:
+                with socket.create_connection(("127.0.0.1", 8883), timeout=1):
+                    return process
+            except OSError:
+                if process.poll() is not None or time.monotonic() >= deadline:
+                    process.terminate()
+                    process.wait(timeout=10)
+                    raise RuntimeError("Owned lab broker did not start; check broker log")
+                time.sleep(0.2)
+
+    def mqtt_lifecycle(self):
+        self.lab_broker = self.start_lab_broker("initial")
+        try:
+            self.mqtt_suite(lifecycle=True)
+        finally:
+            if self.lab_broker.poll() is None:
+                self.lab_broker.terminate()
+                self.lab_broker.wait(timeout=15)
+
+    def mqtt_suite(self, lifecycle=False):
+        certificate = ROOT / ".lab-private/mqtt/server.pem"
+        if not certificate.is_file():
+            raise RuntimeError("Prepare and start the loopback MQTT lab first")
+        self.pair_operator()
+        self.device("reverse", "tcp:8883", "tcp:8883")
+        self.device("shell", "-T", "run-as", AGENT, "tee", "files/mqtt-ca.pem",
+                    binary=True, input_data=certificate.read_bytes())
+        self.device("shell", "pm", "grant", AGENT, "android.permission.POST_NOTIFICATIONS")
+        self.device("shell", "am", "start", "-W", "-n", AGENT + "/.MainActivity")
+        self.wait_activity("NONE", AGENT)
+        self.start_video("mqtt-lifecycle")
+        self.click("Start MQTT probe")
+        self.mqtt_probe()
+        self.checkpoint("mqtt-tls-round-trip")
+        self.click("Start sample kiosk")
+        self.wait_activity("LOCKED", SAMPLE)
+        self.mqtt_probe()
+        self.checkpoint("mqtt-received-while-sample-foreground")
+        services = self.device("shell", "dumpsys", "activity", "services", AGENT)
+        if "isForeground=true" not in services or "LabMqttService" not in services:
+            raise AssertionError("MQTT probe is not running as a visible foreground service")
+        if lifecycle:
+            self.lab_broker.terminate()
+            self.lab_broker.wait(timeout=15)
+            self.wait_mqtt_status("disconnected")
+            self.checkpoint("broker-offline-sample-still-locked")
+            self.lab_broker = self.start_lab_broker("restarted")
+            self.wait_mqtt_status("connected over lab TLS")
+            self.mqtt_probe()
+            self.wait_activity("LOCKED", SAMPLE)
+            self.checkpoint("broker-reconnected-new-probe-acknowledged")
+            process_id = self.device("shell", "pidof", AGENT).strip()
+            if not process_id.isdigit():
+                raise AssertionError("Expected one agent process before process-death check")
+            self.device("shell", "run-as", AGENT, "kill", "-9", process_id)
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if self.device("shell", "pidof", AGENT, check=False).strip():
+                    raise AssertionError("Probe unexpectedly restarted without an explicit user action")
+                time.sleep(1)
+            self.wait_activity("LOCKED", SAMPLE)
+            self.checkpoint("process-death-sample-contained-no-immortal-socket")
+        self.click("Lab management")
+        self.wait_activity("LOCKED", AGENT)
+        if lifecycle:
+            self.click("Start MQTT probe")
+            self.mqtt_probe()
+            self.checkpoint("explicit-probe-restart-after-process-death")
+        self.maintenance_exit()
+        self.click("Stop MQTT probe")
+        self.checkpoint("mqtt-stopped-explicitly")
 
     def wait_text(self, expected, timeout=90):
         deadline = time.monotonic() + timeout
@@ -226,8 +416,7 @@ class EvidenceRun:
             elif resumed_package(activity) != AGENT:
                 raise RuntimeError("Unexpected locked activity; refusing automated recovery")
             self.checkpoint("before-lab-recovery")
-            self.click("Exit lab kiosk")
-            self.wait_kiosk_exit()
+            self.maintenance_exit()
         elif lock_state(activity) != "NONE":
             raise RuntimeError("Unexpected lock task state")
         self.checkpoint("lab-recovery-complete")
@@ -376,8 +565,7 @@ class EvidenceRun:
         self.checkpoint("updated-v2-kiosk")
         self.click("Lab management")
         self.wait_activity("LOCKED", AGENT)
-        self.click("Exit lab kiosk")
-        self.wait_activity("NONE", AGENT)
+        self.maintenance_exit()
         self.checkpoint("update-kiosk-recovered")
 
     def reboot_device(self, timeout=360):
@@ -439,6 +627,7 @@ class EvidenceRun:
         self.output.joinpath("apk-sha256.json").write_text(json.dumps(
             {artifact.name: hashlib.sha256(artifact.read_bytes()).hexdigest()}, indent=2) + "\n")
         self.device("install", "-r", "-t", str(artifact), timeout=180)
+        self.pair_operator()
         self.device("shell", "am", "start", "-W", "-n", AGENT + "/.MainActivity")
         self.wait_activity("NONE", AGENT)
         self.start_video("before-enabled-reboot")
@@ -457,8 +646,7 @@ class EvidenceRun:
         self.checkpoint("restored-kiosk-contains-home")
         self.click("Lab management")
         self.wait_activity("LOCKED", AGENT)
-        self.click("Exit lab kiosk")
-        self.wait_kiosk_exit()
+        self.maintenance_exit()
         self.checkpoint("kiosk-disabled-before-second-reboot")
         self.reboot_device()
         self.start_video("after-disabled-reboot")
@@ -484,10 +672,12 @@ class EvidenceRun:
             raise RuntimeError("Exit the existing kiosk before starting a new recording")
         self.device("shell", "am", "start", "-W", "-n", AGENT + "/.MainActivity")
         self.wait_activity("NONE", AGENT)
+        self.pair_operator()
         self.start_video()
         self.checkpoint("device-owner-ready")
         self.click("Start sample kiosk")
         self.wait_activity("LOCKED", SAMPLE)
+        self.assert_restrictions(True)
         self.checkpoint("sample-kiosk-locked")
         self.device("shell", "input", "keyevent", "KEYCODE_HOME")
         self.wait_activity("LOCKED", SAMPLE)
@@ -498,8 +688,8 @@ class EvidenceRun:
         self.click("Lab management")
         self.wait_activity("LOCKED", AGENT)
         self.checkpoint("lab-management-locked")
-        self.click("Exit lab kiosk")
-        self.wait_activity("NONE", AGENT)
+        self.maintenance_exit()
+        self.assert_restrictions(False)
         self.checkpoint("kiosk-exited")
         self.device("shell", "input", "keyevent", "KEYCODE_HOME")
         self.wait_activity("NONE", "com.android.launcher3")
@@ -511,7 +701,7 @@ def main():
     parser.add_argument("--serial", required=True)
     parser.add_argument("--adb", default=str(Path(os.environ.get("ANDROID_HOME", str(Path.home() / "Library/Android/sdk"))) / "platform-tools/adb"))
     parser.add_argument("--output", type=Path)
-    parser.add_argument("--suite", choices=("smoke", "update", "recover", "reboot"), default="smoke")
+    parser.add_argument("--suite", choices=("smoke", "update", "recover", "reboot", "phase-one", "mqtt", "mqtt-lifecycle"), default="smoke")
     parser.add_argument("--prepared-run", type=Path, help="Reuse and hash-check APK fixtures from an earlier local update bundle instead of rebuilding")
     parser.add_argument("--reset-sample", action="store_true", help="Allow uninstalling only the sample app to restore v1 for a repeated update test")
     arguments = parser.parse_args()
@@ -526,6 +716,12 @@ def main():
             run.recover()
         elif arguments.suite == "reboot":
             run.reboot_suite()
+        elif arguments.suite == "phase-one":
+            run.phase_one()
+        elif arguments.suite == "mqtt":
+            run.mqtt_suite()
+        elif arguments.suite == "mqtt-lifecycle":
+            run.mqtt_lifecycle()
         else:
             run.command([sys.executable, "-m", "unittest", "discover", "-s", "tools", "-p", "test_android_evidence.py", "-v"])
             run.smoke()

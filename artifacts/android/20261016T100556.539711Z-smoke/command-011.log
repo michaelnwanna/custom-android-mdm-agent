@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "files/maintenance-public.der"
+  ],
+  "returncode": 0,
+  "seconds": 1.303,
+  "stderr": "",
+  "stdoutSha256": "ce4261eb93f9d10c515635e59553c695a3f030b4d5fccb5bd0a3014d8da1cc9b"
+}

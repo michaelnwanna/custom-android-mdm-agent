@@ -1,0 +1,190 @@
+<!doctype html><html lang='en'><meta charset='utf-8'><title>Fleet backend checks</title><h1>Fleet backend checks</h1><p>passed</p><p>Component tests only; no HTTP, PostgreSQL, issuer or device integration</p><p><a href='manifest.json'>Commands, input hashes and test counters</a></p><p><a href='results/tests.trx'>TRX test results, if generated</a></p><pre>.NET SDK:
+ Version:           10.0.402
+ Commit:            a8dd0577c5
+ Workload version:  10.0.400-manifests.da132f47
+ MSBuild version:   18.9.15+a8dd0577c
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  15.7
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/sdk/10.0.402/
+
+.NET workloads installed:
+There are no installed workloads to display.
+Configured to use workload sets when installing new manifests.
+No workload sets are installed. Run &quot;dotnet workload restore&quot; to install a workload set.
+
+Host:
+  Version:      10.0.13
+  Architecture: x64
+  Commit:       4099f83977
+
+.NET SDKs installed:
+  10.0.402 [/usr/local/share/dotnet/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  None
+
+Environment variables:
+  Not set
+
+global.json file:
+  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
+
+  Determining projects to restore...
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 4.14 sec).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 4.11 sec).
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Tests -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll
+Test run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/results/tests.trx
+
+Passed!  - Failed:     0, Passed:    45, Skipped:     0, Total:    45, Duration: 7 s - FleetManagement.Tests.dll (net10.0)
+
+{
+  &quot;version&quot;: 1,
+  &quot;parameters&quot;: &quot;--include-transitive&quot;,
+  &quot;projects&quot;: [
+    {
+      &quot;path&quot;: &quot;/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj&quot;,
+      &quot;frameworks&quot;: [
+        {
+          &quot;framework&quot;: &quot;net10.0&quot;,
+          &quot;topLevelPackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Microsoft.NET.Test.Sdk&quot;,
+              &quot;requestedVersion&quot;: &quot;17.14.1&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit&quot;,
+              &quot;requestedVersion&quot;: &quot;2.9.3&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.runner.visualstudio&quot;,
+              &quot;requestedVersion&quot;: &quot;3.1.5&quot;,
+              &quot;resolvedVersion&quot;: &quot;3.1.5&quot;
+            }
+          ],
+          &quot;transitivePackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeCoverage&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Relational&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Memory&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Configuration.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Options&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Primitives&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.TestPlatform.ObjectModel&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.TestPlatform.TestHost&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Newtonsoft.Json&quot;,
+              &quot;resolvedVersion&quot;: &quot;13.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql.EntityFrameworkCore.PostgreSQL&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;1.18.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.assert&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.core&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.extensibility.core&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.extensibility.execution&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</pre></html>

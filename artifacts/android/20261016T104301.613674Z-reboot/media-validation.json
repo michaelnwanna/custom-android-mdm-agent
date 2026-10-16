@@ -1,0 +1,52 @@
+{
+  "recordedAt" : "2026-10-16T10:46:09Z",
+  "recordings" : [
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 6.8822999999999999,
+      "file" : "after-disabled-reboot.mp4",
+      "result" : "passed"
+    },
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 6.8822999999999999,
+      "file" : "after-enabled-reboot.mp4",
+      "result" : "passed"
+    },
+    {
+      "decodedFrames" : [
+        {
+          "height" : 1200,
+          "width" : 540
+        },
+        {
+          "height" : 1200,
+          "width" : 540
+        }
+      ],
+      "durationSeconds" : 6.8822999999999999,
+      "file" : "before-enabled-reboot.mp4",
+      "result" : "passed"
+    }
+  ],
+  "result" : "passed",
+  "validator" : "macOS AVFoundation"
+}

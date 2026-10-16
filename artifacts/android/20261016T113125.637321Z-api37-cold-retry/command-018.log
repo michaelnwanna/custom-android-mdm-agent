@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "dumpsys",
+    "account"
+  ],
+  "returncode": 0,
+  "seconds": 6.036,
+  "stderr": "",
+  "stdout": "User UserInfo{0:Owner:4c13}:\n  Accounts: 0\n  \n  AccountId, Action_Type, timestamp, UID, TableName, Key\n  Accounts History\n  \n  Active Sessions: 0\n  \n  RegisteredServicesCache: 4 services\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.pop3}, ComponentInfo{com.google.android.gm/com.android.email.service.Pop3AuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n    ServiceInfo: AuthenticatorDescription {type=com.google}, ComponentInfo{com.google.android.gms/com.google.android.gms.auth.account.authenticator.GoogleAccountAuthenticatorService}, uid 10224, lastUpdateTime 1792149614765\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.exchange}, ComponentInfo{com.google.android.gm/com.android.email.service.EasAuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n    ServiceInfo: AuthenticatorDescription {type=com.google.android.gm.legacyimap}, ComponentInfo{com.google.android.gm/com.android.email.service.LegacyImapAuthenticatorService}, uid 10175, lastUpdateTime 1792149608299\n  \n  Account visibility:\n  \n"
+}

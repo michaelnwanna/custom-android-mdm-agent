@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "logcat",
+    "-d",
+    "-s",
+    "DevicePolicyManager:I",
+    "*:S"
+  ],
+  "returncode": 0,
+  "seconds": 0.754,
+  "stderr": "",
+  "stdout": ""
+}

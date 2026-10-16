@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-kiosk.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.51,
+  "stderr": "",
+  "stdout": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"bootCount\" value=\"6\" />\n    <string name=\"bootStatus\">Kiosk disabled; no boot launch requested.</string>\n    <set name=\"ownedRestrictions\">\n        <string>no_config_wifi</string>\n        <string>no_control_apps</string>\n        <string>no_config_mobile_networks</string>\n    </set>\n    <boolean name=\"enabled\" value=\"true\" />\n</map>\n"
+}

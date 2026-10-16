@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T13:25:53.586711+00:00",
+  "finishedAt": "2026-10-16T13:27:15.907582+00:00",
+  "result": "passed",
+  "commands": [
+    {
+      "argv": [
+        "dotnet",
+        "--info"
+      ],
+      "returncode": 0,
+      "stdout": ".NET SDK:\n Version:           10.0.402\n Commit:            a8dd0577c5\n Workload version:  10.0.400-manifests.da132f47\n MSBuild version:   18.9.15+a8dd0577c\n\nRuntime Environment:\n OS Name:     Mac OS X\n OS Version:  15.7\n OS Platform: Darwin\n RID:         osx-x64\n Base Path:   /usr/local/share/dotnet/sdk/10.0.402/\n\n.NET workloads installed:\nThere are no installed workloads to display.\nConfigured to use workload sets when installing new manifests.\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\n\nHost:\n  Version:      10.0.13\n  Architecture: x64\n  Commit:       4099f83977\n\n.NET SDKs installed:\n  10.0.402 [/usr/local/share/dotnet/sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]\n\nOther architectures found:\n  None\n\nEnvironment variables:\n  Not set\n\nglobal.json file:\n  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/global.json\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "test",
+        "tests/FleetManagement.Tests/FleetManagement.Tests.csproj",
+        "--logger",
+        "trx;LogFileName=tests.trx",
+        "--results-directory",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/results",
+        "--verbosity",
+        "minimal"
+      ],
+      "returncode": 0,
+      "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 4.14 sec).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj (in 4.11 sec).\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Tests -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll\nTest run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/bin/Debug/net10.0/FleetManagement.Tests.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\nResults File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/results/tests.trx\n\nPassed!  - Failed:     0, Passed:    45, Skipped:     0, Total:    45, Duration: 7 s - FleetManagement.Tests.dll (net10.0)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "list",
+        "tests/FleetManagement.Tests/FleetManagement.Tests.csproj",
+        "package",
+        "--include-transitive",
+        "--format",
+        "json",
+        "--no-restore"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"version\": 1,\n  \"parameters\": \"--include-transitive\",\n  \"projects\": [\n    {\n      \"path\": \"/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T132553.586711Z/inputs/backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj\",\n      \"frameworks\": [\n        {\n          \"framework\": \"net10.0\",\n          \"topLevelPackages\": [\n            {\n              \"id\": \"Microsoft.NET.Test.Sdk\",\n              \"requestedVersion\": \"17.14.1\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"xunit\",\n              \"requestedVersion\": \"2.9.3\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.runner.visualstudio\",\n              \"requestedVersion\": \"3.1.5\",\n              \"resolvedVersion\": \"3.1.5\"\n            }\n          ],\n          \"transitivePackages\": [\n            {\n              \"id\": \"Microsoft.CodeCoverage\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Microsoft.EntityFrameworkCore\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.EntityFrameworkCore.Abstractions\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.EntityFrameworkCore.Analyzers\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.EntityFrameworkCore.Relational\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Caching.Abstractions\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Caching.Memory\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Configuration.Abstractions\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.DependencyInjection\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.DependencyInjection.Abstractions\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Logging\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Logging.Abstractions\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Options\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.Extensions.Primitives\",\n              \"resolvedVersion\": \"10.0.13\"\n            },\n            {\n              \"id\": \"Microsoft.TestPlatform.ObjectModel\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Microsoft.TestPlatform.TestHost\",\n              \"resolvedVersion\": \"17.14.1\"\n            },\n            {\n              \"id\": \"Newtonsoft.Json\",\n              \"resolvedVersion\": \"13.0.3\"\n            },\n            {\n              \"id\": \"Npgsql\",\n              \"resolvedVersion\": \"10.0.3\"\n            },\n            {\n              \"id\": \"Npgsql.EntityFrameworkCore.PostgreSQL\",\n              \"resolvedVersion\": \"10.0.3\"\n            },\n            {\n              \"id\": \"xunit.abstractions\",\n              \"resolvedVersion\": \"2.0.3\"\n            },\n            {\n              \"id\": \"xunit.analyzers\",\n              \"resolvedVersion\": \"1.18.0\"\n            },\n            {\n              \"id\": \"xunit.assert\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.core\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.extensibility.core\",\n              \"resolvedVersion\": \"2.9.3\"\n            },\n            {\n              \"id\": \"xunit.extensibility.execution\",\n              \"resolvedVersion\": \"2.9.3\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n",
+      "stderr": ""
+    }
+  ],
+  "workingDirectory": "inputs/backend",
+  "inputSha256": {
+    "backend/Directory.Build.props": "6569a8cbfe3b80a67413a955c172ece6ce23a2fb8edd175ee2c6504cabdbb274",
+    "backend/global.json": "48298858c2826f4cc9ab7ad3366df926a6195ed4e0594750992fc8c381659122",
+    "backend/src/FleetManagement/Enrollment/EnrollmentBootstrapTokens.cs": "3124e663119d53e85131dd74adc4730ecaf6f92935b82d4c92911b14d6596d9e",
+    "backend/src/FleetManagement/Enrollment/EnrollmentCsrVerifier.cs": "a3b5734a1ebcef98868fd75f0cafaed4dd105ec0526ca9131032de0cefca790c",
+    "backend/src/FleetManagement/Enrollment/PendingEnrollment.cs": "eaa3abbb6d163fd46cfeedb250d2ef05dbe0fc6b218d2140493dcb2ad91002ed",
+    "backend/src/FleetManagement/Enrollment/PostgresEnrollmentClaims.cs": "d2ba38b5a55526f55745fa78f8c040660494761544ba32e9ebcbb025731b004b",
+    "backend/src/FleetManagement/FleetManagement.csproj": "2c49fb050333b28183d64b5c11a1e93b405562d404d47e15cd66daaaecd3c63b",
+    "backend/src/FleetManagement/Persistence/FleetDbContext.cs": "d40d37183aca6dbb73de9879ae5dd1b502e160d6dfb3361ae2d28842ac324225",
+    "backend/src/FleetManagement/Properties/AssemblyInfo.cs": "f1323f7b8b795cda3da1908fdb81523a5da7fea48563a1f26d9a3d1bd3f0fa07",
+    "backend/tests/FleetManagement.Tests/EnrollmentBootstrapTokensTests.cs": "53dbc5414c6172b3fbe710451f2d3597f890e250daf8128ad895244bd1343071",
+    "backend/tests/FleetManagement.Tests/EnrollmentCsrVerifierTests.cs": "594e3ab3e48dd134b286621df8e214e873a63188017453836d60821c0bffaec5",
+    "backend/tests/FleetManagement.Tests/EnrollmentPersistenceTests.cs": "34a54f536cc7ad559599d16096014be5d3339cd1a0873ce6ea6c6526e3f85e73",
+    "backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj": "d5c411bd20b6825f7a0702f298eddbabe6ac816c3c2d69f55efebd42488a2446",
+    "tools/check_backend.py": "a8d854186a6a5ff61756f3ec1900656bdfaf06450b3847caa5498d0a76df528c"
+  },
+  "testCounters": {
+    "total": "45",
+    "executed": "45",
+    "passed": "45",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "scope": "Component tests only; no HTTP, PostgreSQL, issuer or device integration",
+  "resultSha256": {
+    "command-01.json": "9108bd0ca076f40407079107ee5516760a62cf700d8c1fb3197962be69e497d6",
+    "command-02.json": "4812b11b28920837abd71f8f2fc5a89721b270fad3a414bc56935e0d3dfee956",
+    "command-03.json": "00d8217609797b2eb030f173a209241c2f39fe7f9f96cc7c5028df2dec4bb9a1",
+    "results/tests.trx": "5ea7e11120dc13abbd3dc9de160f9d79ef3ea9bd66492994f03253eb99e34476"
+  }
+}

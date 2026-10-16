@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj",
+    "--verbosity",
+    "minimal"
+  ],
+  "returncode": 0,
+  "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T141618.496288Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 2.49 sec).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T141618.496288Z/inputs/backend/tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj (in 2.44 sec).\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T141618.496288Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Postgres.Tests -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/backend/20261016T141618.496288Z/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:23.27\n",
+  "stderr": ""
+}

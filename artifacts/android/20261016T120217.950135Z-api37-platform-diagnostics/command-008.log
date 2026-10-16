@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "dpm",
+    "set-device-owner",
+    "dev.fleet.agent/.FleetAdminReceiver"
+  ],
+  "returncode": 0,
+  "seconds": 8.211,
+  "stderr": "",
+  "stdout": "dev.fleet.agent/.FleetAdminReceiver was already an admin for user 0. No need to set it again.\nSuccess: Device owner set to package dev.fleet.agent/.FleetAdminReceiver\nActive admin set to component dev.fleet.agent/.FleetAdminReceiver\n"
+}

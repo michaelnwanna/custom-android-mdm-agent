@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 from unittest.mock import Mock, patch
 
-from android_evidence import EvidenceRun, button_center, lock_state, resumed_package
+from android_evidence import EvidenceRun, button_center, effective_restrictions, lock_state, resumed_package
 
 
 class EvidenceWaitTests(unittest.TestCase):
@@ -30,7 +30,60 @@ class EvidenceWaitTests(unittest.TestCase):
             run.wait_text("Version 0.2.0 (2)", timeout=0)
 
 
+class OperatorPairingTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        self.addCleanup(patch.stopall)
+        patch("android_evidence.ROOT", root).start()
+        operator = root / ".lab-private" / "lab-device"
+        operator.mkdir(parents=True)
+        (operator / "operator.pem").write_bytes(b"test-private-placeholder")
+        (operator / "operator-public.der").write_bytes(b"expected-public-key")
+        self.run = object.__new__(EvidenceRun)
+        self.run.serial = "lab-device"
+        self.run.command = Mock()
+        self.run.activity = Mock(return_value="mLockTaskModeState=NONE")
+
+    def test_missing_key_file_pairs_without_reading_error_as_key(self):
+        self.run.device = Mock(return_value="")
+        self.run.pair_operator()
+        self.assertFalse(any(call.args[:1] == ("exec-out",)
+                             for call in self.run.device.call_args_list))
+        self.assertEqual(self.run.device.call_args_list[-1].kwargs["input_data"],
+                         b"expected-public-key")
+
+    def test_different_paired_key_is_never_replaced(self):
+        self.run.device = Mock(side_effect=["present\n", b"different-public-key"])
+        with self.assertRaisesRegex(AssertionError, "refusing automatic key replacement"):
+            self.run.pair_operator()
+        self.assertEqual(self.run.device.call_count, 2)
+
+    def test_matching_key_does_not_require_repairing_while_locked(self):
+        self.run.device = Mock(side_effect=["present\n", b"expected-public-key"])
+        self.run.activity.return_value = "mLockTaskModeState=LOCKED"
+        self.run.pair_operator()
+        self.run.activity.assert_not_called()
+        self.assertEqual(self.run.device.call_count, 2)
+
+    def test_missing_key_is_not_paired_while_locked(self):
+        self.run.device = Mock(return_value="")
+        self.run.activity.return_value = "mLockTaskModeState=LOCKED"
+        with self.assertRaisesRegex(AssertionError, "before entering kiosk"):
+            self.run.pair_operator()
+        self.assertEqual(self.run.device.call_count, 1)
+
+
 class BootEvidenceTests(unittest.TestCase):
+    def test_exit_waits_for_resumed_activity_after_unlock(self):
+        run = object.__new__(EvidenceRun)
+        run.activity = Mock(side_effect=["mLockTaskModeState=NONE",
+                                       "mLockTaskModeState=NONE\n topResumedActivity=ActivityRecord{abc u0 dev.fleet.agent/.Main t1}"])
+        with patch("android_evidence.time.sleep"):
+            run.wait_kiosk_exit()
+        self.assertEqual(run.activity.call_count, 2)
+
     def test_exit_accepts_launcher_only_after_unlock(self):
         run = object.__new__(EvidenceRun)
         run.activity = Mock(side_effect=["mLockTaskModeState=LOCKED",
@@ -165,6 +218,18 @@ class NegativeFixtureTests(unittest.TestCase):
 
 
 class EvidenceParserTests(unittest.TestCase):
+    def test_effective_restrictions_exclude_guest_defaults(self):
+        state = "UserInfo{0:Owner:13}\n    Effective restrictions:\n      no_control_apps\n    UserProperties:\nDevice properties:\n  Guest restrictions:\n    no_config_wifi\n"
+        self.assertEqual(effective_restrictions(state), {"no_control_apps"})
+
+    def test_empty_restrictions_are_not_guest_restrictions(self):
+        state = "UserInfo{0:Owner:13}\n    Effective restrictions:\n      none\n    UserProperties:\nDevice properties:\n  Guest restrictions:\n    no_config_wifi\n"
+        self.assertEqual(effective_restrictions(state), set())
+
+    def test_missing_user_restrictions_fail_closed(self):
+        with self.assertRaisesRegex(AssertionError, "Missing user 0"):
+            effective_restrictions("Guest restrictions:\n    no_config_wifi\n")
+
     def test_button_matches_label_case_and_calculates_center(self):
         xml = '<hierarchy><node text="START SAMPLE KIOSK" enabled="true" clickable="true" bounds="[63,370][1017,496]" /></hierarchy>'
         self.assertEqual(button_center(xml, "Start sample kiosk"), (540, 433))

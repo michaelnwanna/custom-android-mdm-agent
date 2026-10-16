@@ -3,7 +3,15 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+dependencies {
+    implementation("com.hivemq:hivemq-mqtt-client:1.3.3")
+    testImplementation("junit:junit:4.13.2")
+}
+
 android {
+    packaging {
+        resources.excludes += setOf("META-INF/INDEX.LIST", "META-INF/io.netty.versions.properties")
+    }
     namespace = "dev.fleet.agent"
     compileSdk = 34
     buildToolsVersion = "34.0.0"

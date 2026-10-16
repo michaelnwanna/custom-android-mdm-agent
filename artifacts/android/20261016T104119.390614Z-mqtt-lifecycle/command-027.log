@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/mqtt-venv/bin/python",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/mqtt_lab.py",
+    "probe"
+  ],
+  "returncode": 0,
+  "seconds": 1.556,
+  "stderr": "",
+  "stdout": "{\"result\": \"passed\", \"probe\": \"probe-47391044-2691-449e-af4c-9a055776ee22\", \"acknowledgedOverTls\": true}\n"
+}

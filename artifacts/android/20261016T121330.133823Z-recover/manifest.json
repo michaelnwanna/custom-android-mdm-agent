@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T12:13:30.135496+00:00",
+  "serial": "emulator-5556",
+  "result": "failed",
+  "error": "The lab agent must be Device Owner before recovery; failure capture: Command failed (137): /Users/michaelnwanna/Library/Android/sdk/platform-tools/adb -s emulator-5556 shell uiautomator dump /sdcard/fleet-evidence-window.xml\n\n",
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "dumpsys",
+        "device_policy"
+      ],
+      "returncode": 0,
+      "seconds": 1.018,
+      "stderr": "Can't find service: device_policy\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5556",
+        "shell",
+        "uiautomator",
+        "dump",
+        "/sdcard/fleet-evidence-window.xml"
+      ],
+      "returncode": 137,
+      "seconds": 5.345,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

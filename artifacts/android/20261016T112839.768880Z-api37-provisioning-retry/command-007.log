@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "dpm",
+    "set-device-owner",
+    "dev.fleet.agent/.FleetAdminReceiver"
+  ],
+  "returncode": 255,
+  "seconds": 1.902,
+  "stderr": "\nException occurred while executing 'set-device-owner':\njava.lang.IllegalStateException: Not allowed to set the device owner because there are already some accounts on the device.\n\tat com.android.server.wm.Task$$ExternalSyntheticBUOutline4.m(R8$$SyntheticClass:0)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.enforceCanSetDeviceOwnerLocked(DevicePolicyManagerService.java:10610)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.setDeviceOwner(DevicePolicyManagerService.java:9323)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.runSetDeviceOwner(DevicePolicyManagerServiceShellCommand.java:286)\n\tat com.android.server.devicepolicy.DevicePolicyManagerServiceShellCommand.onCommand(DevicePolicyManagerServiceShellCommand.java:106)\n\tat com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)\n\tat android.os.ShellCommand.exec(ShellCommand.java:39)\n\tat com.android.server.devicepolicy.DevicePolicyManagerService.onShellCommand(DevicePolicyManagerService.java:11030)\n\tat android.os.Binder.shellCommand(Binder.java:1088)\n\tat android.os.Binder.onTransact(Binder.java:946)\n\tat android.app.admin.IDevicePolicyManager$Stub.onTransact(IDevicePolicyManager.java:6772)\n\tat android.os.Binder.execTransactInternal(Binder.java:1369)\n\tat android.os.Binder.execTransact(Binder.java:1323)\n",
+  "stdout": "dev.fleet.agent/.FleetAdminReceiver was already an admin for user 0. No need to set it again.\n"
+}
