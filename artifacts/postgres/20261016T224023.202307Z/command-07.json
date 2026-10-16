@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/psql",
+    "-h",
+    "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-d_56zn7d",
+    "-U",
+    "fleet_lab",
+    "-d",
+    "postgres",
+    "-X",
+    "-v",
+    "ON_ERROR_STOP=1",
+    "--tuples-only",
+    "--no-align",
+    "-c",
+    "SELECT count(*) FROM pg_namespace WHERE nspname ~ '^fleet_test_[0-9a-f]{32}$';"
+  ],
+  "returncode": 0,
+  "stdout": "0\n",
+  "stderr": ""
+}

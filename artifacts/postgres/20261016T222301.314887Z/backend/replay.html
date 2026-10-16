@@ -1,0 +1,100 @@
+<!doctype html><html lang='en'><meta charset='utf-8'><title>Fleet backend checks</title><h1>Fleet backend checks</h1><p>failed</p><p>Real PostgreSQL claims, lab signing, in-process enrollment HTTP and controlled fast restart; no power-loss, network TLS or device integration</p><p><a href='manifest.json'>Commands, input hashes and test counters</a></p><p><a href='results/tests.trx'>TRX test results, if generated</a></p><pre>.NET SDK:
+ Version:           10.0.402
+ Commit:            a8dd0577c5
+ Workload version:  10.0.400-manifests.da132f47
+ MSBuild version:   18.9.15+a8dd0577c
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  15.7
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/sdk/10.0.402/
+
+.NET workloads installed:
+There are no installed workloads to display.
+Configured to use workload sets when installing new manifests.
+No workload sets are installed. Run &quot;dotnet workload restore&quot; to install a workload set.
+
+Host:
+  Version:      10.0.13
+  Architecture: x64
+  Commit:       4099f83977
+
+.NET SDKs installed:
+  10.0.402 [/usr/local/share/dotnet/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  None
+
+Environment variables:
+  Not set
+
+global.json file:
+  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
+
+test_external_database_excludes_restart (test_postgres_tools.BackendSelectionTests.test_external_database_excludes_restart) ... ok
+test_managed_restart_requires_named_passing_test (test_postgres_tools.BackendSelectionTests.test_managed_restart_requires_named_passing_test) ... ok
+test_missing_restart_result_cannot_pass (test_postgres_tools.BackendSelectionTests.test_missing_restart_result_cannot_pass) ... ok
+test_restart_flag_without_postgres_is_rejected (test_postgres_tools.BackendSelectionTests.test_restart_flag_without_postgres_is_rejected) ... ok
+test_bad_archive_is_rejected_before_extraction_or_compilation (test_postgres_tools.PostgresInstallerTests.test_bad_archive_is_rejected_before_extraction_or_compilation) ... ok
+test_existing_installation_is_not_overwritten (test_postgres_tools.PostgresInstallerTests.test_existing_installation_is_not_overwritten) ... ok
+test_backend_failure_still_stops_server_and_records_failure (test_postgres_tools.PostgresRunnerTests.test_backend_failure_still_stops_server_and_records_failure) ... ok
+test_missing_binaries_cannot_pass (test_postgres_tools.PostgresRunnerTests.test_missing_binaries_cannot_pass) ... ok
+test_shutdown_failure_cannot_pass_or_remove_live_socket (test_postgres_tools.PostgresRunnerTests.test_shutdown_failure_cannot_pass_or_remove_live_socket) ... ok
+test_success_requires_backend_pass_and_stopped_cluster (test_postgres_tools.PostgresRunnerTests.test_success_requires_backend_pass_and_stopped_cluster) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.213s
+
+OK
+
+  Determining projects to restore...
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement.Api/FleetManagement.Api.csproj (in 613 ms).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj (in 673 ms).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 732 ms).
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Api -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll
+  FleetManagement.Postgres.Tests -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:09.09
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Api -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll
+  FleetManagement.Postgres.Tests -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll
+Test run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization [1 s]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                         ↓ (pos 407)
+Expected: [···, 115, 81, 43, 111, 50, ···]
+Actual:   [···, 115, 81, 92, 117, 48, ···]
+                         ↑ (pos 407)
+  Stack Trace:
+     at FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization() in /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/EnrollmentHttpPersistenceTests.cs:line 101
+   at FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization() in /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/EnrollmentHttpPersistenceTests.cs:line 120
+   at FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization() in /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/EnrollmentHttpPersistenceTests.cs:line 132
+   at FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization() in /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/EnrollmentHttpPersistenceTests.cs:line 132
+--- End of stack trace from previous location ---
+Results File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T222301.314887Z/backend/results/tests.trx
+
+Failed!  - Failed:     1, Passed:    12, Skipped:     0, Total:    13, Duration: 15 s - FleetManagement.Postgres.Tests.dll (net10.0)
+[xUnit.net 00:00:12.54]     FleetManagement.Postgres.Tests.EnrollmentHttpPersistenceTests.HttpEnrollmentPersistsOneCertificateAndRecoversExactBytesWithOriginalAuthorization [FAIL]
+</pre></html>

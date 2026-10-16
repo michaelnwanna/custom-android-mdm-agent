@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/psql",
+    "-h",
+    "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-d_56zn7d",
+    "-U",
+    "fleet_lab",
+    "-d",
+    "postgres",
+    "-X",
+    "-v",
+    "ON_ERROR_STOP=1",
+    "-c",
+    "SELECT version(); SHOW listen_addresses; SHOW unix_socket_permissions; SHOW fsync; SHOW synchronous_commit;"
+  ],
+  "returncode": 0,
+  "stdout": "                                                     version                                                      \n------------------------------------------------------------------------------------------------------------------\n PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit\n(1 row)\n\n listen_addresses \n------------------\n \n(1 row)\n\n unix_socket_permissions \n-------------------------\n 0700\n(1 row)\n\n fsync \n-------\n on\n(1 row)\n\n synchronous_commit \n--------------------\n on\n(1 row)\n\n",
+  "stderr": ""
+}

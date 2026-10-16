@@ -1,0 +1,26 @@
+2026-10-17 01:24:19.912 EAT [85966] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 01:24:19.913 EAT [85966] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-8_75cz4x/.s.PGSQL.5432"
+2026-10-17 01:24:19.944 EAT [85973] LOG:  database system was shut down at 2026-10-17 01:24:18 EAT
+2026-10-17 01:24:19.951 EAT [85966] LOG:  database system is ready to accept connections
+2026-10-17 01:24:55.033 EAT [86046] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 01:24:55.033 EAT [86046] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 01:25:00.668 EAT [86064] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 01:25:00.668 EAT [86064] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 01:25:01.112 EAT [86068] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Completion"
+2026-10-17 01:25:01.112 EAT [86068] DETAIL:  Failing row contains (60d609a4-00e5-45c1-a1c8-5c4093642dda, de082186525c85e6a0f29783120b9333715f6be5692985457a61589c151b95f8, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, 98231ca8-eac4-42ca-8487-2a7cd2fc9e2f, 4d065b7a-be47-42da-9adf-dcaf46a8b050, 21304efb63d9ba070caab0400f0ae800cd0cc287bd438879243ea157ec7e39d2, MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHVANBpbqkDjwYZiv0eNBCIFQq6+6..., 2026-10-16 15:00:00+03, {"schemaVersion":1,"deviceId":"57c23a05-2aed-4fd1-b362-50ef867e2..., f).
+2026-10-17 01:25:01.112 EAT [86068] STATEMENT:  UPDATE "PendingEnrollments" SET "CompletedResponseJson" = $1 WHERE "Id" = $2
+2026-10-17 01:25:01.201 EAT [86071] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 01:25:01.201 EAT [86071] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 01:25:01.810 EAT [85966] LOG:  received fast shutdown request
+2026-10-17 01:25:01.810 EAT [85966] LOG:  aborting any active transactions
+2026-10-17 01:25:01.811 EAT [85966] LOG:  background worker "logical replication launcher" (PID 85976) exited with exit code 1
+2026-10-17 01:25:01.811 EAT [85971] LOG:  shutting down
+2026-10-17 01:25:01.812 EAT [85971] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 01:25:01.834 EAT [85971] LOG:  checkpoint complete: wrote 89 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.013 s, total=0.023 s; sync files=67, longest=0.002 s, average=0.001 s; distance=411 kB, estimate=411 kB; lsn=0/1505FF8, redo lsn=0/1505FF8
+2026-10-17 01:25:01.841 EAT [85966] LOG:  database system is shut down

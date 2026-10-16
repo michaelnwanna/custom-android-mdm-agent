@@ -106,7 +106,7 @@ def main():
         "binarySha256": {executable: hashlib.sha256((args.bin_dir / executable).read_bytes()).hexdigest()
                  for executable in ("initdb", "pg_ctl", "psql", "postgres", "pg_config")
                  if (args.bin_dir / executable).is_file()},
-        "commands": records, "scope": "Real local PostgreSQL claims and controlled fast restart; no signing, HTTP or power-loss guarantee",
+        "commands": records, "scope": "Real local PostgreSQL claims, lab signing, in-process enrollment HTTP and controlled fast restart; no network TLS, device or power-loss guarantee",
         "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                        for filename in sorted(output.rglob("*")) if filename.is_file()
                        and not {"bin", "obj"}.intersection(filename.relative_to(output).parts)},

@@ -1,6 +1,6 @@
 # Offline-First Android Fleet Management
 
-A Kotlin Android Device Policy Controller with a planned C# / ASP.NET Core control plane and React management console for intermittently connected device fleets.
+A Kotlin Android Device Policy Controller with a C# / ASP.NET Core enrollment lab and a planned fleet control plane and React management console for intermittently connected device fleets.
 
 ## Status
 
@@ -11,6 +11,8 @@ Phase 1 is accepted for API 34 development feasibility under the [revised accept
 A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verified on API 34, including negative identity/version/signer/invalid-APK checks and v2 kiosk relaunch. The [fresh sixteen-checkpoint update replay](artifacts/android/20261016T104623.288748Z-update/replay.html) and [manifest](artifacts/android/20261016T104623.288748Z-update/manifest.json) passed current build/lint invocations, twenty-seven Python tests, restrictions, and signed maintenance recovery. Persisted kiosk intent restored enabled and disabled state across non-wiping cold boots; the [six-checkpoint warm-reboot replay](artifacts/android/20261016T104301.613674Z-reboot/replay.html) and [manifest](artifacts/android/20261016T104301.613674Z-reboot/manifest.json) now verify two genuine warm reboots, automatic enabled restoration/Home containment, then disabled no-restoration/persisted exit. All four new bundles passed native video validation. The [earlier warm-reboot failure](artifacts/android/20261016T093407.811439Z-reboot/replay.html) remains failed; [recorded tests](docs/test-evidence.md) preserve it and other failures. These API 34 results do not establish physical-device/OEM reliability or current-stable compatibility. Production MQTT transport, signed release delivery, durable synchronization, backend services, and the web console remain planned.
 
 ### Phase 2 Contract Foundation
+
+The [enrollment HTTP lab](docs/enrollment-http.md) now implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate tests exercise real loopback TLS and HTTP with PostgreSQL/lab signing; combined Android enrollment and production deployment remain unverified. The backend solution now contains five live projects, including the API host.
 
 The final local foundation regression passed [six contract checks](artifacts/contracts/20261016T215343.214977Z/replay.html), [sixty-six .NET component tests and ten tooling tests](artifacts/backend/20261016T215353.237189Z/replay.html), and [twelve PostgreSQL integration tests and ten tooling tests](artifacts/postgres/20261016T215647.644582Z/replay.html), including controlled database restart. The [foundation CI workflow and remaining MVP work](docs/foundation-ci.md) distinguish local verification from hosted CI and production readiness. For C# editing, open the four-project [backend solution](backend/FleetManagement.slnx), not the historical artifact snapshots.
 
@@ -36,11 +38,21 @@ Further [recovery experiments](docs/test-evidence.md#controlled-recovery-experim
 
 ## Architecture
 
-This diagram separates implemented API 34 lab diagnostics from the planned end-to-end system. The isolated loopback MQTT probe is not production transport or backend infrastructure. The numbered flow below describes the target design, not an implemented integration.
+This diagram separates implemented API 34 diagnostics and the backend enrollment lab from the planned end-to-end fleet system. Enrollment HTTP/database integration and loopback TLS are separately verified; Android enrollment is not. The isolated loopback MQTT probe is not production transport. The numbered flow below describes the target fleet design, not an implemented integration.
 
 ```mermaid
 flowchart TB
 	Admin[Administrator]
+
+	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]
+		EnrollmentClient[Synthetic HTTP test client]
+		EnrollmentAPI[ASP.NET Core enrollment endpoint]
+		EnrollmentDB[(PostgreSQL claims and completion)]
+		LabSigner[Private ledger and caller-owned lab CA]
+		EnrollmentClient -->|Bootstrap bearer and strict CSR request| EnrollmentAPI
+		EnrollmentAPI --> EnrollmentDB
+		EnrollmentAPI --> LabSigner
+	end
 
 	subgraph Management["Management plane - planned"]
 		Console[React management console]

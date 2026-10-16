@@ -1,0 +1,452 @@
+<!doctype html><html lang='en'><meta charset='utf-8'><title>Fleet PostgreSQL checks</title><h1>Fleet PostgreSQL checks</h1><p>passed</p><p>Server stopped: True</p><p>Real local PostgreSQL claims, lab signing, in-process enrollment HTTP and controlled fast restart; no network TLS, device or power-loss guarantee</p><p><a href='manifest.json'>Setup, shutdown and hashes</a></p><p><a href='backend/replay.html'>Backend test replay, if reached</a></p><pre>postgres (PostgreSQL) 17.11
+
+ &#x27;--prefix=/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11&#x27; &#x27;--without-icu&#x27; &#x27;--without-readline&#x27; &#x27;--without-gssapi&#x27; &#x27;--without-lz4&#x27; &#x27;--without-zstd&#x27;
+
+The files belonging to this database system will be owned by user &quot;michaelnwanna&quot;.
+This user must also own the server process.
+
+The database cluster will be initialized with locale &quot;C&quot;.
+The default text search configuration will be set to &quot;english&quot;.
+
+Data page checksums are disabled.
+
+creating directory /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T224414.780045Z/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default &quot;max_connections&quot; ... 100
+selecting default &quot;shared_buffers&quot; ... 128MB
+selecting default time zone ... Africa/Nairobi
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl -D /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres/20261016T224414.780045Z/data -l logfile start
+
+
+waiting for server to start.... done
+server started
+
+                                                     version                                                      
+------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+(1 row)
+
+ listen_addresses 
+------------------
+ 
+(1 row)
+
+ unix_socket_permissions 
+-------------------------
+ 0700
+(1 row)
+
+ fsync 
+-------
+ on
+(1 row)
+
+ synchronous_commit 
+--------------------
+ on
+(1 row)
+
+
+.NET SDK:
+ Version:           10.0.402
+ Commit:            a8dd0577c5
+ Workload version:  10.0.400-manifests.da132f47
+ MSBuild version:   18.9.15+a8dd0577c
+
+Runtime Environment:
+ OS Name:     Mac OS X
+ OS Version:  15.7
+ OS Platform: Darwin
+ RID:         osx-x64
+ Base Path:   /usr/local/share/dotnet/sdk/10.0.402/
+
+.NET workloads installed:
+There are no installed workloads to display.
+Configured to use workload sets when installing new manifests.
+No workload sets are installed. Run &quot;dotnet workload restore&quot; to install a workload set.
+
+Host:
+  Version:      10.0.13
+  Architecture: x64
+  Commit:       4099f83977
+
+.NET SDKs installed:
+  10.0.402 [/usr/local/share/dotnet/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  None
+
+Environment variables:
+  Not set
+
+global.json file:
+  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
+
+test_external_database_excludes_restart (test_postgres_tools.BackendSelectionTests.test_external_database_excludes_restart) ... ok
+test_managed_restart_requires_named_passing_test (test_postgres_tools.BackendSelectionTests.test_managed_restart_requires_named_passing_test) ... ok
+test_missing_restart_result_cannot_pass (test_postgres_tools.BackendSelectionTests.test_missing_restart_result_cannot_pass) ... ok
+test_restart_flag_without_postgres_is_rejected (test_postgres_tools.BackendSelectionTests.test_restart_flag_without_postgres_is_rejected) ... ok
+test_bad_archive_is_rejected_before_extraction_or_compilation (test_postgres_tools.PostgresInstallerTests.test_bad_archive_is_rejected_before_extraction_or_compilation) ... ok
+test_existing_installation_is_not_overwritten (test_postgres_tools.PostgresInstallerTests.test_existing_installation_is_not_overwritten) ... ok
+test_backend_failure_still_stops_server_and_records_failure (test_postgres_tools.PostgresRunnerTests.test_backend_failure_still_stops_server_and_records_failure) ... ok
+test_missing_binaries_cannot_pass (test_postgres_tools.PostgresRunnerTests.test_missing_binaries_cannot_pass) ... ok
+test_shutdown_failure_cannot_pass_or_remove_live_socket (test_postgres_tools.PostgresRunnerTests.test_shutdown_failure_cannot_pass_or_remove_live_socket) ... ok
+test_success_requires_backend_pass_and_stopped_cluster (test_postgres_tools.PostgresRunnerTests.test_success_requires_backend_pass_and_stopped_cluster) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.219s
+
+OK
+
+  Determining projects to restore...
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement.Api/FleetManagement.Api.csproj (in 721 ms).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj (in 756 ms).
+  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 809 ms).
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Api -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll
+  FleetManagement.Postgres.Tests -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:07.31
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  FleetManagement -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll
+  FleetManagement.Api -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll
+  FleetManagement.Postgres.Tests -&gt; /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll
+Test run for /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/bin/Debug/net10.0/FleetManagement.Postgres.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/results/tests.trx
+
+Passed!  - Failed:     0, Passed:    13, Skipped:     0, Total:    13, Duration: 14 s - FleetManagement.Postgres.Tests.dll (net10.0)
+
+{
+  &quot;version&quot;: 1,
+  &quot;parameters&quot;: &quot;--include-transitive&quot;,
+  &quot;projects&quot;: [
+    {
+      &quot;path&quot;: &quot;/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj&quot;,
+      &quot;frameworks&quot;: [
+        {
+          &quot;framework&quot;: &quot;net10.0&quot;,
+          &quot;topLevelPackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Microsoft.AspNetCore.TestHost&quot;,
+              &quot;requestedVersion&quot;: &quot;10.0.13&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.NET.Test.Sdk&quot;,
+              &quot;requestedVersion&quot;: &quot;17.14.1&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit&quot;,
+              &quot;requestedVersion&quot;: &quot;2.9.3&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.runner.visualstudio&quot;,
+              &quot;requestedVersion&quot;: &quot;3.1.5&quot;,
+              &quot;resolvedVersion&quot;: &quot;3.1.5&quot;
+            }
+          ],
+          &quot;transitivePackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeCoverage&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Relational&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Memory&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Configuration.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Options&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Primitives&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.TestPlatform.ObjectModel&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.TestPlatform.TestHost&quot;,
+              &quot;resolvedVersion&quot;: &quot;17.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Newtonsoft.Json&quot;,
+              &quot;resolvedVersion&quot;: &quot;13.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql.EntityFrameworkCore.PostgreSQL&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;1.18.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.assert&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.core&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.extensibility.core&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;xunit.extensibility.execution&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.9.3&quot;
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+{
+  &quot;version&quot;: 1,
+  &quot;parameters&quot;: &quot;--include-transitive&quot;,
+  &quot;projects&quot;: [
+    {
+      &quot;path&quot;: &quot;/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/inputs/backend/src/FleetManagement/FleetManagement.csproj&quot;,
+      &quot;frameworks&quot;: [
+        {
+          &quot;framework&quot;: &quot;net10.0&quot;,
+          &quot;topLevelPackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore&quot;,
+              &quot;requestedVersion&quot;: &quot;10.0.13&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Design&quot;,
+              &quot;requestedVersion&quot;: &quot;10.0.13&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Relational&quot;,
+              &quot;requestedVersion&quot;: &quot;10.0.13&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql.EntityFrameworkCore.PostgreSQL&quot;,
+              &quot;requestedVersion&quot;: &quot;10.0.3&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            }
+          ],
+          &quot;transitivePackages&quot;: [
+            {
+              &quot;id&quot;: &quot;Humanizer.Core&quot;,
+              &quot;resolvedVersion&quot;: &quot;2.14.1&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Build.Framework&quot;,
+              &quot;resolvedVersion&quot;: &quot;18.0.2&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.Analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;3.11.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.Common&quot;,
+              &quot;resolvedVersion&quot;: &quot;5.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.CSharp&quot;,
+              &quot;resolvedVersion&quot;: &quot;5.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.CSharp.Workspaces&quot;,
+              &quot;resolvedVersion&quot;: &quot;5.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.Workspaces.Common&quot;,
+              &quot;resolvedVersion&quot;: &quot;5.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.CodeAnalysis.Workspaces.MSBuild&quot;,
+              &quot;resolvedVersion&quot;: &quot;5.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.EntityFrameworkCore.Analyzers&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Caching.Memory&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Configuration.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyInjection.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.DependencyModel&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Logging.Abstractions&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Options&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.Extensions.Primitives&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.13&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Microsoft.VisualStudio.SolutionPersistence&quot;,
+              &quot;resolvedVersion&quot;: &quot;1.0.52&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Mono.TextTemplating&quot;,
+              &quot;resolvedVersion&quot;: &quot;3.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Newtonsoft.Json&quot;,
+              &quot;resolvedVersion&quot;: &quot;13.0.4&quot;
+            },
+            {
+              &quot;id&quot;: &quot;Npgsql&quot;,
+              &quot;resolvedVersion&quot;: &quot;10.0.3&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.CodeDom&quot;,
+              &quot;resolvedVersion&quot;: &quot;6.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition.AttributedModel&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition.Convention&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition.Hosting&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition.Runtime&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            },
+            {
+              &quot;id&quot;: &quot;System.Composition.TypedParts&quot;,
+              &quot;resolvedVersion&quot;: &quot;9.0.0&quot;
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+PASSED: /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/postgres/20261016T224414.780045Z/backend/replay.html
+
+0
+
+waiting for server to shut down.... done
+server stopped
+</pre></html>

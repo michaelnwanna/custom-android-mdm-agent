@@ -1,0 +1,16 @@
+{
+  "schema": "http/problem-v1.schema.json",
+  "valid": [
+    {"type": "about:blank", "title": "Unauthorized", "status": 401},
+    {"type": "about:blank", "title": "Too Many Requests", "status": 429, "traceId": "synthetic_trace_001"}
+  ],
+  "invalid": [
+    {"name": "missing status", "base": 0, "remove": ["status"]},
+    {"name": "success is not an error", "base": 0, "set": {"status": 200}},
+    {"name": "unbounded error detail", "base": 0, "set": {"detail": "not allowed"}},
+    {"name": "token disclosure field", "base": 0, "set": {"token": "synthetic-not-a-secret"}},
+    {"name": "empty title", "base": 0, "set": {"title": ""}},
+    {"name": "invalid trace", "base": 1, "set": {"traceId": "with whitespace"}},
+    {"name": "unsupported problem type", "base": 0, "set": {"type": "https://example.invalid/problem"}}
+  ]
+}
