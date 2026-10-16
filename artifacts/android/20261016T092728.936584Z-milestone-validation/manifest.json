@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T09:27:28.938582+00:00",
+  "serial": "emulator-5554",
+  "result": "passed",
+  "error": null,
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/opt/python@3.13/bin/python3.13",
+        "-c",
+        "import json,re; from pathlib import Path; documents=[Path(name) for name in (\"README.md\",\"PROJECT_PLAN.md\",\"docs/test-evidence.md\",\"docs/android-runtime-verification.md\")]; missing=[str(document)+\": \"+target for document in documents for target in re.findall(r\"\\]\\(([^)]+)\\)\",document.read_text()) if \"://\" not in target and not (document.parent/target.split(\"#\")[0]).exists()]; assert not missing,missing; bundle=Path(\"artifacts/android/20261016T092323.365537Z-update\"); manifest=json.loads((bundle/\"manifest.json\").read_text()); media=json.loads((bundle/\"media-validation.json\").read_text()); assert manifest[\"result\"]==\"passed\" and len(manifest[\"steps\"])==16; assert media[\"result\"]==\"passed\" and len(media[\"recordings\"])==2; print(\"Four documentation link checks, sixteen checkpoints, and two validated recordings: passed\")"
+      ],
+      "returncode": 0,
+      "seconds": 0.278,
+      "stderr": "",
+      "stdout": "Four documentation link checks, sixteen checkpoints, and two validated recordings: passed\n"
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

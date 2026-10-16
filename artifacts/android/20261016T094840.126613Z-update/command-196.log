@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/bin/swift",
+    "-suppress-warnings",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/verify-recordings.swift"
+  ],
+  "returncode": 0,
+  "seconds": 3.652,
+  "stderr": "",
+  "stdout": "{\n  \"recordedAt\" : \"2026-10-16T09:51:49Z\",\n  \"recordings\" : [\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 41.276400000000002,\n      \"file\" : \"smoke.mp4\",\n      \"result\" : \"passed\"\n    },\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 83.949799999999996,\n      \"file\" : \"update.mp4\",\n      \"result\" : \"passed\"\n    }\n  ],\n  \"result\" : \"passed\",\n  \"validator\" : \"macOS AVFoundation\"\n}\n"
+}

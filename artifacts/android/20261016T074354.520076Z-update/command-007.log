@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "uninstall",
+    "dev.fleet.sample"
+  ],
+  "returncode": 0,
+  "seconds": 13.682,
+  "stderr": "",
+  "stdout": "Success\n"
+}

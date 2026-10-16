@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "ps",
+    "-p",
+    "46649,66781,76059",
+    "-o",
+    "pid,ppid,pcpu,rss,comm"
+  ],
+  "returncode": 0,
+  "seconds": 1.663,
+  "stderr": "",
+  "stdout": "  PID  PPID  %CPU    RSS COMM\n46649     1 117.5 3011640 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine\n76059 75208   0.0  37796 /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java\n66781 66193  13.2 941460 /Users/michaelnwanna/Library/Android/sdk/emulator/qemu/darwin-x86_64/qemu-system-x86_64-headless\n"
+}

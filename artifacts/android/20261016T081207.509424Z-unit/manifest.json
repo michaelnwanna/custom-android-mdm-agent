@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T08:12:07.522580+00:00",
+  "serial": "emulator-5554",
+  "result": "passed",
+  "error": null,
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_android_evidence.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "seconds": 3.173,
+      "stderr": "test_button_matches_label_case_and_calculates_center (test_android_evidence.EvidenceParserTests.test_button_matches_label_case_and_calculates_center) ... ok\ntest_disabled_control_is_rejected (test_android_evidence.EvidenceParserTests.test_disabled_control_is_rejected) ... ok\ntest_invalid_bounds_are_rejected (test_android_evidence.EvidenceParserTests.test_invalid_bounds_are_rejected) ... ok\ntest_locked_is_distinct_from_pinned_and_none (test_android_evidence.EvidenceParserTests.test_locked_is_distinct_from_pinned_and_none) ... ok\ntest_missing_control_is_rejected (test_android_evidence.EvidenceParserTests.test_missing_control_is_rejected) ... ok\ntest_resumed_package_ignores_other_activity_mentions (test_android_evidence.EvidenceParserTests.test_resumed_package_ignores_other_activity_mentions) ... ok\ntest_non_text_attribute_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_non_text_attribute_is_not_accepted) ... ok\ntest_waits_past_splash_for_rendered_version (test_android_evidence.EvidenceWaitTests.test_waits_past_splash_for_rendered_version) ... ok\ntest_wrong_version_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_wrong_version_is_not_accepted) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.008s\n\nOK\n",
+      "stdout": ""
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

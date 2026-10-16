@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "logcat",
+    "-d",
+    "-t",
+    "500",
+    "-s",
+    "ActivityManager",
+    "ActivityTaskManager",
+    "AndroidRuntime"
+  ],
+  "returncode": 0,
+  "seconds": 0.309,
+  "stderr": "",
+  "stdout": "--------- beginning of system\n10-16 12:40:59.009  8825  8825 I ActivityManager: Memory class: 192\n"
+}

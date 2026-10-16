@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "shared_prefs/lab-kiosk.xml"
+  ],
+  "returncode": 0,
+  "seconds": 0.34,
+  "stderr": "",
+  "stdout": "run-as: couldn't stat /data/user/0/dev.fleet.agent: No such file or directory\n"
+}

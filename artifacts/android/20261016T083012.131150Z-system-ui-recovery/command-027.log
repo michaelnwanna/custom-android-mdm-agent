@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T083012.131150Z-system-ui-recovery/system-ui-recovery.mp4"
+  ],
+  "returncode": 0,
+  "seconds": 1.357,
+  "stderr": "/sdcard/fleet-runtime-evidence.mp4: 1 file pulled, 0 skipped. 1.0 MB/s (102182 bytes in 0.094s)\n",
+  "stdout": ""
+}

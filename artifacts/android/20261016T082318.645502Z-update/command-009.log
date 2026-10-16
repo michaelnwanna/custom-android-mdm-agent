@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+    "verify",
+    "--print-certs",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T082318.645502Z-update/sample-v2-wrong-signer.apk"
+  ],
+  "returncode": 0,
+  "seconds": 8.577,
+  "stderr": "",
+  "stdout": "Signer #1 certificate DN: CN=Fleet Negative Test Only\nSigner #1 certificate SHA-256 digest: aae8e8b54578ba7717cbcc5dfc510595b0d15ca26b3a181e5bdc1dc4e4774a9f\nSigner #1 certificate SHA-1 digest: 58b56c605cb39c4246d9269d693e224e4f9b32f3\nSigner #1 certificate MD5 digest: e5e351cdeb28237527460b2ba0d6320a\n"
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-16T08:20:55.178737+00:00",
+  "serial": "emulator-5554",
+  "result": "passed",
+  "error": null,
+  "steps": [],
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_android_evidence.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "seconds": 5.015,
+      "stderr": "test_button_matches_label_case_and_calculates_center (test_android_evidence.EvidenceParserTests.test_button_matches_label_case_and_calculates_center) ... ok\ntest_disabled_control_is_rejected (test_android_evidence.EvidenceParserTests.test_disabled_control_is_rejected) ... ok\ntest_invalid_bounds_are_rejected (test_android_evidence.EvidenceParserTests.test_invalid_bounds_are_rejected) ... ok\ntest_locked_is_distinct_from_pinned_and_none (test_android_evidence.EvidenceParserTests.test_locked_is_distinct_from_pinned_and_none) ... ok\ntest_missing_control_is_rejected (test_android_evidence.EvidenceParserTests.test_missing_control_is_rejected) ... ok\ntest_resumed_package_ignores_other_activity_mentions (test_android_evidence.EvidenceParserTests.test_resumed_package_ignores_other_activity_mentions) ... ok\ntest_non_text_attribute_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_non_text_attribute_is_not_accepted) ... ok\ntest_waits_past_splash_for_rendered_version (test_android_evidence.EvidenceWaitTests.test_waits_past_splash_for_rendered_version) ... ok\ntest_wrong_version_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_wrong_version_is_not_accepted) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.020s\n\nOK\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "keytool",
+        "-genkeypair",
+        "-keystore",
+        "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-negative-signing-cymgfmmq/negative.p12",
+        "-storetype",
+        "PKCS12",
+        "-storepass",
+        "android",
+        "-keypass",
+        "android",
+        "-alias",
+        "negative-lab",
+        "-keyalg",
+        "RSA",
+        "-keysize",
+        "2048",
+        "-validity",
+        "2",
+        "-dname",
+        "CN=Fleet Negative Test Only",
+        "-noprompt"
+      ],
+      "returncode": 0,
+      "seconds": 15.554,
+      "stderr": "Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 2 days\n\tfor: CN=Fleet Negative Test Only\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+        "sign",
+        "--ks",
+        "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-negative-signing-cymgfmmq/negative.p12",
+        "--ks-key-alias",
+        "negative-lab",
+        "--ks-pass",
+        "pass:android",
+        "--out",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T082055.176402Z-fixtures/sample-v2-wrong-signer.apk",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T071546.926749Z-update/sample-v2.apk"
+      ],
+      "returncode": 0,
+      "seconds": 15.558,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+        "verify",
+        "--print-certs",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T071546.926749Z-update/sample-v2.apk"
+      ],
+      "returncode": 0,
+      "seconds": 8.23,
+      "stderr": "",
+      "stdout": "Signer #1 certificate DN: C=US, O=Android, CN=Android Debug\nSigner #1 certificate SHA-256 digest: 673fd8362bfcd6245fdc970337c312a6c8362871690d2f150dcd93775e45de61\nSigner #1 certificate SHA-1 digest: bf082c1d0410e440b461720d01abad68d065cffa\nSigner #1 certificate MD5 digest: be2c8cecfb21542c33cbc81cc5b700a6\n"
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+        "verify",
+        "--print-certs",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T082055.176402Z-fixtures/sample-v2-wrong-signer.apk"
+      ],
+      "returncode": 0,
+      "seconds": 9.195,
+      "stderr": "",
+      "stdout": "Signer #1 certificate DN: CN=Fleet Negative Test Only\nSigner #1 certificate SHA-256 digest: 37b0be2d252bd836d9254751ad0431eedfd096495411a08a90d5d425242cf9bc\nSigner #1 certificate SHA-1 digest: caff806c1869240bf7d5301d56bfa2cd5966ad01\nSigner #1 certificate MD5 digest: 6a9ae3b2eeeaa4caff700a7a254631e0\n"
+    }
+  ],
+  "videos": [],
+  "captureNote": "New recorded rerun, not screenshots recovered from the original manual test."
+}

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "df",
+    "-h",
+    "/sdcard"
+  ],
+  "returncode": 0,
+  "seconds": 0.257,
+  "stderr": "",
+  "stdout": "Filesystem      Size Used Avail Use% Mounted on\n/dev/fuse        10G 242M  9.3G   3% /storage/emulated\n"
+}

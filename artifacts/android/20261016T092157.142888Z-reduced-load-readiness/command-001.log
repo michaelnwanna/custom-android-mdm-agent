@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/local/opt/python@3.13/bin/python3.13",
+    "-c",
+    "import re; from pathlib import Path; document=Path(\"PROJECT_PLAN.md\"); missing=[target for target in re.findall(r\"\\]\\(([^)]+)\\)\",document.read_text()) if \"://\" not in target and not (document.parent/target.split(\"#\")[0]).exists()]; assert not missing,missing; print(\"Project plan local links valid\")"
+  ],
+  "returncode": 0,
+  "seconds": 0.311,
+  "stderr": "",
+  "stdout": "Project plan local links valid\n"
+}

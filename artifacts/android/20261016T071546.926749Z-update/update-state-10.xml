@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="installerStatus" value="0" />
+    <string name="artifactSha256">1c4ffd085dc4532bfc8980d65159584190d87d290b6a1a8ac291680ffadb5500</string>
+    <boolean name="busy" value="false" />
+    <boolean name="pendingUserAction" value="false" />
+    <int name="sessionId" value="-1" />
+    <string name="status">Lab update failed: Wrong package identity</string>
+</map>

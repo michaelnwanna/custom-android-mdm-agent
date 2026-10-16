@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "kill",
+    "-2",
+    "4512"
+  ],
+  "returncode": 0,
+  "seconds": 1.47,
+  "stderr": "",
+  "stdout": ""
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/bin/swift",
+    "-suppress-warnings",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/tools/verify-recordings.swift"
+  ],
+  "returncode": 0,
+  "seconds": 4.191,
+  "stderr": "",
+  "stdout": "{\n  \"recordedAt\" : \"2026-10-16T09:40:35Z\",\n  \"recordings\" : [\n    {\n      \"decodedFrames\" : [\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        },\n        {\n          \"height\" : 1200,\n          \"width\" : 540\n        }\n      ],\n      \"durationSeconds\" : 7.2172000000000001,\n      \"file\" : \"before-enabled-reboot.mp4\",\n      \"result\" : \"passed\"\n    }\n  ],\n  \"result\" : \"passed\",\n  \"validator\" : \"macOS AVFoundation\"\n}\n"
+}

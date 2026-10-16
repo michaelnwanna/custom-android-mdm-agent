@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "uiautomator",
+    "dump",
+    "/sdcard/fleet-evidence-window.xml"
+  ],
+  "returncode": 0,
+  "seconds": 5.474,
+  "stderr": "",
+  "stdout": "UI hierchary dumped to: /sdcard/fleet-evidence-window.xml\n"
+}

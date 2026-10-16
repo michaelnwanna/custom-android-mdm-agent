@@ -1,0 +1,7 @@
+{
+  "agent-debug.apk": "46862528b6a4e2269c3b39a55b8a57771d0df071369a3003c3bef9df93b33661",
+  "sample-v1.apk": "2824cbc56552ba0dc6a35716e3532d6b802df22f001b29fce36b058f2512a547",
+  "sample-v2.apk": "1c4ffd085dc4532bfc8980d65159584190d87d290b6a1a8ac291680ffadb5500",
+  "sample-v2-wrong-signer.apk": "46b553c4b97c63cca65207ebc48a38d0c957a721dd3abe75ec5bf4729448222a",
+  "sample-invalid.apk": "65a0ccd7d4c5a2a7ec06f9ae9a5e8a9e93f46e6bf57d1281e322f395d5e7f491"
+}

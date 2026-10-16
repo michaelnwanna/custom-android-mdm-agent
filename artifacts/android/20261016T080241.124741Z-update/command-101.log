@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "uiautomator",
+    "dump",
+    "/sdcard/fleet-evidence-window.xml"
+  ],
+  "returncode": 137,
+  "seconds": 12.17,
+  "stderr": "",
+  "stdout": ""
+}

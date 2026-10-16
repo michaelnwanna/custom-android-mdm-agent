@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/android/gradlew",
+    "-p",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/android",
+    ":agent:assembleDebug",
+    ":agent:lintDebug",
+    "--console",
+    "plain"
+  ],
+  "returncode": 0,
+  "seconds": 34.448,
+  "stderr": "",
+  "stdout": "> Task :agent:preBuild UP-TO-DATE\n> Task :agent:preDebugBuild UP-TO-DATE\n> Task :agent:mergeDebugNativeDebugMetadata NO-SOURCE\n> Task :agent:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :agent:checkDebugAarMetadata UP-TO-DATE\n> Task :agent:generateDebugResValues UP-TO-DATE\n> Task :agent:mapDebugSourceSetPaths UP-TO-DATE\n> Task :agent:generateDebugResources UP-TO-DATE\n> Task :agent:mergeDebugResources UP-TO-DATE\n> Task :agent:packageDebugResources UP-TO-DATE\n> Task :agent:parseDebugLocalResources UP-TO-DATE\n> Task :agent:createDebugCompatibleScreenManifests UP-TO-DATE\n> Task :agent:extractDeepLinksDebug UP-TO-DATE\n> Task :agent:processDebugMainManifest\n> Task :agent:processDebugManifest\n> Task :agent:javaPreCompileDebug UP-TO-DATE\n> Task :agent:mergeDebugShaders UP-TO-DATE\n> Task :agent:compileDebugShaders NO-SOURCE\n> Task :agent:generateDebugAssets UP-TO-DATE\n> Task :agent:mergeDebugAssets UP-TO-DATE\n> Task :agent:compressDebugAssets UP-TO-DATE\n> Task :agent:desugarDebugFileDependencies UP-TO-DATE\n> Task :agent:checkDebugDuplicateClasses UP-TO-DATE\n> Task :agent:mergeExtDexDebug UP-TO-DATE\n> Task :agent:mergeLibDexDebug UP-TO-DATE\n> Task :agent:mergeDebugJniLibFolders UP-TO-DATE\n> Task :agent:mergeDebugNativeLibs NO-SOURCE\n> Task :agent:stripDebugDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebug UP-TO-DATE\n> Task :agent:writeDebugAppMetadata UP-TO-DATE\n> Task :agent:writeDebugSigningConfigVersions UP-TO-DATE\n> Task :agent:preDebugAndroidTestBuild SKIPPED\n> Task :agent:generateDebugAndroidTestResValues UP-TO-DATE\n> Task :agent:extractProguardFiles UP-TO-DATE\n> Task :agent:preDebugUnitTestBuild UP-TO-DATE\n> Task :agent:processDebugManifestForPackage\n> Task :agent:processDebugResources\n> Task :agent:compileDebugKotlin\n> Task :agent:compileDebugJavaWithJavac NO-SOURCE\n> Task :agent:dexBuilderDebug\n> Task :agent:mergeDebugGlobalSynthetics UP-TO-DATE\n> Task :agent:processDebugJavaRes UP-TO-DATE\n> Task :agent:mergeDebugJavaResource UP-TO-DATE\n> Task :agent:bundleDebugClassesToCompileJar\n> Task :agent:generateDebugLintReportModel\n> Task :agent:mergeProjectDexDebug\n> Task :agent:generateDebugAndroidTestLintModel\n> Task :agent:generateDebugUnitTestLintModel\n> Task :agent:packageDebug\n> Task :agent:createDebugApkListingFileRedirect UP-TO-DATE\n> Task :agent:assembleDebug\n> Task :agent:lintAnalyzeDebugUnitTest\n> Task :agent:lintAnalyzeDebugAndroidTest\n> Task :agent:lintAnalyzeDebug\n\n> Task :agent:lintReportDebug\nWrote HTML report to file:///Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/android/agent/build/reports/lint-results-debug.html\n\n> Task :agent:lintDebug\n\nBUILD SUCCESSFUL in 33s\n44 actionable tasks: 17 executed, 27 up-to-date\n"
+}

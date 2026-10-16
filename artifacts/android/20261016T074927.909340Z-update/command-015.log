@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "start",
+    "-W",
+    "-n",
+    "dev.fleet.agent/.MainActivity"
+  ],
+  "returncode": 0,
+  "seconds": 27.041,
+  "stderr": "",
+  "stdout": "Starting: Intent { cmp=dev.fleet.agent/.MainActivity }\nStatus: timeout\nLaunchState: UNKNOWN (-1)\nActivity: dev.fleet.agent/.MainActivity\nWaitTime: 25699\nComplete\n"
+}

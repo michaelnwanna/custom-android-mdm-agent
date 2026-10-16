@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "install",
+    "-r",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T080241.124741Z-update/sample-v1.apk"
+  ],
+  "returncode": 0,
+  "seconds": 4.289,
+  "stderr": "",
+  "stdout": "Performing Streamed Install\nSuccess\n"
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+    "verify",
+    "--print-certs",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T083818.578832Z-update/sample-v2.apk"
+  ],
+  "returncode": 0,
+  "seconds": 14.164,
+  "stderr": "",
+  "stdout": "Signer #1 certificate DN: C=US, O=Android, CN=Android Debug\nSigner #1 certificate SHA-256 digest: 673fd8362bfcd6245fdc970337c312a6c8362871690d2f150dcd93775e45de61\nSigner #1 certificate SHA-1 digest: bf082c1d0410e440b461720d01abad68d065cffa\nSigner #1 certificate MD5 digest: be2c8cecfb21542c33cbc81cc5b700a6\n"
+}

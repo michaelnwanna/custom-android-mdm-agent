@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/local/opt/python@3.13/bin/python3.13",
+    "-c",
+    "import pathlib,re,json; documents=[pathlib.Path(name) for name in (\"README.md\",\"docs/test-evidence.md\",\"docs/android-runtime-verification.md\",\"docs/android-feasibility.md\",\"PROJECT_PLAN.md\")]; missing=[(str(document),target) for document in documents for target in re.findall(r\"\\]\\(([^)]+)\\)\",document.read_text()) if not target.startswith((\"https:\",\"http:\",\"#\")) and not (document.parent/target.split(\"#\")[0]).exists()]; assert not missing,missing; bundles={\"20261016T094224.879952Z-cold-boot-recovery\":1,\"20261016T094556.261617Z-smoke\":7,\"20261016T094752.508212Z-disabled-after-cold-start\":2,\"20261016T094840.126613Z-update\":16}; root=pathlib.Path(\"artifacts/android\"); \nfor name,count in bundles.items():\n bundle=root/name; manifest=json.loads((bundle/\"manifest.json\").read_text()); media=json.loads((bundle/\"media-validation.json\").read_text()); assert manifest[\"result\"]==\"passed\" and len(manifest[\"steps\"])==count; assert media[\"result\"]==\"passed\"; assert all((bundle/step[\"screenshot\"]).is_file() for step in manifest[\"steps\"]); print(name, count, \"checkpoints; media valid\")\nassert json.loads((root/\"20261016T093407.811439Z-reboot/manifest.json\").read_text())[\"result\"]==\"failed\"; print(\"Five document link checks valid; failed warm reboot retained\")"
+  ],
+  "returncode": 0,
+  "seconds": 0.336,
+  "stderr": "",
+  "stdout": "20261016T094224.879952Z-cold-boot-recovery 1 checkpoints; media valid\n20261016T094556.261617Z-smoke 7 checkpoints; media valid\n20261016T094752.508212Z-disabled-after-cold-start 2 checkpoints; media valid\n20261016T094840.126613Z-update 16 checkpoints; media valid\nFive document link checks valid; failed warm reboot retained\n"
+}

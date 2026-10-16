@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "emu",
+    "kill"
+  ],
+  "returncode": 0,
+  "seconds": 0.161,
+  "stderr": "",
+  "stdout": "OK: killing emulator, bye bye\r\nOK\r\n"
+}

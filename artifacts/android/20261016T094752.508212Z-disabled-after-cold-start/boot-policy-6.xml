@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="bootCount" value="6" />
+    <string name="bootStatus">Kiosk disabled; no boot launch requested.</string>
+    <boolean name="enabled" value="false" />
+</map>

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "wait-for-device"
+  ],
+  "returncode": 0,
+  "seconds": 0.327,
+  "stderr": "",
+  "stdout": ""
+}

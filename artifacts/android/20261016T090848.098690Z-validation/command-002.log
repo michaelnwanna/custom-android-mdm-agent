@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/local/opt/python@3.13/bin/python3.13",
+    "-c",
+    "import re; from pathlib import Path; documents=[Path(\"docs/test-evidence.md\"),Path(\"docs/android-runtime-verification.md\")]; missing=[str(document)+\": \"+target for document in documents for target in re.findall(r\"\\]\\(([^)]+)\\)\",document.read_text()) if \"://\" not in target and not (document.parent/target.split(\"#\")[0]).exists()]; assert not missing, missing; print(\"All local documentation links valid\")"
+  ],
+  "returncode": 0,
+  "seconds": 1.062,
+  "stderr": "",
+  "stdout": "All local documentation links valid\n"
+}

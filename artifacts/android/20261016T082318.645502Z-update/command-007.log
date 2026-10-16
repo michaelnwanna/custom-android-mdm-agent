@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/build-tools/34.0.0/apksigner",
+    "sign",
+    "--ks",
+    "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-negative-signing-u6yyz_yi/negative.p12",
+    "--ks-key-alias",
+    "negative-lab",
+    "--ks-pass",
+    "pass:android",
+    "--out",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T082318.645502Z-update/sample-v2-wrong-signer.apk",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T082318.645502Z-update/sample-v2.apk"
+  ],
+  "returncode": 0,
+  "seconds": 10.023,
+  "stderr": "",
+  "stdout": ""
+}

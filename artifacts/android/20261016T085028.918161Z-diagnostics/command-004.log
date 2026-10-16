@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "cat",
+    "/proc/meminfo"
+  ],
+  "returncode": 0,
+  "seconds": 1.089,
+  "stderr": "",
+  "stdout": "MemTotal:        2534112 kB\nMemFree:          761784 kB\nMemAvailable:    1516560 kB\nBuffers:           22024 kB\nCached:           920644 kB\nSwapCached:            0 kB\nActive:          1019136 kB\nInactive:         422916 kB\nActive(anon):     506480 kB\nInactive(anon):     1220 kB\nActive(file):     512656 kB\nInactive(file):   421696 kB\nUnevictable:        3964 kB\nMlocked:            3964 kB\nSwapTotal:       1900580 kB\nSwapFree:        1863716 kB\nDirty:                 0 kB\nWriteback:             0 kB\nAnonPages:        503372 kB\nMapped:           542092 kB\nShmem:              5316 kB\nKReclaimable:      70404 kB\nSlab:             153200 kB\nSReclaimable:      66996 kB\nSUnreclaim:        86204 kB\nKernelStack:       20944 kB\nPageTables:        49892 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     3167636 kB\nCommitted_AS:   25020028 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       43376 kB\nVmallocChunk:          0 kB\nPercpu:             4496 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nDirectMap4k:       67408 kB\nDirectMap2M:     2553856 kB\n"
+}

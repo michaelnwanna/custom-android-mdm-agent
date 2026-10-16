@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "sysctl",
+    "vm.swapusage"
+  ],
+  "returncode": 0,
+  "seconds": 0.73,
+  "stderr": "",
+  "stdout": "vm.swapusage: total = 10240.00M  used = 9606.50M  free = 633.50M  (encrypted)\n"
+}

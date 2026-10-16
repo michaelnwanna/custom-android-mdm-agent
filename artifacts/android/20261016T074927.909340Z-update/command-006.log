@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "dumpsys",
+    "package",
+    "dev.fleet.sample"
+  ],
+  "returncode": 0,
+  "seconds": 1.105,
+  "stderr": "",
+  "stdout": "Unable to find package: dev.fleet.sample\n"
+}

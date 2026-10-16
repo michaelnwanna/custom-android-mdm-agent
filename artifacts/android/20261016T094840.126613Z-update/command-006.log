@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "keytool",
+    "-genkeypair",
+    "-keystore",
+    "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-negative-signing-sdg7wrx7/negative.p12",
+    "-storetype",
+    "PKCS12",
+    "-storepass",
+    "android",
+    "-keypass",
+    "android",
+    "-alias",
+    "negative-lab",
+    "-keyalg",
+    "RSA",
+    "-keysize",
+    "2048",
+    "-validity",
+    "2",
+    "-dname",
+    "CN=Fleet Negative Test Only",
+    "-noprompt"
+  ],
+  "returncode": 0,
+  "seconds": 2.254,
+  "stderr": "Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 2 days\n\tfor: CN=Fleet Negative Test Only\n",
+  "stdout": ""
+}

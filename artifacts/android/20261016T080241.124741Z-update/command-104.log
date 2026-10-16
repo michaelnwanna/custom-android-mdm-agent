@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "pull",
+    "/sdcard/fleet-runtime-evidence.mp4",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T080241.124741Z-update/update.mp4"
+  ],
+  "returncode": 1,
+  "seconds": 0.609,
+  "stderr": "adb: error: failed to stat remote object '/sdcard/fleet-runtime-evidence.mp4': Input/output error\n",
+  "stdout": ""
+}

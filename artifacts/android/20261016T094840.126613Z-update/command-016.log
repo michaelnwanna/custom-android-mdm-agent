@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "emu",
+    "avd",
+    "name"
+  ],
+  "returncode": 0,
+  "seconds": 0.171,
+  "stderr": "",
+  "stdout": "Pixel_8\r\nOK\r\n"
+}

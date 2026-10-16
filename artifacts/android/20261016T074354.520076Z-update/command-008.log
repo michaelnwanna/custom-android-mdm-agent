@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "install",
+    "-r",
+    "-t",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android/20261016T074354.520076Z-update/agent-debug.apk"
+  ],
+  "returncode": 124,
+  "seconds": 30.069,
+  "stderr": "\nTimed out after 30 seconds",
+  "stdout": ""
+}

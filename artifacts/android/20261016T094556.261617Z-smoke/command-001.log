@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/local/opt/python@3.13/bin/python3.13",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tools",
+    "-p",
+    "test_android_evidence.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "seconds": 0.512,
+  "stderr": "test_accepts_current_boot_receiver_result (test_android_evidence.BootEvidenceTests.test_accepts_current_boot_receiver_result) ... ok\ntest_accepts_disabled_boot_without_launch (test_android_evidence.BootEvidenceTests.test_accepts_disabled_boot_without_launch) ... ok\ntest_exit_accepts_launcher_only_after_unlock (test_android_evidence.BootEvidenceTests.test_exit_accepts_launcher_only_after_unlock) ... ok\ntest_exit_rejects_active_lock (test_android_evidence.BootEvidenceTests.test_exit_rejects_active_lock) ... ok\ntest_exit_rejects_unknown_foreground (test_android_evidence.BootEvidenceTests.test_exit_rejects_unknown_foreground) ... ok\ntest_reboot_requires_changed_boot_identity (test_android_evidence.BootEvidenceTests.test_reboot_requires_changed_boot_identity) ... ok\ntest_rejects_previous_boot_receiver_result (test_android_evidence.BootEvidenceTests.test_rejects_previous_boot_receiver_result) ... ok\ntest_rejects_receiver_failure (test_android_evidence.BootEvidenceTests.test_rejects_receiver_failure) ... ok\ntest_rejects_wrong_persisted_intent (test_android_evidence.BootEvidenceTests.test_rejects_wrong_persisted_intent) ... ok\ntest_button_matches_label_case_and_calculates_center (test_android_evidence.EvidenceParserTests.test_button_matches_label_case_and_calculates_center) ... ok\ntest_disabled_control_is_rejected (test_android_evidence.EvidenceParserTests.test_disabled_control_is_rejected) ... ok\ntest_invalid_bounds_are_rejected (test_android_evidence.EvidenceParserTests.test_invalid_bounds_are_rejected) ... ok\ntest_locked_is_distinct_from_pinned_and_none (test_android_evidence.EvidenceParserTests.test_locked_is_distinct_from_pinned_and_none) ... ok\ntest_missing_control_is_rejected (test_android_evidence.EvidenceParserTests.test_missing_control_is_rejected) ... ok\ntest_resumed_package_ignores_other_activity_mentions (test_android_evidence.EvidenceParserTests.test_resumed_package_ignores_other_activity_mentions) ... ok\ntest_non_text_attribute_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_non_text_attribute_is_not_accepted) ... ok\ntest_waits_past_splash_for_rendered_version (test_android_evidence.EvidenceWaitTests.test_waits_past_splash_for_rendered_version) ... ok\ntest_wrong_version_is_not_accepted (test_android_evidence.EvidenceWaitTests.test_wrong_version_is_not_accepted) ... ok\ntest_missing_signer_certificate_is_rejected (test_android_evidence.NegativeFixtureTests.test_missing_signer_certificate_is_rejected) ... ok\ntest_same_signer_fixture_is_rejected (test_android_evidence.NegativeFixtureTests.test_same_signer_fixture_is_rejected) ... ok\ntest_altered_artifact_is_rejected (test_android_evidence.PreparedArtifactTests.test_altered_artifact_is_rejected) ... ok\ntest_copies_verified_artifacts_and_records_provenance (test_android_evidence.PreparedArtifactTests.test_copies_verified_artifacts_and_records_provenance) ... ok\ntest_missing_hash_is_rejected (test_android_evidence.PreparedArtifactTests.test_missing_hash_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 0.032s\n\nOK\n",
+  "stdout": ""
+}
