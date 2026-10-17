@@ -1,5 +1,9 @@
 # Recorded Tests
 
+## Android Command Decoder
+
+The [saved replay](../artifacts/android-enrollment/20261017T095439.171027Z/replay.html) and [manifest](../artifacts/android-enrollment/20261017T095439.171027Z/manifest.json) pass 30 JVM tests, application/instrumentation APK assembly and lint. Five decoder tests expand three shared valid commands and fourteen rejection mutations, plus malformed-wire, device-binding, size/integer/UUID/timestamp boundaries. All 68 Python tooling tests passed. This local snapshot used Java 21.0.8, not the hosted Java 17 runtime. No emulator, MQTT or PostgreSQL runtime was rerun; this decoder is not connected to message intake, durable storage, execution or acknowledgements. See the [decoder boundary and replay instructions](android-command-decoding.md).
+
 ## Enrolled Android MQTT
 
 The [combined replay](../artifacts/android-backend-mqtt/20261017T093610.172037Z/replay.html) and [manifest](../artifacts/android-backend-mqtt/20261017T093610.172037Z/manifest.json) pass 25 JVM tests, APK build/lint and one real API 34 enrollment/HTTPS/MQTT scenario. Independent broker proof confirms the exact issued certificate, one random roundtrip, cross-device/wildcard denials, and disabled subscription/reconnect after PostgreSQL commit propagated by a single-device test bridge. MQTT/PostgreSQL stopped cleanly and private broker credentials were removed. This is not production membership synchronization, durable processing or forced session termination; see the [runbook](android-mqtt-enrollment.md).

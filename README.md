@@ -12,9 +12,11 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [Android command decoder](docs/android-command-decoding.md) now validates shared command v1 fixtures, exact payloads, safe integers, timestamps and enrolled-device binding. Five new decoder tests bring the recorded JVM suite to 30, with APK build/lint passing. It is not yet connected to MQTT intake, Room, execution or acknowledgements.
+
 The [enrolled Android MQTT follow-up](docs/android-mqtt-enrollment.md) now passes a real API 34 Keystore mTLS roundtrip against the device-scoped broker, including cross-device/wildcard denials and rejected subscription/reconnect after committed PostgreSQL disable. Its single-device local-file membership bridge is test-only, not production synchronization or forced session termination. The combined replay records 25 JVM tests, build/lint and one instrumentation scenario; older host-only MQTT limits below retain their historical scope.
 
-The separate [device MQTT authentication lab](docs/mqtt-device-lab.md) now verifies mandatory mTLS, exact enabled certificate membership and directional per-device topic ACLs over real loopback MQTT. Thirteen host-side tests pass, including cross-device/wildcard denial, forged-client-ID isolation, live disable checks and retained suppression. Its trusted local membership file and ephemeral software-key tests are not yet connected to enrolled Android Keystore identities or PostgreSQL; production transport and lifecycle work remain open. The original anonymous Android probe diagnostic is unchanged.
+The separate [device MQTT authentication lab](docs/mqtt-device-lab.md) verifies mandatory mTLS, exact enabled certificate membership and directional per-device topic ACLs over real loopback MQTT. Fourteen host-side broker/probe tests pass, including cross-device/wildcard denial, forged-client-ID isolation, live disable checks and retained suppression. These software-key checks remain separate from the combined Android test-bridge proof above; production transport and lifecycle work remain open. The original anonymous Android probe diagnostic is unchanged.
 
 The [HTTPS mTLS identity lab](docs/device-mtls.md) now authenticates Android using its enrolled Keystore key, exact completed certificate and current PostgreSQL enabled state. API 34 instrumentation passed a real mTLS request and rejection after persisted disable. A fifth migration is required. Earlier paragraphs about unverified mTLS describe prior milestones: HTTPS identity is now scoped lab-verified; MQTT mTLS, full revocation, secure production provisioning and the fleet workflow remain open.
 
@@ -86,10 +88,10 @@ flowchart TB
 		LabService[HiveMQ client in user-started dataSync foreground service]
 	end
 
-	subgraph DeviceMqttLab["Device MQTT authentication - isolated host lab verified"]
+	subgraph DeviceMqttLab["Device MQTT authentication - host and API 34 test-bridge labs verified"]
 		SoftwareClients[Ephemeral software-key test clients]
 		DeviceLabBroker[Mandatory mTLS and directional topic ACLs]
-		LabMembership[Explicit lab certificate membership - no PostgreSQL integration]
+		LabMembership[Explicit local membership - test-only PostgreSQL bridge]
 		SoftwareClients <--> DeviceLabBroker
 		LabMembership --> DeviceLabBroker
 	end
@@ -104,6 +106,8 @@ flowchart TB
 		EnrollmentDB --> TestMembership[Test-only single-device membership propagation]
 		TestMembership --> LabMembership
 		Room[(Room inbox and outbox - planned)]
+		CommandFixtures[Shared command fixtures] --> CommandDecoder[Strict typed decoder - JVM verified; no live intake]
+		CommandDecoder -. future durable intake .-> Room
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]
 		Installer[PackageInstaller - local lab verified; release delivery planned]

@@ -22,6 +22,10 @@ android {
     namespace = "dev.fleet.agent"
     compileSdk = 34
     buildToolsVersion = "34.0.0"
+    sourceSets.getByName("test").resources.apply {
+        srcDir("../../contracts/fixtures")
+        include("commands-v1.json")
+    }
 
     defaultConfig {
         applicationId = "dev.fleet.agent"

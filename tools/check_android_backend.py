@@ -16,7 +16,7 @@ import tempfile
 import uuid
 import xml.etree.ElementTree as ET
 
-from check_android_enrollment import instrumentation_passed
+from check_android_enrollment import COMMAND_CONTRACT_INPUTS, instrumentation_passed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +70,7 @@ def main():
     sources = [*list((ROOT / "android").rglob("*")), *list((ROOT / "backend").rglob("*")),
                *list((ROOT / "tools/android-enrollment-host").rglob("*")),
                ROOT / "tools/check_android_backend.py", ROOT / "tools/test_android_backend.py",
-               ROOT / "tools/check_android_enrollment.py"]
+               ROOT / "tools/check_android_enrollment.py", *(ROOT / name for name in COMMAND_CONTRACT_INPUTS)]
     if args.with_mqtt:
         sources.extend(ROOT / "tools" / name for name in ("mqtt_device_broker.py", "mqtt_device_policy.py",
             "mqtt_android_probe.py", "test_mqtt_device_probe.py", "mqtt-lab-requirements.txt"))
@@ -140,7 +140,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in jvm:
                 jvm[name] += int(suite.get(name, "0"))
-        if jvm["tests"] < 25 or any(jvm[name] for name in ("failures", "errors", "skipped")):
+        if jvm["tests"] < 30 or any(jvm[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         shutil.copytree(results, output / "jvm-results")
         shutil.copytree(android / "agent/build/reports", output / "reports")

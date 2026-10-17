@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[1]
+COMMAND_CONTRACT_INPUTS = ("contracts/events/command-v1.schema.json", "contracts/fixtures/commands-v1.json")
 
 
 def instrumentation_passed(text):
@@ -34,7 +35,8 @@ def main():
     output = ROOT / "artifacts/android-enrollment" / started.strftime("%Y%m%dT%H%M%S.%fZ")
     output.mkdir(parents=True)
     hashes = {}
-    for source in sorted((ROOT / "android").rglob("*")):
+    sources = [*list((ROOT / "android").rglob("*")), *(ROOT / name for name in COMMAND_CONTRACT_INPUTS)]
+    for source in sorted(sources):
         relative = source.relative_to(ROOT)
         if not source.is_file() or {"build", ".gradle", ".kotlin"}.intersection(relative.parts):
             continue
@@ -84,7 +86,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in counters:
                 counters[name] += int(suite.get(name, "0"))
-        if counters["tests"] < 22 or any(counters[name] for name in ("failures", "errors", "skipped")):
+        if counters["tests"] < 30 or any(counters[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         for source in (working / "agent/build/reports").rglob("*"):
             if source.is_file():
@@ -121,7 +123,7 @@ def main():
                 "result": "passed" if passed else "failed", "error": error, "commands": records,
                 "inputSha256": hashes, "apkSha256": apk_hashes, "jvmCounters": counters, "serial": args.serial,
                 "expectedAvd": args.expected_avd,
-                "scope": "Android JVM crypto/parser/loopback enrollment and mTLS, APK build/lint; optional isolated real Keystore instrumentation. No combined ASP.NET/PostgreSQL/device runtime, MQTT mTLS, process restart or power-loss proof.",
+                "scope": "Android JVM crypto/parser/loopback enrollment and mTLS, strict command decoding against shared fixtures, APK build/lint; optional isolated real Keystore instrumentation. No command intake/execution/persistence, combined ASP.NET/PostgreSQL/device runtime, MQTT runtime, process restart or power-loss proof.",
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}
