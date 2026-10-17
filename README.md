@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [persisted WorkManager recovery probe](docs/android-scheduler-recovery.md) now survives a host-issued app force-stop with verified old-PID absence, then completes the same work ID in an explicitly relaunched new process with real first-backoff timing. Three recovery phases, both prior scheduler scenarios, 42 JVM tests/build/lint and all 76 tooling tests pass. This debug-only no-credential proof is not autonomous dead-process/JobScheduler-only delivery, reboot recovery or real event recovery; earlier paragraphs retain their milestone scope.
+
 The [actual WorkManager scheduler probe](docs/android-event-scheduler.md) now verifies first-backoff retry timing with the same persisted work ID, unique `KEEP` deduplication and delayed-work cancellation on API 34. Both scheduler scenarios, all six worker regressions, 42 JVM tests/build/lint and 74 tooling tests pass. The debug-only probe never accesses enrollment keys or the event journal. Foreground instrumentation permits GreedyScheduler; JobScheduler-only event delivery, constraint transitions and reboot recovery remain unverified.
 
 The [bounded background event worker](docs/android-event-worker.md) now uses unique connected-network WorkManager jobs, twenty-event batches, five attempts with exponential backoff, a fifteen-second request cancellation deadline and authenticated deletion. Six API 34 worker-body/TLS scenarios, a real Keystore/PostgreSQL worker-body replay and five acknowledgement regressions pass; all 42 JVM and 74 tooling tests pass. Scheduling/enrollment/startup hooks are implemented, but actual OS backoff, stop/resume and reboot dispatch remain unverified. Earlier absent-worker statements below describe historical milestones.
@@ -84,6 +86,7 @@ flowchart TB
 		RecoveredAck --> EventHttp
 		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified] --> EventHttp
 		WorkerSchedule[Unique connected WorkManager scheduling - configured; first-backoff debug probe verified] --> EventWorker[Bounded worker body - API 34 and Keystore/PostgreSQL verified]
+		RecoveryProbe[Debug probe only - same-ID work after force-stop and explicit new-process relaunch verified] -.-> WorkerSchedule
 		EventWorker --> AndroidEventUpload
 		EventHttp --> AndroidEventUpload
 		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "probe": "8680bf54-8f7b-4132-a22e-125b743de5e5",
+  "workId": "e625e1b7-d859-4b8e-8a29-cfe1353f24fb",
+  "preparedProcessId": 2154,
+  "recoveredProcessId": 2209,
+  "state": "SUCCEEDED",
+  "first": {
+    "attempt": 0,
+    "elapsedMillis": 247959,
+    "workId": "e625e1b7-d859-4b8e-8a29-cfe1353f24fb",
+    "processId": 2209
+  },
+  "second": {
+    "attempt": 1,
+    "elapsedMillis": 277976,
+    "workId": "e625e1b7-d859-4b8e-8a29-cfe1353f24fb",
+    "processId": 2209
+  }
+}

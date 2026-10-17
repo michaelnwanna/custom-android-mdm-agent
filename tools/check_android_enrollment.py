@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import uuid
 import xml.etree.ElementTree as ET
 
 
@@ -27,6 +28,68 @@ def instrumentation_passed(text, expected_tests=1):
             and "FAILURES" not in text and "INSTRUMENTATION_FAILED" not in text)
 
 
+def verify_recovery_proof(prepared, recovered, nonce):
+    if (type(prepared.get("schemaVersion")) is not int or prepared["schemaVersion"] != 1
+            or type(recovered.get("schemaVersion")) is not int or recovered["schemaVersion"] != 1
+            or prepared.get("probe") != nonce or recovered.get("probe") != nonce
+            or str(uuid.UUID(prepared["workId"])) != prepared["workId"]
+            or recovered.get("workId") != prepared["workId"] or recovered.get("state") != "SUCCEEDED"
+            or type(prepared.get("processId")) is not int or prepared["processId"] <= 0
+            or type(recovered.get("preparedProcessId")) is not int or recovered["preparedProcessId"] != prepared["processId"]
+            or type(recovered.get("recoveredProcessId")) is not int or recovered["recoveredProcessId"] <= 0
+            or recovered["recoveredProcessId"] == prepared["processId"]):
+        raise ValueError("Persisted work/process recovery proof missing")
+    for attempt, name in enumerate(("first", "second")):
+        record = recovered.get(name, {})
+        if (type(record.get("attempt")) is not int or record["attempt"] != attempt
+                or record.get("workId") != prepared["workId"]
+                or type(record.get("processId")) is not int or record["processId"] != recovered["recoveredProcessId"]
+                or type(record.get("elapsedMillis")) is not int):
+            raise ValueError("Recovered attempt proof missing")
+    if recovered["second"]["elapsedMillis"] - recovered["first"]["elapsedMillis"] < 29000:
+        raise ValueError("Recovered retry backoff missing")
+
+
+def run_process_recovery(command, adb, output):
+    nonce = str(uuid.uuid4())
+    fixture = f"no_backup/scheduler-probe-{nonce}"
+
+    def phase(method):
+        text = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "probe", nonce,
+                        "-e", "class", "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#" + method,
+                        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 140)
+        if not instrumentation_passed(text):
+            raise RuntimeError("Recovery phase did not explicitly pass")
+
+    original_failure = None
+    try:
+        phase("preparePersistedWorkBeforeHostForceStop")
+        prepared = json.loads(command([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat", fixture + "/prepared.json"], 30))
+        if type(prepared.get("processId")) is not int or prepared["processId"] <= 0:
+            raise ValueError("Prepared process ID missing")
+        (output / "recovery-prepared.json").write_text(json.dumps(prepared, indent=2) + "\n")
+        command([*adb, "shell", "am", "force-stop", "dev.fleet.agent"], 30)
+        command([*adb, "shell", "test", "!", "-d", f"/proc/{prepared['processId']}"], 30)
+        (output / "process-stop-verification.json").write_text(json.dumps(
+            {"schemaVersion": 1, "probe": nonce, "preparedProcessId": prepared["processId"],
+             "forceStopIssued": True, "oldProcessAbsent": True, "explicitRelaunch": True}, indent=2) + "\n")
+        phase("resumePersistedWorkAfterHostVerifiedForceStop")
+        recovered = json.loads(command([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat", fixture + "/verified.json"], 30))
+        verify_recovery_proof(prepared, recovered, nonce)
+        (output / "recovery-verified.json").write_text(json.dumps(recovered, indent=2) + "\n")
+    except Exception as failure:
+        original_failure = failure
+        raise
+    finally:
+        try:
+            phase("cleanupOnlyThisRecoveryProbe")
+            command([*adb, "shell", "run-as", "dev.fleet.agent", "test", "!", "-d", fixture], 30)
+        except Exception as cleanup_failure:
+            if original_failure is not None:
+                raise RuntimeError(f"{original_failure}; recovery probe cleanup also failed") from cleanup_failure
+            raise
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--serial")
@@ -35,17 +98,19 @@ def main():
     parser.add_argument("--event-acknowledgements", action="store_true", help="Run five isolated SQLite/TLS acknowledgement deletion scenarios")
     parser.add_argument("--event-worker", action="store_true", help="Run six isolated SQLite/TLS WorkManager worker scenarios")
     parser.add_argument("--event-scheduler", action="store_true", help="Run two actual WorkManager dispatch/backoff/cancellation probe scenarios")
+    parser.add_argument("--scheduler-recovery", action="store_true", help="Verify persisted probe work across app force-stop and explicit relaunch")
     args = parser.parse_args()
     if bool(args.serial) != bool(args.expected_avd):
         parser.error("--serial and --expected-avd must be supplied together")
     if args.serial and not args.serial.startswith("emulator-"):
         parser.error("Only an explicitly named disposable emulator is supported")
-    if (args.command_journal or args.event_acknowledgements or args.event_worker or args.event_scheduler) and not args.serial:
+    if (args.command_journal or args.event_acknowledgements or args.event_worker or args.event_scheduler or args.scheduler_recovery) and not args.serial:
         parser.error("Journal scenarios require an explicit emulator and expected AVD")
-    if sum((args.command_journal, args.event_acknowledgements, args.event_worker, args.event_scheduler)) > 1:
+    if sum((args.command_journal, args.event_acknowledgements, args.event_worker, args.event_scheduler, args.scheduler_recovery)) > 1:
         parser.error("Choose one isolated journal suite")
     started = datetime.datetime.now(datetime.timezone.utc)
-    output = ROOT / ("artifacts/android-event-scheduler" if args.event_scheduler else
+    output = ROOT / ("artifacts/android-scheduler-recovery" if args.scheduler_recovery else
+                     "artifacts/android-event-scheduler" if args.event_scheduler else
                      "artifacts/android-event-worker" if args.event_worker else
                      "artifacts/android-event-acknowledgements" if args.event_acknowledgements else
                      "artifacts/android-command-journal" if args.command_journal else "artifacts/android-enrollment") / started.strftime("%Y%m%dT%H%M%S.%fZ")
@@ -130,11 +195,14 @@ def main():
                           "EventUploadWorkerInstrumentedTest" if args.event_worker else
                           "EventAcknowledgementInstrumentedTest" if args.event_acknowledgements else
                           "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest")
-            result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
-                              "dev.fleet.agent." + test_class,
-                              "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 120)
-            if not instrumentation_passed(result, 2 if args.event_scheduler else 6 if args.event_worker or args.command_journal else 5 if args.event_acknowledgements else 1):
-                raise RuntimeError("Instrumentation did not explicitly pass")
+            if args.scheduler_recovery:
+                run_process_recovery(command, adb, output)
+            else:
+                result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
+                                  "dev.fleet.agent." + test_class,
+                                  "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 120)
+                if not instrumentation_passed(result, 2 if args.event_scheduler else 6 if args.event_worker or args.command_journal else 5 if args.event_acknowledgements else 1):
+                    raise RuntimeError("Instrumentation did not explicitly pass")
         passed = True
     except Exception as failure:
         error = str(failure)
@@ -147,7 +215,9 @@ def main():
                 "eventAcknowledgementsRequested": args.event_acknowledgements,
                 "eventWorkerRequested": args.event_worker,
                 "eventSchedulerRequested": args.event_scheduler,
-                "scope": ("Two actual API34 WorkManager debug-probe scheduling scenarios: real dispatch, persisted same-ID retry after exponential 30-second backoff, unique KEEP deduplication, cancellation of delayed work without dispatch. No forced run/test clock, production identity/journal access or database reset. Foreground instrumentation permits GreedyScheduler; not proof of JobScheduler-only dispatch, constraints, in-flight event-worker OS cancellation, process death or reboot recovery." if args.event_scheduler else
+                "schedulerRecoveryRequested": args.scheduler_recovery,
+                "scope": ("API34 persisted debug-probe WorkManager recovery across host-issued app force-stop with verified old PID absence, then explicit instrumentation relaunch/new PID; same work ID, attempts 0/1, real first backoff, terminal cleanup. No enqueue on resume, test clock, production identity/journal reset or forced scheduler run. Force-stop prevents autonomous execution until relaunch; foreground GreedyScheduler possible. Not automatic dead-process/JobScheduler-only delivery, reboot or actual event recovery." if args.scheduler_recovery else
+                    "Two actual API34 WorkManager debug-probe scheduling scenarios: real dispatch, persisted same-ID retry after exponential 30-second backoff, unique KEEP deduplication, cancellation of delayed work without dispatch. No forced run/test clock, production identity/journal access or database reset. Foreground instrumentation permits GreedyScheduler; not proof of JobScheduler-only dispatch, constraints, in-flight event-worker OS cancellation, process death or reboot recovery." if args.event_scheduler else
                     "Six API34 SQLite/software-key loopback mTLS worker-body/request-policy scenarios: bounded batch continuation, transient replay, permanent/exhausted failures retain rows, stop callback cancellation, slow-response deadline and WorkManager network/backoff/input configuration. No actual OS-scheduled backoff/cancel/reboot, real Keystore/backend, process kill or power loss." if args.event_worker else
                     "Five real SQLite/software-key loopback mTLS acknowledgement deletion scenarios: exact-row deletion, retained inbox/dedup after reopen, rejected replies preserve rows, delete failure rollback/retry, concurrent duplicate uploads and changed in-flight row preservation. No backend, real Keystore, worker, process kill or power loss." if args.event_acknowledgements else
                     "Android JVM crypto/parser/loopback enrollment/mTLS and command/event encoding, APK build/lint; optional explicit emulator: six isolated Room receipt/outbox scenarios when commandJournalRequested, otherwise one Keystore scenario. No live command intake, execution, acknowledgement deletion, broker/backend runtime, process-kill or power-loss proof."),

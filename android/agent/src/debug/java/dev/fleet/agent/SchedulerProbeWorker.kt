@@ -16,7 +16,8 @@ class SchedulerProbeWorker(context: Context, parameters: WorkerParameters) : Wor
         val record = File(directory, "attempt-$runAttemptCount.json")
         if (!record.createNewFile()) return Result.failure()
         record.writeText(JSONObject().put("attempt", runAttemptCount)
-            .put("elapsedMillis", SystemClock.elapsedRealtime()).put("workId", id.toString()).toString())
+            .put("elapsedMillis", SystemClock.elapsedRealtime()).put("workId", id.toString())
+            .put("processId", android.os.Process.myPid()).toString())
         return if (runAttemptCount == 0) Result.retry() else Result.success()
     }
 }

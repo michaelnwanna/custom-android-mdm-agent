@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "run-as",
+    "dev.fleet.agent",
+    "test",
+    "!",
+    "-d",
+    "no_backup/scheduler-probe-f3e1cd25-aca3-431c-9e29-181df8d0eda0"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

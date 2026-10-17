@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "probe",
+    "f3e1cd25-aca3-431c-9e29-181df8d0eda0",
+    "-e",
+    "class",
+    "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#cleanupOnlyThisRecoveryProbe",
+    "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "returncode": 0,
+  "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventSchedulerRecoveryInstrumentedTest:\nINSTRUMENTATION_STATUS: test=cleanupOnlyThisRecoveryProbe\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=cleanupOnlyThisRecoveryProbe\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 0.041\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+  "stderr": ""
+}

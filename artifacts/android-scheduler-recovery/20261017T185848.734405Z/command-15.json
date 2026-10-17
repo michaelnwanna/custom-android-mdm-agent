@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "probe",
+    "8680bf54-8f7b-4132-a22e-125b743de5e5",
+    "-e",
+    "class",
+    "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#resumePersistedWorkAfterHostVerifiedForceStop",
+    "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "returncode": 0,
+  "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventSchedulerRecoveryInstrumentedTest:\nINSTRUMENTATION_STATUS: test=resumePersistedWorkAfterHostVerifiedForceStop\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=resumePersistedWorkAfterHostVerifiedForceStop\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 73.592\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+  "stderr": ""
+}
