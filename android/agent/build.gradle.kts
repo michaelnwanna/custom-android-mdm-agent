@@ -31,7 +31,7 @@ android {
     buildToolsVersion = "34.0.0"
     sourceSets.getByName("test").resources.apply {
         srcDir("../../contracts/fixtures")
-        include("commands-v1.json", "command-events-v1.json")
+        include("commands-v1.json", "command-events-v1.json", "event-acks-v1.json")
     }
 
     defaultConfig {

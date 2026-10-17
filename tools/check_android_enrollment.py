@@ -14,7 +14,8 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMAND_CONTRACT_INPUTS = ("contracts/events/command-v1.schema.json", "contracts/fixtures/commands-v1.json",
-                           "contracts/events/command-event-v1.schema.json", "contracts/fixtures/command-events-v1.json")
+                           "contracts/events/command-event-v1.schema.json", "contracts/fixtures/command-events-v1.json",
+                           "contracts/events/event-ack-v1.schema.json", "contracts/fixtures/event-acks-v1.json")
 
 
 def instrumentation_passed(text, expected_tests=1):
@@ -93,7 +94,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in counters:
                 counters[name] += int(suite.get(name, "0"))
-        if counters["tests"] < 32 or any(counters[name] for name in ("failures", "errors", "skipped")):
+        if counters["tests"] < 37 or any(counters[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         for source in (working / "agent/build/reports").rglob("*"):
             if source.is_file():

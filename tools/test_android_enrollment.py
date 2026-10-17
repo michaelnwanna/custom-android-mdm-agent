@@ -1,9 +1,14 @@
 import unittest
 
-from check_android_enrollment import instrumentation_passed
+from check_android_enrollment import COMMAND_CONTRACT_INPUTS, instrumentation_passed
 
 
 class EnrollmentEvidenceTests(unittest.TestCase):
+    def test_command_snapshots_include_original_acknowledgement_schema_and_fixture(self):
+        self.assertIn("contracts/events/event-ack-v1.schema.json", COMMAND_CONTRACT_INPUTS)
+        self.assertIn("contracts/fixtures/event-acks-v1.json", COMMAND_CONTRACT_INPUTS)
+        self.assertEqual(len(COMMAND_CONTRACT_INPUTS), len(set(COMMAND_CONTRACT_INPUTS)))
+
     def test_requires_exact_positive_instrumentation_count(self):
         self.assertTrue(instrumentation_passed("OK (6 tests)\nINSTRUMENTATION_CODE: -1\n", 6))
         for count in (0, -1, True, "6", 1, 5, 7):

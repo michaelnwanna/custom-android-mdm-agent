@@ -1,5 +1,7 @@
 # Command Event HTTPS Ingestion
 
+Android follow-up: the [one-event upload component and strict acknowledgement decoder](android-event-upload.md) now have separate JVM TLS verification. They are not called by a Room upload worker; Android-to-backend Keystore runtime and outbox deletion remain unimplemented. Earlier absent-client statements below retain their historical scope.
+
 `POST /api/v1/device/command-events` accepts one command-state event under the existing [device certificate policy](device-mtls.md). The [endpoint](../backend/src/FleetManagement.Api/CommandEventEndpoints.cs) delegates to [durable PostgreSQL ingestion](backend-event-ingestion.md) and returns the stored acknowledgement JSON unchanged, only after the ingestion operation commits. This is an HTTPS lab path, not MQTT ingestion or an Android publisher.
 
 ```mermaid

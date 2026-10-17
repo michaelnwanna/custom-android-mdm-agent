@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [Android event upload component](docs/android-event-upload.md) now posts one stored event using the enrolled HTTPS key manager and pinned root, then strictly validates the acknowledgement's device/event binding. Five new JVM tests bring the snapshot to 37 with APK build/lint passing; all 71 tooling tests pass. It is not wired to a scheduler or Room mutation; Android Keystore-to-backend event runtime and outbox deletion remain unverified.
+
 The [certificate-authenticated event HTTPS endpoint](docs/command-event-http.md) now accepts one bounded command-state event and delivers its exact committed acknowledgement. Real loopback Kestrel TLS/PostgreSQL tests verify enrolled certificate membership, duplicate recovery, rollback/retry and disabled access. Final verification passes 158 component tests, 15 PostgreSQL tests, ten contract checks and 70 tooling tests. Android upload/acknowledgement validation and outbox deletion remain planned; this is not MQTT ingestion or full fleet acceptance.
 
 The [durable backend event library](docs/backend-event-ingestion.md) now verifies trusted command ownership, commits each event with its original acknowledgement, and recovers that exact acknowledgement on duplicate delivery and actual PostgreSQL restart. All six migrations are required. Final local verification passes 15 PostgreSQL tests, 154 component tests and 69 tooling tests. Network ingestion, acknowledgement delivery, Android outbox deletion and command lifecycle projection remain unimplemented.
@@ -72,6 +74,7 @@ flowchart TB
 		EventDecode[Strict device-bound event decoder] --> EventStore
 		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
 		RecoveredAck --> EventHttp
+		AndroidEventUpload[Android uploader and matching ack decoder - JVM TLS verified; caller integration planned] --> EventHttp
 	end
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]

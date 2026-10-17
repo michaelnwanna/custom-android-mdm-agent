@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [Android acknowledgement consumer](../docs/android-event-upload.md) now uses the shared event-ack v1 fixture, strict bounded UTF-8/JSON, exact numeric version and expected device/event binding. Its one-event HTTPS transport is JVM TLS verified; it does not delete Room rows or establish combined Android/backend runtime. Historical absent-consumer statements below describe earlier milestones.
+
 The [event HTTPS operation](../docs/command-event-http.md) now declares and consumes one command-state event under enrolled device-certificate authentication, returning the original event-ack v1 only after durable acceptance. Ten contract checks include the operation's security/schema/status rules. Local software-key Kestrel TLS/PostgreSQL verification is separate from those schema checks; Android response validation/deletion and MQTT ingestion are not implemented.
 
 The [PostgreSQL event library](../docs/backend-event-ingestion.md) now checks trusted command ownership and generates/stores the event acknowledgement v1 shape with the event before returning it. Duplicate ingestion recovers the original acknowledgement; 15 local database tests include actual restart recovery. This is not network acknowledgement delivery or Android outbox deletion. Earlier absent-ingestion statements below retain their historical scope.
@@ -32,7 +34,9 @@ flowchart LR
     Fixtures --> EventDecoder[Backend command-state decoder - component verified]
     EventDecoder --> EventStore[Owned event and original acknowledgement commit - PostgreSQL verified]
     EventStore --> HttpsAck[Exact HTTPS acknowledgement - TLS / PostgreSQL verified]
-    HttpsAck -. Android validation planned .-> Device
+    HttpsAck -. Android integration planned .-> Device
+    Fixtures --> AckDecoder[Android matching acknowledgement decoder - JVM verified]
+    HttpsAck -. combined runtime planned .-> AckDecoder
 ```
 
 ## Wire Rules
