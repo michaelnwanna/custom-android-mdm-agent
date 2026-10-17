@@ -34,17 +34,19 @@ def main():
     parser.add_argument("--command-journal", action="store_true", help="Run six isolated SQLite journal scenarios on the explicit emulator")
     parser.add_argument("--event-acknowledgements", action="store_true", help="Run five isolated SQLite/TLS acknowledgement deletion scenarios")
     parser.add_argument("--event-worker", action="store_true", help="Run six isolated SQLite/TLS WorkManager worker scenarios")
+    parser.add_argument("--event-scheduler", action="store_true", help="Run two actual WorkManager dispatch/backoff/cancellation probe scenarios")
     args = parser.parse_args()
     if bool(args.serial) != bool(args.expected_avd):
         parser.error("--serial and --expected-avd must be supplied together")
     if args.serial and not args.serial.startswith("emulator-"):
         parser.error("Only an explicitly named disposable emulator is supported")
-    if (args.command_journal or args.event_acknowledgements or args.event_worker) and not args.serial:
+    if (args.command_journal or args.event_acknowledgements or args.event_worker or args.event_scheduler) and not args.serial:
         parser.error("Journal scenarios require an explicit emulator and expected AVD")
-    if sum((args.command_journal, args.event_acknowledgements, args.event_worker)) > 1:
+    if sum((args.command_journal, args.event_acknowledgements, args.event_worker, args.event_scheduler)) > 1:
         parser.error("Choose one isolated journal suite")
     started = datetime.datetime.now(datetime.timezone.utc)
-    output = ROOT / ("artifacts/android-event-worker" if args.event_worker else
+    output = ROOT / ("artifacts/android-event-scheduler" if args.event_scheduler else
+                     "artifacts/android-event-worker" if args.event_worker else
                      "artifacts/android-event-acknowledgements" if args.event_acknowledgements else
                      "artifacts/android-command-journal" if args.command_journal else "artifacts/android-enrollment") / started.strftime("%Y%m%dT%H%M%S.%fZ")
     output.mkdir(parents=True)
@@ -124,13 +126,14 @@ def main():
             command([*adb, "shell", "dpm", "list-owners"], 30)
             for apk in apks:
                 command([*adb, "install", "-r", "-t", apk], 120)
-            test_class = ("EventUploadWorkerInstrumentedTest" if args.event_worker else
+            test_class = ("EventSchedulerInstrumentedTest" if args.event_scheduler else
+                          "EventUploadWorkerInstrumentedTest" if args.event_worker else
                           "EventAcknowledgementInstrumentedTest" if args.event_acknowledgements else
                           "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest")
             result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
                               "dev.fleet.agent." + test_class,
                               "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 120)
-            if not instrumentation_passed(result, 6 if args.event_worker or args.command_journal else 5 if args.event_acknowledgements else 1):
+            if not instrumentation_passed(result, 2 if args.event_scheduler else 6 if args.event_worker or args.command_journal else 5 if args.event_acknowledgements else 1):
                 raise RuntimeError("Instrumentation did not explicitly pass")
         passed = True
     except Exception as failure:
@@ -143,7 +146,9 @@ def main():
                 "commandJournalRequested": args.command_journal,
                 "eventAcknowledgementsRequested": args.event_acknowledgements,
                 "eventWorkerRequested": args.event_worker,
-                "scope": ("Six API34 SQLite/software-key loopback mTLS worker-body/request-policy scenarios: bounded batch continuation, transient replay, permanent/exhausted failures retain rows, stop callback cancellation, slow-response deadline and WorkManager network/backoff/input configuration. No actual OS-scheduled backoff/cancel/reboot, real Keystore/backend, process kill or power loss." if args.event_worker else
+                "eventSchedulerRequested": args.event_scheduler,
+                "scope": ("Two actual API34 WorkManager debug-probe scheduling scenarios: real dispatch, persisted same-ID retry after exponential 30-second backoff, unique KEEP deduplication, cancellation of delayed work without dispatch. No forced run/test clock, production identity/journal access or database reset. Foreground instrumentation permits GreedyScheduler; not proof of JobScheduler-only dispatch, constraints, in-flight event-worker OS cancellation, process death or reboot recovery." if args.event_scheduler else
+                    "Six API34 SQLite/software-key loopback mTLS worker-body/request-policy scenarios: bounded batch continuation, transient replay, permanent/exhausted failures retain rows, stop callback cancellation, slow-response deadline and WorkManager network/backoff/input configuration. No actual OS-scheduled backoff/cancel/reboot, real Keystore/backend, process kill or power loss." if args.event_worker else
                     "Five real SQLite/software-key loopback mTLS acknowledgement deletion scenarios: exact-row deletion, retained inbox/dedup after reopen, rejected replies preserve rows, delete failure rollback/retry, concurrent duplicate uploads and changed in-flight row preservation. No backend, real Keystore, worker, process kill or power loss." if args.event_acknowledgements else
                     "Android JVM crypto/parser/loopback enrollment/mTLS and command/event encoding, APK build/lint; optional explicit emulator: six isolated Room receipt/outbox scenarios when commandJournalRequested, otherwise one Keystore scenario. No live command intake, execution, acknowledgement deletion, broker/backend runtime, process-kill or power-loss proof."),
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()

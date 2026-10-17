@@ -1,5 +1,7 @@
 # Bounded Background Event Delivery
 
+Follow-up: the [actual scheduler probe](android-event-scheduler.md) now verifies first-backoff timing, same-ID retry, unique `KEEP` and cancellation before dispatch using real WorkManager and a no-credential debug worker. Earlier absent-scheduler-proof statements below describe this worker-body milestone. JobScheduler-only real event delivery, constraints, OS-driven in-flight cancellation and reboot recovery remain unverified; the probe does not access the default identity or journal.
+
 [EventUploadWorker](../android/agent/src/main/java/dev/fleet/agent/EventUploadWorker.kt) now provides a WorkManager-backed event delivery path. Scheduling/lifecycle hooks are implemented; the worker body is API 34 verified against SQLite/TLS and the enrolled Keystore/PostgreSQL lab. OS scheduling/backoff timing, reboot resumption and OS-driven stop callbacks remain unverified. This is not full offline fleet acceptance or a production command receiver.
 
 ```mermaid

@@ -1,0 +1,18 @@
+{
+  "schema": "events/event-ack-v1.schema.json",
+  "valid": [
+    {
+      "schemaVersion": 1,
+      "deviceId": "a75df51f-ce19-40b7-8370-2c1a745bc823",
+      "eventId": "ec648da6-0fde-4239-9305-2026e89d5911",
+      "receivedAt": "2026-10-16T12:01:01Z"
+    }
+  ],
+  "invalid": [
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "missing event id", "base": 0, "remove": ["eventId"]},
+    {"name": "invalid device id", "base": 0, "set": {"deviceId": "not-a-uuid"}},
+    {"name": "invalid receipt timestamp", "base": 0, "set": {"receivedAt": "2026-99-99T00:00:00Z"}},
+    {"name": "unknown field", "base": 0, "set": {"commandSucceeded": true}}
+  ]
+}

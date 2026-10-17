@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.DeviceIdentityTransportTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-17T18:44:10" hostname="Michaels-MacBook-Pro.local" time="0.638">
+  <properties/>
+  <testcase name="realTlsPresentsClientCertificateAndRejectsRedirectsMalformedIdentityAndOversize" classname="dev.fleet.agent.DeviceIdentityTransportTest" time="0.62"/>
+  <testcase name="clientKeyManagerDoesNotOfferWrongAlgorithmsIssuersOrServerKeys" classname="dev.fleet.agent.DeviceIdentityTransportTest" time="0.017"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
