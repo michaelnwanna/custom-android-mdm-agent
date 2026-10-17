@@ -1,0 +1,33 @@
+2026-10-17 14:46:43.966 EAT [85087] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 14:46:43.967 EAT [85087] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-kru2670m/.s.PGSQL.5432"
+2026-10-17 14:46:43.978 EAT [85091] LOG:  database system was shut down at 2026-10-17 14:46:43 EAT
+2026-10-17 14:46:43.987 EAT [85087] LOG:  database system is ready to accept connections
+2026-10-17 14:46:44.228 EAT [85097] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:46:44.228 EAT [85097] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:46:45.599 EAT [85107] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:46:45.599 EAT [85107] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:46:46.129 EAT [85114] ERROR:  new row for relation "PendingEnrollments" violates check constraint "CK_Enrollment_Completion"
+2026-10-17 14:46:46.129 EAT [85114] DETAIL:  Failing row contains (d757ee87-d203-4bb7-96ed-c86d7646a9d1, 96a3e8d0b60ee9d9fd6ef78c8d97c54431e6de5e7b7a525eb7d9dd95ae640517, 2026-10-16 15:00:00+03, 2026-10-16 15:05:00+03, 15121539-9758-4a68-8147-2be91f2ea5bd, e0cd3f9a-1eed-46e8-b053-b86b8f80c154, 16db0b7502045bc6f6c53da21e99c2f9e6ff4909532b05f088c51053dd1d4056, MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEBABqGDh1Ph9vhGQdr0m3YynDBL15..., 2026-10-16 15:00:00+03, {"schemaVersion":1,"deviceId":"a7c5e72b-c035-4552-a3e6-5406aba82..., f, f).
+2026-10-17 14:46:46.129 EAT [85114] STATEMENT:  UPDATE "PendingEnrollments" SET "CompletedResponseJson" = $1 WHERE "Id" = $2
+2026-10-17 14:46:46.222 EAT [85120] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:46:46.222 EAT [85120] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:46:47.691 EAT [85130] ERROR:  test event insertion failure
+2026-10-17 14:46:47.691 EAT [85130] CONTEXT:  PL/pgSQL function reject_test_event() line 2 at RAISE
+2026-10-17 14:46:47.691 EAT [85130] STATEMENT:  INSERT INTO "StoredCommandEvents" ("EventId", "AcknowledgementJson", "CommandId", "ContentJson", "CorrelationId", "DeviceId")
+	VALUES ($1, $2, $3, $4, $5, $6)
+2026-10-17 14:46:47.747 EAT [85128] ERROR:  insert or update on table "StoredCommandEvents" violates foreign key constraint "FK_StoredCommandEvents_CommandEventOwnerships_CommandId_Device~"
+2026-10-17 14:46:47.747 EAT [85128] DETAIL:  Key (CommandId, DeviceId, CorrelationId)=(673bf8ad-55ef-4acf-b410-02ea6f179180, 1a3f75d9-f5c3-4e00-867f-96bba84a2a0a, 2eccca20-31a0-4ed8-92f3-4f9f57e2cf40) is not present in table "CommandEventOwnerships".
+2026-10-17 14:46:47.747 EAT [85128] STATEMENT:  UPDATE "StoredCommandEvents" SET "CorrelationId" = $1 WHERE "EventId" = $2
+2026-10-17 14:46:54.540 EAT [85087] LOG:  received fast shutdown request
+2026-10-17 14:46:54.540 EAT [85087] LOG:  aborting any active transactions
+2026-10-17 14:46:54.541 EAT [85087] LOG:  background worker "logical replication launcher" (PID 85094) exited with exit code 1
+2026-10-17 14:46:54.541 EAT [85089] LOG:  shutting down
+2026-10-17 14:46:54.542 EAT [85089] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 14:46:54.567 EAT [85089] LOG:  checkpoint complete: wrote 77 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.011 s, total=0.026 s; sync files=104, longest=0.001 s, average=0.001 s; distance=697 kB, estimate=697 kB; lsn=0/1737578, redo lsn=0/1737578
+2026-10-17 14:46:54.575 EAT [85087] LOG:  database system is shut down

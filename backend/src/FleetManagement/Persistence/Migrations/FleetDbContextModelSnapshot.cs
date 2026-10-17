@@ -116,11 +116,82 @@ namespace FleetManagement.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FleetManagement.Messaging.CommandEventOwnership", b =>
+                {
+                    b.Property<Guid>("CommandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CommandId");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.ToTable("CommandEventOwnerships", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Messaging.StoredCommandEvent", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AcknowledgementJson")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<Guid>("CommandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasMaxLength(16384)
+                        .HasColumnType("character varying(16384)");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("EventId");
+
+                    b.HasIndex("CommandId", "DeviceId", "CorrelationId");
+
+                    b.ToTable("StoredCommandEvents", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
                 {
                     b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
                         .WithMany()
                         .HasForeignKey("PendingEnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Messaging.CommandEventOwnership", b =>
+                {
+                    b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Messaging.StoredCommandEvent", b =>
+                {
+                    b.HasOne("FleetManagement.Messaging.CommandEventOwnership", null)
+                        .WithMany()
+                        .HasForeignKey("CommandId", "DeviceId", "CorrelationId")
+                        .HasPrincipalKey("CommandId", "DeviceId", "CorrelationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

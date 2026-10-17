@@ -1,7 +1,10 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.Json;
 using FleetManagement.Enrollment;
+using FleetManagement.Messaging;
 using FleetManagement.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -83,6 +86,15 @@ public sealed class EnrollmentRestartTests
             using var leaf = request.Create(root, now.AddMinutes(-1), now.AddDays(1), RandomNumberGenerator.GetBytes(16));
             var completed = await service.CompleteAsync(token.Credential.PendingEnrollmentId, claimed.OperationId!.Value,
                 Convert.ToBase64String(leaf.RawData), [], root, TimeSpan.FromDays(2));
+            var commandId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            var eventId = Guid.NewGuid();
+            var events = new PostgresCommandEvents(factory, clock);
+            await events.RegisterOwnershipAsync(commandId, claimed.DeviceId.Value, correlationId);
+            var eventBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { schemaVersion = 1, eventId, commandId,
+                deviceId = claimed.DeviceId.Value, correlationId, recordedAt = "2026-10-16T12:00:00Z", state = "received" }));
+            var committedEvent = await events.IngestAsync(eventBody, claimed.DeviceId.Value);
+            Assert.False(committedEvent.Duplicate);
 
             NpgsqlConnection.ClearAllPools();
             var processInfo = new ProcessStartInfo(Path.Combine(binaryDirectory!, "pg_ctl"))
@@ -124,6 +136,14 @@ public sealed class EnrollmentRestartTests
                     "The restarted cluster must preserve private networking and durability settings.");
             }
             var reopened = new PostgresEnrollmentClaims(factory, clock);
+            var recoveredEvent = await new PostgresCommandEvents(factory, clock).IngestAsync(eventBody, claimed.DeviceId.Value);
+            Assert.True(recoveredEvent.Duplicate);
+            Assert.Equal(committedEvent.AcknowledgementJson, recoveredEvent.AcknowledgementJson);
+            await using (var context = factory.CreateDbContext())
+            {
+                Assert.Equal(1, await context.StoredCommandEvents.CountAsync());
+                Assert.Equal(1, await context.CommandEventOwnerships.CountAsync());
+            }
             Assert.False(await reopened.TryBeginSigningAsync(uncertainToken.Credential.PendingEnrollmentId,
                 uncertainClaim.OperationId.Value));
             var uncertainWork = await reopened.ReadSigningWorkAsync(uncertainToken.Credential.PendingEnrollmentId,

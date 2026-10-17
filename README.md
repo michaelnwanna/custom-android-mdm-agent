@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [durable backend event library](docs/backend-event-ingestion.md) now verifies trusted command ownership, commits each event with its original acknowledgement, and recovers that exact acknowledgement on duplicate delivery and actual PostgreSQL restart. All six migrations are required. Final local verification passes 15 PostgreSQL tests, 154 component tests and 69 tooling tests. Network ingestion, acknowledgement delivery, Android outbox deletion and command lifecycle projection remain unimplemented.
+
 The [backend event decoder](docs/backend-command-events.md) now validates shared command-state events, exact state/error shapes, timestamps, identifiers and authenticated-caller device binding. Five new checks bring the backend suite to 154 passing tests. This is a parser only, not command ownership verification, durable ingestion or acknowledgement generation.
 
 The [authenticated MQTT-to-Room follow-up](docs/android-mqtt-enrollment.md#durable-receipt-follow-up) now verifies two enrolled-key command deliveries produce one committed receipt event, recoverable after database reopen. The combined API 34 run passes 32 JVM tests/build/lint and the existing PostgreSQL disable checks; six isolated journal scenarios also pass. This is test-only command delivery, not production execution, backend event ingestion or acknowledgement deletion.
@@ -61,6 +63,12 @@ This diagram separates implemented API 34 diagnostics and the verified combined 
 ```mermaid
 flowchart TB
 	Admin[Administrator]
+
+	subgraph EventLibrary["Event ingestion library - local PostgreSQL verified; transport planned"]
+		OwnedCommands[Trusted command ownership registration] --> EventStore[(Owned events and original acknowledgements)]
+		EventDecode[Strict device-bound event decoder] --> EventStore
+		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
+	end
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]
 		EnrollmentClient[Synthetic HTTP test client]

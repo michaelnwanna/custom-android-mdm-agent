@@ -1,0 +1,55 @@
+2026-10-17 14:50:32.281 EAT [85903] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 14:50:32.282 EAT [85903] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-cy7b6plg/.s.PGSQL.5432"
+2026-10-17 14:50:32.289 EAT [85908] LOG:  database system was shut down at 2026-10-17 14:50:31 EAT
+2026-10-17 14:50:32.295 EAT [85903] LOG:  database system is ready to accept connections
+2026-10-17 14:51:01.553 EAT [85978] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:01.553 EAT [85978] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:04.840 EAT [85986] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:04.840 EAT [85986] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:05.341 EAT [85988] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:05.341 EAT [85988] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:05.835 EAT [85989] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:05.835 EAT [85989] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:06.323 EAT [85990] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:06.323 EAT [85990] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:06.719 EAT [85991] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:06.719 EAT [85991] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:07.073 EAT [85992] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:07.073 EAT [85992] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:07.447 EAT [85999] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:07.447 EAT [85999] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:07.845 EAT [86000] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:07.845 EAT [86000] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:08.258 EAT [86001] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:08.258 EAT [86001] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:09.567 EAT [86009] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 14:51:09.567 EAT [86009] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 14:51:10.786 EAT [85903] LOG:  received fast shutdown request
+2026-10-17 14:51:10.786 EAT [85903] LOG:  aborting any active transactions
+2026-10-17 14:51:10.788 EAT [85903] LOG:  background worker "logical replication launcher" (PID 85911) exited with exit code 1
+2026-10-17 14:51:10.789 EAT [85906] LOG:  shutting down
+2026-10-17 14:51:10.790 EAT [85906] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 14:51:10.869 EAT [85906] LOG:  checkpoint complete: wrote 173 buffers (1.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.014 s, sync=0.037 s, total=0.080 s; sync files=278, longest=0.005 s, average=0.001 s; distance=1788 kB, estimate=1788 kB; lsn=0/165E598, redo lsn=0/165E598
+2026-10-17 14:51:10.876 EAT [85903] LOG:  database system is shut down

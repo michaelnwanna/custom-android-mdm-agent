@@ -1,4 +1,5 @@
 using FleetManagement.Enrollment;
+using FleetManagement.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -8,9 +9,28 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
 {
     public DbSet<PendingEnrollment> PendingEnrollments => Set<PendingEnrollment>();
     public DbSet<EnrollmentProvisioningAudit> EnrollmentProvisioningAudits => Set<EnrollmentProvisioningAudit>();
+    public DbSet<CommandEventOwnership> CommandEventOwnerships => Set<CommandEventOwnership>();
+    public DbSet<StoredCommandEvent> StoredCommandEvents => Set<StoredCommandEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var ownership = modelBuilder.Entity<CommandEventOwnership>();
+        ownership.ToTable("CommandEventOwnerships");
+        ownership.HasKey(value => value.CommandId);
+        ownership.Property(value => value.CommandId).ValueGeneratedNever();
+        ownership.HasAlternateKey(value => new { value.CommandId, value.DeviceId, value.CorrelationId });
+        ownership.HasOne<PendingEnrollment>().WithMany().HasForeignKey(value => value.EnrollmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        var events = modelBuilder.Entity<StoredCommandEvent>();
+        events.ToTable("StoredCommandEvents");
+        events.HasKey(value => value.EventId);
+        events.Property(value => value.EventId).ValueGeneratedNever();
+        events.Property(value => value.ContentJson).HasMaxLength(16384).IsRequired();
+        events.Property(value => value.AcknowledgementJson).HasMaxLength(512).IsRequired();
+        events.HasOne<CommandEventOwnership>().WithMany()
+            .HasForeignKey(value => new { value.CommandId, value.DeviceId, value.CorrelationId })
+            .HasPrincipalKey(value => new { value.CommandId, value.DeviceId, value.CorrelationId })
+            .OnDelete(DeleteBehavior.Restrict);
         var audit = modelBuilder.Entity<EnrollmentProvisioningAudit>();
         audit.ToTable("EnrollmentProvisioningAudits");
         audit.HasKey(value => value.PendingEnrollmentId);

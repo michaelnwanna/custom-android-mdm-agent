@@ -1,5 +1,7 @@
 # Enrollment Backend Foundation
 
+The [durable event ingestion library](../docs/backend-event-ingestion.md) adds trusted command ownership registration, enabled-enrollment row locking, global event-ID deduplication and exact original acknowledgement recovery after commit. Apply all six migrations, including `CommandEventIngestion`; older migration counts below describe their historical slices. Local evidence passes 154 component tests and 15 real PostgreSQL tests, including acknowledgement recovery across actual database restart. This is not a public API/worker, command lifecycle projection or acknowledgement delivery path.
+
 The [command-state event decoder](../docs/backend-command-events.md) adds strict shared-fixture-backed event parsing and expected-device binding in the core library. Five decoder tests bring the retained component suite to 154. It does not add an API/worker, command ownership or lifecycle checks, persistence, event-ID deduplication or durable acknowledgements. Earlier descriptions below retain their original enrollment scope.
 
 Current HTTPS follow-up: [device mTLS identity](../docs/device-mtls.md) requires a pinned-CA client certificate, exact completed certificate/key membership and a fresh PostgreSQL enabled-state check per request. Apply the fifth `DeviceAccessControl` migration. API 34 Keystore/Kestrel/PostgreSQL access and disable rejection are lab-verified; older mTLS exclusions below are historical. MQTT authentication, full revocation and audited lifecycle APIs remain open.

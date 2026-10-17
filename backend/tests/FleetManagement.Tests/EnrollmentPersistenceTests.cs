@@ -17,9 +17,12 @@ public sealed class EnrollmentPersistenceTests
         using var context = new FleetDbContext(new DbContextOptionsBuilder<FleetDbContext>()
             .UseNpgsql("Host=localhost;Database=not_connected;Username=unused").Options);
         Assert.False(context.Database.HasPendingModelChanges());
-        Assert.Equal(5, context.Database.GetMigrations().Count());
+        Assert.Equal(6, context.Database.GetMigrations().Count());
         var sql = context.GetService<IMigrator>().GenerateScript();
         Assert.Contains("CREATE TABLE \"PendingEnrollments\"", sql);
+        Assert.Contains("CREATE TABLE \"CommandEventOwnerships\"", sql);
+        Assert.Contains("CREATE TABLE \"StoredCommandEvents\"", sql);
+        Assert.Contains("FOREIGN KEY (\"CommandId\", \"DeviceId\", \"CorrelationId\")", sql);
         Assert.Contains("CK_Enrollment_Claim", sql);
         Assert.Contains("__EFMigrationsHistory", sql);
     }

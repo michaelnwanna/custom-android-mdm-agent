@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [PostgreSQL event library](../docs/backend-event-ingestion.md) now checks trusted command ownership and generates/stores the event acknowledgement v1 shape with the event before returning it. Duplicate ingestion recovers the original acknowledgement; 15 local database tests include actual restart recovery. This is not network acknowledgement delivery or Android outbox deletion. Earlier absent-ingestion statements below retain their historical scope.
+
 The [backend command-state event decoder](../docs/backend-command-events.md) now consumes the same five valid/eleven rejection event fixtures in .NET, with strict fields/state/error shapes and expected-device binding. Its timestamp receiver limit is nanosecond precision, preserving the validated original string. Parsing is not durable ingestion, lifecycle/ownership validation or acknowledgement generation; earlier absent-consumer statements below are historical.
 
 The [Android receipt journal](../docs/android-command-journal.md) now produces shared command-state `received`/`expired` event shapes and commits each with its command in Room. Six isolated API 34 SQLite tests verify the local transaction boundary; two JVM tests cover canonical command and event encoding. No backend ingestion, transport publication or event acknowledgement/deletion path is implemented.
@@ -26,6 +28,8 @@ flowchart LR
     Fixtures --> Decoder[Android command decoder - JVM verified]
     Decoder --> Journal[Atomic Room receipt and event - API 34 verified]
     Fixtures --> EventDecoder[Backend command-state decoder - component verified]
+    EventDecoder --> EventStore[Owned event and original acknowledgement commit - PostgreSQL verified]
+    EventStore -. transport planned .-> Device
 ```
 
 ## Wire Rules
