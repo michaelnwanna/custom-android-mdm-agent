@@ -2,11 +2,44 @@ import json
 import base64
 import hashlib
 import unittest
+import tempfile
+from pathlib import Path
 
-from check_android_backend import public_configuration, public_tls_diagnostics, verify_event_proof, verify_mqtt_proof
+from check_android_backend import public_configuration, public_tls_diagnostics, verify_event_proof, verify_mqtt_proof, verify_event_process_proof, run_event_process_phases
 
 
 class AndroidBackendEvidenceTests(unittest.TestCase):
+    def test_event_recovery_requires_new_process_same_identity_event_and_wire(self):
+        prepared = {"schemaVersion": 1, "preparedProcessId": 123,
+                    "deviceId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+                    "eventId": "374823b7-0e54-4893-b661-e638cc03310c", "wireSha256": "a" * 64}
+        recovered = {"eventProcessRecoveryVerified": True, "preparedProcessId": 123, "recoveredProcessId": 456,
+                     "deviceId": prepared["deviceId"], "retainedEventId": prepared["eventId"], "recoveredWireSha256": "a" * 64}
+        verify_event_process_proof(prepared, recovered)
+        for name, value in (("eventProcessRecoveryVerified", False), ("preparedProcessId", 124),
+                            ("recoveredProcessId", 123), ("recoveredProcessId", True), ("preparedProcessId", 123.0),
+                            ("deviceId", prepared["eventId"]), ("retainedEventId", prepared["deviceId"]),
+                            ("recoveredWireSha256", "b" * 64)):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                verify_event_process_proof(prepared, dict(recovered, **{name: value}))
+
+    def test_event_recovery_does_not_resume_when_old_process_is_present(self):
+        calls = []
+
+        def execute(arguments, timeout):
+            calls.append(arguments)
+            if "instrument" in arguments:
+                return "OK (1 test)\nINSTRUMENTATION_CODE: -1\n"
+            if "/proc/123" in arguments:
+                raise RuntimeError("old process exists")
+            return json.dumps({"preparedProcessId": 123})
+
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(RuntimeError, "old process exists"):
+                run_event_process_phases(execute, ["adb"], Path(directory))
+        self.assertTrue(any("force-stop" in call for call in calls))
+        self.assertFalse(any("resume" in call for call in calls))
+
     def test_worker_proof_requires_worker_retry_and_disabled_retention(self):
         device_id = "7512f600-bb5b-4353-b67a-3a56126308d7"
         event_id = "374823b7-0e54-4893-b661-e638cc03310c"

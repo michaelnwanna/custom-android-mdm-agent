@@ -33,24 +33,31 @@ class EnrollmentBackendInstrumentedTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val input = File(context.filesDir, "enrollment-integration-input.json")
         val output = File(context.filesDir, "enrollment-integration-result.json")
-        require(input.length() in 1..100000)
-        val configuration = JSONObject(input.readText())
-        require(input.delete())
+        val recoveryFile = File(context.filesDir, "enrollment-event-recovery.json")
+        val phase = InstrumentationRegistry.getArguments().getString("recoveryPhase")
+        require(phase == null || phase == "prepare" || phase == "resume")
+        val resuming = phase == "resume"
+        val state = if (resuming) JSONObject(recoveryFile.readText()) else null
+        if (!resuming) require(input.length() in 1..100000)
+        val configuration = state?.getJSONObject("configuration") ?: JSONObject(input.readText())
+        if (!resuming) require(input.delete())
         require(!output.exists())
         val namespace = configuration.getString("namespace")
         require(namespace.matches(Regex("integration-[0-9a-f-]{36}")))
         val namespaces = listOf(namespace, "$namespace-conflict")
         val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-        require(namespaces.none { keyStore.containsAlias("fleet-enrollment-$it") })
+        if (!resuming) require(namespaces.none { keyStore.containsAlias("fleet-enrollment-$it") })
         var mqtt: Mqtt3AsyncClient? = null
-        val databaseName = "test-mqtt-command-${UUID.randomUUID()}.db"
+        val databaseName = state?.getString("databaseName") ?: "test-mqtt-command-${UUID.randomUUID()}.db"
+        require(databaseName.matches(Regex("test-mqtt-command-[0-9a-f-]{36}\\.db")))
+        var checkpointRetained = false
         var database: CommandDatabase? = null
         var mqttReceipt: JSONObject? = null
         var eventAcknowledgement: JSONObject? = null
         var retainedEventId: String? = null
         val eventDeletion = configuration.optBoolean("eventDeletion", false)
         val eventWorker = configuration.optBoolean("eventWorker", false)
-        var eventWorkerRetryVerified = false
+        var eventWorkerRetryVerified = state?.getBoolean("workerRetryVerified") ?: false
         var eventWorkerVerified = false
         var eventWorkerDisabledRetained = false
         var eventDeletionVerified = false
@@ -62,58 +69,104 @@ class EnrollmentBackendInstrumentedTest {
         try {
             val serverRoot = root("serverRootDer")
             val deviceRoot = root("deviceRootDer")
-            val bootstrap = EnrollmentBootstrap.parse(configuration.getJSONObject("bootstrap").toString().toByteArray())
+            if (phase == "prepare") {
+                require(eventWorker && eventDeletion)
+                check(!recoveryFile.exists())
+                val publicConfiguration = JSONObject(configuration.toString())
+                publicConfiguration.remove("bootstrap")
+                recoveryFile.writeText(JSONObject().put("configuration", publicConfiguration)
+                    .put("databaseName", databaseName).put("preparedProcessId", android.os.Process.myPid()).toString())
+            }
             val identity = AndroidEnrollmentIdentity(context, namespace)
-            val csr = identity.prepare(bootstrap, serverRoot, deviceRoot)
             val alias = "fleet-enrollment-$namespace"
-            assertNull(keyStore.getKey(alias, null).encoded)
-            val keyInfo = KeyFactory.getInstance("EC", "AndroidKeyStore")
-                .getKeySpec(keyStore.getKey(alias, null), KeyInfo::class.java)
-            assertTrue(keyInfo.digests.contains(KeyProperties.DIGEST_NONE))
-            val rejected = assertThrows(EnrollmentHttpException::class.java) {
-                EnrollmentTransport.redeem(EnrollmentBootstrap(bootstrap.endpoint, bootstrap.pendingId,
-                    if (bootstrap.token == "A".repeat(43)) "B" + "A".repeat(42) else "A".repeat(43)), csr, serverRoot)
+            var csr: String
+            var first: ByteArray
+            if (resuming) {
+                assertNotEquals(state!!.getInt("preparedProcessId"), android.os.Process.myPid())
+                assertTrue(eventWorkerRetryVerified)
+                csr = state.getString("csrDer")
+                first = Base64.getDecoder().decode(state.getString("responseBase64"))
+                assertTrue(identity.restore(deviceRoot, Instant.now()))
+            } else {
+                val bootstrap = EnrollmentBootstrap.parse(configuration.getJSONObject("bootstrap").toString().toByteArray())
+                csr = identity.prepare(bootstrap, serverRoot, deviceRoot)
+                assertNull(keyStore.getKey(alias, null).encoded)
+                val keyInfo = KeyFactory.getInstance("EC", "AndroidKeyStore")
+                    .getKeySpec(keyStore.getKey(alias, null), KeyInfo::class.java)
+                assertTrue(keyInfo.digests.contains(KeyProperties.DIGEST_NONE))
+                val rejected = assertThrows(EnrollmentHttpException::class.java) {
+                    EnrollmentTransport.redeem(EnrollmentBootstrap(bootstrap.endpoint, bootstrap.pendingId,
+                        if (bootstrap.token == "A".repeat(43)) "B" + "A".repeat(42) else "A".repeat(43)), csr, serverRoot)
+                }
+                assertEquals(401, rejected.status)
+                first = EnrollmentTransport.redeem(bootstrap, csr, serverRoot)
+                identity.complete(first, deviceRoot, Instant.now())
+                val reopened = AndroidEnrollmentIdentity(context, namespace)
+                assertTrue(reopened.restore(deviceRoot, Instant.now()))
+                assertEquals(csr, reopened.prepare(bootstrap, serverRoot, deviceRoot))
+                val replay = EnrollmentTransport.redeem(bootstrap, csr, serverRoot)
+                assertArrayEquals(first, replay)
+                val conflictCsr = AndroidEnrollmentIdentity(context, namespaces.last()).prepare(bootstrap, serverRoot, deviceRoot)
+                val conflict = assertThrows(EnrollmentHttpException::class.java) {
+                    EnrollmentTransport.redeem(bootstrap, conflictCsr, serverRoot)
+                }
+                assertEquals(409, conflict.status)
             }
-            assertEquals(401, rejected.status)
-            val first = EnrollmentTransport.redeem(bootstrap, csr, serverRoot)
             val response = EnrollmentResponse.parse(first)
-            identity.complete(first, deviceRoot, Instant.now())
             val reopened = AndroidEnrollmentIdentity(context, namespace)
-            assertTrue(reopened.restore(deviceRoot, Instant.now()))
-            assertEquals(csr, reopened.prepare(bootstrap, serverRoot, deviceRoot))
-            val replay = EnrollmentTransport.redeem(bootstrap, csr, serverRoot)
-            assertArrayEquals(first, replay)
-            val conflictCsr = AndroidEnrollmentIdentity(context, namespaces.last()).prepare(bootstrap, serverRoot, deviceRoot)
-            val conflict = assertThrows(EnrollmentHttpException::class.java) {
-                EnrollmentTransport.redeem(bootstrap, conflictCsr, serverRoot)
-            }
-            assertEquals(409, conflict.status)
             val tlsIdentity = reopened.tlsIdentity(serverRoot, deviceRoot, Instant.now())
+            if (phase == "prepare") {
+                recoveryFile.writeText(JSONObject(recoveryFile.readText())
+                    .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first)).toString())
+            }
             if (configuration.optBoolean("eventUpload", false)) {
                 val journalDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
                 database = journalDatabase
                 val now = Instant.now()
-                val command = JSONObject().put("schemaVersion", 1)
+                val command = if (resuming) JSONObject(state!!.getString("commandJson")) else JSONObject().put("schemaVersion", 1)
                     .put("commandId", configuration.getString("eventCommandId"))
                     .put("correlationId", configuration.getString("eventCorrelationId"))
                     .put("deviceId", response.deviceId.toString()).put("sequence", 1)
                     .put("type", "REQUEST_SYNC").put("payload", JSONObject())
                     .put("issuedAt", now.toString()).put("expiresAt", now.plusSeconds(3600).toString())
                 val journal = CommandJournal(journalDatabase, response.deviceId)
+                if (resuming) {
+                    assertEquals(state!!.getString("wireJson"), journal.pendingEvents().single().wireJson)
+                    assertNotNull(journalDatabase.journal().command(command.getString("commandId")))
+                }
                 val receipt = journal.receive(command.toString().toByteArray())
+                if (resuming) assertTrue(receipt.duplicate)
                 val pending = journal.pendingEvents().single()
                 assertEquals(receipt.eventId.toString(), pending.eventId)
-                if (eventWorker) {
-                    assertEquals(androidx.work.ListenableWorker.Result.retry(),
-                        runWorker(context, databaseName, tlsIdentity, serverRoot, 0))
-                    eventWorkerRetryVerified = true
+                if (resuming) {
+                    assertEquals(state!!.getString("wireJson"), pending.wireJson)
+                    assertEquals(state.getString("eventId"), pending.eventId)
                 } else {
-                    assertEquals(503, assertThrows(DeviceHttpException::class.java) {
-                        if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending)
-                        else CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
-                    }.status)
+                    if (eventWorker) {
+                        assertEquals(androidx.work.ListenableWorker.Result.retry(),
+                            runWorker(context, databaseName, tlsIdentity, serverRoot, 0))
+                        eventWorkerRetryVerified = true
+                    } else {
+                        assertEquals(503, assertThrows(DeviceHttpException::class.java) {
+                            if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending)
+                            else CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
+                        }.status)
+                    }
+                    assertEquals(pending, journal.pendingEvents().single())
+                    if (phase == "prepare") {
+                        val checkpoint = JSONObject(recoveryFile.readText()).put("commandJson", command.toString())
+                            .put("wireJson", pending.wireJson).put("eventId", pending.eventId)
+                            .put("workerRetryVerified", eventWorkerRetryVerified)
+                        recoveryFile.writeText(checkpoint.toString())
+                        File(context.filesDir, "enrollment-integration-prepared.json").writeText(JSONObject()
+                            .put("schemaVersion", 1).put("preparedProcessId", android.os.Process.myPid())
+                            .put("deviceId", response.deviceId.toString()).put("eventId", pending.eventId)
+                            .put("wireSha256", java.security.MessageDigest.getInstance("SHA-256")
+                                .digest(pending.wireJson.toByteArray()).joinToString("") { byte -> "%02x".format(byte) }).toString())
+                        checkpointRetained = true
+                        return
+                    }
                 }
-                assertEquals(pending, journal.pendingEvents().single())
                 journalDatabase.close()
                 val recoveredDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
                 database = recoveredDatabase
@@ -250,6 +303,11 @@ class EnrollmentBackendInstrumentedTest {
                 verify(signature)
             })
             output.writeText(JSONObject().put("schemaVersion", 1).put("deviceId", response.deviceId.toString())
+                .put("eventProcessRecoveryVerified", resuming)
+                .put("preparedProcessId", state?.getInt("preparedProcessId") ?: android.os.Process.myPid())
+                .put("recoveredProcessId", android.os.Process.myPid())
+                .put("recoveredWireSha256", if (resuming) java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(state!!.getString("wireJson").toByteArray()).joinToString("") { byte -> "%02x".format(byte) } else "")
                 .put("mtlsAuthenticated", true).put("disabledRejected", true)
                 .put("mqttAuthenticated", configuration.has("mqttPort"))
                 .put("mqttDisabledRejected", configuration.has("mqttPort"))
@@ -266,13 +324,40 @@ class EnrollmentBackendInstrumentedTest {
         } finally {
             try { mqtt?.disconnect()?.get(5, TimeUnit.SECONDS) } catch (_: Exception) { }
             database?.close()
-            context.deleteDatabase(databaseName)
-            namespaces.forEach { current ->
-                val alias = "fleet-enrollment-$current"
-                if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
-                File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively()
+            if (!checkpointRetained && phase != null) cleanupOnlyEventRecoveryFixture()
+            if (phase == null) {
+                context.deleteDatabase(databaseName)
+                namespaces.forEach { current ->
+                    val alias = "fleet-enrollment-$current"
+                    if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
+                    File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively()
+                }
             }
         }
+    }
+
+    @Test fun cleanupOnlyEventRecoveryFixture() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val file = File(context.filesDir, "enrollment-event-recovery.json")
+        if (file.exists()) {
+            val state = JSONObject(file.readText())
+            val namespace = state.getJSONObject("configuration").getString("namespace")
+            require(namespace.matches(Regex("integration-[0-9a-f-]{36}")))
+            val databaseName = state.getString("databaseName")
+            require(databaseName.matches(Regex("test-mqtt-command-[0-9a-f-]{36}\\.db")))
+            val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            listOf(namespace, "$namespace-conflict").forEach { current ->
+                val alias = "fleet-enrollment-$current"
+                if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
+                check(!keyStore.containsAlias(alias))
+                check(File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively())
+            }
+            context.deleteDatabase(databaseName)
+            check(!context.getDatabasePath(databaseName).exists())
+            check(file.delete())
+        }
+        val prepared = File(context.filesDir, "enrollment-integration-prepared.json")
+        if (prepared.exists()) check(prepared.delete())
     }
 
     private fun runWorker(context: android.content.Context, databaseName: String, identity: DeviceTlsIdentity,

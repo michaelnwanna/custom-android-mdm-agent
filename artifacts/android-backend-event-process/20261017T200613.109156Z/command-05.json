@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "dpm",
+    "list-owners"
+  ],
+  "returncode": 0,
+  "stdout": "1 owner:\nUser  0: admin=dev.fleet.agent/.FleetAdminReceiver,DeviceOwner,Affiliated\n",
+  "stderr": ""
+}

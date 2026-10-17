@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "files/enrollment-integration-result.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schemaVersion\":1,\"deviceId\":\"f5cf3355-91c4-499a-85a4-8ce3b720529d\",\"eventProcessRecoveryVerified\":true,\"preparedProcessId\":2188,\"recoveredProcessId\":2249,\"recoveredWireSha256\":\"20265aacdbf682a57c89fe41645b404226ab7c66c59bc116b70bf3bea25cb148\",\"mtlsAuthenticated\":true,\"disabledRejected\":true,\"mqttAuthenticated\":false,\"mqttDisabledRejected\":false,\"mqttJournalVerified\":false,\"eventUploadVerified\":true,\"eventAcknowledgement\":{\"schemaVersion\":1,\"deviceId\":\"f5cf3355-91c4-499a-85a4-8ce3b720529d\",\"eventId\":\"71d51dd9-342d-43f7-9de6-53e7c537169c\",\"receivedAt\":\"2026-10-17T20:08:01.05586+00:00\"},\"retainedEventId\":\"71d51dd9-342d-43f7-9de6-53e7c537169c\",\"eventDeletionVerified\":true,\"eventDeleteRollbackVerified\":true,\"eventInboxRetained\":true,\"disabledEventRetained\":true,\"eventWorkerVerified\":true,\"eventWorkerRetryVerified\":true,\"eventWorkerDisabledRetained\":true,\"csrDer\":\"MIHWMH0CAQAwGzEZMBcGA1UEAwwQRmxlZXQgZW5yb2xsbWVudDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABMzXSmXQG+1xcOKjpaZpJpHKU97UMFrdXGGW9pgpZKlzhEu5vWBDIkcFrgPTpk0mX8O4nLJRrbUNxVx4onjvHLegADAKBggqhkjOPQQDAgNJADBGAiEA3Yp0JkVdOeq5bHPe7FPMHpX4Cf+MxB2hMzNhhE9NfasCIQCcjnkI23il5kjgJhxCxzy34zzfBKITxLQnLVWTryxihA==\",\"responseBase64\":\"eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXZpY2VJZCI6ImY1Y2YzMzU1LTkxYzQtNDk5YS04NWE0LThjZTNiNzIwNTI5ZCIsImNlcnRpZmljYXRlRGVyIjoiTUlJQ1NEQ0NBZTJnQXdJQkFnSVJBSnlCMG9lNExiXHUwMDJCak41UTF4cUFqWk1nd0NnWUlLb1pJemowRUF3SXdKakVrTUNJR0ExVUVBeE1iUVc1a2NtOXBaQ0JpWVdOclpXNWtJR1JsZG1salpTQnliMjkwTUI0WERUSTJNVEF4TnpJd01EY3lPRm9YRFRJMk1UQXhPREl3TURjeU9Gb3dMekV0TUNzR0ExVUVBeE1rWmpWalpqTXpOVFV0T1RGak5DMDBPVGxoTFRnMVlUUXRPR05sTTJJM01qQTFNamxrTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFek5kS1pkQWI3WEZ3NHFPbHBta21rY3BUM3RRd1d0MWNZWmIybUNsa3FYT0VTN205WUVNaVJ3V3VBOU9tVFNaZnc3aWNzbEd0dFEzRlhIaWllTzhjdDZPQjhqQ0I3ekFNQmdOVkhSTUJBZjhFQWpBQU1CMEdBMVVkRGdRV0JCUXlMN0c5NWZcdTAwMkJ6SDA1XHUwMDJCVEl6anZucDQ0dUNSY0RCV0JnTlZIU01FVHpCTmdCVGpaMkZNSVRzS3hIUDJtZU1rNGhGNllKOFZIcUVxcENnd0pqRWtNQ0lHQTFVRUF4TWJRVzVrY205cFpDQmlZV05yWlc1a0lHUmxkbWxqWlNCeWIyOTBnZ2tBMWt3cnhRbWYxcUl3RGdZRFZSMFBBUUgvQkFRREFnZUFNQllHQTFVZEpRRUIvd1FNTUFvR0NDc0dBUVVGQndNQ01FQUdBMVVkRVFRNU1EZUdOWFZ5YmpwbWJHVmxkRHBrWlhacFkyVTZaalZqWmpNek5UVXRPVEZqTkMwME9UbGhMVGcxWVRRdE9HTmxNMkkzTWpBMU1qbGtNQW9HQ0NxR1NNNDlCQU1DQTBrQU1FWUNJUUNmRlZYL0NQYVBLL2s2YWdtNjV1WXZGTURYVEdDUXBPSTJCdmtjXHUwMDJCZ1RZcUFJaEFKSG1jc1h3cWFGRWo3Rm41QnZ2aGF2OUJBdU1YZFVwZ3VEeThrUXhvTGVpIiwiaW50ZXJtZWRpYXRlQ2VydGlmaWNhdGVzRGVyIjpbXSwiaXNzdWVkQXQiOiIyMDI2LTEwLTE3VDIwOjA3OjI4KzAwOjAwIiwiZXhwaXJlc0F0IjoiMjAyNi0xMC0xOFQyMDowNzoyOCswMDowMCJ9\",\"challengeBase64\":\"ZDZhYTIwODQtNmVhNy00YTNmLWEwMTUtODdmMTc3M2U5ZGY2\",\"signatureBase64\":\"MEUCIQDrZcrKgQke0AzWvoGaN58lxAgtxqWrUCU6\\/z03EkEFmQIgVtvyKuqeGLMCvJZEqWbc4KBaJFMr7TFp5DpyyJdja+U=\"}",
+  "stderr": ""
+}

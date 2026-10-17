@@ -1,5 +1,7 @@
 # Persisted Probe Recovery Across Reboot
 
+Event follow-up: [real enrolled event recovery](android-event-process-recovery.md) now passes across a separate same-boot force-stop/explicit-relaunch test. That worker-body result does not establish actual event delivery across reboot or autonomous scheduling; the debug-probe reboot boundary below is unchanged.
+
 The debug-only WorkManager probe now survives an actual non-wiping API 34 emulator reboot and completes after explicit instrumentation relaunch. This extends [force-stop recovery](android-scheduler-recovery.md). It is not automatic execution at boot or real event-delivery recovery.
 
 ```mermaid

@@ -91,6 +91,49 @@ def verify_mqtt_proof(device, broker):
         raise ValueError("Invalid receipt timestamp")
 
 
+def verify_event_process_proof(prepared, recovered):
+    if (type(prepared.get("schemaVersion")) is not int or prepared["schemaVersion"] != 1
+            or recovered.get("eventProcessRecoveryVerified") is not True
+            or type(prepared.get("preparedProcessId")) is not int or prepared["preparedProcessId"] <= 0
+            or type(recovered.get("preparedProcessId")) is not int
+            or recovered["preparedProcessId"] != prepared["preparedProcessId"]
+            or type(recovered.get("recoveredProcessId")) is not int or recovered["recoveredProcessId"] <= 0
+            or recovered["recoveredProcessId"] == prepared["preparedProcessId"]
+            or recovered.get("deviceId") != prepared.get("deviceId")
+            or recovered.get("retainedEventId") != prepared.get("eventId")
+            or not isinstance(prepared.get("wireSha256"), str)
+            or re.fullmatch(r"[0-9a-f]{64}", prepared["wireSha256"]) is None
+            or recovered.get("recoveredWireSha256") != prepared["wireSha256"]):
+        raise ValueError("Persisted event/new-process recovery proof missing")
+    for name in ("deviceId", "eventId"):
+        if str(uuid.UUID(prepared[name])) != prepared[name]:
+            raise ValueError("Invalid recovered event identity")
+
+
+def run_event_process_phases(execute, adb, output):
+    def phase(name):
+        result = execute([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "recoveryPhase", name,
+                          "-e", "class", "dev.fleet.agent.EnrollmentBackendInstrumentedTest#realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity",
+                          "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], timeout=120)
+        if not instrumentation_passed(result):
+            raise RuntimeError("Event process phase did not explicitly pass")
+
+    phase("prepare")
+    prepared = json.loads(execute([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat",
+                                  "files/enrollment-integration-prepared.json"], timeout=30))
+    process_id = prepared.get("preparedProcessId")
+    if type(process_id) is not int or process_id <= 0:
+        raise ValueError("Prepared event process ID missing")
+    (output / "event-process-prepared.json").write_text(json.dumps(prepared, indent=2) + "\n")
+    execute([*adb, "shell", "am", "force-stop", "dev.fleet.agent"], timeout=30)
+    execute([*adb, "shell", "test", "!", "-d", f"/proc/{process_id}"], timeout=30)
+    (output / "event-process-stop.json").write_text(json.dumps(
+        {"schemaVersion": 1, "preparedProcessId": process_id, "forceStopIssued": True,
+         "oldProcessAbsent": True, "explicitRelaunch": True}, indent=2) + "\n")
+    phase("resume")
+    return prepared
+
+
 def public_tls_diagnostics(stderr):
     return [line for line in stderr.splitlines() if line in
             {"TLS:ACCEPTED", "TLS:PROOF_REJECTED", "TLS:CHAIN_REJECTED"}
@@ -105,6 +148,7 @@ def main():
     parser.add_argument("--with-events", action="store_true", help="Verify Room/Keystore event upload and post-commit acknowledgement recovery without deletion")
     parser.add_argument("--acknowledge-events", action="store_true", help="Also verify authenticated deletion, rollback and retained inbox; requires --with-events")
     parser.add_argument("--event-worker", action="store_true", help="Use the real event worker body for retry/deletion; requires --acknowledge-events")
+    parser.add_argument("--event-process-recovery", action="store_true", help="Force-stop between committed event retry and fresh-process identity/journal recovery; requires --event-worker")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
@@ -115,9 +159,12 @@ def main():
         parser.error("--acknowledge-events requires --with-events")
     if args.event_worker and not args.acknowledge_events:
         parser.error("--event-worker requires --acknowledge-events")
+    if args.event_process_recovery and not args.event_worker:
+        parser.error("--event-process-recovery requires --event-worker")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / ("artifacts/android-backend-event-worker" if args.event_worker else
+    output = ROOT / ("artifacts/android-backend-event-process" if args.event_process_recovery else
+                     "artifacts/android-backend-event-worker" if args.event_worker else
                      "artifacts/android-backend-event-deletion" if args.acknowledge_events else
                      "artifacts/android-backend-events" if args.with_events else
                      "artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
@@ -257,7 +304,8 @@ def main():
                 raise RuntimeError("MQTT readiness was not explicit")
             configuration["mqttPort"] = readiness["port"]
         (output / "public-configuration.json").write_text(json.dumps(public_configuration(configuration), indent=2) + "\n")
-        for filename in ("enrollment-integration-input.json", "enrollment-integration-result.json"):
+        for filename in ("enrollment-integration-input.json", "enrollment-integration-result.json",
+                 "enrollment-event-recovery.json", "enrollment-integration-prepared.json"):
             existing = subprocess.run([*adb, "shell", "run-as", "dev.fleet.agent", "test", "-e", "files/" + filename],
                                       capture_output=True, text=True, timeout=30)
             if existing.returncode != 1:
@@ -267,14 +315,20 @@ def main():
                  "'umask 077; mkdir -p files; cat > files/enrollment-integration-input.json'"], timeout=30,
                 input_text=json.dumps(configuration))
         del configuration
-        result = execute([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
-                          "dev.fleet.agent.EnrollmentBackendInstrumentedTest",
+        prepared = None
+        if args.event_process_recovery:
+            prepared = run_event_process_phases(execute, adb, output)
+        else:
+            result = execute([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
+                          "dev.fleet.agent.EnrollmentBackendInstrumentedTest#realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity",
                           "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], timeout=120)
-        if not instrumentation_passed(result):
-            raise RuntimeError("Real-backend instrumentation did not explicitly pass")
+            if not instrumentation_passed(result):
+                raise RuntimeError("Real-backend instrumentation did not explicitly pass")
         proof = execute([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat", "files/enrollment-integration-result.json"], timeout=30)
         json.loads(proof)
         (output / "device-public-proof.json").write_text(proof + "\n")
+        if args.event_process_recovery:
+            verify_event_process_proof(prepared, json.loads(proof))
         stdout, stderr = host.communicate(input=proof + "\n", timeout=60)
         host_stderr = stderr
         if host.returncode or any(line not in public_tls_diagnostics(stderr) for line in stderr.splitlines()):
@@ -324,6 +378,14 @@ def main():
                 passed = False
         if staged:
             try:
+                if args.event_process_recovery:
+                    cleanup = execute([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
+                        "dev.fleet.agent.EnrollmentBackendInstrumentedTest#cleanupOnlyEventRecoveryFixture",
+                        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], timeout=60)
+                    if not instrumentation_passed(cleanup):
+                        raise RuntimeError("Event recovery cleanup did not explicitly pass")
+                    for filename in ("enrollment-event-recovery.json", "enrollment-integration-prepared.json"):
+                        execute([*adb, "shell", "run-as", "dev.fleet.agent", "test", "!", "-e", "files/" + filename], timeout=30)
                 execute([*adb, "shell", "run-as", "dev.fleet.agent", "rm", "-f",
                          "files/enrollment-integration-input.json", "files/enrollment-integration-result.json"], timeout=30)
             except Exception:
@@ -347,10 +409,12 @@ def main():
                 "eventUploadRequested": args.with_events,
                 "eventDeletionRequested": args.acknowledge_events,
                 "eventWorkerRequested": args.event_worker,
+                "eventProcessRecoveryRequested": args.event_process_recovery,
                 "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
                 "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
                     for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
-                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL worker-body replay via WorkManager test builder: post-commit 503 returns retry and preserves row, original ACK recovery, local delete rollback, worker retry deletes exact event, inbox/reopen dedup and disabled failure retains a new event. No OS-scheduled timing/backoff/reboot/cancel, actual network loss, process kill or full fleet acceptance." if args.event_worker else
+                "scope": ("Real API34 isolated enrolled Keystore/Room/HTTPS/PostgreSQL event recovery across host force-stop with verified old PID absence and explicit new-process instrumentation relaunch. Worker body via test builder first returns retry after committed event/test-only 503; fresh process restores same test identity, verifies exact persisted event wire, recovers original ACK, verifies local delete rollback, worker deletion, retained inbox and disabled-event retention. No autonomous scheduling, production default identity mutation, crash during execution, actual network loss, reboot, power loss or full fleet acceptance." if args.event_process_recovery else
+                    "Real API34 Keystore/Room/HTTPS/PostgreSQL worker-body replay via WorkManager test builder: post-commit 503 returns retry and preserves row, original ACK recovery, local delete rollback, worker retry deletes exact event, inbox/reopen dedup and disabled failure retains a new event. No OS-scheduled timing/backoff/reboot/cancel, actual network loss, process kill or full fleet acceptance." if args.event_worker else
                     "Real API34 Keystore/Room/HTTPS/PostgreSQL authenticated event deletion: post-commit 503 preserves row, original acknowledgement recovery, forced delete rollback/reopen/retry, exact event deletion after valid reply, inbox retained across reopen/duplicate command, disabled upload preserves a new event. No actual network loss, process kill, worker or full fleet acceptance." if args.acknowledge_events else
                     "Real API34 Keystore/Room/HTTPS/PostgreSQL event upload: test-only 503 after durable commit, unchanged pending event across database reopen, original acknowledgement recovered on retry, event retained after 200 and disabled-device 401. No deletion, network disconnect/lost-packet simulation, process crash, production worker, MQTT ingestion or full fleet acceptance." if args.with_events else
                     "Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else

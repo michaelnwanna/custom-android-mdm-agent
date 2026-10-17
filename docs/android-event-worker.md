@@ -1,5 +1,7 @@
 # Bounded Background Event Delivery
 
+Event recovery follow-up: the [enrolled process-recovery run](android-event-process-recovery.md) now verifies the same isolated Keystore identity and exact Room event across host force-stop and explicit new-process worker-body execution. Original acknowledgement recovery, rollback/deletion and retained inbox/disabled-event checks pass. Earlier process-kill exclusions below retain this initial worker milestone's scope; autonomous scheduling, in-flight crashes and event recovery across reboot remain unverified.
+
 Reboot follow-up: [debug-probe persistence](android-scheduler-reboot.md) now survives an actual API 34 reboot and explicit resume. The probe does not touch event/identity state; automatic boot dispatch and actual event-worker recovery remain unverified.
 
 Recovery follow-up: the [persisted debug-probe run](android-scheduler-recovery.md) now crosses host-issued app force-stop and explicit new-process relaunch with the same work ID. It does not prove real event/Keystore/backend recovery or autonomous dead-process delivery; earlier limits below retain this worker-body milestone's scope.
