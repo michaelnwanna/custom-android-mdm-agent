@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [backend event decoder](docs/backend-command-events.md) now validates shared command-state events, exact state/error shapes, timestamps, identifiers and authenticated-caller device binding. Five new checks bring the backend suite to 154 passing tests. This is a parser only, not command ownership verification, durable ingestion or acknowledgement generation.
+
 The [authenticated MQTT-to-Room follow-up](docs/android-mqtt-enrollment.md#durable-receipt-follow-up) now verifies two enrolled-key command deliveries produce one committed receipt event, recoverable after database reopen. The combined API 34 run passes 32 JVM tests/build/lint and the existing PostgreSQL disable checks; six isolated journal scenarios also pass. This is test-only command delivery, not production execution, backend event ingestion or acknowledgement deletion.
 
 The [Android command journal](docs/android-command-journal.md) now atomically records a command and its initial receipt event in Room. Six API 34 SQLite tests verify close/reopen, duplicate/conflict handling, rollback, concurrent delivery, expiry and scoped outbox reads; 32 JVM tests/build/lint also pass. It is not connected to live MQTT, execution, event publishing or acknowledgement deletion.
@@ -113,6 +115,7 @@ flowchart TB
 		CommandFixtures[Shared command fixtures] --> CommandDecoder[Strict typed decoder - JVM verified; no live intake]
 		CommandDecoder -->|Atomic receipt and event - no live intake| Room
 		DeviceLabBroker -->|Typed duplicate commands - test callback verified| CommandDecoder
+		EventFixtures[Shared command-state fixtures] --> EventDecoder[Backend event decoder - component verified; ingestion planned]
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]
 		Installer[PackageInstaller - local lab verified; release delivery planned]

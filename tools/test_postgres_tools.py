@@ -145,6 +145,10 @@ class BackendSelectionTests(unittest.TestCase):
             (root / "tools").mkdir()
             for filename in ("check_backend.py", "check_postgres.py", "install_postgres_lab.py", "test_postgres_tools.py"):
                 shutil.copyfile(Path(__file__).parent / filename, root / "tools" / filename)
+            for relative in ("contracts/events/command-event-v1.schema.json", "contracts/fixtures/command-events-v1.json"):
+                destination = root / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(Path(__file__).resolve().parents[1] / relative, destination)
             commands = []
 
             def run(command, **kwargs):

@@ -8,6 +8,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 ## Verification Boundary
 
+The [backend event decoder](backend-command-events.md) adds five shared-fixture-backed component tests; the backend runner retains event schema/fixture inputs and its mock-repository setup includes them. Local component evidence now passes 154 tests. The preceding MQTT-to-Room commit `af4d869` passed all three hosted jobs in [39028170140](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39028170140); that result predates this decoder and does not establish durable event ingestion.
+
 The [MQTT-to-Room follow-up](android-mqtt-enrollment.md#durable-receipt-follow-up) extends broker hook/proof-validation tests and compiles the typed receipt callback in the Android instrumentation APK. Local API 34 combined and isolated SQLite replays, not hosted CI, establish its runtime path. Prior journal commit `0999802` passed all three jobs in [39027103381](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39027103381). No production command receiver, publisher/ingester or acknowledgement path is established by these gates.
 
 The [Room receipt journal](android-command-journal.md) adds pinned Room/KSP schema generation and two event/canonicalization JVM checks. Android runners now require at least 32 passing JVM tests and retain both command and command-state event fixtures. Hosted CI builds the six-scenario instrumentation class but does not execute it; actual SQLite behavior is separate local API 34 evidence. Prior decoder commit `0676404` passed [39023167649](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39023167649), which did not contain Room.

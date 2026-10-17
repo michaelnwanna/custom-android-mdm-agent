@@ -32,6 +32,8 @@ def main():
         and not {"bin", "obj"}.intersection(filename.relative_to(ROOT / "backend").parts)
     ]
     sources.append(ROOT / "tools/check_backend.py")
+    sources.extend(ROOT / name for name in ("contracts/events/command-event-v1.schema.json",
+                                           "contracts/fixtures/command-events-v1.json"))
     sources.extend(ROOT / "tools" / filename for filename in
                    ("check_postgres.py", "install_postgres_lab.py", "test_postgres_tools.py"))
     hashes = {}
