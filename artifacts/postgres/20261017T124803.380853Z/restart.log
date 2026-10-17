@@ -1,0 +1,27 @@
+2026-10-17 15:48:59.208 EAT [768] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 15:48:59.209 EAT [768] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-w2epkb35/.s.PGSQL.5432"
+2026-10-17 15:48:59.222 EAT [771] LOG:  database system was shut down at 2026-10-17 15:48:58 EAT
+2026-10-17 15:48:59.229 EAT [768] LOG:  database system is ready to accept connections
+2026-10-17 15:48:59.727 EAT [777] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 15:48:59.727 EAT [777] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 15:49:00.803 EAT [777] ERROR:  forced audit failure
+2026-10-17 15:49:00.803 EAT [777] CONTEXT:  PL/pgSQL function reject_provisioning_audit() line 2 at RAISE
+2026-10-17 15:49:00.803 EAT [777] STATEMENT:  INSERT INTO "EnrollmentProvisioningAudits" ("PendingEnrollmentId", "CreatedAt", "Issuer", "Subject")
+	VALUES ($1, $2, $3, $4)
+2026-10-17 15:49:00.872 EAT [780] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 15:49:00.872 EAT [780] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 15:49:01.703 EAT [790] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 15:49:01.703 EAT [790] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 15:49:04.149 EAT [768] LOG:  received fast shutdown request
+2026-10-17 15:49:04.149 EAT [768] LOG:  aborting any active transactions
+2026-10-17 15:49:04.150 EAT [768] LOG:  background worker "logical replication launcher" (PID 774) exited with exit code 1
+2026-10-17 15:49:04.151 EAT [769] LOG:  shutting down
+2026-10-17 15:49:04.151 EAT [769] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 15:49:04.175 EAT [769] LOG:  checkpoint complete: wrote 77 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.010 s, total=0.025 s; sync files=104, longest=0.001 s, average=0.001 s; distance=692 kB, estimate=692 kB; lsn=0/17309D8, redo lsn=0/17309D8
+2026-10-17 15:49:04.181 EAT [768] LOG:  database system is shut down

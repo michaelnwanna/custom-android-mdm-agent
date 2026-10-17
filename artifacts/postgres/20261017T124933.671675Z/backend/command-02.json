@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/mqtt-venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "../tools",
+    "-p",
+    "test_postgres_tools.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "test_external_database_excludes_restart (test_postgres_tools.BackendSelectionTests.test_external_database_excludes_restart) ... ok\ntest_managed_restart_requires_named_passing_test (test_postgres_tools.BackendSelectionTests.test_managed_restart_requires_named_passing_test) ... ok\ntest_missing_restart_result_cannot_pass (test_postgres_tools.BackendSelectionTests.test_missing_restart_result_cannot_pass) ... ok\ntest_restart_flag_without_postgres_is_rejected (test_postgres_tools.BackendSelectionTests.test_restart_flag_without_postgres_is_rejected) ... ok\ntest_bad_archive_is_rejected_before_extraction_or_compilation (test_postgres_tools.PostgresInstallerTests.test_bad_archive_is_rejected_before_extraction_or_compilation) ... ok\ntest_existing_installation_is_not_overwritten (test_postgres_tools.PostgresInstallerTests.test_existing_installation_is_not_overwritten) ... ok\ntest_backend_failure_still_stops_server_and_records_failure (test_postgres_tools.PostgresRunnerTests.test_backend_failure_still_stops_server_and_records_failure) ... ok\ntest_missing_binaries_cannot_pass (test_postgres_tools.PostgresRunnerTests.test_missing_binaries_cannot_pass) ... ok\ntest_shutdown_failure_cannot_pass_or_remove_live_socket (test_postgres_tools.PostgresRunnerTests.test_shutdown_failure_cannot_pass_or_remove_live_socket) ... ok\ntest_success_requires_backend_pass_and_stopped_cluster (test_postgres_tools.PostgresRunnerTests.test_success_requires_backend_pass_and_stopped_cluster) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.345s\n\nOK\n"
+}

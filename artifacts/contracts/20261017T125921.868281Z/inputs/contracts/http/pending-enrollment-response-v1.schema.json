@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Created pending enrollment v1",
+  "description": "Sensitive one-time delivery to an authorized administrator over TLS. Never log or persist the bootstrapToken in plaintext.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "pendingEnrollmentId", "bootstrapToken", "issuedAt", "expiresAt"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "pendingEnrollmentId": {"type": "string", "format": "uuid"},
+    "bootstrapToken": {"type": "string", "minLength": 43, "maxLength": 43, "pattern": "^[A-Za-z0-9_-]{43}$"},
+    "issuedAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"}
+  }
+}

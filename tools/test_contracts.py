@@ -11,6 +11,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContractTests(unittest.TestCase):
+    def test_command_event_ingestion_requires_mtls_and_returns_durable_ack(self):
+        document = json.loads((ROOT / "contracts/openapi.json").read_text())
+        operation = document["paths"]["/api/v1/device/command-events"]["post"]
+        self.assertEqual(operation["security"], [{"deviceCertificate": []}])
+        self.assertTrue(operation["requestBody"]["required"])
+        self.assertEqual(operation["requestBody"]["content"]["application/json"]["schema"]["$ref"],
+                         "./events/command-event-v1.schema.json")
+        self.assertEqual(set(operation["responses"]), {"200", "400", "401", "403", "409", "413", "415", "429", "500", "503"})
+        self.assertEqual(operation["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+                         "./events/event-ack-v1.schema.json")
+        self.assertEqual(operation["responses"]["200"]["headers"]["Cache-Control"]["$ref"],
+                         "#/components/headers/NoStore")
+        self.assertNotIn("WWW-Authenticate", operation["responses"]["401"]["headers"])
+
     def test_device_identity_requires_mtls_and_no_bootstrap_body(self):
         document = json.loads((ROOT / "contracts/openapi.json").read_text())
         operation = document["paths"]["/api/v1/device/identity"]["get"]

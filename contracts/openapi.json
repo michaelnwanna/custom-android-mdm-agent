@@ -3,11 +3,59 @@
   "info": {
     "title": "Fleet enrollment API",
     "version": "1.0.0",
-    "description": "Enrollment lab with bootstrap redemption, administrator provisioning and an HTTPS mTLS device-identity diagnostic. Runtime verification is distinct from schema validation. Production CA, browser login, MQTT mTLS and full revocation lifecycle remain outside this lab."
+    "description": "Enrollment lab with bootstrap redemption, administrator provisioning, HTTPS mTLS device identity and durable command-event ingestion. Runtime verification is distinct from schema validation. Production CA, browser login, production MQTT transport and full revocation lifecycle remain outside this lab."
   },
   "servers": [{"url": "https://fleet.example.invalid"}],
   "security": [{"deviceCertificate": []}],
   "paths": {
+    "/api/v1/device/command-events": {
+      "post": {
+        "operationId": "IngestCommandEvent",
+        "summary": "Commit one owned command event and recover its original acknowledgement",
+        "description": "HTTPS only, using the enrolled device certificate policy. Bootstrap/API bearer tokens and forwarded certificate headers are not credentials. Accept one unencoded UTF-8 application/json event, at most 8192 bytes including whitespace; reject duplicate/unknown fields and device mismatch. Check trusted command/correlation ownership and fresh completed/enabled enrollment under a PostgreSQL row lock. Commit event and original acknowledgement together before returning 200; identical duplicate delivery returns exactly the original acknowledgement JSON and receivedAt. UUID casing, property order and equivalent numeric version forms normalize; timestamp text remains significant, so rewriting an equivalent timestamp conflicts. A disabled device normally receives 401 at authentication; disable committed between authentication and ingestion is a generic 409. Ownership, correlation and changed-content/event-ID rejection also use the same generic 409. No command registration route or execution/lifecycle projection is provided. Requests share the device identity route's process-local 120-per-minute limit, including unauthorized requests. Ingestion has a cooperative 15-second deadline after the separate authentication deadline. An uncertain commit/lost reply must be retried with the original event; HTTP failure never grants permission to delete the Android outbox event.",
+        "security": [{"deviceCertificate": []}],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"$ref": "./events/command-event-v1.schema.json"}}}
+        },
+        "responses": {
+          "200": {
+            "description": "Committed original acknowledgement, for either first ingestion or identical replay. This is not command execution success.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/json": {"schema": {"$ref": "./events/event-ack-v1.schema.json"}}}
+          },
+          "400": {"$ref": "#/components/responses/InvalidRequest"},
+          "401": {
+            "description": "Missing, unregistered or disabled device certificate; no bearer challenge.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "403": {
+            "description": "Device authorization policy denied access.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "409": {
+            "description": "Generic event ownership, identity or current enrollment rejection, without exposing existing event or command contents.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "413": {
+            "description": "Request exceeds 8192 bytes, including requests without Content-Length.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "415": {
+            "description": "Only unencoded application/json with optional UTF-8 charset is accepted.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "429": {"$ref": "#/components/responses/RetryUnavailable"},
+          "500": {"$ref": "#/components/responses/InternalError"},
+          "503": {"$ref": "#/components/responses/RetryUnavailable"}
+        }
+      }
+    },
     "/api/v1/device/identity": {
       "get": {
         "operationId": "GetDeviceIdentity",

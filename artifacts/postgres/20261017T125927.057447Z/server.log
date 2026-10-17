@@ -1,0 +1,78 @@
+2026-10-17 15:59:31.946 EAT [4129] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 15:59:31.947 EAT [4129] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-tqdhfyas/.s.PGSQL.5432"
+2026-10-17 15:59:31.953 EAT [4132] LOG:  database system was shut down at 2026-10-17 15:59:30 EAT
+2026-10-17 15:59:31.959 EAT [4129] LOG:  database system is ready to accept connections
+2026-10-17 15:59:57.836 EAT [4184] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 15:59:57.836 EAT [4184] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:01.342 EAT [4197] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:01.342 EAT [4197] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:02.184 EAT [4197] ERROR:  forced audit failure
+2026-10-17 16:00:02.184 EAT [4197] CONTEXT:  PL/pgSQL function reject_provisioning_audit() line 2 at RAISE
+2026-10-17 16:00:02.184 EAT [4197] STATEMENT:  INSERT INTO "EnrollmentProvisioningAudits" ("PendingEnrollmentId", "CreatedAt", "Issuer", "Subject")
+	VALUES ($1, $2, $3, $4)
+2026-10-17 16:00:02.262 EAT [4198] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:02.262 EAT [4198] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:04.577 EAT [4203] ERROR:  test event insertion failure
+2026-10-17 16:00:04.577 EAT [4203] CONTEXT:  PL/pgSQL function reject_test_event() line 2 at RAISE
+2026-10-17 16:00:04.577 EAT [4203] STATEMENT:  INSERT INTO "StoredCommandEvents" ("EventId", "AcknowledgementJson", "CommandId", "ContentJson", "CorrelationId", "DeviceId")
+	VALUES ($1, $2, $3, $4, $5, $6)
+2026-10-17 16:00:04.612 EAT [4205] ERROR:  test event insertion failure
+2026-10-17 16:00:04.612 EAT [4205] CONTEXT:  PL/pgSQL function reject_test_event() line 2 at RAISE
+2026-10-17 16:00:04.612 EAT [4205] STATEMENT:  INSERT INTO "StoredCommandEvents" ("EventId", "AcknowledgementJson", "CommandId", "ContentJson", "CorrelationId", "DeviceId")
+	VALUES ($1, $2, $3, $4, $5, $6)
+2026-10-17 16:00:04.676 EAT [4207] ERROR:  insert or update on table "StoredCommandEvents" violates foreign key constraint "FK_StoredCommandEvents_CommandEventOwnerships_CommandId_Device~"
+2026-10-17 16:00:04.676 EAT [4207] DETAIL:  Key (CommandId, DeviceId, CorrelationId)=(21d50590-c4e8-44e8-b412-0658ca8ee1b7, 8387e34f-c082-486c-808d-783a9ddce50f, 071c5054-346a-42e4-9d2c-82fc05fdc68a) is not present in table "CommandEventOwnerships".
+2026-10-17 16:00:04.676 EAT [4207] STATEMENT:  UPDATE "StoredCommandEvents" SET "CorrelationId" = $1 WHERE "EventId" = $2
+2026-10-17 16:00:04.798 EAT [4209] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:04.798 EAT [4209] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:05.272 EAT [4210] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:05.272 EAT [4210] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:05.693 EAT [4213] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:05.693 EAT [4213] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:06.294 EAT [4217] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:06.294 EAT [4217] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:06.690 EAT [4218] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:06.690 EAT [4218] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:07.171 EAT [4221] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:07.171 EAT [4221] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:07.619 EAT [4222] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:07.619 EAT [4222] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:08.017 EAT [4230] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:08.017 EAT [4230] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:08.436 EAT [4231] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:08.436 EAT [4231] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:08.859 EAT [4233] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 16:00:08.859 EAT [4233] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 16:00:09.484 EAT [4129] LOG:  received fast shutdown request
+2026-10-17 16:00:09.484 EAT [4129] LOG:  aborting any active transactions
+2026-10-17 16:00:09.485 EAT [4129] LOG:  background worker "logical replication launcher" (PID 4135) exited with exit code 1
+2026-10-17 16:00:09.485 EAT [4130] LOG:  shutting down
+2026-10-17 16:00:09.486 EAT [4130] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 16:00:09.551 EAT [4130] LOG:  checkpoint complete: wrote 191 buffers (1.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.014 s, sync=0.024 s, total=0.066 s; sync files=324, longest=0.001 s, average=0.001 s; distance=2115 kB, estimate=2115 kB; lsn=0/16B0060, redo lsn=0/16B0060
+2026-10-17 16:00:09.561 EAT [4129] LOG:  database system is shut down

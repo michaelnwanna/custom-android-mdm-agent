@@ -1,5 +1,7 @@
 # Backend Command Event Decoding
 
+The [HTTPS ingestion endpoint](command-event-http.md) now authenticates the caller through enrolled certificate membership, binds this parser to that identity, and returns the library's durable acknowledgement unchanged. Earlier parser-only exclusions remain historical; Android publishing/deletion and MQTT ingestion are still unimplemented.
+
 Follow-up: the [durable PostgreSQL library](backend-event-ingestion.md) now calls this parser, checks trusted command/correlation ownership and commits event-ID deduplication with recoverable original acknowledgements. The parser-only evidence below retains its original scope; HTTP/MQTT ingestion and acknowledgement delivery remain planned. Timestamp text remains significant in the new fail-closed duplicate identity policy, not proof of distinct execution.
 
 [CommandStateEvent.Parse](../backend/src/FleetManagement/Messaging/CommandStateEvent.cs) is a stateless .NET consumer of the [command-state event v1 contract](../contracts/events/command-event-v1.schema.json). It takes bounded JSON bytes and a device UUID supplied by a future authenticated caller, and returns typed identifiers, one of five states, a validated timestamp string and an optional error code. It is not connected to HTTP, MQTT, PostgreSQL ingestion or Android outbox acknowledgement.

@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [event HTTPS operation](../docs/command-event-http.md) now declares and consumes one command-state event under enrolled device-certificate authentication, returning the original event-ack v1 only after durable acceptance. Ten contract checks include the operation's security/schema/status rules. Local software-key Kestrel TLS/PostgreSQL verification is separate from those schema checks; Android response validation/deletion and MQTT ingestion are not implemented.
+
 The [PostgreSQL event library](../docs/backend-event-ingestion.md) now checks trusted command ownership and generates/stores the event acknowledgement v1 shape with the event before returning it. Duplicate ingestion recovers the original acknowledgement; 15 local database tests include actual restart recovery. This is not network acknowledgement delivery or Android outbox deletion. Earlier absent-ingestion statements below retain their historical scope.
 
 The [backend command-state event decoder](../docs/backend-command-events.md) now consumes the same five valid/eleven rejection event fixtures in .NET, with strict fields/state/error shapes and expected-device binding. Its timestamp receiver limit is nanosecond precision, preserving the validated original string. Parsing is not durable ingestion, lifecycle/ownership validation or acknowledgement generation; earlier absent-consumer statements below are historical.
@@ -29,7 +31,8 @@ flowchart LR
     Decoder --> Journal[Atomic Room receipt and event - API 34 verified]
     Fixtures --> EventDecoder[Backend command-state decoder - component verified]
     EventDecoder --> EventStore[Owned event and original acknowledgement commit - PostgreSQL verified]
-    EventStore -. transport planned .-> Device
+    EventStore --> HttpsAck[Exact HTTPS acknowledgement - TLS / PostgreSQL verified]
+    HttpsAck -. Android validation planned .-> Device
 ```
 
 ## Wire Rules

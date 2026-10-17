@@ -46,7 +46,15 @@ public sealed record DurableCommandEventReceipt(string AcknowledgementJson, bool
     public override string ToString() => "DurableCommandEventReceipt { [redacted] }";
 }
 
-public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> contexts, TimeProvider clock)
+public interface ICommandEventIngestion
+{
+    Task<DurableCommandEventReceipt> IngestAsync(ReadOnlyMemory<byte> body, Guid authenticatedDeviceId,
+        CancellationToken cancellationToken = default);
+}
+
+public sealed class CommandEventRejectedException() : InvalidOperationException("Command event rejected.");
+
+public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> contexts, TimeProvider clock) : ICommandEventIngestion
 {
     public async Task RegisterOwnershipAsync(Guid commandId, Guid deviceId, Guid correlationId,
         CancellationToken cancellationToken = default)
@@ -58,7 +66,7 @@ public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> cont
         if (existing is not null)
         {
             if (existing.DeviceId != deviceId || existing.CorrelationId != correlationId || existing.EnrollmentId != enrollment.Id)
-                throw new InvalidOperationException("Command ownership conflict.");
+                throw new CommandEventRejectedException();
         }
         else
         {
@@ -80,13 +88,13 @@ public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> cont
             .SingleOrDefaultAsync(value => value.CommandId == message.CommandId, cancellationToken);
         if (ownership is null || ownership.DeviceId != authenticatedDeviceId || ownership.CorrelationId != message.CorrelationId ||
             ownership.EnrollmentId != enrollment.Id)
-            throw new InvalidOperationException("Command ownership rejected.");
+            throw new CommandEventRejectedException();
         var existing = await context.StoredCommandEvents.AsNoTracking()
             .SingleOrDefaultAsync(value => value.EventId == message.EventId, cancellationToken);
         if (existing is not null)
         {
             if (existing.ContentJson != content)
-                throw new InvalidOperationException("Event identity conflict.");
+                throw new CommandEventRejectedException();
             await transaction.CommitAsync(cancellationToken);
             return new DurableCommandEventReceipt(existing.AcknowledgementJson, true);
         }
@@ -106,7 +114,7 @@ public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> cont
             .AsTracking().ToListAsync(cancellationToken);
         var enrollment = rows.SingleOrDefault();
         if (enrollment?.CompletedResponseJson is null || enrollment.DeviceAccessDisabled)
-            throw new InvalidOperationException("Device enrollment rejected.");
+            throw new CommandEventRejectedException();
         return enrollment;
     }
 
@@ -118,7 +126,7 @@ public sealed class PostgresCommandEvents(IDbContextFactory<FleetDbContext> cont
         }
         catch (DbUpdateException failure) when (failure.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
-            throw new InvalidOperationException("Event or command identity conflict.");
+            throw new CommandEventRejectedException();
         }
     }
 }

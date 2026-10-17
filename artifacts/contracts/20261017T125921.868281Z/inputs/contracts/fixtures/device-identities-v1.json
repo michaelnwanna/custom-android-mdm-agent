@@ -1,0 +1,15 @@
+{
+  "schema": "http/device-identity-v1.schema.json",
+  "valid": [{"schemaVersion": 1, "deviceId": "a9373871-de89-4723-bc55-884e76916e67"}],
+  "invalid": [
+    {"name": "missing version", "base": 0, "remove": ["schemaVersion"]},
+    {"name": "missing identity", "base": 0, "remove": ["deviceId"]},
+    {"name": "unsupported version", "base": 0, "set": {"schemaVersion": 2}},
+    {"name": "string version", "base": 0, "set": {"schemaVersion": "1"}},
+    {"name": "extra field", "base": 0, "set": {"token": "forbidden"}},
+    {"name": "null identity", "base": 0, "set": {"deviceId": null}},
+    {"name": "empty identity", "base": 0, "set": {"deviceId": "00000000-0000-0000-0000-000000000000"}},
+    {"name": "noncanonical identity", "base": 0, "set": {"deviceId": "A9373871-DE89-4723-BC55-884E76916E67"}},
+    {"name": "invalid identity", "base": 0, "set": {"deviceId": "not-a-uuid"}}
+  ]
+}

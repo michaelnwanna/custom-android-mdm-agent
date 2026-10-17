@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using FleetManagement.Enrollment;
+using FleetManagement.Messaging;
 using FleetManagement.Persistence;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -92,6 +93,7 @@ public static class FleetApi
         app.MapEnrollment();
         app.MapPendingEnrollment();
         app.MapDeviceIdentity();
+        app.MapCommandEvents();
         return app;
     }
 
@@ -116,6 +118,7 @@ public static class FleetApi
         builder.Services.AddSingleton<IDeviceCertificateIdentity>(services => new DeviceCertificateIdentity(
             services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), root, services.GetRequiredService<TimeProvider>()));
         builder.Services.AddSingleton<PostgresEnrollmentClaims>();
+        builder.Services.AddSingleton<ICommandEventIngestion, PostgresCommandEvents>();
         builder.Services.AddSingleton<IEnrollmentSigner>(services => new LabLedgerEnrollmentSigner(values[4]!,
             services.GetRequiredService<X509Certificate2>(), services.GetRequiredService<TimeProvider>(), TimeSpan.FromDays(1)));
         builder.Services.AddSingleton(services => new EnrollmentSigningCoordinator(

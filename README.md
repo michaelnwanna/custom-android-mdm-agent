@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [certificate-authenticated event HTTPS endpoint](docs/command-event-http.md) now accepts one bounded command-state event and delivers its exact committed acknowledgement. Real loopback Kestrel TLS/PostgreSQL tests verify enrolled certificate membership, duplicate recovery, rollback/retry and disabled access. Final verification passes 158 component tests, 15 PostgreSQL tests, ten contract checks and 70 tooling tests. Android upload/acknowledgement validation and outbox deletion remain planned; this is not MQTT ingestion or full fleet acceptance.
+
 The [durable backend event library](docs/backend-event-ingestion.md) now verifies trusted command ownership, commits each event with its original acknowledgement, and recovers that exact acknowledgement on duplicate delivery and actual PostgreSQL restart. All six migrations are required. Final local verification passes 15 PostgreSQL tests, 154 component tests and 69 tooling tests. Network ingestion, acknowledgement delivery, Android outbox deletion and command lifecycle projection remain unimplemented.
 
 The [backend event decoder](docs/backend-command-events.md) now validates shared command-state events, exact state/error shapes, timestamps, identifiers and authenticated-caller device binding. Five new checks bring the backend suite to 154 passing tests. This is a parser only, not command ownership verification, durable ingestion or acknowledgement generation.
@@ -64,10 +66,12 @@ This diagram separates implemented API 34 diagnostics and the verified combined 
 flowchart TB
 	Admin[Administrator]
 
-	subgraph EventLibrary["Event ingestion library - local PostgreSQL verified; transport planned"]
+	subgraph EventLibrary["Event ingestion - local HTTPS mTLS and PostgreSQL verified"]
+		EventHttp[Certificate-authenticated HTTPS event endpoint] --> EventDecode
 		OwnedCommands[Trusted command ownership registration] --> EventStore[(Owned events and original acknowledgements)]
 		EventDecode[Strict device-bound event decoder] --> EventStore
 		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
+		RecoveredAck --> EventHttp
 	end
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]

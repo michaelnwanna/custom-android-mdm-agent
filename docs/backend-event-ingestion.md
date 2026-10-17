@@ -1,5 +1,7 @@
 # Durable Backend Event Ingestion
 
+Follow-up: [certificate-authenticated HTTPS ingestion](command-event-http.md) now calls this library and delivers the original acknowledgement JSON. The library-only evidence and exclusions below describe the earlier milestone; Android upload/acknowledgement validation/deletion and MQTT ingestion remain planned. Known ownership/enrollment/event conflicts now use `CommandEventRejectedException` (an `InvalidOperationException` subtype), allowing the HTTP boundary to distinguish domain rejection from unexpected failures without exposing details.
+
 [PostgresCommandEvents](../backend/src/FleetManagement/Messaging/PostgresCommandEvents.cs) adds trusted command ownership registration and durable command-state event ingestion to the core library. Apply all six migrations, including [CommandEventIngestion](../backend/src/FleetManagement/Persistence/Migrations/20261017114417_CommandEventIngestion.cs). There is no HTTP endpoint, MQTT worker or acknowledgement delivery in this milestone.
 
 ```mermaid

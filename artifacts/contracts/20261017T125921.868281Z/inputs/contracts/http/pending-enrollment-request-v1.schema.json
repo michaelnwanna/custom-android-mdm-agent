@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Create pending enrollment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "lifetimeSeconds"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "lifetimeSeconds": {"type": "integer", "minimum": 60, "maximum": 900}
+  }
+}
