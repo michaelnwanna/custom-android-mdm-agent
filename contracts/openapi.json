@@ -3,11 +3,40 @@
   "info": {
     "title": "Fleet enrollment API",
     "version": "1.0.0",
-    "description": "Enrollment lab with implemented bootstrap redemption and administrator pending-enrollment creation. Runtime tests are separate from schema validation. Production CA, browser login, Android enrollment, revocation and device mTLS remain outside this lab."
+    "description": "Enrollment lab with bootstrap redemption, administrator provisioning and an HTTPS mTLS device-identity diagnostic. Runtime verification is distinct from schema validation. Production CA, browser login, MQTT mTLS and full revocation lifecycle remain outside this lab."
   },
   "servers": [{"url": "https://fleet.example.invalid"}],
   "security": [{"deviceCertificate": []}],
   "paths": {
+    "/api/v1/device/identity": {
+      "get": {
+        "operationId": "GetDeviceIdentity",
+        "summary": "Read the identity authenticated by the device TLS certificate",
+        "description": "HTTPS only. Requires TLS proof of the enrolled private key, pinned device CA, valid P-256/SHA256 certificate with exact clientAuth usage and one device URI SAN, and exact certificate/key membership in a completed enrollment. Server validation is not hardware-key attestation. DeviceAccessDisabled is checked from PostgreSQL on every request, without a positive identity cache. Bootstrap/API access tokens and forwarded certificate headers are not device credentials. Invalid certificate chains may fail at TLS before an HTTP response. Shared process-local limit: 120 requests per minute, including unauthorized requests. No MQTT authentication, CRL/OCSP or active-connection termination is implied.",
+        "security": [{"deviceCertificate": []}],
+        "responses": {
+          "200": {
+            "description": "Authenticated server-assigned device identity; no credential or private material returned.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/json": {"schema": {"$ref": "./http/device-identity-v1.schema.json"}}}
+          },
+          "400": {"$ref": "#/components/responses/InvalidRequest"},
+          "401": {
+            "description": "No certificate, unregistered certificate or disabled device identity. No bootstrap bearer challenge is issued.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "403": {
+            "description": "Device authorization policy denied access.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}},
+            "content": {"application/problem+json": {"schema": {"$ref": "./http/problem-v1.schema.json"}}}
+          },
+          "429": {"$ref": "#/components/responses/RetryUnavailable"},
+          "500": {"$ref": "#/components/responses/InternalError"},
+          "503": {"$ref": "#/components/responses/RetryUnavailable"}
+        }
+      }
+    },
     "/api/v1/admin/pending-enrollments": {
       "post": {
         "operationId": "CreatePendingEnrollment",
@@ -141,7 +170,7 @@
       },
       "deviceCertificate": {
         "type": "mutualTLS",
-        "description": "Subsequent device APIs require validated, unexpired, unrevoked device identity certificates and server-side authorization. Merely presenting a certificate is insufficient."
+        "description": "The HTTPS device identity route requires a valid pinned-CA certificate, TLS key-possession proof, exact completed-enrollment membership and an enabled device record. Forwarded certificate headers are not trusted. CRL/OCSP, MQTT access and full certificate-revocation lifecycle remain unimplemented."
       }
     },
     "headers": {

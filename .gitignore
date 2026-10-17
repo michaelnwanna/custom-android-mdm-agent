@@ -11,3 +11,5 @@ __pycache__/
 .lab-private/
 *.p12
 *.pfx
+hs_err_pid*.log
+*.hprof

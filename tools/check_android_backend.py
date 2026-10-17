@@ -27,6 +27,12 @@ def public_configuration(configuration):
             "bootstrap": {name: bootstrap[name] for name in ("schemaVersion", "endpoint", "pendingEnrollmentId")}}
 
 
+def public_tls_diagnostics(stderr):
+    return [line for line in stderr.splitlines() if line in
+            {"TLS:ACCEPTED", "TLS:PROOF_REJECTED", "TLS:CHAIN_REJECTED"}
+            or re.fullmatch(r"TLS:ERROR:(?:AuthenticationException|SslException|IOException|Win32Exception|CryptographicException|AppleCommonCryptoCryptographicException|InvalidOperationException):-?[0-9]{1,11}", line)]
+
+
 def main():
     parser = argparse.ArgumentParser(description="Record explicit emulator enrollment against private PostgreSQL and real Kestrel TLS.")
     parser.add_argument("--serial", required=True)
@@ -71,6 +77,7 @@ def main():
     jvm = None
     apks = {}
     staged = False
+    host_stderr = ""
 
     def execute(arguments, cwd=inputs / "backend", timeout=600, input_text=None):
         process = subprocess.run(list(map(str, arguments)), cwd=cwd, env=environment, input=input_text,
@@ -106,7 +113,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in jvm:
                 jvm[name] += int(suite.get(name, "0"))
-        if jvm["tests"] < 20 or any(jvm[name] for name in ("failures", "errors", "skipped")):
+        if jvm["tests"] < 22 or any(jvm[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         shutil.copytree(results, output / "jvm-results")
         shutil.copytree(android / "agent/build/reports", output / "reports")
@@ -157,11 +164,15 @@ def main():
         json.loads(proof)
         (output / "device-public-proof.json").write_text(proof + "\n")
         stdout, stderr = host.communicate(input=proof + "\n", timeout=60)
-        if host.returncode or stderr:
+        host_stderr = stderr
+        if host.returncode or any(line not in public_tls_diagnostics(stderr) for line in stderr.splitlines()):
             raise RuntimeError("Integration host verification failed")
         verification = json.loads(stdout)
         if verification.get("stage") != "verified" or verification.get("issuedCertificates") != 1 or not verification.get("publicKeyProof"):
             raise RuntimeError("Backend proof was not explicit")
+        if not all(verification.get(name) is True for name in ("mtlsAuthenticated", "disabledRejected",
+                   "alternateCertificateRejected", "forwardedCertificateRejected")):
+            raise RuntimeError("mTLS access-control proof was not explicit")
         (output / "backend-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
         remaining = execute([*psql, "--tuples-only", "--no-align", "-c",
                              "SELECT count(*) FROM pg_namespace WHERE nspname ~ '^fleet_test_[0-9a-f]{32}$';"])
@@ -173,10 +184,10 @@ def main():
     finally:
         if host is not None and host.poll() is None:
             try:
-                host.communicate(timeout=20)
+                _, host_stderr = host.communicate(timeout=20)
             except subprocess.TimeoutExpired:
                 host.kill()
-                host.communicate()
+                _, host_stderr = host.communicate()
         if staged:
             try:
                 execute([*adb, "shell", "run-as", "dev.fleet.agent", "rm", "-f",
@@ -191,13 +202,14 @@ def main():
         stopped = not (data / "postmaster.pid").exists()
         if stopped:
             shutil.rmtree(socket_directory)
+    (output / "tls-diagnostics.json").write_text(json.dumps(public_tls_diagnostics(host_stderr), indent=2) + "\n")
     manifest = {"schemaVersion": 1, "startedAt": started.isoformat(),
                 "finishedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "result": "passed" if passed and stopped else "failed", "error": error,
                 "serial": args.serial, "expectedAvd": args.expected_avd, "serverStopped": stopped,
                 "inputSha256": hashes, "apkSha256": apks, "jvmCounters": jvm,
                 "commands": records,
-                "scope": "Real emulator Keystore CSR, Kestrel HTTPS, authorized admin API provisioning, PostgreSQL audit/completion and lab signer; exact response retry, invalid token/conflicting CSR rejection and key-possession proof. No UI workflow, live IdP, mTLS, reboot, power loss or production provisioning proof.",
+                "scope": "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof.",
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}

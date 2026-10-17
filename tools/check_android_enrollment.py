@@ -84,7 +84,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in counters:
                 counters[name] += int(suite.get(name, "0"))
-        if counters["tests"] < 20 or any(counters[name] for name in ("failures", "errors", "skipped")):
+        if counters["tests"] < 22 or any(counters[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         for source in (working / "agent/build/reports").rglob("*"):
             if source.is_file():
@@ -121,7 +121,7 @@ def main():
                 "result": "passed" if passed else "failed", "error": error, "commands": records,
                 "inputSha256": hashes, "apkSha256": apk_hashes, "jvmCounters": counters, "serial": args.serial,
                 "expectedAvd": args.expected_avd,
-                "scope": "Android JVM crypto/parser/loopback TLS, APK build/lint; optional isolated real Keystore instrumentation. No combined ASP.NET/PostgreSQL/device enrollment, mTLS, process restart or power-loss proof.",
+                "scope": "Android JVM crypto/parser/loopback enrollment and mTLS, APK build/lint; optional isolated real Keystore instrumentation. No combined ASP.NET/PostgreSQL/device runtime, MQTT mTLS, process restart or power-loss proof.",
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}

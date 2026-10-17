@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.MaintenanceProofTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-17T07:53:15" hostname="Michaels-MacBook-Pro.local" time="0.076">
+  <properties/>
+  <testcase name="rejectsPreviousBoot" classname="dev.fleet.agent.MaintenanceProofTest" time="0.009"/>
+  <testcase name="rejectsClockReset" classname="dev.fleet.agent.MaintenanceProofTest" time="0.014"/>
+  <testcase name="acceptsFreshProof" classname="dev.fleet.agent.MaintenanceProofTest" time="0.012"/>
+  <testcase name="rejectsUnknownBoot" classname="dev.fleet.agent.MaintenanceProofTest" time="0.007"/>
+  <testcase name="rejectsExpiredProof" classname="dev.fleet.agent.MaintenanceProofTest" time="0.004"/>
+  <testcase name="rejectsModifiedChallenge" classname="dev.fleet.agent.MaintenanceProofTest" time="0.007"/>
+  <testcase name="rejectsMalformedSignature" classname="dev.fleet.agent.MaintenanceProofTest" time="0.004"/>
+  <testcase name="rejectsWrongKey" classname="dev.fleet.agent.MaintenanceProofTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

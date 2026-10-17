@@ -17,7 +17,7 @@ public sealed class EnrollmentPersistenceTests
         using var context = new FleetDbContext(new DbContextOptionsBuilder<FleetDbContext>()
             .UseNpgsql("Host=localhost;Database=not_connected;Username=unused").Options);
         Assert.False(context.Database.HasPendingModelChanges());
-        Assert.Equal(4, context.Database.GetMigrations().Count());
+        Assert.Equal(5, context.Database.GetMigrations().Count());
         var sql = context.GetService<IMigrator>().GenerateScript();
         Assert.Contains("CREATE TABLE \"PendingEnrollments\"", sql);
         Assert.Contains("CK_Enrollment_Claim", sql);
@@ -36,6 +36,7 @@ public sealed class EnrollmentPersistenceTests
         Assert.Contains("CK_Enrollment_Digest", sql);
         Assert.Contains("CK_Enrollment_Completion", sql);
         Assert.Contains("CK_Enrollment_SigningAttempt", sql);
+        Assert.Contains("\"DeviceAccessDisabled\" boolean NOT NULL DEFAULT FALSE", sql);
         Assert.Contains("character varying(100000)", sql);
         Assert.Contains("CREATE UNIQUE INDEX \"IX_PendingEnrollments_OperationId\"", sql);
         Assert.Contains("CREATE UNIQUE INDEX \"IX_PendingEnrollments_DeviceId\"", sql);
@@ -92,6 +93,8 @@ public sealed class EnrollmentPersistenceTests
     {
         var credential = Issue().Credential;
         var pending = PendingEnrollment.Create(credential);
+        Assert.False(pending.DeviceAccessDisabled);
+        Assert.Throws<InvalidOperationException>(() => pending.DisableDeviceAccess());
         var key = CreateVerifiedKey();
         var claim = pending.Claim(key, credential.IssuedAt);
         var response = new EnrollmentCertificateResponse(1, claim.DeviceId!.Value, "synthetic-component-only",
@@ -112,6 +115,10 @@ public sealed class EnrollmentPersistenceTests
         var conflict = pending.Claim(CreateVerifiedKey(), credential.IssuedAt.AddSeconds(2));
         Assert.Equal(EnrollmentClaimStatus.Conflict, conflict.Status);
         Assert.Null(conflict.Response);
+        pending.DisableDeviceAccess();
+        pending.DisableDeviceAccess();
+        Assert.True(pending.DeviceAccessDisabled);
+        Assert.Equal(stored, pending.CompletedResponseJson);
     }
 
     [Fact]

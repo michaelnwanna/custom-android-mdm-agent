@@ -11,6 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContractTests(unittest.TestCase):
+    def test_device_identity_requires_mtls_and_no_bootstrap_body(self):
+        document = json.loads((ROOT / "contracts/openapi.json").read_text())
+        operation = document["paths"]["/api/v1/device/identity"]["get"]
+        self.assertEqual(operation["security"], [{"deviceCertificate": []}])
+        self.assertNotIn("requestBody", operation)
+        self.assertEqual(set(operation["responses"]), {"200", "400", "401", "403", "429", "500", "503"})
+        self.assertEqual(operation["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+                         "./http/device-identity-v1.schema.json")
+        self.assertNotIn("WWW-Authenticate", operation["responses"]["401"]["headers"])
+
     def test_all_declared_errors_fit_problem_schema(self):
         document = json.loads((ROOT / "contracts/openapi.json").read_text())
         schema = json.loads((ROOT / "contracts/http/problem-v1.schema.json").read_text())

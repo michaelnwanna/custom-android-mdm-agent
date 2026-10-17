@@ -9,6 +9,9 @@ import org.junit.runner.RunWith
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.security.KeyStore
+import java.security.KeyFactory
+import android.security.keystore.KeyInfo
+import android.security.keystore.KeyProperties
 import java.security.Signature
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -41,6 +44,9 @@ class EnrollmentBackendInstrumentedTest {
             val csr = identity.prepare(bootstrap, serverRoot, deviceRoot)
             val alias = "fleet-enrollment-$namespace"
             assertNull(keyStore.getKey(alias, null).encoded)
+            val keyInfo = KeyFactory.getInstance("EC", "AndroidKeyStore")
+                .getKeySpec(keyStore.getKey(alias, null), KeyInfo::class.java)
+            assertTrue(keyInfo.digests.contains(KeyProperties.DIGEST_NONE))
             val rejected = assertThrows(EnrollmentHttpException::class.java) {
                 EnrollmentTransport.redeem(EnrollmentBootstrap(bootstrap.endpoint, bootstrap.pendingId,
                     if (bootstrap.token == "A".repeat(43)) "B" + "A".repeat(42) else "A".repeat(43)), csr, serverRoot)
@@ -59,6 +65,11 @@ class EnrollmentBackendInstrumentedTest {
                 EnrollmentTransport.redeem(bootstrap, conflictCsr, serverRoot)
             }
             assertEquals(409, conflict.status)
+            val tlsIdentity = reopened.tlsIdentity(serverRoot, deviceRoot, Instant.now())
+            assertEquals(response.deviceId, DeviceIdentityTransport.check(tlsIdentity, serverRoot))
+            assertEquals(401, assertThrows(DeviceHttpException::class.java) {
+                DeviceIdentityTransport.check(tlsIdentity, serverRoot)
+            }.status)
             assertArrayEquals(Base64.getDecoder().decode(response.certificateDer), keyStore.getCertificate(alias).encoded)
             assertNull(keyStore.getKey(alias, null).encoded)
             val challenge = UUID.randomUUID().toString().toByteArray()
@@ -73,6 +84,7 @@ class EnrollmentBackendInstrumentedTest {
                 verify(signature)
             })
             output.writeText(JSONObject().put("schemaVersion", 1).put("deviceId", response.deviceId.toString())
+                .put("mtlsAuthenticated", true).put("disabledRejected", true)
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())

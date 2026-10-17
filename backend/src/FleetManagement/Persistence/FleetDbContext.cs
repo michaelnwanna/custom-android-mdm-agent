@@ -45,6 +45,7 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
         enrollment.Property(value => value.SubjectPublicKeyInfoBase64).HasMaxLength(512);
         enrollment.Property(value => value.CompletedResponseJson).HasMaxLength(100000);
         enrollment.Property(value => value.SigningAttempted).HasDefaultValue(false);
+        enrollment.Property(value => value.DeviceAccessDisabled).HasDefaultValue(false);
         enrollment.HasIndex(value => value.OperationId).IsUnique();
         enrollment.HasIndex(value => value.DeviceId).IsUnique();
         enrollment.Ignore(value => value.Credential);

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "stage": "verified",
+  "deviceId": "f4da39ba-fd18-4b71-be2e-27882c2ade1b",
+  "pendingEnrollmentId": "9c95c792-0aa7-406b-b485-564cd4842379",
+  "issuedCertificates": 1,
+  "provisioningAudits": 1,
+  "publicKeyProof": true,
+  "exactResponseReplay": true,
+  "mtlsAuthenticated": true,
+  "disabledRejected": true,
+  "alternateCertificateRejected": true,
+  "forwardedCertificateRejected": true
+}

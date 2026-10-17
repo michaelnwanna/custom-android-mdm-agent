@@ -37,6 +37,12 @@ public static class FleetApi
                 limiter.Window = TimeSpan.FromMinutes(1);
                 limiter.QueueLimit = 0;
             });
+            options.AddFixedWindowLimiter("device", limiter =>
+            {
+                limiter.PermitLimit = 120;
+                limiter.Window = TimeSpan.FromMinutes(1);
+                limiter.QueueLimit = 0;
+            });
             options.OnRejected = async (context, cancellationToken) =>
             {
                 var seconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
@@ -47,6 +53,7 @@ public static class FleetApi
         });
         ConfigureEnrollment(builder);
         builder.AddAdministratorAuthentication();
+        builder.AddDeviceAuthentication();
         configure?.Invoke(builder);
         var app = builder.Build();
         app.Use(async (context, next) =>
@@ -84,6 +91,7 @@ public static class FleetApi
         app.UseAuthorization();
         app.MapEnrollment();
         app.MapPendingEnrollment();
+        app.MapDeviceIdentity();
         return app;
     }
 
@@ -103,6 +111,10 @@ public static class FleetApi
         builder.Services.AddSingleton(root);
         builder.Services.AddPooledDbContextFactory<FleetDbContext>(options => options.UseNpgsql(values[0]));
         builder.Services.AddSingleton(TimeProvider.System);
+        builder.WebHost.ConfigureKestrel(options => options.ConfigureHttpsDefaults(https =>
+            DeviceAuthentication.ConfigureHttps(https, root, TimeProvider.System)));
+        builder.Services.AddSingleton<IDeviceCertificateIdentity>(services => new DeviceCertificateIdentity(
+            services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), root, services.GetRequiredService<TimeProvider>()));
         builder.Services.AddSingleton<PostgresEnrollmentClaims>();
         builder.Services.AddSingleton<IEnrollmentSigner>(services => new LabLedgerEnrollmentSigner(values[4]!,
             services.GetRequiredService<X509Certificate2>(), services.GetRequiredService<TimeProvider>(), TimeSpan.FromDays(1)));

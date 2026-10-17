@@ -63,18 +63,33 @@ static async Task<int> Run()
         var claims = new PostgresEnrollmentClaims(factory, clock);
         var signer = new LabLedgerEnrollmentSigner(ledger, deviceRoot, clock, TimeSpan.FromDays(1));
         var coordinator = new EnrollmentSigningCoordinator(claims, signer, deviceRoot, TimeSpan.FromDays(2));
+        var deviceAccess = new DisableAfterFirstIdentity(factory, deviceRoot, clock);
         using var operatorKey = RSA.Create(2048);
         var operatorSecurityKey = new RsaSecurityKey(operatorKey);
         await using var app = FleetApi.Build([], builder =>
         {
             builder.Logging.ClearProviders();
+            builder.Logging.AddFilter("Microsoft.AspNetCore.Server.Kestrel", LogLevel.Debug);
+            builder.Logging.AddProvider(new TlsDiagnosticLoggerProvider());
             builder.WebHost.UseKestrel(options => options.Listen(IPAddress.Loopback, 0, listener =>
             {
                 listener.Protocols = HttpProtocols.Http1;
-                listener.UseHttps(serverCertificate);
+                listener.UseHttps(serverCertificate, https =>
+                {
+                    DeviceAuthentication.ConfigureHttps(https, deviceRoot, clock);
+                    var validate = https.ClientCertificateValidation!;
+                    https.ClientCertificateValidation = (certificate, chain, errors) =>
+                    {
+                        var accepted = validate(certificate, chain, errors);
+                        Console.Error.WriteLine(accepted ? "TLS:ACCEPTED" :
+                            errors == SslPolicyErrors.None ? "TLS:PROOF_REJECTED" : "TLS:CHAIN_REJECTED");
+                        return accepted;
+                    };
+                });
             }));
             builder.Services.AddSingleton<IEnrollmentRedemption>(new EnrollmentRedemptionService(claims, coordinator, digestKey));
             builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(new PendingEnrollmentProvisioner(factory, clock, digestKey));
+            builder.Services.AddSingleton<IDeviceCertificateIdentity>(deviceAccess);
             builder.Services.Configure<JwtBearerOptions>(AdministratorAuthentication.Scheme, options =>
             {
                 options.TokenValidationParameters.ValidIssuer = "https://identity.example.test";
@@ -121,6 +136,8 @@ static async Task<int> Run()
         Ensure(proofLine is { Length: > 0 and <= 200000 });
         using var proof = JsonDocument.Parse(proofLine!);
         var fields = proof.RootElement;
+        Ensure(fields.GetProperty("mtlsAuthenticated").GetBoolean() && fields.GetProperty("disabledRejected").GetBoolean());
+        Ensure(deviceAccess.Accepted == 1 && deviceAccess.Denied >= 1 && deviceAccess.AlternateCertificateRejected);
         var csr = fields.GetProperty("csrDer").GetString()!;
         var responseBytes = Convert.FromBase64String(fields.GetProperty("responseBase64").GetString()!);
         var response = JsonSerializer.Deserialize<EnrollmentCertificateResponse>(responseBytes, JsonSerializerOptions.Web)!;
@@ -138,15 +155,21 @@ static async Task<int> Run()
             var pending = await reopened.PendingEnrollments.SingleAsync();
             var audit = await reopened.EnrollmentProvisioningAudits.SingleAsync();
             Ensure(pending.Id == issued.PendingEnrollmentId && pending.DeviceId == response.DeviceId);
+            Ensure(pending.DeviceAccessDisabled);
             Ensure(pending.CompletedResponseJson is not null && Encoding.UTF8.GetBytes(pending.CompletedResponseJson).SequenceEqual(responseBytes));
             Ensure(audit.PendingEnrollmentId == pending.Id && audit.Subject == "android-integration-operator");
             Ensure(!JsonSerializer.Serialize(pending).Contains(issued.BootstrapToken, StringComparison.Ordinal));
         }
         Ensure(Directory.GetFiles(ledger, "*.issued.json").Length == 1);
+        using var spoofed = new HttpRequestMessage(HttpMethod.Get, "/api/v1/device/identity");
+        spoofed.Headers.TryAddWithoutValidation("X-ARR-ClientCert", response.CertificateDer);
+        using var anonymous = await client.SendAsync(spoofed);
+        Ensure(anonymous.StatusCode == HttpStatusCode.Unauthorized);
         await app.StopAsync();
         Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, stage = "verified", deviceId = response.DeviceId,
             pendingEnrollmentId = issued.PendingEnrollmentId, issuedCertificates = 1, provisioningAudits = 1,
-            publicKeyProof = true, exactResponseReplay = true }));
+            publicKeyProof = true, exactResponseReplay = true, mtlsAuthenticated = true,
+            disabledRejected = true, alternateCertificateRejected = true, forwardedCertificateRejected = true }));
         return 0;
     }
     catch (Exception)
@@ -181,4 +204,65 @@ static void Ensure(bool condition)
 sealed class ContextFactory(DbContextOptions<FleetDbContext> options) : IDbContextFactory<FleetDbContext>
 {
     public FleetDbContext CreateDbContext() => new(options);
+}
+
+sealed class TlsDiagnosticLoggerProvider : ILoggerProvider
+{
+    public ILogger CreateLogger(string categoryName) => new TlsDiagnosticLogger(categoryName);
+    public void Dispose() { }
+
+    private sealed class TlsDiagnosticLogger(string category) : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => category.Contains("Kestrel", StringComparison.Ordinal);
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (!IsEnabled(logLevel)) return;
+            for (var current = exception; current is not null; current = current.InnerException)
+                Console.Error.WriteLine($"TLS:ERROR:{current.GetType().Name}:{current.HResult}");
+        }
+    }
+}
+
+sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 root, TimeProvider clock) : IDeviceCertificateIdentity
+{
+    private readonly DeviceCertificateIdentity identity = new(factory, root, clock);
+    public int Accepted { get; private set; }
+    public int Denied { get; private set; }
+    public bool AlternateCertificateRejected { get; private set; }
+
+    public async Task<Guid?> AuthenticateAsync(X509Certificate2 certificate, CancellationToken cancellationToken)
+    {
+        var deviceId = await identity.AuthenticateAsync(certificate, cancellationToken);
+        if (deviceId is null)
+        {
+            Denied++;
+            return null;
+        }
+        Accepted++;
+        var now = clock.GetUtcNow();
+        var request = new CertificateRequest(new X500DistinguishedName("CN=Unregistered alternate certificate"),
+            certificate.PublicKey, HashAlgorithmName.SHA256);
+        request.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
+        request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
+        request.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(new OidCollection { new("1.3.6.1.5.5.7.3.2") }, true));
+        var names = new SubjectAlternativeNameBuilder();
+        names.AddUri(new Uri(EnrollmentCertificateVerifier.DeviceUri(deviceId.Value)));
+        request.CertificateExtensions.Add(names.Build());
+        using var alternate = request.Create(root, now.AddMinutes(-1), now.AddDays(1), RandomNumberGenerator.GetBytes(16));
+        DeviceCertificateProof.Verify(alternate, [], root, now);
+        AlternateCertificateRejected = await identity.AuthenticateAsync(alternate, cancellationToken) is null;
+        EnsureValid(AlternateCertificateRejected);
+        await using var context = factory.CreateDbContext();
+        var enrollment = await context.PendingEnrollments.SingleAsync(value => value.DeviceId == deviceId, cancellationToken);
+        enrollment.DisableDeviceAccess();
+        await context.SaveChangesAsync(cancellationToken);
+        return deviceId;
+    }
+
+    private static void EnsureValid(bool condition)
+    {
+        if (!condition) throw new InvalidOperationException("Alternate certificate was not rejected.");
+    }
 }

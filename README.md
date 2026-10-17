@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [HTTPS mTLS identity lab](docs/device-mtls.md) now authenticates Android using its enrolled Keystore key, exact completed certificate and current PostgreSQL enabled state. API 34 instrumentation passed a real mTLS request and rejection after persisted disable. A fifth migration is required. Earlier paragraphs about unverified mTLS describe prior milestones: HTTPS identity is now scoped lab-verified; MQTT mTLS, full revocation, secure production provisioning and the fleet workflow remain open.
+
 The [Android enrollment client](docs/android-enrollment.md) prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. A [combined API 34 run](artifacts/android-backend/20261017T071554.735623Z/replay.html) passed real Kestrel HTTPS enrollment against PostgreSQL and the lab signer, including authorized administrator provisioning, exact response recovery, invalid-token/conflicting-CSR rejection and key-possession proof. Twenty JVM tests and APK build/lint also passed. The UI staging action, live identity-provider integration, secure production bootstrap delivery and mTLS remain unverified.
 
 The [administrator provisioning route](docs/administrator-enrollment.md) now validates issuer-signed API access tokens, requires `enrollments:create`, and atomically saves the pending credential digest and issuer/subject audit before one-time bootstrap-secret delivery. This uses a fourth database migration. It is not browser login, production identity-provider integration or secure Android token transfer; those boundaries remain unverified.
@@ -85,6 +87,7 @@ flowchart TB
 		DeviceEnrollment[Keystore enrollment client - combined API 34 lab verified]
 		Agent --> DeviceEnrollment
 		DeviceEnrollment -->|Pinned HTTPS - PostgreSQL lab verified| EnrollmentAPI
+		DeviceEnrollment -->|HTTPS mTLS - API 34 lab verified| DeviceIdentity[Device identity API and enabled-state check]
 		Room[(Room inbox and outbox - planned)]
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]

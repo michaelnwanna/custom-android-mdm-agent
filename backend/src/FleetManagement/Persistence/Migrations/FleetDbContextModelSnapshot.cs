@@ -61,6 +61,11 @@ namespace FleetManagement.Persistence.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<bool>("DeviceAccessDisabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<Guid?>("DeviceId")
                         .HasColumnType("uuid");
 

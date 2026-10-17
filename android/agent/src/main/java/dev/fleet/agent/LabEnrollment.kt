@@ -49,6 +49,31 @@ object LabEnrollment {
         }
     }
 
+    fun checkIdentity(context: Context) {
+        val application = context.applicationContext
+        if (!application.getSystemService(DevicePolicyManager::class.java).isDeviceOwnerApp(application.packageName)) {
+            status(application, "Device Owner required")
+            return
+        }
+        if (!running.compareAndSet(false, true)) return
+        status(application, "Checking device identity")
+        executor.execute {
+            try {
+                val serverRoot = root(File(application.filesDir, "enrollment-server-ca.pem"))
+                val deviceRoot = root(File(application.filesDir, "enrollment-device-ca.pem"))
+                val identity = AndroidEnrollmentIdentity(application).tlsIdentity(serverRoot, deviceRoot, Instant.now())
+                DeviceIdentityTransport.check(identity, serverRoot)
+                status(application, "HTTPS device identity authenticated")
+            } catch (failure: DeviceHttpException) {
+                status(application, "Device access rejected (${failure.status})")
+            } catch (failure: Exception) {
+                status(application, "Device identity check unavailable")
+            } finally {
+                running.set(false)
+            }
+        }
+    }
+
     fun status(context: Context): String = "Enrollment: " +
         context.getSharedPreferences("lab-enrollment", Context.MODE_PRIVATE).getString("status", "Not started")
 

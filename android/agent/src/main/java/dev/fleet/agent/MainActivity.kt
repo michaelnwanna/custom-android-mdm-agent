@@ -71,6 +71,10 @@ class MainActivity : Activity() {
             text = "Enroll staged lab identity"
             setOnClickListener { LabEnrollment.start(this@MainActivity) }
         })
+        content.addView(Button(this).apply {
+            text = "Check enrolled HTTPS identity"
+            setOnClickListener { LabEnrollment.checkIdentity(this@MainActivity) }
+        })
         setContentView(ScrollView(this).apply { addView(content) })
     }
 

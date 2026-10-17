@@ -20,6 +20,7 @@ public sealed class PendingEnrollment
     public DateTimeOffset? ClaimedAt { get; private set; }
     public string? CompletedResponseJson { get; private set; }
     public bool SigningAttempted { get; private set; }
+    public bool DeviceAccessDisabled { get; private set; }
 
     private PendingEnrollment() { }
 
@@ -39,6 +40,13 @@ public sealed class PendingEnrollment
     }
 
     public BootstrapTokenCredential Credential => new(Id, TokenDigest, IssuedAt, ExpiresAt);
+
+    public void DisableDeviceAccess()
+    {
+        if (CompletedResponseJson is null)
+            throw new InvalidOperationException("Device enrollment is not complete.");
+        DeviceAccessDisabled = true;
+    }
 
     internal EnrollmentClaim Claim(VerifiedEnrollmentKey key, DateTimeOffset now)
     {

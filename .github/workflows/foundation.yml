@@ -47,6 +47,8 @@ jobs:
             !artifacts/**/build/**
             !artifacts/**/.gradle/**
             !artifacts/**/.kotlin/**
+            !artifacts/**/hs_err_pid*.log
+            !artifacts/**/*.hprof
   components:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -80,3 +82,5 @@ jobs:
             artifacts/contracts/
             !artifacts/**/bin/**
             !artifacts/**/obj/**
+            !artifacts/**/hs_err_pid*.log
+            !artifacts/**/*.hprof

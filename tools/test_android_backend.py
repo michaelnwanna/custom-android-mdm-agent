@@ -1,10 +1,16 @@
 import json
 import unittest
 
-from check_android_backend import public_configuration
+from check_android_backend import public_configuration, public_tls_diagnostics
 
 
 class AndroidBackendEvidenceTests(unittest.TestCase):
+    def test_tls_diagnostics_only_retains_fixed_public_labels(self):
+        self.assertEqual(["TLS:ACCEPTED", "TLS:CHAIN_REJECTED"], public_tls_diagnostics(
+            "sensitive-test-sentinel\nTLS:ACCEPTED\nTLS:ACCEPTED secret\nTLS:CHAIN_REJECTED\n"))
+        self.assertEqual(["TLS:ERROR:IOException:-2146232800"], public_tls_diagnostics(
+            "TLS:ERROR:IOException:-2146232800\nTLS:ERROR:SecretException:42\nTLS:ERROR:IOException:42 private\n"))
+
     def test_public_configuration_is_allowlisted_and_never_retains_bootstrap_secret(self):
         configuration = {"namespace": "integration-example", "serverRootDer": "public-server-root",
                          "deviceRootDer": "public-device-root", "unexpected": "sensitive-test-sentinel",

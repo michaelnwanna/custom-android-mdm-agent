@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fleet.example.invalid/schemas/device-identity-v1.schema.json",
+  "title": "Authenticated device identity v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "deviceId"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "deviceId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "not": {"const": "00000000-0000-0000-0000-000000000000"}
+    }
+  }
+}
