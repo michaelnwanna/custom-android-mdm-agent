@@ -1,5 +1,7 @@
 # Android Event Upload Boundary
 
+The [bounded worker](android-event-worker.md) now supplies optional upload control: fifteen-second cancellation deadlines and `onStopped` disconnect requests prevent later deletion if cancellation wins. Default transport-only calls retain their socket timeouts and nondeleting behavior. Earlier absent-worker/deadline statements below describe the original component; OS scheduling acceptance is pending.
+
 Follow-up: the [combined API 34 replay lab](android-event-replay.md) verifies actual Keystore/Room/HTTPS/PostgreSQL upload and original acknowledgement recovery after a post-commit test-only 503. The [journal acknowledgement operation](android-event-acknowledgement.md) now also verifies transactional exact-event deletion, rollback and inbox retention. Earlier JVM-only/absent-deletion statements below describe the component milestone; transport-only `upload` remains nondeleting. Real network disconnect, process-crash recovery and production worker integration remain unverified.
 
 [CommandEventTransport](../android/agent/src/main/java/dev/fleet/agent/CommandEventTransport.kt) uploads one stored `CommandEventRow` using an existing enrolled `DeviceTlsIdentity` and explicitly supplied server root. [EventAcknowledgementDecoder](../android/agent/src/main/java/dev/fleet/agent/EventAcknowledgement.kt) accepts only a bounded, matching event acknowledgement. These are callable components, not a scheduled synchronization worker. There is no Room deletion or acknowledgement mutation in this milestone.

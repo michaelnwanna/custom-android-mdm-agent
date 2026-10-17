@@ -34,10 +34,12 @@ def public_configuration(configuration):
                       eventCorrelationId=configuration["eventCorrelationId"])
         if configuration.get("eventDeletion") is True:
             result["eventDeletion"] = True
+        if configuration.get("eventWorker") is True:
+            result["eventWorker"] = True
     return result
 
 
-def verify_event_proof(device, backend, deletion=False):
+def verify_event_proof(device, backend, deletion=False, worker=False):
     acknowledgement = device.get("eventAcknowledgement")
     if (device.get("eventUploadVerified") is not True or backend.get("eventUploadVerified") is not True
             or type(backend.get("suppressedAcknowledgements")) is not int or backend["suppressedAcknowledgements"] != 1
@@ -56,6 +58,9 @@ def verify_event_proof(device, backend, deletion=False):
     if deletion and (backend.get("eventDeletionVerified") is not True or not all(device.get(name) is True for name in
             ("eventDeletionVerified", "eventDeleteRollbackVerified", "eventInboxRetained", "disabledEventRetained"))):
         raise ValueError("Authenticated deletion/rollback/inbox/disabled retention proof missing")
+    if worker and (not deletion or backend.get("eventWorkerVerified") is not True or not all(device.get(name) is True
+            for name in ("eventWorkerVerified", "eventWorkerRetryVerified", "eventWorkerDisabledRetained"))):
+        raise ValueError("Independent worker retry/deletion/disabled retention proof missing")
 
 
 def verify_mqtt_proof(device, broker):
@@ -99,6 +104,7 @@ def main():
     parser.add_argument("--with-mqtt", action="store_true", help="Also verify enrolled Keystore MQTT and test-host membership propagation")
     parser.add_argument("--with-events", action="store_true", help="Verify Room/Keystore event upload and post-commit acknowledgement recovery without deletion")
     parser.add_argument("--acknowledge-events", action="store_true", help="Also verify authenticated deletion, rollback and retained inbox; requires --with-events")
+    parser.add_argument("--event-worker", action="store_true", help="Use the real event worker body for retry/deletion; requires --acknowledge-events")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
@@ -107,9 +113,12 @@ def main():
         parser.error("Event replay and MQTT scenarios require separate isolated runs")
     if args.acknowledge_events and not args.with_events:
         parser.error("--acknowledge-events requires --with-events")
+    if args.event_worker and not args.acknowledge_events:
+        parser.error("--event-worker requires --acknowledge-events")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / ("artifacts/android-backend-event-deletion" if args.acknowledge_events else
+    output = ROOT / ("artifacts/android-backend-event-worker" if args.event_worker else
+                     "artifacts/android-backend-event-deletion" if args.acknowledge_events else
                      "artifacts/android-backend-events" if args.with_events else
                      "artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
     output.mkdir(parents=True)
@@ -188,7 +197,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in jvm:
                 jvm[name] += int(suite.get(name, "0"))
-        if jvm["tests"] < 37 or any(jvm[name] for name in ("failures", "errors", "skipped")):
+        if jvm["tests"] < 42 or any(jvm[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         shutil.copytree(results, output / "jvm-results")
         shutil.copytree(android / "agent/build/reports", output / "reports")
@@ -214,6 +223,8 @@ def main():
             host_environment["FLEET_TEST_EVENT_UPLOAD"] = "1"
         if args.acknowledge_events:
             host_environment["FLEET_TEST_EVENT_ACK_DELETE"] = "1"
+        if args.event_worker:
+            host_environment["FLEET_TEST_EVENT_WORKER"] = "1"
         executable = inputs / "tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll"
         host = subprocess.Popen(["dotnet", str(executable)], cwd=inputs / "backend", env=host_environment,
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -228,6 +239,8 @@ def main():
             raise RuntimeError("Event integration host readiness missing")
         if args.acknowledge_events and configuration.get("eventDeletion") is not True:
             raise RuntimeError("Event deletion host readiness missing")
+        if args.event_worker and configuration.get("eventWorker") is not True:
+            raise RuntimeError("Event worker host readiness missing")
         configuration["namespace"] = "integration-" + str(uuid.uuid4())
         if args.with_mqtt:
             configuration["mqttProbe"] = "probe-" + str(uuid.uuid4())
@@ -274,7 +287,7 @@ def main():
             raise RuntimeError("mTLS access-control proof was not explicit")
         (output / "backend-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
         if args.with_events:
-            verify_event_proof(json.loads(proof), verification, args.acknowledge_events)
+            verify_event_proof(json.loads(proof), verification, args.acknowledge_events, args.event_worker)
         if args.with_mqtt:
             broker_stdout, broker_stderr = broker.communicate(input="stop\n", timeout=30)
             if broker.returncode or broker_stderr:
@@ -333,10 +346,12 @@ def main():
                 "mqttRequested": args.with_mqtt,
                 "eventUploadRequested": args.with_events,
                 "eventDeletionRequested": args.acknowledge_events,
+                "eventWorkerRequested": args.event_worker,
                 "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
                 "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
                     for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
-                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL authenticated event deletion: post-commit 503 preserves row, original acknowledgement recovery, forced delete rollback/reopen/retry, exact event deletion after valid reply, inbox retained across reopen/duplicate command, disabled upload preserves a new event. No actual network loss, process kill, worker or full fleet acceptance." if args.acknowledge_events else
+                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL worker-body replay via WorkManager test builder: post-commit 503 returns retry and preserves row, original ACK recovery, local delete rollback, worker retry deletes exact event, inbox/reopen dedup and disabled failure retains a new event. No OS-scheduled timing/backoff/reboot/cancel, actual network loss, process kill or full fleet acceptance." if args.event_worker else
+                    "Real API34 Keystore/Room/HTTPS/PostgreSQL authenticated event deletion: post-commit 503 preserves row, original acknowledgement recovery, forced delete rollback/reopen/retry, exact event deletion after valid reply, inbox retained across reopen/duplicate command, disabled upload preserves a new event. No actual network loss, process kill, worker or full fleet acceptance." if args.acknowledge_events else
                     "Real API34 Keystore/Room/HTTPS/PostgreSQL event upload: test-only 503 after durable commit, unchanged pending event across database reopen, original acknowledgement recovered on retry, event retained after 200 and disabled-device 401. No deletion, network disconnect/lost-packet simulation, process crash, production worker, MQTT ingestion or full fleet acceptance." if args.with_events else
                     "Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else
                     "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof."),

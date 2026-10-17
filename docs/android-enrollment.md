@@ -1,5 +1,7 @@
 # Android Enrollment Lab
 
+The [bounded event worker](android-event-worker.md) now schedules unique connected-network work after successful lab enrollment or validated restore. Application startup also schedules when the normal enrollment journal and both root files exist; the worker revalidates Device Owner, roots, completed identity and key before upload. It does not prepare/replace identities or copy credentials into WorkManager data. Hooks compile/lint; actual startup/reboot scheduling is not yet accepted.
+
 Current follow-up: the [device HTTPS mTLS lab](device-mtls.md) verifies an enrolled Keystore identity against Kestrel/PostgreSQL and rejects subsequent access after persisted disable. The older mTLS exclusions below describe enrollment-only evidence. New keys authorize Conscrypt's prehashed TLS signing; older SHA256-only keys fail closed without replacement. MQTT and full credential lifecycle remain outside this proof.
 
 The agent has a manually initiated enrollment client: a non-exportable AndroidKeyStore P-256 signing key, PKCS#10 CSR, exact-request retry journal, pinned HTTPS transport, strict response decoding and pinned certificate validation. It is separate from the existing maintenance key and MQTT diagnostic. Combined Android-to-ASP.NET/PostgreSQL enrollment is verified in the scoped API 34 harness below, not as a production deployment or functional device mTLS.

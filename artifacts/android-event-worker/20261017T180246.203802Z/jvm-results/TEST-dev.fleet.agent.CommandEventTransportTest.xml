@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.CommandEventTransportTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-17T18:03:10" hostname="Michaels-MacBook-Pro.local" time="3.079">
+  <properties/>
+  <testcase name="mismatchedLocalRowsAndUnsafeOriginsAreRejectedBeforeSending" classname="dev.fleet.agent.CommandEventTransportTest" time="0.945"/>
+  <testcase name="enrolledTlsUploadsExactEventAndValidatesOriginalAndDuplicateAcknowledgements" classname="dev.fleet.agent.CommandEventTransportTest" time="0.951"/>
+  <testcase name="rejectsUntrustedMismatchedOversizedEncodedRedirectAndErrorResponses" classname="dev.fleet.agent.CommandEventTransportTest" time="1.183"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

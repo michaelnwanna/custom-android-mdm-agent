@@ -8,6 +8,7 @@
         <package android:name="dev.fleet.sample" />
     </queries>
     <application
+        android:name=".EventDeliveryApplication"
         android:allowBackup="false"
         android:label="Fleet Lab Agent"
         android:testOnly="true"

@@ -59,11 +59,12 @@ internal class CommandJournal(
         identity: DeviceTlsIdentity,
         serverRoot: X509Certificate,
         event: CommandEventRow,
+        control: EventUploadControl? = null,
     ): EventAcknowledgement {
         require(identity.deviceId == deviceId && event.deviceId == deviceId.toString())
         require(database.journal().event(deviceId.toString(), event.eventId) == event) { "Pending event changed" }
-        val acknowledgement = CommandEventTransport.upload(identity, serverRoot, event)
-        database.runInTransaction {
+        val acknowledgement = CommandEventTransport.upload(identity, serverRoot, event, control)
+        val delete = { database.runInTransaction {
             val dao = database.journal()
             val current = dao.event(deviceId.toString(), acknowledgement.eventId.toString())
             if (current != null) {
@@ -71,7 +72,8 @@ internal class CommandJournal(
                 check(dao.deleteUploadedEvent(deviceId.toString(), acknowledgement.eventId.toString(),
                     event.commandId, event.wireJson) == 1)
             }
-        }
+        } }
+        if (control != null) control.whileActive(delete) else delete()
         return acknowledgement
     }
 }

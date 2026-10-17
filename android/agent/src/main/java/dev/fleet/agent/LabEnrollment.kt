@@ -27,6 +27,8 @@ object LabEnrollment {
                 val deviceRoot = root(File(application.filesDir, "enrollment-device-ca.pem"))
                 val identity = AndroidEnrollmentIdentity(application)
                 if (identity.restore(deviceRoot, Instant.now())) {
+                    identity.tlsIdentity(serverRoot, deviceRoot, Instant.now())
+                    EventUploadScheduler.enqueue(application)
                     status(application, "Identity restored")
                     return@execute
                 }
@@ -38,6 +40,7 @@ object LabEnrollment {
                 status(application, "Redeeming prepared request")
                 val response = EnrollmentTransport.redeem(bootstrap, csr, serverRoot)
                 identity.complete(response, deviceRoot, Instant.now())
+                EventUploadScheduler.enqueue(application)
                 status(application, "Identity enrolled")
             } catch (failure: EnrollmentHttpException) {
                 status(application, "Server rejected enrollment (${failure.status}); request retained")

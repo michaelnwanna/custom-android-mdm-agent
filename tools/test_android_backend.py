@@ -7,6 +7,24 @@ from check_android_backend import public_configuration, public_tls_diagnostics, 
 
 
 class AndroidBackendEvidenceTests(unittest.TestCase):
+    def test_worker_proof_requires_worker_retry_and_disabled_retention(self):
+        device_id = "7512f600-bb5b-4353-b67a-3a56126308d7"
+        event_id = "374823b7-0e54-4893-b661-e638cc03310c"
+        device = {"deviceId": device_id, "eventUploadVerified": True, "retainedEventId": event_id,
+                  "eventAcknowledgement": {"schemaVersion": 1, "deviceId": device_id, "eventId": event_id,
+                                           "receivedAt": "2026-10-17T12:00:00Z"},
+                  "eventDeletionVerified": True, "eventDeleteRollbackVerified": True, "eventInboxRetained": True,
+                  "disabledEventRetained": True, "eventWorkerVerified": True, "eventWorkerRetryVerified": True,
+                  "eventWorkerDisabledRetained": True}
+        backend = {"eventUploadVerified": True, "suppressedAcknowledgements": 1, "recoveredAcknowledgements": 3,
+                   "eventDeletionVerified": True, "eventWorkerVerified": True}
+        verify_event_proof(device, backend, deletion=True, worker=True)
+        for name in ("eventWorkerVerified", "eventWorkerRetryVerified", "eventWorkerDisabledRetained"):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                verify_event_proof(dict(device, **{name: False}), backend, deletion=True, worker=True)
+        with self.assertRaises(ValueError):
+            verify_event_proof(device, dict(backend, eventWorkerVerified=False), deletion=True, worker=True)
+
     def test_deletion_proof_requires_rollback_reopen_inbox_and_disabled_retention(self):
         device_id = "7512f600-bb5b-4353-b67a-3a56126308d7"
         event_id = "374823b7-0e54-4893-b661-e638cc03310c"
@@ -90,10 +108,11 @@ class AndroidBackendEvidenceTests(unittest.TestCase):
         self.assertNotIn("bootstrapToken", public["bootstrap"])
         self.assertEqual({"schemaVersion", "endpoint", "pendingEnrollmentId"}, set(public["bootstrap"]))
         self.assertEqual("sensitive-test-sentinel", configuration["bootstrap"]["bootstrapToken"])
-        configuration.update(eventUpload=True, eventDeletion=True, eventCommandId="public-command", eventCorrelationId="public-correlation")
+        configuration.update(eventUpload=True, eventDeletion=True, eventWorker=True, eventCommandId="public-command", eventCorrelationId="public-correlation")
         event_public = public_configuration(configuration)
         self.assertTrue(event_public["eventUpload"])
         self.assertTrue(event_public["eventDeletion"])
+        self.assertTrue(event_public["eventWorker"])
         self.assertEqual("public-command", event_public["eventCommandId"])
         self.assertEqual("public-correlation", event_public["eventCorrelationId"])
         self.assertNotIn("sensitive-test-sentinel", json.dumps(event_public))

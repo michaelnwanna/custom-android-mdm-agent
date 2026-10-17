@@ -1,5 +1,7 @@
 # Authenticated Event Acknowledgement Deletion
 
+Follow-up: the [bounded event worker](android-event-worker.md) now calls this operation with controlled cancellation and a request deadline. Scheduling hooks are implemented, but actual OS scheduling/recovery remains unverified. Earlier absent-worker/cancellation statements below describe the original caller-driven milestone; authenticated deletion rules remain unchanged.
+
 [CommandJournal.uploadAndAcknowledge](../android/agent/src/main/java/dev/fleet/agent/CommandJournal.kt) now uploads one existing pending event and removes that exact outbox row only after [the HTTPS transport](android-event-upload.md) authenticates the server and validates the matching acknowledgement. This is an internal synchronous caller-driven operation, not a worker, UI action or enabled production synchronization path. The transport-only `upload` method and the original retention-only replay mode remain nondeleting.
 
 ```mermaid

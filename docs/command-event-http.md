@@ -1,5 +1,7 @@
 # Command Event HTTPS Ingestion
 
+The [bounded Android worker-body lab](android-event-worker.md) now verifies post-commit retry/deletion using the actual enrolled Keystore against this endpoint and PostgreSQL. Capped retries and cancellation reuse the original durable acknowledgement; the endpoint/wire contract are unchanged. OS scheduling/recovery remains unverified.
+
 The [authenticated Android journal acknowledgement](android-event-acknowledgement.md) now verifies deletion only after this endpoint's trusted matching reply, with real Keystore/Room/PostgreSQL rollback/retry and inbox retention. The endpoint and wire schema are unchanged; no production worker or MQTT ingestion is introduced. Earlier absent-deletion statements describe previous milestones.
 
 The [combined API 34 event replay](android-event-replay.md) now verifies this endpoint with the real Android Keystore and Room journal against PostgreSQL, including post-commit acknowledgement suppression/retry and disabled-device denial. The suppression is a test-only 503, not actual connection loss; no outbox deletion or production worker is introduced.

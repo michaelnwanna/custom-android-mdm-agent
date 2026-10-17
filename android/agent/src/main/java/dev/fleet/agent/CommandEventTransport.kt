@@ -6,12 +6,22 @@ import java.io.ByteArrayOutputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.UUID
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 
 internal object CommandEventTransport {
-    fun upload(identity: DeviceTlsIdentity, serverRoot: X509Certificate, event: CommandEventRow): EventAcknowledgement {
+    private val deadlines = Executors.newSingleThreadScheduledExecutor { task ->
+        Thread(task, "event-upload-deadlines").apply { isDaemon = true }
+    }
+    private val disconnects = Executors.newFixedThreadPool(2) { task ->
+        Thread(task, "event-upload-disconnect").apply { isDaemon = true }
+    }
+
+    fun upload(identity: DeviceTlsIdentity, serverRoot: X509Certificate, event: CommandEventRow,
+        control: EventUploadControl? = null): EventAcknowledgement {
         val source = identity.endpoint
         require(source.scheme == "https" && !source.host.isNullOrEmpty() && source.userInfo == null &&
             source.query == null && source.fragment == null && source.path == "/api/v1/device/identity")
@@ -45,7 +55,11 @@ internal object CommandEventTransport {
         val trust = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply { init(store) }
         val tls = SSLContext.getInstance("TLS").apply { init(arrayOf(identity.keyManager), trust.trustManagers, null) }
         val connection = source.resolve("/api/v1/device/command-events").toURL().openConnection() as HttpsURLConnection
+        var deadline: java.util.concurrent.ScheduledFuture<*>? = null
         try {
+            control?.attach { disconnects.execute { connection.disconnect() } }
+            if (control != null) deadline = deadlines.schedule({ control.cancel() },
+                EventDeliveryPolicy.REQUEST_DEADLINE_SECONDS, TimeUnit.SECONDS)
             connection.sslSocketFactory = tls.socketFactory
             connection.instanceFollowRedirects = false
             connection.useCaches = false
@@ -73,6 +87,8 @@ internal object CommandEventTransport {
             }
             return EventAcknowledgementDecoder.decode(output.toByteArray(), identity.deviceId, eventId)
         } finally {
+            deadline?.cancel(false)
+            control?.detach()
             connection.disconnect()
         }
     }

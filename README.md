@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [bounded background event worker](docs/android-event-worker.md) now uses unique connected-network WorkManager jobs, twenty-event batches, five attempts with exponential backoff, a fifteen-second request cancellation deadline and authenticated deletion. Six API 34 worker-body/TLS scenarios, a real Keystore/PostgreSQL worker-body replay and five acknowledgement regressions pass; all 42 JVM and 74 tooling tests pass. Scheduling/enrollment/startup hooks are implemented, but actual OS backoff, stop/resume and reboot dispatch remain unverified. Earlier absent-worker statements below describe historical milestones.
+
 The [authenticated acknowledgement operation](docs/android-event-acknowledgement.md) now uploads through the pinned enrolled HTTPS identity and transactionally deletes only the unchanged matching outbox event, retaining the command inbox. Five API 34 SQLite/TLS tests and a real Keystore/Room/HTTPS/PostgreSQL run verify rejection retention, delete rollback/retry, reopen/deduplication and concurrent uploads; the retention-only and six original journal scenarios still pass. All 37 JVM and 73 tooling tests pass. No worker, actual network-loss/process-crash proof or complete fleet workflow is introduced. The paragraphs below record earlier milestone boundaries; their absent-deletion statements describe those earlier snapshots.
 
 The [combined Android event replay lab](docs/android-event-replay.md) now verifies real API 34 Keystore/Room/HTTPS/PostgreSQL upload, a test-only 503 after commit, unchanged event recovery after Room reopen, original acknowledgement replay and disabled-device rejection. The run passes 37 JVM tests/build/lint and one instrumentation scenario; all 72 tooling tests pass. Events remain retained even after valid acknowledgement. This is not a real network-disconnect/process-crash test or an enabled deletion/worker path.
@@ -78,7 +80,9 @@ flowchart TB
 		EventDecode[Strict device-bound event decoder] --> EventStore
 		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
 		RecoveredAck --> EventHttp
-		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified; production worker planned] --> EventHttp
+		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified] --> EventHttp
+		WorkerSchedule[Unique connected WorkManager scheduling - configured; OS timing unverified] --> EventWorker[Bounded worker body - API 34 and Keystore/PostgreSQL verified]
+		EventWorker --> AndroidEventUpload
 		EventHttp --> AndroidEventUpload
 		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]
 		JournalAck --> ExactDelete[Transactional exact outbox deletion; retain inbox]

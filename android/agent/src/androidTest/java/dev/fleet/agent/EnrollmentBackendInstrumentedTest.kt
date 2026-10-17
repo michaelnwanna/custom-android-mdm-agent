@@ -49,6 +49,10 @@ class EnrollmentBackendInstrumentedTest {
         var eventAcknowledgement: JSONObject? = null
         var retainedEventId: String? = null
         val eventDeletion = configuration.optBoolean("eventDeletion", false)
+        val eventWorker = configuration.optBoolean("eventWorker", false)
+        var eventWorkerRetryVerified = false
+        var eventWorkerVerified = false
+        var eventWorkerDisabledRetained = false
         var eventDeletionVerified = false
         var eventDeleteRollbackVerified = false
         var eventInboxRetained = false
@@ -99,10 +103,16 @@ class EnrollmentBackendInstrumentedTest {
                 val receipt = journal.receive(command.toString().toByteArray())
                 val pending = journal.pendingEvents().single()
                 assertEquals(receipt.eventId.toString(), pending.eventId)
-                assertEquals(503, assertThrows(DeviceHttpException::class.java) {
-                    if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending)
-                    else CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
-                }.status)
+                if (eventWorker) {
+                    assertEquals(androidx.work.ListenableWorker.Result.retry(),
+                        runWorker(context, databaseName, tlsIdentity, serverRoot, 0))
+                    eventWorkerRetryVerified = true
+                } else {
+                    assertEquals(503, assertThrows(DeviceHttpException::class.java) {
+                        if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending)
+                        else CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
+                    }.status)
+                }
                 assertEquals(pending, journal.pendingEvents().single())
                 journalDatabase.close()
                 val recoveredDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
@@ -131,7 +141,12 @@ class EnrollmentBackendInstrumentedTest {
                     assertEquals(listOf(pending), retryJournal.pendingEvents())
                     eventDeleteRollbackVerified = true
                     retryDatabase.openHelper.writableDatabase.execSQL("DROP TRIGGER test_delete_failure")
-                    assertEquals(acknowledgement, retryJournal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending))
+                    if (eventWorker) {
+                        assertEquals(androidx.work.ListenableWorker.Result.success(
+                            androidx.work.Data.Builder().putInt("delivered", 1).build()),
+                            runWorker(context, databaseName, tlsIdentity, serverRoot, 1))
+                        eventWorkerVerified = true
+                    } else assertEquals(acknowledgement, retryJournal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending))
                     assertTrue(retryJournal.pendingEvents().isEmpty())
                     retryDatabase.close()
                     val finalDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
@@ -205,6 +220,12 @@ class EnrollmentBackendInstrumentedTest {
                 }.status)
                 assertEquals(retained, journal.pendingEvents().single())
                 disabledEventRetained = true
+                if (eventWorker) {
+                    assertEquals(androidx.work.ListenableWorker.Result.failure(),
+                        runWorker(context, databaseName, tlsIdentity, serverRoot, 0))
+                    assertEquals(listOf(retained), journal.pendingEvents())
+                    eventWorkerDisabledRetained = true
+                }
             }
             mqtt?.let { client ->
                 rejectedSubscription(client, "fleet/devices/${response.deviceId}/commands")
@@ -237,6 +258,8 @@ class EnrollmentBackendInstrumentedTest {
                 .put("retainedEventId", retainedEventId)
                 .put("eventDeletionVerified", eventDeletionVerified).put("eventDeleteRollbackVerified", eventDeleteRollbackVerified)
                 .put("eventInboxRetained", eventInboxRetained).put("disabledEventRetained", disabledEventRetained)
+                .put("eventWorkerVerified", eventWorkerVerified).put("eventWorkerRetryVerified", eventWorkerRetryVerified)
+                .put("eventWorkerDisabledRetained", eventWorkerDisabledRetained)
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())
@@ -251,6 +274,19 @@ class EnrollmentBackendInstrumentedTest {
             }
         }
     }
+
+    private fun runWorker(context: android.content.Context, databaseName: String, identity: DeviceTlsIdentity,
+        serverRoot: X509Certificate, attempt: Int): androidx.work.ListenableWorker.Result =
+        androidx.work.testing.TestWorkerBuilder.from(context, EventUploadWorker::class.java,
+            java.util.concurrent.Executor { task -> task.run() }).setRunAttemptCount(attempt)
+            .setWorkerFactory(object : androidx.work.WorkerFactory() {
+                override fun createWorker(appContext: android.content.Context, workerClassName: String,
+                    workerParameters: androidx.work.WorkerParameters): androidx.work.ListenableWorker =
+                    EventUploadWorker(appContext, workerParameters) {
+                        EventDeliverySession(Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build(),
+                            identity, serverRoot)
+                    }
+            }).build().doWork()
 
     private fun rejectedSubscription(client: Mqtt3AsyncClient, topic: String) {
         try {

@@ -72,6 +72,7 @@ static async Task<int> Run()
         var coordinator = new EnrollmentSigningCoordinator(claims, signer, deviceRoot, TimeSpan.FromDays(2));
         var eventMode = Environment.GetEnvironmentVariable("FLEET_TEST_EVENT_UPLOAD") == "1";
         var eventDeletion = eventMode && Environment.GetEnvironmentVariable("FLEET_TEST_EVENT_ACK_DELETE") == "1";
+        var eventWorker = eventDeletion && Environment.GetEnvironmentVariable("FLEET_TEST_EVENT_WORKER") == "1";
         var eventCommandId = Guid.NewGuid();
         var eventCorrelationId = Guid.NewGuid();
         var events = new SuppressFirstEventAcknowledgement(new PostgresCommandEvents(factory, clock));
@@ -144,7 +145,7 @@ static async Task<int> Run()
         var issued = (await provisioned.Content.ReadFromJsonAsync<PendingEnrollmentProvisioned>())!;
         Console.WriteLine(JsonSerializer.Serialize(new
         {
-            schemaVersion = 1, stage = "ready", eventUpload = eventMode, eventDeletion,
+            schemaVersion = 1, stage = "ready", eventUpload = eventMode, eventDeletion, eventWorker,
             eventCommandId, eventCorrelationId, serverRootDer = Convert.ToBase64String(serverRoot.RawData),
             deviceRootDer = Convert.ToBase64String(deviceRoot.RawData), bootstrap = new
             {
@@ -173,6 +174,9 @@ static async Task<int> Run()
             Ensure(events.Suppressed == 1 && events.Recovered == (eventDeletion ? 3 : 1) && events.Original is not null);
             if (eventDeletion)
                 Ensure(new[] { "eventDeletionVerified", "eventDeleteRollbackVerified", "eventInboxRetained", "disabledEventRetained" }
+                    .All(name => fields.GetProperty(name).GetBoolean()));
+            if (eventWorker)
+                Ensure(new[] { "eventWorkerVerified", "eventWorkerRetryVerified", "eventWorkerDisabledRetained" }
                     .All(name => fields.GetProperty(name).GetBoolean()));
             var acknowledgement = fields.GetProperty("eventAcknowledgement");
             using var original = JsonDocument.Parse(events.Original!);
@@ -210,7 +214,8 @@ static async Task<int> Run()
             pendingEnrollmentId = issued.PendingEnrollmentId, issuedCertificates = 1, provisioningAudits = 1,
             publicKeyProof = true, exactResponseReplay = true, mtlsAuthenticated = true,
             disabledRejected = true, alternateCertificateRejected = true, forwardedCertificateRejected = true,
-            eventUploadVerified = eventMode, eventDeletionVerified = eventDeletion, suppressedAcknowledgements = events.Suppressed,
+            eventUploadVerified = eventMode, eventDeletionVerified = eventDeletion, eventWorkerVerified = eventWorker,
+            suppressedAcknowledgements = events.Suppressed,
             recoveredAcknowledgements = events.Recovered }));
         return 0;
     }

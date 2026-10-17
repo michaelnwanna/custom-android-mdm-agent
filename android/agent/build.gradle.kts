@@ -9,6 +9,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.15.2")
     implementation("com.hivemq:hivemq-mqtt-client:1.3.3")
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.work:work-runtime:2.9.1")
     ksp("androidx.room:room-compiler:2.6.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
@@ -17,6 +18,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     androidTestImplementation("com.squareup.okhttp3:okhttp-tls:4.12.0")
+    androidTestImplementation("androidx.work:work-testing:2.9.1")
 }
 
 ksp {

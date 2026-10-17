@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [bounded Android worker](../docs/android-event-worker.md) now consumes existing event/acknowledgement v1 contracts with authenticated deletion, bounded retries and cancellation. Contracts and Room schema v1 are unchanged. Six worker-body scenarios and real Keystore/PostgreSQL proof do not establish OS scheduling/reboot acceptance.
+
 The [authenticated journal acknowledgement follow-up](../docs/android-event-acknowledgement.md) now verifies exact-event outbox deletion after a pinned HTTPS matching reply, retaining the inbox for duplicate commands. Command/event/acknowledgement v1 contracts and Room schema v1 are unchanged. Earlier absent-deletion statements below refer to prior milestones; no production worker or full fleet acceptance is implied.
 
 The [combined event replay lab](../docs/android-event-replay.md) now verifies Android's event/acknowledgement consumers over actual Keystore HTTPS against PostgreSQL, with original acknowledgement recovery after a post-commit test-only 503. Shared wire versions are unchanged. Room rows remain retained; no deletion, real network-loss or production worker claim is implied.

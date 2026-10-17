@@ -8,6 +8,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 ## Verification Boundary
 
+The [bounded event worker](android-event-worker.md) adds WorkManager 2.9.1, startup/enrollment hooks, five policy/cancellation JVM tests (42 total), six isolated worker scenarios and a combined worker-body mode (74 tooling tests). Hosted CI compiles/lints the worker/tests and runs JVM/proof validation. SQLite/TLS deadline/cancellation and enrolled Keystore/PostgreSQL worker execution remain separate local evidence; neither establishes OS-scheduled backoff, cancellation or reboot recovery. Earlier absent-worker statements describe earlier milestones.
+
 The [authenticated journal acknowledgement](android-event-acknowledgement.md) adds five API 34 SQLite/TLS scenarios and an opt-in combined deletion mode with negative-tested proof validation (73 tooling tests total). Hosted CI compiles these scenarios/host and runs the existing 37 JVM tests, builds/lint and tooling checks. Actual SQLite and enrolled Keystore/PostgreSQL deletion/rollback/reopen/concurrency proofs remain local evidence, not hosted emulator coverage. No worker is enabled; earlier absent-deletion statements below describe earlier milestones.
 
 The [combined Android event replay](android-event-replay.md) adds opt-in `--with-events`, test-only host ownership/acknowledgement suppression and one proof-validator regression (72 tooling tests total). Hosted CI compiles the instrumentation scenario/host and runs validator checks; the real API 34 Keystore/Room/HTTPS/PostgreSQL replay is separate local evidence. It proves recovery after a post-commit test-only 503, not a TCP disconnect or process crash. No outbox deletion or production worker is enabled.

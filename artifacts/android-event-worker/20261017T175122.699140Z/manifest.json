@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-17T17:51:22.699140+00:00",
+  "finishedAt": "2026-10-17T17:52:27.830024+00:00",
+  "result": "passed",
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "./gradlew",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "\n------------------------------------------------------------\nGradle 8.9\n------------------------------------------------------------\n\nBuild time:    2024-07-11 14:37:41 UTC\nRevision:      d536ef36a19186ccc596d8817123e5445f30fef8\n\nKotlin:        1.9.23\nGroovy:        3.0.21\nAnt:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023\nLauncher JVM:  17.0.20.1 (Eclipse Adoptium 17.0.20.1+1)\nDaemon JVM:    /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/jdk17/jdk-17.0.20.1+1/Contents/Home (no JDK specified, using current Java home)\nOS:            Mac OS X 15.7.8 x86_64\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:dependencies",
+        "--configuration",
+        "debugRuntimeClasspath",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "\n> Task :agent:dependencies\n\n------------------------------------------------------------\nProject ':agent'\n------------------------------------------------------------\n\ndebugRuntimeClasspath - Runtime classpath of '/debug'.\n+--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21\n|    +--- org.jetbrains:annotations:13.0 -> 23.0.0\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0 -> 1.8.22 (c)\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0 -> 1.8.22 (c)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21 (c)\n+--- org.bouncycastle:bcpkix-jdk18on:1.83\n|    \\--- org.bouncycastle:bcutil-jdk18on:1.83\n|         \\--- org.bouncycastle:bcprov-jdk18on:1.83\n+--- com.squareup.moshi:moshi:1.15.2\n|    +--- com.squareup.okio:okio:3.7.0\n|    |    \\--- com.squareup.okio:okio-jvm:3.7.0\n|    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 -> 2.0.21 (*)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21 -> 1.8.22\n|         +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22\n|              \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n+--- com.hivemq:hivemq-mqtt-client:1.3.3\n|    +--- io.netty:netty-buffer:4.1.99.Final\n|    |    \\--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-codec:4.1.99.Final\n|    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    \\--- io.netty:netty-transport:4.1.99.Final\n|    |         +--- io.netty:netty-common:4.1.99.Final\n|    |         +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |         \\--- io.netty:netty-resolver:4.1.99.Final\n|    |              \\--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-handler:4.1.99.Final\n|    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    +--- io.netty:netty-resolver:4.1.99.Final (*)\n|    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    +--- io.netty:netty-transport:4.1.99.Final (*)\n|    |    +--- io.netty:netty-transport-native-unix-common:4.1.99.Final\n|    |    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    |    \\--- io.netty:netty-transport:4.1.99.Final (*)\n|    |    \\--- io.netty:netty-codec:4.1.99.Final (*)\n|    +--- io.netty:netty-transport:4.1.99.Final (*)\n|    +--- org.jctools:jctools-core:2.1.2\n|    +--- org.jetbrains:annotations:16.0.3 -> 23.0.0\n|    +--- com.google.dagger:dagger:2.27\n|    |    \\--- javax.inject:javax.inject:1\n|    +--- io.reactivex.rxjava2:rxjava:2.2.21\n|    |    \\--- org.reactivestreams:reactive-streams:1.0.3 -> 1.0.4\n|    \\--- org.reactivestreams:reactive-streams:1.0.4\n+--- androidx.room:room-runtime:2.6.1\n|    +--- androidx.annotation:annotation-experimental:1.1.0-rc01 -> 1.3.0\n|    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10 -> 2.0.21 (*)\n|    +--- androidx.arch.core:core-runtime:2.2.0\n|    |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n|    |    \\--- androidx.arch.core:core-common:2.2.0\n|    |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n|    +--- androidx.room:room-common:2.6.1\n|    |    +--- androidx.annotation:annotation:1.3.0\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22 (*)\n|    |    +--- androidx.room:room-ktx:2.6.1 (c)\n|    |    \\--- androidx.room:room-runtime:2.6.1 (c)\n|    +--- androidx.sqlite:sqlite:2.4.0\n|    |    +--- androidx.annotation:annotation:1.0.0 -> 1.3.0\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|    |    \\--- androidx.sqlite:sqlite-framework:2.4.0 (c)\n|    +--- androidx.sqlite:sqlite-framework:2.4.0\n|    |    +--- androidx.annotation:annotation:1.2.0 -> 1.3.0\n|    |    +--- androidx.sqlite:sqlite:2.4.0 (*)\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|    |    \\--- androidx.sqlite:sqlite:2.4.0 (c)\n|    +--- androidx.room:room-common:2.6.1 (c)\n|    \\--- androidx.room:room-ktx:2.6.1 (c)\n\\--- androidx.work:work-runtime:2.9.1\n     +--- androidx.annotation:annotation-experimental:1.0.0 -> 1.3.0 (*)\n     +--- androidx.core:core:1.9.0\n     |    +--- androidx.annotation:annotation:1.2.0 -> 1.3.0\n     |    +--- androidx.annotation:annotation-experimental:1.3.0 (*)\n     |    +--- androidx.collection:collection:1.0.0\n     |    |    \\--- androidx.annotation:annotation:1.0.0 -> 1.3.0\n     |    +--- androidx.concurrent:concurrent-futures:1.0.0\n     |    |    +--- com.google.guava:listenablefuture:1.0\n     |    |    \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    +--- androidx.lifecycle:lifecycle-runtime:2.3.1 -> 2.5.1\n     |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |    |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |    |    \\--- androidx.lifecycle:lifecycle-common:2.5.1\n     |    |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    \\--- androidx.versionedparcelable:versionedparcelable:1.1.1\n     |         +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |         \\--- androidx.collection:collection:1.0.0 (*)\n     +--- androidx.lifecycle:lifecycle-livedata:2.5.1\n     |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |    \\--- androidx.lifecycle:lifecycle-livedata-core:2.5.1\n     |         +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |         +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |         \\--- androidx.lifecycle:lifecycle-common:2.5.1 (*)\n     +--- androidx.lifecycle:lifecycle-service:2.5.1\n     |    \\--- androidx.lifecycle:lifecycle-runtime:2.5.1 (*)\n     +--- androidx.room:room-ktx:2.5.0 -> 2.6.1\n     |    +--- androidx.room:room-common:2.6.1 (*)\n     |    +--- androidx.room:room-runtime:2.6.1 (*)\n     |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n     |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1\n     |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1\n     |    |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1\n     |    |    |         +--- org.jetbrains:annotations:23.0.0\n     |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.1\n     |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1 (c)\n     |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1 (c)\n     |    |    |         |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1 (c)\n     |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.8.20 -> 2.0.21\n     |    |    |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 (*)\n     |    |    |         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20 -> 1.8.22 (*)\n     |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.1 (*)\n     |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20 -> 1.8.22 (*)\n     |    +--- androidx.room:room-common:2.6.1 (c)\n     |    \\--- androidx.room:room-runtime:2.6.1 (c)\n     +--- androidx.sqlite:sqlite-framework:2.3.0 -> 2.4.0 (*)\n     +--- androidx.startup:startup-runtime:1.1.1\n     |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    \\--- androidx.tracing:tracing:1.0.0\n     |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     +--- com.google.guava:listenablefuture:1.0\n     +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n     \\--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1 (*)\n\n(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.\n(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.\n\nA web-based, searchable dependency report is available by adding the --scan option.\n\nBUILD SUCCESSFUL in 2s\n1 actionable task: 1 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:testDebugUnitTest",
+        ":agent:assembleDebug",
+        ":agent:lintDebug",
+        ":agent:assembleDebugAndroidTest",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "> Task :agent:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :agent:preBuild UP-TO-DATE\n> Task :agent:preDebugBuild UP-TO-DATE\n> Task :agent:checkDebugAarMetadata\n> Task :agent:generateDebugResValues\n> Task :agent:mapDebugSourceSetPaths\n> Task :agent:generateDebugResources\n> Task :agent:packageDebugResources\n> Task :agent:mergeDebugResources\n> Task :agent:createDebugCompatibleScreenManifests\n> Task :agent:extractDeepLinksDebug\n> Task :agent:parseDebugLocalResources\n> Task :agent:processDebugMainManifest\n> Task :agent:processDebugManifest\n> Task :agent:preDebugUnitTestBuild UP-TO-DATE\n> Task :agent:javaPreCompileDebugUnitTest\n> Task :agent:mergeDebugNativeDebugMetadata NO-SOURCE\n> Task :agent:mergeDebugShaders\n> Task :agent:compileDebugShaders NO-SOURCE\n> Task :agent:generateDebugAssets UP-TO-DATE\n> Task :agent:mergeDebugAssets\n> Task :agent:compressDebugAssets\n> Task :agent:desugarDebugFileDependencies\n> Task :agent:mergeDebugJniLibFolders\n> Task :agent:mergeDebugNativeLibs NO-SOURCE\n> Task :agent:stripDebugDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebug\n> Task :agent:javaPreCompileDebug\n> Task :agent:writeDebugAppMetadata\n> Task :agent:writeDebugSigningConfigVersions\n> Task :agent:preDebugAndroidTestBuild SKIPPED\n> Task :agent:generateDebugAndroidTestResValues\n> Task :agent:extractProguardFiles\n> Task :agent:checkDebugDuplicateClasses\n> Task :agent:checkDebugAndroidTestAarMetadata\n> Task :agent:mapDebugAndroidTestSourceSetPaths\n> Task :agent:mergeLibDexDebug\n> Task :agent:generateDebugAndroidTestResources\n> Task :agent:processDebugAndroidTestManifest\n> Task :agent:javaPreCompileDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestShaders\n> Task :agent:compileDebugAndroidTestShaders NO-SOURCE\n> Task :agent:generateDebugAndroidTestAssets UP-TO-DATE\n> Task :agent:mergeDebugAndroidTestAssets\n> Task :agent:compressDebugAndroidTestAssets\n> Task :agent:desugarDebugAndroidTestFileDependencies\n> Task :agent:mergeDebugAndroidTestJniLibFolders\n> Task :agent:mergeDebugAndroidTestNativeLibs NO-SOURCE\n> Task :agent:stripDebugAndroidTestDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebugAndroidTest\n> Task :agent:checkDebugAndroidTestDuplicateClasses\n> Task :agent:writeDebugAndroidTestSigningConfigVersions\n> Task :agent:processDebugManifestForPackage\n> Task :agent:mergeLibDexDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestResources\n> Task :agent:mergeExtDexDebugAndroidTest\n> Task :agent:processDebugAndroidTestResources\n> Task :agent:processDebugResources\n> Task :agent:mergeExtDexDebug\n> Task :agent:kspDebugKotlin\n> Task :agent:compileDebugKotlin\n> Task :agent:compileDebugJavaWithJavac\n> Task :agent:processDebugJavaRes\n> Task :agent:bundleDebugClassesToRuntimeJar\n> Task :agent:bundleDebugClassesToCompileJar\n> Task :agent:dexBuilderDebug\n> Task :agent:mergeDebugGlobalSynthetics\n> Task :agent:generateDebugAndroidTestLintModel\n> Task :agent:mergeProjectDexDebug\n> Task :agent:generateDebugLintReportModel\n> Task :agent:generateDebugUnitTestLintModel\n> Task :agent:kspDebugUnitTestKotlin\n> Task :agent:kspDebugAndroidTestKotlin\n> Task :agent:mergeDebugJavaResource\n> Task :agent:packageDebug\n> Task :agent:createDebugApkListingFileRedirect\n> Task :agent:assembleDebug\n> Task :agent:compileDebugUnitTestKotlin\n> Task :agent:compileDebugUnitTestJavaWithJavac NO-SOURCE\n> Task :agent:processDebugUnitTestJavaRes\n> Task :agent:compileDebugAndroidTestKotlin\n> Task :agent:lintAnalyzeDebugUnitTest\n> Task :agent:lintAnalyzeDebugAndroidTest\n> Task :agent:testDebugUnitTest\n> Task :agent:compileDebugAndroidTestJavaWithJavac NO-SOURCE\n> Task :agent:dexBuilderDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestGlobalSynthetics\n> Task :agent:processDebugAndroidTestJavaRes\n> Task :agent:mergeProjectDexDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestJavaResource\n> Task :agent:packageDebugAndroidTest\n> Task :agent:createDebugAndroidTestApkListingFileRedirect\n> Task :agent:assembleDebugAndroidTest\n> Task :agent:lintAnalyzeDebug\n\n> Task :agent:lintReportDebug\nWrote HTML report to file:///Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-event-worker/20261017T175122.699140Z/inputs/android/agent/build/reports/lint-results-debug.html\n\n> Task :agent:lintDebug\n\nBUILD SUCCESSFUL in 50s\n78 actionable tasks: 78 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "returncode": 0,
+      "stdout": "Pixel_8\nOK\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "ls",
+        "/sdcard"
+      ],
+      "returncode": 0,
+      "stdout": "Alarms\nAndroid\nAudiobooks\nDCIM\nDocuments\nDownload\nMovies\nMusic\nNotifications\nPictures\nPodcasts\nRecordings\nRingtones\nfleet-evidence-window.xml\nfleet-runtime-evidence.mp4\nfleet-window.xml\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "ro.build.fingerprint"
+      ],
+      "returncode": 0,
+      "stdout": "Android/sdk_phone64_x86_64/emu64x:14/UE1A.230829.036.A1/11228894:userdebug/test-keys\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dpm",
+        "list-owners"
+      ],
+      "returncode": 0,
+      "stdout": "1 owner:\nUser  0: admin=dev.fleet.agent/.FleetAdminReceiver,DeviceOwner,Affiliated\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-event-worker/20261017T175122.699140Z/inputs/android/agent/build/outputs/apk/debug/agent-debug.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-event-worker/20261017T175122.699140Z/inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "-e",
+        "class",
+        "dev.fleet.agent.EventUploadWorkerInstrumentedTest",
+        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "returncode": 0,
+      "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventUploadWorkerInstrumentedTest:\nINSTRUMENTATION_STATUS: test=transientResponseRetainsExactEventForTheNextAttempt\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=transientResponseRetainsExactEventForTheNextAttempt\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=stopCallbackDuringRequestCannotDeleteTheUnacknowledgedEvent\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=stopCallbackDuringRequestCannotDeleteTheUnacknowledgedEvent\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=workRequestHasConnectedConstraintBackoffAndNoIdentityInput\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=workRequestHasConnectedConstraintBackoffAndNoIdentityInput\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=4\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=permanentOrExhaustedFailuresRetainEventsWithoutAnUnboundedRetry\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=4\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=permanentOrExhaustedFailuresRetainEventsWithoutAnUnboundedRetry\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=5\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=boundedBatchContinuesWithoutRecreatingAcknowledgedReceipts\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventUploadWorkerInstrumentedTest\nINSTRUMENTATION_STATUS: current=5\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=5\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=boundedBatchContinuesWithoutRecreatingAcknowledgedReceipts\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 4.69\n\nOK (5 tests)\n\n\nINSTRUMENTATION_CODE: -1\n",
+      "stderr": ""
+    }
+  ],
+  "inputSha256": {
+    "android/agent/build.gradle.kts": "d4a81a5f9a7a6ac12460574b618565f6caf8cbd15eae88bc0a493f629dd352c3",
+    "android/agent/schemas/dev.fleet.agent.CommandDatabase/1.json": "291b257164e7e299370f4be9f8b98caf9c092cef4d4aa8e3c122a737e717184b",
+    "android/agent/src/androidTest/java/dev/fleet/agent/CommandJournalInstrumentedTest.kt": "07fc6c4e2abdbc7662005ad4b3f0e9e9aceef5397ce337a5506028a0d35dda2b",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentBackendInstrumentedTest.kt": "2cf61ba36fb58d4b7207ee2ac1df1e0def35418845cd5314e5062a95eacee152",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentIdentityInstrumentedTest.kt": "639a5a01457da554584f76956ab49b71c8e647242334a2d9f1f63bfd6f68f252",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventAcknowledgementInstrumentedTest.kt": "9e6fa4f58b05980e4806bc1b95eb27e22a7801676545d5744d7933e7292345d8",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventUploadWorkerInstrumentedTest.kt": "a575e926a82a28c075b7562ebc55c65d12d3a45ef0aa277173109939fa976b6a",
+    "android/agent/src/main/AndroidManifest.xml": "9e5cb84180624fcab84dbda21116b1b7e0c299cadbe228b8181d5d7e00dd4909",
+    "android/agent/src/main/java/dev/fleet/agent/AndroidEnrollmentIdentity.kt": "005ccdc725009b80356443d59aaaf36ed4b2e2becf7c62e7da3686e330ced127",
+    "android/agent/src/main/java/dev/fleet/agent/CommandDatabase.kt": "36a9f54f89e7975c040fadde9b139066d0066b8a16cd7d538a9a8696ce6478c3",
+    "android/agent/src/main/java/dev/fleet/agent/CommandEventTransport.kt": "3c67a9be81e1270f31563be7d1159c05d1ab23afa58564dbbebd15fe4437e18b",
+    "android/agent/src/main/java/dev/fleet/agent/CommandJournal.kt": "5dea79ca8bc76c657969d99e551b8169a5e67a8ee0071c01655451d3cb2137f3",
+    "android/agent/src/main/java/dev/fleet/agent/CommandMessage.kt": "1e95b1e45fba3114472dc2bcf8a48c7c2da93df52f95af07481b7b5b7c14feda",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceIdentityTransport.kt": "bec83955691e1c9cf3dbabb0fceb29b5276068f5fe8c6854892e2959979dac2c",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceKeyManagerFactory.kt": "cdda7cd1bacc5465c2607bc2371c455bed02aa21b5f810521d17937e29180207",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceMqttTransport.kt": "f7fb643713f4f4ea58154e04f22c5bec1578e26fbe0e4f063fa9f495b1ff4ea7",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceTlsIdentity.kt": "d11b8d5c0985df6ce187484678421cdd822308024bcb8ff7506afd28c3a78531",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentBootstrap.kt": "c8f9b9665c16c92aba1fe31bf30af0e354a4d4c1aeb14053c00e9e778a928d9a",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentProof.kt": "343c02b0a6e2d0e1bef01e7e920e08eab25a26d87a97e957f184825fff0bf017",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentResponse.kt": "cfb64c35dbee5ac81cc73dc389dacf7c358c012214ded79095db680f72c8f005",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentTransport.kt": "f7331739641acff3c21f79e768ecbd56ad4650d352a452c34abad214c0edc7f2",
+    "android/agent/src/main/java/dev/fleet/agent/EventAcknowledgement.kt": "1872c8e9f33e8fb310a1d225c894aea06add0d7052f8caa99d6b3f696773601b",
+    "android/agent/src/main/java/dev/fleet/agent/EventDeliveryPolicy.kt": "bbca4c966260e83baa5d45d581b0148dc59fdb53cd30c7a4581d4b92b2cab6bd",
+    "android/agent/src/main/java/dev/fleet/agent/EventUploadControl.kt": "48f4a56edde8a1b108986d5bcd952f4e99ce30cc40fed2912ed55fc5be2f5e8d",
+    "android/agent/src/main/java/dev/fleet/agent/EventUploadWorker.kt": "d6a5c1112bfc331364d185f72c29d45caf4ffece9099fee9cb6fd70e6610fde5",
+    "android/agent/src/main/java/dev/fleet/agent/FleetAdminReceiver.kt": "f6c58b7536af7a2fffd8657b6f0fda30ab1ca52fe362615de69d180119b7b6b5",
+    "android/agent/src/main/java/dev/fleet/agent/LabEnrollment.kt": "dbc0ea8f5a46b4feb1e13f5ab6e0133a709a56a018d0c1bf697e313bb4e23a6a",
+    "android/agent/src/main/java/dev/fleet/agent/LabKioskController.kt": "252ccbd400909f5066f7483b66ebfeed2ff6d4f4d7f2b4a926b1fa8af7c490e1",
+    "android/agent/src/main/java/dev/fleet/agent/LabMaintenance.kt": "c498a7ae19c93da8b3f93f495a3bb23ca5d638052c16136a881a557b12785213",
+    "android/agent/src/main/java/dev/fleet/agent/LabMqttService.kt": "085c412dad4d64673c70f3cd61821afcb99a02f55ee6c847026bcd6f1c4bb1a9",
+    "android/agent/src/main/java/dev/fleet/agent/LabUpdateInstaller.kt": "76d760bd2b4cdc427240179a583557df5c8a270d3ac0263fab6ba65ea308c231",
+    "android/agent/src/main/java/dev/fleet/agent/MainActivity.kt": "013d643598d4f88dd123ea4422c498b34d42f5c04153804a625fbe7629161ebb",
+    "android/agent/src/main/java/dev/fleet/agent/MaintenanceProof.kt": "08e6a371e43bbb9e4b19cf0a452cf4425c0b55efbdd94a3cd1a81d9221963db7",
+    "android/agent/src/main/res/xml/device_admin.xml": "1bd02fa6728fb70187e65af59c379f2f063aa995cf87f26da9c5ff9f550d9b2b",
+    "android/agent/src/test/java/dev/fleet/agent/CommandDecoderTest.kt": "86ca8dfcac5d3822b8745d713728b7093f08039c08f79fe818c1fcb03dac8cce",
+    "android/agent/src/test/java/dev/fleet/agent/CommandEventTransportTest.kt": "a62504c60dacfed760eff5cc4215efe98514f24c9d52146416cd15b306a8f477",
+    "android/agent/src/test/java/dev/fleet/agent/CommandJournalWireTest.kt": "2cab6337b5cc662cd3494793f085afb45d7c10da3f0553b282b86282be76eade",
+    "android/agent/src/test/java/dev/fleet/agent/DeviceIdentityTransportTest.kt": "4e0dc1e555e49115ed6d380db75d1ac0b52cbfdbc22bf0ee4ae6e501c66062cf",
+    "android/agent/src/test/java/dev/fleet/agent/DeviceMqttTransportTest.kt": "677022648067379ce5269268f7c32c08a56cb85d495aea9884b4d0f74cdca145",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentBootstrapTest.kt": "39813b448e04b8a7481232793c9cdc6e4df5ac5e41ccc1823a737953cc9103a8",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentProofTest.kt": "2d068834bcb9e2238939a173dd39a07b7fc19ed0caffa00f229ae96040ccc655",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentResponseTest.kt": "91be365b25c77fcbf7ece710b6ba1b34281f3e6b81c99d3d7989f4098995d35c",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentTransportTest.kt": "0fcac38c26e96d5d0ef43287239e34b47e2d6529e9816faa898de5b452bd0407",
+    "android/agent/src/test/java/dev/fleet/agent/EventAcknowledgementTest.kt": "e2a0f2291c14a8a8c3019e8243be3037b4bbcb157d22fd76ed30210e6772366d",
+    "android/agent/src/test/java/dev/fleet/agent/EventDeliveryPolicyTest.kt": "35f58085d0dbb1dcd2c5e2bca36474ffb73f699b508d3704fd853c2e5c0d4184",
+    "android/agent/src/test/java/dev/fleet/agent/EventUploadControlTest.kt": "abd3210e56a628a751c0c0b783f25481d6fe132c7868066dc0c4aa47547849d9",
+    "android/agent/src/test/java/dev/fleet/agent/MaintenanceProofTest.kt": "b87b5561797c2f107ca9a1a813a52c86f8836a89c3b1e13ae15208111f4a102a",
+    "android/build.gradle.kts": "1e9dff79349edce4b91e0ca63f6756c4efaa6810cbfb3dd01799828cabb49f8c",
+    "android/gradle/wrapper/gradle-wrapper.jar": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+    "android/gradle/wrapper/gradle-wrapper.properties": "dc0c4f45f299ac2d51077dd1587e619128d091816ad9170d535a23694ddf355b",
+    "android/gradle.properties": "093ce43bdf9c26b7d8cd424a4af4410ce7e17ced2d7b0f892d551525c94b16ef",
+    "android/gradlew": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+    "android/gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "android/sample-managed-app/build.gradle.kts": "3cb421c94b3a1e7c706f70bd03d11281b6e4c6693ec4c8ee93470d1b011833a8",
+    "android/sample-managed-app/src/main/AndroidManifest.xml": "8aa79ef57998ba89e35557046f473a6aaa7f3d11334145927da7b7205a6b9429",
+    "android/sample-managed-app/src/main/java/dev/fleet/sample/MainActivity.kt": "df7b313d6afde98ea41569f1d0a3201290a57bdd843edbaea61f47ac35decc19",
+    "android/settings.gradle.kts": "8d24e364f5cae7a9f812dd5967267ff18f60c9f9182d64bfd2022acabdbe0cad",
+    "contracts/events/command-event-v1.schema.json": "4b4f57280ef20fd6d68d338fdf26bf2a44587ced3f9d190534ede767e4b00dcf",
+    "contracts/events/command-v1.schema.json": "1bfb6392d23269facc7e2b81120cd1da60cee931307c220a5a06772b88eb06f5",
+    "contracts/events/event-ack-v1.schema.json": "a9fd2ebbdc6147cfb0b4e9357e37bacfb709c58e2d58c449b58042ba1fa10929",
+    "contracts/fixtures/command-events-v1.json": "50a0990d61eb46fc40f56538b07ae20c010fa9a2a9b99ac66a07c8d78a4bf299",
+    "contracts/fixtures/commands-v1.json": "77aca1bd11c5e6acd54da6812052bedb875e34cb0ea90aa22864921896756848",
+    "contracts/fixtures/event-acks-v1.json": "5aef24921f5d07368c8b79d5f2f24bf325b99f38dc8b72b38b7a6be179250269",
+    "tools/check_android_enrollment.py": "f89907e4e02f66890a53ac3460a1a047aaf922da98e15fe47854b94ba53665d4",
+    "tools/test_android_enrollment.py": "db9eec1ad25b0d4523114373654c718098337521cb3077f11946631f65143476"
+  },
+  "apkSha256": {
+    "inputs/android/agent/build/outputs/apk/debug/agent-debug.apk": "557664777a6ec6e77aa4c578df6464c5ff3c691cc659b57b39b8b05ad636cb97",
+    "inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk": "f91f2f1d69b821022dd0cef7ff7faa5382cd29993e3e106a44fd6862fcd29f96"
+  },
+  "jvmCounters": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "serial": "emulator-5554",
+  "expectedAvd": "Pixel_8",
+  "commandJournalRequested": false,
+  "eventAcknowledgementsRequested": false,
+  "eventWorkerRequested": true,
+  "scope": "Five API34 SQLite/software-key loopback mTLS worker-body/request-policy scenarios: bounded batch continuation, transient replay, permanent/exhausted failures retain rows, stop callback cancellation and WorkManager network/backoff/input configuration. No actual OS-scheduled backoff/cancel/reboot, real Keystore/backend, process kill or power loss.",
+  "fileSha256": {
+    "command-01.json": "53d3d5010a1442c2f12308f75be0f507062eb6eacc0c882bfd092d4e7b5d3f12",
+    "command-02.json": "31371734905aa4894b8b8a0437be28bbd5ce31ac8a07a0a959e9df6a717a380e",
+    "command-03.json": "ee2b08d03a7752669b4a6591bd7e46a7207ceb704f7efeb57e3c3daf12acf36f",
+    "command-04.json": "c67091c8ba1db42a8d3437bf033b6b19c750f1d9e73cbfc910e3887c64c08242",
+    "command-05.json": "13ad7fc1cc0adeb0e85d2684ecae5e6c6f71193e0782b2b10b5809ad28727fcd",
+    "command-06.json": "d62bd4f8e980399621fdcd98639c180d09925140ebc79a8b4c48c5d3140f6eea",
+    "command-07.json": "2beac93e624b6250d62bc352fdac966fd0c7768601e719f2218311ea4f76b229",
+    "command-08.json": "ab256d55d7dbe0df2e64afa3687b26219917bd09df89e75967a12968ab0421ea",
+    "command-09.json": "b1759004a96936836c7e62e9751bee3c4c97015ec229382bae61740d08729502",
+    "command-10.json": "f6a3995cf00e0065a3cfcb0a6762706d50da16a349247d59f2df22e18fccf0e6",
+    "command-11.json": "0411dd10e66048eb742a96c4cf70d5af180681772d83e8e9c35bfe686da20727",
+    "jvm-results/TEST-dev.fleet.agent.CommandDecoderTest.xml": "4d680bcec390db00a3c8622f86dd6a5f402c8ec8478be18e9d55de50cf3ba4fc",
+    "jvm-results/TEST-dev.fleet.agent.CommandEventTransportTest.xml": "b364d215681985726681d45a1eabaa4fb217cf12de9082f661c3a629d0a84ee6",
+    "jvm-results/TEST-dev.fleet.agent.CommandJournalWireTest.xml": "883e296cc0e73a45346d3679ac58fc802ca01dc77805e5d17c113f81005b9006",
+    "jvm-results/TEST-dev.fleet.agent.DeviceIdentityTransportTest.xml": "c3f1e2435447ba3a6ae50ac8613cdab4760679ff2954d99d13e1e672abbd1a4b",
+    "jvm-results/TEST-dev.fleet.agent.DeviceMqttTransportTest.xml": "9caa4015c9e3b9f0393a94111754eba8f157052b0a61e823098f094ab6feeb36",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentBootstrapTest.xml": "18585407fb48fcddbcec85fd00358a13143a32a65e6446ddc39443e5cae3db7a",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentProofTest.xml": "e137ee537775191dfe448e2e35a7ee3f300b626a7c5e2164b79fa41ccd715dff",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentResponseTest.xml": "fa41c0b733922e709431e97ef8ac91c666ac0588a8d0f0783a89a74bedf1891f",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentTransportTest.xml": "0d5e957dc718bd31b6d95bc67ddf1cb8c8e5f5a2fc79bf1c139f1394375d0e97",
+    "jvm-results/TEST-dev.fleet.agent.EventAcknowledgementTest.xml": "9956cf40157bd56620d2db83bbb5572acae32b5383779f1ec02b3176d2b8df5c",
+    "jvm-results/TEST-dev.fleet.agent.EventDeliveryPolicyTest.xml": "7a2e2cec7999db1569c7fa77b4b7062f514d6c643f64795663e5715de19beaaa",
+    "jvm-results/TEST-dev.fleet.agent.EventUploadControlTest.xml": "c32bc8e70552dc21b9c493fc560b9dabbda2dd4e3a09b346361fa7b64bf56f97",
+    "jvm-results/TEST-dev.fleet.agent.MaintenanceProofTest.xml": "6f40d7c72cac46545e127734341f30a634d3b7537c5747c4a0377ee9d9ffa17a",
+    "jvm-results/binary/output.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "jvm-results/binary/output.bin.idx": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "jvm-results/binary/results.bin": "4cd8f0d8a99c7765b46b6a0fa56d18ff5f96c3a01ad4a668f5221811d56e610b",
+    "reports/lint-results-debug.html": "90dbed2ebe1f69c571a188fb903c1fc5328e659915be722ad403b07aeb560cc5",
+    "reports/lint-results-debug.txt": "7f738f4de812eb5c47303588d34eee8dbf7d30080c906c34b71dc4915e82d03d",
+    "reports/lint-results-debug.xml": "4e9d57c7bea25b9d6b15784f709c1215d2cb8fd4ce0173937b1118653ca5cee5",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandDecoderTest.html": "f941c66ad0bd5f84287dfd7e8cd6ce0128b82407d2d6c057ab7665d78c3def0a",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandEventTransportTest.html": "65bd1770cdde7e2eadcb6eb82db418d10390535da038cf4e832fa7c332b9da33",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandJournalWireTest.html": "1d7fb37fa9841958e998af065620a9842019d045007eabff210631a5bb4817f6",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.DeviceIdentityTransportTest.html": "a77cc74ba48ce049c363a3b9f7b1962588929f46f2aa27851935567abbf9b75f",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.DeviceMqttTransportTest.html": "23ed375eb546d0334b6b0fc69ff7611b08de16f28eaa542f9bfe8622766c825f",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentBootstrapTest.html": "db80ac664f3a596af7ec12e6ba562cc2a3bcb43e9297944765ac12e4b01c94df",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentProofTest.html": "403254a9ec47bda65ebd69193e3075991c55bb84855a006b0a835d6a37e03f0d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentResponseTest.html": "c186548d02cfd093bd57f1dc460ae6bfa1a1ec3dbbbe5acc2926a8ae0c6c5a70",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentTransportTest.html": "3c7c0dda8412d168d7d6ab85e3e5dd8ca47d2ad36fc485d45c6f43a2700c378d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventAcknowledgementTest.html": "2664915ff12591ecb8c587debad5e3923f229fb8163e1dc399ccbe3d48cc2158",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventDeliveryPolicyTest.html": "a46afaa45a3cef78859086b1677b5ca6eadb5dbd02a9e2101b2e079589015ae6",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventUploadControlTest.html": "02319ef38b325eb9a5d1b5457a93051315160411ffc091dd71225ce37c0413d3",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.MaintenanceProofTest.html": "ed5f1298913149e4f10fe515740042c2fa2ea853e365079d9d3dac5e186f15c9",
+    "reports/tests/testDebugUnitTest/css/base-style.css": "a10a4ef75ca2601b44bfdaf3112a5854f6376f68d7cbaf6958286f04488d293b",
+    "reports/tests/testDebugUnitTest/css/style.css": "61866908fd7eb09c79e96239f69db2e8cc5c6526cdb308eba0535ed2a0f6a263",
+    "reports/tests/testDebugUnitTest/index.html": "5551b8d47d3b4888ddd88368022090ff0fdb923881b25713a6f519200ad2ca56",
+    "reports/tests/testDebugUnitTest/js/report.js": "fc89c6d002d18f4662065c9887b2cda8f8486f2737d4ad0f2fdeac0ad58a44dc",
+    "reports/tests/testDebugUnitTest/packages/dev.fleet.agent.html": "4729bb0fd5c26eeec7deedfe0e9cf97af6c95ab24aea74c929f398b40e57704b"
+  }
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.EnrollmentBootstrapTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-17T18:04:26" hostname="Michaels-MacBook-Pro.local" time="0.008">
+  <properties/>
+  <testcase name="stagedConfigurationRequiresExactVersionedFieldsAndCanonicalToken" classname="dev.fleet.agent.EnrollmentBootstrapTest" time="0.005"/>
+  <testcase name="allowsOnlyExplicitHttpsBootstrapWithoutRedirectTargetsOrSecretUrls" classname="dev.fleet.agent.EnrollmentBootstrapTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
