@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "stage": "mqtt-verified",
+  "identities": {
+    "dd99c782-4379-4063-abab-ac6ee9afb371": "1b3873c788c0dc58f2ded1702a7886c137d32c89091f9f43ccd34382d99c753c"
+  },
+  "probeRoundtrips": 1,
+  "commandId": "d805c5be-7af1-4dc4-a202-eae38f72361a",
+  "commandDeliveries": 2,
+  "crossDeviceDenied": 1,
+  "wildcardDenied": 1,
+  "disabledSubscribeDenied": 1,
+  "disabledConnectionsRejected": 1,
+  "stopped": true
+}

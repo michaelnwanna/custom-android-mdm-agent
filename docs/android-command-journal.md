@@ -1,5 +1,7 @@
 # Android Command Receipt Journal
 
+The [authenticated MQTT follow-up](android-mqtt-enrollment.md#durable-receipt-follow-up) now verifies the journal in a test-only enrolled-key callback: two identical command deliveries commit one event and recover it after database reopen. `receiveFromMqtt` checks the exact device command topic and forbids retained delivery before calling `receive`; it relies on the caller's authenticated connection and is not itself an authentication API. The [new six-scenario replay](../artifacts/android-command-journal/20261017T111337.575634Z/replay.html) adds rejection tests for wrong/wildcard topics and retained delivery. Earlier statements below about absent test wiring describe the original isolated journal milestone. No production service, event publishing, execution or acknowledgement deletion is implemented.
+
 The internal [CommandJournal](../android/agent/src/main/java/dev/fleet/agent/CommandJournal.kt) records a validated command and its initial command-state event in a single Room transaction. [CommandDatabase](../android/agent/src/main/java/dev/fleet/agent/CommandDatabase.kt) uses Room 2.6.1 with a pinned KSP compiler and an exported version-1 schema. This is a local receipt boundary, not a command execution engine or live fleet synchronization service.
 
 ```mermaid

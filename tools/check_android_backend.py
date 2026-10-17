@@ -44,6 +44,20 @@ def verify_mqtt_proof(device, broker):
     if not all(type(broker.get(name)) is int and broker[name] >= 1 for name in
                ("crossDeviceDenied", "wildcardDenied", "disabledSubscribeDenied", "disabledConnectionsRejected")):
         raise ValueError("Independent broker rejection proof missing")
+    receipt = device.get("mqttReceipt")
+    if (device.get("mqttJournalVerified") is not True or not isinstance(receipt, dict)
+            or set(receipt) != {"schemaVersion", "eventId", "commandId", "deviceId", "correlationId", "recordedAt", "state"}
+            or type(receipt["schemaVersion"]) is not int or receipt["schemaVersion"] != 1
+            or receipt["state"] != "received" or receipt["deviceId"] != device["deviceId"]
+            or receipt["commandId"] != broker.get("commandId") or receipt["correlationId"] != broker.get("commandId")
+            or type(broker.get("commandDeliveries")) is not int or broker["commandDeliveries"] != 2):
+        raise ValueError("Durable MQTT receipt proof missing")
+    for name in ("eventId", "commandId"):
+        if str(uuid.UUID(receipt[name])) != receipt[name]:
+            raise ValueError("Invalid receipt identifier")
+    recorded = datetime.datetime.fromisoformat(receipt["recordedAt"].replace("Z", "+00:00"))
+    if recorded.tzinfo is None:
+        raise ValueError("Invalid receipt timestamp")
 
 
 def public_tls_diagnostics(stderr):

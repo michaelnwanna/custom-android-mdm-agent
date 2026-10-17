@@ -18,6 +18,11 @@ internal class CommandJournal(
     private val deviceId: UUID,
     private val clock: Clock = Clock.systemUTC(),
 ) {
+    fun receiveFromMqtt(topic: String, bytes: ByteArray, retained: Boolean): CommandReceipt {
+        require(topic == "fleet/devices/$deviceId/commands" && !retained) { "Invalid command delivery" }
+        return receive(bytes)
+    }
+
     fun receive(bytes: ByteArray): CommandReceipt {
         val command = CommandDecoder.decode(bytes, deviceId)
         val canonical = CommandJournalWire.command(command)

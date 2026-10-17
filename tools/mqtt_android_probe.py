@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import hashlib
 import json
 import logging
@@ -11,6 +12,7 @@ from mqtt_device_broker import create_broker, read_memberships
 
 def attach_probe(broker, membership_file, probe):
     state = {"schemaVersion": 1, "stage": "mqtt-verified", "identities": {}, "probeRoundtrips": 0,
+             "commandId": probe[6:], "commandDeliveries": 0,
              "crossDeviceDenied": 0, "wildcardDenied": 0, "disabledSubscribeDenied": 0,
              "disabledConnectionsRejected": 0}
     authenticate = broker._authenticate
@@ -45,7 +47,13 @@ def attach_probe(broker, membership_file, probe):
         if (session is not None and topic == "fleet/devices/" + session.client_id + "/command-events"
                 and bytes(data) == probe.encode()):
             state["probeRoundtrips"] += 1
-            await broadcast(None, "fleet/devices/" + session.client_id + "/commands", data, 1)
+            now = datetime.datetime.now(datetime.timezone.utc)
+            command = json.dumps({"schemaVersion": 1, "commandId": probe[6:], "deviceId": session.client_id,
+                "sequence": 1, "type": "REQUEST_SYNC", "payload": {}, "issuedAt": now.isoformat(),
+                "expiresAt": (now + datetime.timedelta(hours=1)).isoformat(), "correlationId": probe[6:]}).encode()
+            for _ in range(2):
+                await broadcast(None, "fleet/devices/" + session.client_id + "/commands", command, 1)
+                state["commandDeliveries"] += 1
 
     broker._authenticate = authenticated
     broker._topic_filtering = authorized

@@ -1,5 +1,6 @@
 package dev.fleet.agent
 
+import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.hivemq.client.mqtt.datatypes.MqttQos
@@ -42,6 +43,9 @@ class EnrollmentBackendInstrumentedTest {
         val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         require(namespaces.none { keyStore.containsAlias("fleet-enrollment-$it") })
         var mqtt: Mqtt3AsyncClient? = null
+        val databaseName = "test-mqtt-command-${UUID.randomUUID()}.db"
+        var database: CommandDatabase? = null
+        var mqttReceipt: JSONObject? = null
         fun root(name: String): X509Certificate = CertificateFactory.getInstance("X.509")
             .generateCertificate(ByteArrayInputStream(Base64.getDecoder().decode(configuration.getString(name)))) as X509Certificate
         try {
@@ -80,18 +84,44 @@ class EnrollmentBackendInstrumentedTest {
                 val client = DeviceMqttTransport.client(tlsIdentity, serverRoot, configuration.getInt("mqttPort"))
                 mqtt = client
                 client.connectWith().cleanSession(true).keepAlive(15).send().get(15, TimeUnit.SECONDS)
-                val received = CompletableFuture<String>()
+                val journalDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                database = journalDatabase
+                val journal = CommandJournal(journalDatabase, response.deviceId)
+                val received = CompletableFuture<List<CommandReceipt>>()
+                val receipts = mutableListOf<CommandReceipt>()
                 val subscribed = client.subscribeWith().topicFilter("fleet/devices/${response.deviceId}/commands")
                     .qos(MqttQos.AT_LEAST_ONCE).callback { message ->
-                        if (message.payloadAsBytes.contentEquals(probe.toByteArray())) received.complete(probe)
-                        else received.completeExceptionally(IllegalStateException("Unexpected MQTT probe"))
+                        try {
+                            val receipt = journal.receiveFromMqtt(message.topic.toString(), message.payloadAsBytes, message.isRetain)
+                            synchronized(receipts) {
+                                receipts.add(receipt)
+                                if (receipts.size == 2) received.complete(receipts.toList())
+                            }
+                        } catch (failure: Exception) {
+                            received.completeExceptionally(failure)
+                        }
                     }.send().get(15, TimeUnit.SECONDS)
                 assertEquals(listOf(Mqtt3SubAckReturnCode.SUCCESS_MAXIMUM_QOS_1), subscribed.returnCodes)
                 rejectedSubscription(client, "fleet/devices/${UUID.randomUUID()}/commands")
                 rejectedSubscription(client, "fleet/#")
                 client.publishWith().topic("fleet/devices/${response.deviceId}/command-events")
                     .qos(MqttQos.AT_LEAST_ONCE).payload(probe.toByteArray()).send().get(15, TimeUnit.SECONDS)
-                assertEquals(probe, received.get(15, TimeUnit.SECONDS))
+                val committed = received.get(15, TimeUnit.SECONDS)
+                assertEquals(1, committed.count { !it.duplicate })
+                assertEquals(1, committed.count { it.duplicate })
+                assertEquals(1, committed.map { it.eventId }.distinct().size)
+                assertTrue(committed.all { it.commandId == UUID.fromString(probe.removePrefix("probe-"))
+                    && it.state == ReceiptState.RECEIVED })
+                journalDatabase.close()
+                val reopenedDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                database = reopenedDatabase
+                val events = CommandJournal(reopenedDatabase, response.deviceId).pendingEvents()
+                assertEquals(1, events.size)
+                assertEquals(committed.first().eventId.toString(), events.single().eventId)
+                val stored = requireNotNull(reopenedDatabase.journal().command(committed.first().commandId.toString()))
+                assertEquals(response.deviceId.toString(), stored.deviceId)
+                assertEquals("REQUEST_SYNC", JSONObject(stored.canonicalJson).getString("type"))
+                mqttReceipt = JSONObject(events.single().wireJson)
             }
             assertEquals(response.deviceId, DeviceIdentityTransport.check(tlsIdentity, serverRoot))
             assertEquals(401, assertThrows(DeviceHttpException::class.java) {
@@ -123,11 +153,14 @@ class EnrollmentBackendInstrumentedTest {
                 .put("mtlsAuthenticated", true).put("disabledRejected", true)
                 .put("mqttAuthenticated", configuration.has("mqttPort"))
                 .put("mqttDisabledRejected", configuration.has("mqttPort"))
+                .put("mqttJournalVerified", mqttReceipt != null).put("mqttReceipt", mqttReceipt)
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())
         } finally {
             try { mqtt?.disconnect()?.get(5, TimeUnit.SECONDS) } catch (_: Exception) { }
+            database?.close()
+            context.deleteDatabase(databaseName)
             namespaces.forEach { current ->
                 val alias = "fleet-enrollment-$current"
                 if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)

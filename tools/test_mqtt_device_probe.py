@@ -40,7 +40,18 @@ class AndroidMqttProbeTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(0, state["probeRoundtrips"])
             await broker._broadcast_message(session, topic, probe.encode())
             self.assertEqual(1, state["probeRoundtrips"])
-            broadcast.assert_awaited_with(None, "fleet/devices/" + device_id + "/commands", probe.encode(), 1)
+            self.assertEqual(2, state["commandDeliveries"])
+            deliveries = broadcast.await_args_list[-2:]
+            self.assertEqual(deliveries[0], deliveries[1])
+            sender, command_topic, payload, qos = deliveries[0].args
+            self.assertIsNone(sender)
+            self.assertEqual("fleet/devices/" + device_id + "/commands", command_topic)
+            self.assertEqual(1, qos)
+            command = json.loads(payload)
+            self.assertEqual(probe[6:], command["commandId"])
+            self.assertEqual(device_id, command["deviceId"])
+            self.assertEqual("REQUEST_SYNC", command["type"])
+            self.assertEqual({}, command["payload"])
 
 
 if __name__ == "__main__":

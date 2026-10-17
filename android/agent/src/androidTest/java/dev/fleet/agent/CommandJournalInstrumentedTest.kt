@@ -136,6 +136,14 @@ class CommandJournalInstrumentedTest {
         first.receive(command(firstDevice, UUID.randomUUID(), 2).toByteArray())
         second.receive(command(secondDevice, UUID.randomUUID()).toByteArray())
         assertEquals(2, first.pendingEvents().size)
+        val candidate = command(firstDevice, UUID.randomUUID(), 3).toByteArray()
+        for (topic in listOf("fleet/#", "fleet/devices/$secondDevice/commands", "fleet/devices/$firstDevice/command-events")) {
+            assertThrows(Exception::class.java) { first.receiveFromMqtt(topic, candidate, false) }
+        }
+        assertThrows(Exception::class.java) {
+            first.receiveFromMqtt("fleet/devices/$firstDevice/commands", candidate, true)
+        }
+        assertEquals(2, first.pendingEvents().size)
         assertEquals(1, first.pendingEvents(1).size)
         assertEquals(listOf(secondDevice.toString()), second.pendingEvents().map { it.deviceId })
         assertEquals(first.pendingEvents(), first.pendingEvents())

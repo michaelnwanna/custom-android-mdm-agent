@@ -1,0 +1,20 @@
+<!doctype html><html lang='en'><meta charset='utf-8'><title>Device MQTT lab</title><h1>Device MQTT mTLS and topic authorization</h1><p>passed</p><p>Real loopback MQTT TLS with ephemeral software keys, explicit lab certificate membership and directional ACLs; no Android Keystore, enrollment/PostgreSQL membership, session termination, payload validation, durable delivery or production infrastructure</p><p><a href='manifest.json'>Exact inputs, dependencies, counters and result hashes</a></p><pre>test_fresh_membership_for_authentication_and_every_topic_action (test_mqtt_device_broker.DeviceBrokerPluginTests.test_fresh_membership_for_authentication_and_every_topic_action) ... ok
+test_missing_or_malformed_membership_fails_closed (test_mqtt_device_broker.DeviceBrokerPluginTests.test_missing_or_malformed_membership_fails_closed) ... ok
+test_registry_has_strict_field_and_value_types (test_mqtt_device_broker.DeviceBrokerPluginTests.test_registry_has_strict_field_and_value_types) ... ok
+test_rejects_non_tls_credentials_wills_and_persistent_sessions (test_mqtt_device_broker.DeviceBrokerPluginTests.test_rejects_non_tls_credentials_wills_and_persistent_sessions) ... ok
+test_directional_topics_deny_other_devices_wildcards_and_unknown_actions (test_mqtt_device_policy.DeviceMqttPolicyTests.test_directional_topics_deny_other_devices_wildcards_and_unknown_actions) ... ok
+test_exact_registered_certificate_and_client_id_required (test_mqtt_device_policy.DeviceMqttPolicyTests.test_exact_registered_certificate_and_client_id_required) ... ok
+test_registered_certificate_still_requires_strict_leaf_policy (test_mqtt_device_policy.DeviceMqttPolicyTests.test_registered_certificate_still_requires_strict_leaf_policy) ... ok
+test_records_certificate_and_denials_and_echoes_only_the_exact_probe (test_mqtt_device_probe.AndroidMqttProbeTests.test_records_certificate_and_denials_and_echoes_only_the_exact_probe) ... ok
+test_disable_blocks_new_subscriptions_receive_and_reconnect (test_mqtt_device_wire.DeviceMqttWireTests.test_disable_blocks_new_subscriptions_receive_and_reconnect) ... ok
+test_missing_wrong_unregistered_and_forged_credentials_rejected_before_session_mutation (test_mqtt_device_wire.DeviceMqttWireTests.test_missing_wrong_unregistered_and_forged_credentials_rejected_before_session_mutation) ... ok
+test_persistent_sessions_are_rejected (test_mqtt_device_wire.DeviceMqttWireTests.test_persistent_sessions_are_rejected) ... ok
+test_publish_direction_and_disable_enforced_before_broadcast (test_mqtt_device_wire.DeviceMqttWireTests.test_publish_direction_and_disable_enforced_before_broadcast) ... ok
+test_real_mtls_directional_subscriptions_and_cross_device_isolation (test_mqtt_device_wire.DeviceMqttWireTests.test_real_mtls_directional_subscriptions_and_cross_device_isolation) ... ok
+test_retained_publications_are_not_stored_or_replayed (test_mqtt_device_wire.DeviceMqttWireTests.test_retained_publications_are_not_stored_or_replayed) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 4.470s
+
+OK
+</pre></html>
