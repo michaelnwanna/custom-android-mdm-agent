@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import uuid
 import xml.etree.ElementTree as ET
 
@@ -28,7 +29,7 @@ def instrumentation_passed(text, expected_tests=1):
             and "FAILURES" not in text and "INSTRUMENTATION_FAILED" not in text)
 
 
-def verify_recovery_proof(prepared, recovered, nonce):
+def verify_recovery_proof(prepared, recovered, nonce, reboot=False):
     if (type(prepared.get("schemaVersion")) is not int or prepared["schemaVersion"] != 1
             or type(recovered.get("schemaVersion")) is not int or recovered["schemaVersion"] != 1
             or prepared.get("probe") != nonce or recovered.get("probe") != nonce
@@ -37,8 +38,14 @@ def verify_recovery_proof(prepared, recovered, nonce):
             or type(prepared.get("processId")) is not int or prepared["processId"] <= 0
             or type(recovered.get("preparedProcessId")) is not int or recovered["preparedProcessId"] != prepared["processId"]
             or type(recovered.get("recoveredProcessId")) is not int or recovered["recoveredProcessId"] <= 0
-            or recovered["recoveredProcessId"] == prepared["processId"]):
+            or (not reboot and recovered["recoveredProcessId"] == prepared["processId"])):
         raise ValueError("Persisted work/process recovery proof missing")
+    if reboot and (type(prepared.get("bootCount")) is not int or prepared["bootCount"] < 0
+                   or type(recovered.get("preparedBootCount")) is not int
+                   or recovered["preparedBootCount"] != prepared["bootCount"]
+                   or type(recovered.get("recoveredBootCount")) is not int
+                   or recovered["recoveredBootCount"] <= prepared["bootCount"]):
+        raise ValueError("Persisted work reboot proof missing")
     for attempt, name in enumerate(("first", "second")):
         record = recovered.get(name, {})
         if (type(record.get("attempt")) is not int or record["attempt"] != attempt
@@ -50,12 +57,18 @@ def verify_recovery_proof(prepared, recovered, nonce):
         raise ValueError("Recovered retry backoff missing")
 
 
-def run_process_recovery(command, adb, output):
+def verify_boot_transition(before, after):
+    if (str(uuid.UUID(before)) != before or str(uuid.UUID(after)) != after or before == after):
+        raise ValueError("Kernel boot ID did not change")
+
+
+def run_process_recovery(command, adb, output, reboot=False):
     nonce = str(uuid.uuid4())
     fixture = f"no_backup/scheduler-probe-{nonce}"
 
     def phase(method):
         text = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "probe", nonce,
+                "-e", "reboot", "true" if reboot else "false",
                         "-e", "class", "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#" + method,
                         "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 140)
         if not instrumentation_passed(text):
@@ -73,9 +86,24 @@ def run_process_recovery(command, adb, output):
         (output / "process-stop-verification.json").write_text(json.dumps(
             {"schemaVersion": 1, "probe": nonce, "preparedProcessId": prepared["processId"],
              "forceStopIssued": True, "oldProcessAbsent": True, "explicitRelaunch": True}, indent=2) + "\n")
+        if reboot:
+            before = command([*adb, "shell", "cat", "/proc/sys/kernel/random/boot_id"], 30).strip()
+            command([*adb, "reboot"], 30)
+            command([*adb, "wait-for-disconnect"], 60)
+            command([*adb, "wait-for-device"], 240)
+            deadline = time.monotonic() + 240
+            while command([*adb, "shell", "getprop", "sys.boot_completed"], 30).strip() != "1":
+                if time.monotonic() >= deadline:
+                    raise RuntimeError("Android boot did not complete after reboot")
+            after = command([*adb, "shell", "cat", "/proc/sys/kernel/random/boot_id"], 30).strip()
+            verify_boot_transition(before, after)
+            command([*adb, "shell", "ls", "/sdcard"], 30)
+            (output / "reboot-verification.json").write_text(json.dumps(
+                {"schemaVersion": 1, "probe": nonce, "beforeBootId": before, "afterBootId": after,
+                 "explicitRelaunch": True}, indent=2) + "\n")
         phase("resumePersistedWorkAfterHostVerifiedForceStop")
         recovered = json.loads(command([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat", fixture + "/verified.json"], 30))
-        verify_recovery_proof(prepared, recovered, nonce)
+        verify_recovery_proof(prepared, recovered, nonce, reboot=reboot)
         (output / "recovery-verified.json").write_text(json.dumps(recovered, indent=2) + "\n")
     except Exception as failure:
         original_failure = failure
@@ -99,17 +127,19 @@ def main():
     parser.add_argument("--event-worker", action="store_true", help="Run six isolated SQLite/TLS WorkManager worker scenarios")
     parser.add_argument("--event-scheduler", action="store_true", help="Run two actual WorkManager dispatch/backoff/cancellation probe scenarios")
     parser.add_argument("--scheduler-recovery", action="store_true", help="Verify persisted probe work across app force-stop and explicit relaunch")
+    parser.add_argument("--scheduler-reboot", action="store_true", help="Verify persisted probe work across force-stop, actual reboot and explicit relaunch")
     args = parser.parse_args()
     if bool(args.serial) != bool(args.expected_avd):
         parser.error("--serial and --expected-avd must be supplied together")
     if args.serial and not args.serial.startswith("emulator-"):
         parser.error("Only an explicitly named disposable emulator is supported")
-    if (args.command_journal or args.event_acknowledgements or args.event_worker or args.event_scheduler or args.scheduler_recovery) and not args.serial:
+    if (args.command_journal or args.event_acknowledgements or args.event_worker or args.event_scheduler or args.scheduler_recovery or args.scheduler_reboot) and not args.serial:
         parser.error("Journal scenarios require an explicit emulator and expected AVD")
-    if sum((args.command_journal, args.event_acknowledgements, args.event_worker, args.event_scheduler, args.scheduler_recovery)) > 1:
+    if sum((args.command_journal, args.event_acknowledgements, args.event_worker, args.event_scheduler, args.scheduler_recovery, args.scheduler_reboot)) > 1:
         parser.error("Choose one isolated journal suite")
     started = datetime.datetime.now(datetime.timezone.utc)
-    output = ROOT / ("artifacts/android-scheduler-recovery" if args.scheduler_recovery else
+    output = ROOT / ("artifacts/android-scheduler-reboot" if args.scheduler_reboot else
+                     "artifacts/android-scheduler-recovery" if args.scheduler_recovery else
                      "artifacts/android-event-scheduler" if args.event_scheduler else
                      "artifacts/android-event-worker" if args.event_worker else
                      "artifacts/android-event-acknowledgements" if args.event_acknowledgements else
@@ -195,8 +225,8 @@ def main():
                           "EventUploadWorkerInstrumentedTest" if args.event_worker else
                           "EventAcknowledgementInstrumentedTest" if args.event_acknowledgements else
                           "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest")
-            if args.scheduler_recovery:
-                run_process_recovery(command, adb, output)
+            if args.scheduler_recovery or args.scheduler_reboot:
+                run_process_recovery(command, adb, output, reboot=args.scheduler_reboot)
             else:
                 result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
                                   "dev.fleet.agent." + test_class,
@@ -216,7 +246,9 @@ def main():
                 "eventWorkerRequested": args.event_worker,
                 "eventSchedulerRequested": args.event_scheduler,
                 "schedulerRecoveryRequested": args.scheduler_recovery,
-                "scope": ("API34 persisted debug-probe WorkManager recovery across host-issued app force-stop with verified old PID absence, then explicit instrumentation relaunch/new PID; same work ID, attempts 0/1, real first backoff, terminal cleanup. No enqueue on resume, test clock, production identity/journal reset or forced scheduler run. Force-stop prevents autonomous execution until relaunch; foreground GreedyScheduler possible. Not automatic dead-process/JobScheduler-only delivery, reboot or actual event recovery." if args.scheduler_recovery else
+                "schedulerRebootRequested": args.scheduler_reboot,
+                "scope": ("API34 debug-probe persisted WorkManager recovery across host force-stop, actual emulator reboot with changed kernel boot ID and increased Android boot count, then explicit instrumentation relaunch. Same work ID, attempts 0/1, real first backoff, scoped cleanup. No enqueue on resume or identity/journal reset. Package force-stopped until explicit launch; foreground GreedyScheduler possible. Not autonomous boot dispatch, JobScheduler-only execution, actual event/Keystore/backend recovery, abrupt power loss or production proof." if args.scheduler_reboot else
+                    "API34 persisted debug-probe WorkManager recovery across host-issued app force-stop with verified old PID absence, then explicit instrumentation relaunch/new PID; same work ID, attempts 0/1, real first backoff, terminal cleanup. No enqueue on resume, test clock, production identity/journal reset or forced scheduler run. Force-stop prevents autonomous execution until relaunch; foreground GreedyScheduler possible. Not automatic dead-process/JobScheduler-only delivery, reboot or actual event recovery." if args.scheduler_recovery else
                     "Two actual API34 WorkManager debug-probe scheduling scenarios: real dispatch, persisted same-ID retry after exponential 30-second backoff, unique KEEP deduplication, cancellation of delayed work without dispatch. No forced run/test clock, production identity/journal access or database reset. Foreground instrumentation permits GreedyScheduler; not proof of JobScheduler-only dispatch, constraints, in-flight event-worker OS cancellation, process death or reboot recovery." if args.event_scheduler else
                     "Six API34 SQLite/software-key loopback mTLS worker-body/request-policy scenarios: bounded batch continuation, transient replay, permanent/exhausted failures retain rows, stop callback cancellation, slow-response deadline and WorkManager network/backoff/input configuration. No actual OS-scheduled backoff/cancel/reboot, real Keystore/backend, process kill or power loss." if args.event_worker else
                     "Five real SQLite/software-key loopback mTLS acknowledgement deletion scenarios: exact-row deletion, retained inbox/dedup after reopen, rejected replies preserve rows, delete failure rollback/retry, concurrent duplicate uploads and changed in-flight row preservation. No backend, real Keystore, worker, process kill or power loss." if args.event_acknowledgements else

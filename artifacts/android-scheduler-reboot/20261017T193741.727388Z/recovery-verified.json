@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "probe": "fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b",
+  "workId": "9c6265ca-629b-408f-becb-dbab14d65179",
+  "preparedProcessId": 2165,
+  "preparedBootCount": 30,
+  "recoveredBootCount": 31,
+  "recoveredProcessId": 1796,
+  "state": "SUCCEEDED",
+  "first": {
+    "attempt": 0,
+    "elapsedMillis": 45494,
+    "workId": "9c6265ca-629b-408f-becb-dbab14d65179",
+    "processId": 1796
+  },
+  "second": {
+    "attempt": 1,
+    "elapsedMillis": 75580,
+    "workId": "9c6265ca-629b-408f-becb-dbab14d65179",
+    "processId": 1796
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "no_backup/scheduler-probe-a301eaa6-a7f6-46d8-ae72-1801abdfa884/verified.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schemaVersion\":1,\"probe\":\"a301eaa6-a7f6-46d8-ae72-1801abdfa884\",\"workId\":\"14a3bc34-f38a-43bf-a7c5-beb334b3f484\",\"preparedProcessId\":2387,\"preparedBootCount\":31,\"recoveredBootCount\":31,\"recoveredProcessId\":2442,\"state\":\"SUCCEEDED\",\"first\":{\"attempt\":0,\"elapsedMillis\":193457,\"workId\":\"14a3bc34-f38a-43bf-a7c5-beb334b3f484\",\"processId\":2442},\"second\":{\"attempt\":1,\"elapsedMillis\":223504,\"workId\":\"14a3bc34-f38a-43bf-a7c5-beb334b3f484\",\"processId\":2442}}",
+  "stderr": ""
+}

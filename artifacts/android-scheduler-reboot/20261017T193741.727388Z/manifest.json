@@ -1,0 +1,1635 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-17T19:37:41.727388+00:00",
+  "finishedAt": "2026-10-17T19:40:39.252634+00:00",
+  "result": "passed",
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "./gradlew",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "\n------------------------------------------------------------\nGradle 8.9\n------------------------------------------------------------\n\nBuild time:    2024-07-11 14:37:41 UTC\nRevision:      d536ef36a19186ccc596d8817123e5445f30fef8\n\nKotlin:        1.9.23\nGroovy:        3.0.21\nAnt:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023\nLauncher JVM:  17.0.20.1 (Eclipse Adoptium 17.0.20.1+1)\nDaemon JVM:    /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/jdk17/jdk-17.0.20.1+1/Contents/Home (no JDK specified, using current Java home)\nOS:            Mac OS X 15.7.8 x86_64\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:dependencies",
+        "--configuration",
+        "debugRuntimeClasspath",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "\n> Task :agent:dependencies\n\n------------------------------------------------------------\nProject ':agent'\n------------------------------------------------------------\n\ndebugRuntimeClasspath - Runtime classpath of '/debug'.\n+--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21\n|    +--- org.jetbrains:annotations:13.0 -> 23.0.0\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0 -> 1.8.22 (c)\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0 -> 1.8.22 (c)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21 (c)\n+--- org.bouncycastle:bcpkix-jdk18on:1.83\n|    \\--- org.bouncycastle:bcutil-jdk18on:1.83\n|         \\--- org.bouncycastle:bcprov-jdk18on:1.83\n+--- com.squareup.moshi:moshi:1.15.2\n|    +--- com.squareup.okio:okio:3.7.0\n|    |    \\--- com.squareup.okio:okio-jvm:3.7.0\n|    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 -> 2.0.21 (*)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21 -> 1.8.22\n|         +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22\n|              \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n+--- com.hivemq:hivemq-mqtt-client:1.3.3\n|    +--- io.netty:netty-buffer:4.1.99.Final\n|    |    \\--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-codec:4.1.99.Final\n|    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    \\--- io.netty:netty-transport:4.1.99.Final\n|    |         +--- io.netty:netty-common:4.1.99.Final\n|    |         +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |         \\--- io.netty:netty-resolver:4.1.99.Final\n|    |              \\--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-common:4.1.99.Final\n|    +--- io.netty:netty-handler:4.1.99.Final\n|    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    +--- io.netty:netty-resolver:4.1.99.Final (*)\n|    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    +--- io.netty:netty-transport:4.1.99.Final (*)\n|    |    +--- io.netty:netty-transport-native-unix-common:4.1.99.Final\n|    |    |    +--- io.netty:netty-common:4.1.99.Final\n|    |    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n|    |    |    \\--- io.netty:netty-transport:4.1.99.Final (*)\n|    |    \\--- io.netty:netty-codec:4.1.99.Final (*)\n|    +--- io.netty:netty-transport:4.1.99.Final (*)\n|    +--- org.jctools:jctools-core:2.1.2\n|    +--- org.jetbrains:annotations:16.0.3 -> 23.0.0\n|    +--- com.google.dagger:dagger:2.27\n|    |    \\--- javax.inject:javax.inject:1\n|    +--- io.reactivex.rxjava2:rxjava:2.2.21\n|    |    \\--- org.reactivestreams:reactive-streams:1.0.3 -> 1.0.4\n|    \\--- org.reactivestreams:reactive-streams:1.0.4\n+--- androidx.room:room-runtime:2.6.1\n|    +--- androidx.annotation:annotation-experimental:1.1.0-rc01 -> 1.3.0\n|    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10 -> 2.0.21 (*)\n|    +--- androidx.arch.core:core-runtime:2.2.0\n|    |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n|    |    \\--- androidx.arch.core:core-common:2.2.0\n|    |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n|    +--- androidx.room:room-common:2.6.1\n|    |    +--- androidx.annotation:annotation:1.3.0\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22 (*)\n|    |    +--- androidx.room:room-ktx:2.6.1 (c)\n|    |    \\--- androidx.room:room-runtime:2.6.1 (c)\n|    +--- androidx.sqlite:sqlite:2.4.0\n|    |    +--- androidx.annotation:annotation:1.0.0 -> 1.3.0\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|    |    \\--- androidx.sqlite:sqlite-framework:2.4.0 (c)\n|    +--- androidx.sqlite:sqlite-framework:2.4.0\n|    |    +--- androidx.annotation:annotation:1.2.0 -> 1.3.0\n|    |    +--- androidx.sqlite:sqlite:2.4.0 (*)\n|    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n|    |    \\--- androidx.sqlite:sqlite:2.4.0 (c)\n|    +--- androidx.room:room-common:2.6.1 (c)\n|    \\--- androidx.room:room-ktx:2.6.1 (c)\n\\--- androidx.work:work-runtime:2.9.1\n     +--- androidx.annotation:annotation-experimental:1.0.0 -> 1.3.0 (*)\n     +--- androidx.core:core:1.9.0\n     |    +--- androidx.annotation:annotation:1.2.0 -> 1.3.0\n     |    +--- androidx.annotation:annotation-experimental:1.3.0 (*)\n     |    +--- androidx.collection:collection:1.0.0\n     |    |    \\--- androidx.annotation:annotation:1.0.0 -> 1.3.0\n     |    +--- androidx.concurrent:concurrent-futures:1.0.0\n     |    |    +--- com.google.guava:listenablefuture:1.0\n     |    |    \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    +--- androidx.lifecycle:lifecycle-runtime:2.3.1 -> 2.5.1\n     |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |    |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |    |    \\--- androidx.lifecycle:lifecycle-common:2.5.1\n     |    |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    \\--- androidx.versionedparcelable:versionedparcelable:1.1.1\n     |         +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |         \\--- androidx.collection:collection:1.0.0 (*)\n     +--- androidx.lifecycle:lifecycle-livedata:2.5.1\n     |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |    \\--- androidx.lifecycle:lifecycle-livedata-core:2.5.1\n     |         +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)\n     |         +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)\n     |         \\--- androidx.lifecycle:lifecycle-common:2.5.1 (*)\n     +--- androidx.lifecycle:lifecycle-service:2.5.1\n     |    \\--- androidx.lifecycle:lifecycle-runtime:2.5.1 (*)\n     +--- androidx.room:room-ktx:2.5.0 -> 2.6.1\n     |    +--- androidx.room:room-common:2.6.1 (*)\n     |    +--- androidx.room:room-runtime:2.6.1 (*)\n     |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n     |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1\n     |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1\n     |    |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1\n     |    |    |         +--- org.jetbrains:annotations:23.0.0\n     |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.1\n     |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1 (c)\n     |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1 (c)\n     |    |    |         |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1 (c)\n     |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.8.20 -> 2.0.21\n     |    |    |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 (*)\n     |    |    |         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20 -> 1.8.22 (*)\n     |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.7.1 (*)\n     |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20 -> 1.8.22 (*)\n     |    +--- androidx.room:room-common:2.6.1 (c)\n     |    \\--- androidx.room:room-runtime:2.6.1 (c)\n     +--- androidx.sqlite:sqlite-framework:2.3.0 -> 2.4.0 (*)\n     +--- androidx.startup:startup-runtime:1.1.1\n     |    +--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     |    \\--- androidx.tracing:tracing:1.0.0\n     |         \\--- androidx.annotation:annotation:1.1.0 -> 1.3.0\n     +--- com.google.guava:listenablefuture:1.0\n     +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.0.21 (*)\n     \\--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1 (*)\n\n(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.\n(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.\n\nA web-based, searchable dependency report is available by adding the --scan option.\n\nBUILD SUCCESSFUL in 2s\n1 actionable task: 1 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:testDebugUnitTest",
+        ":agent:assembleDebug",
+        ":agent:lintDebug",
+        ":agent:assembleDebugAndroidTest",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "> Task :agent:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :agent:preBuild UP-TO-DATE\n> Task :agent:preDebugBuild UP-TO-DATE\n> Task :agent:checkDebugAarMetadata\n> Task :agent:generateDebugResValues\n> Task :agent:mapDebugSourceSetPaths\n> Task :agent:generateDebugResources\n> Task :agent:packageDebugResources\n> Task :agent:mergeDebugResources\n> Task :agent:createDebugCompatibleScreenManifests\n> Task :agent:extractDeepLinksDebug\n> Task :agent:parseDebugLocalResources\n> Task :agent:processDebugMainManifest\n> Task :agent:processDebugManifest\n> Task :agent:preDebugUnitTestBuild UP-TO-DATE\n> Task :agent:mergeDebugNativeDebugMetadata NO-SOURCE\n> Task :agent:javaPreCompileDebugUnitTest\n> Task :agent:mergeDebugShaders\n> Task :agent:compileDebugShaders NO-SOURCE\n> Task :agent:generateDebugAssets UP-TO-DATE\n> Task :agent:mergeDebugAssets\n> Task :agent:compressDebugAssets\n> Task :agent:desugarDebugFileDependencies\n> Task :agent:javaPreCompileDebug\n> Task :agent:mergeDebugJniLibFolders\n> Task :agent:mergeDebugNativeLibs NO-SOURCE\n> Task :agent:stripDebugDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebug\n> Task :agent:writeDebugAppMetadata\n> Task :agent:writeDebugSigningConfigVersions\n> Task :agent:preDebugAndroidTestBuild SKIPPED\n> Task :agent:generateDebugAndroidTestResValues\n> Task :agent:extractProguardFiles\n> Task :agent:checkDebugDuplicateClasses\n> Task :agent:checkDebugAndroidTestAarMetadata\n> Task :agent:mergeLibDexDebug\n> Task :agent:mapDebugAndroidTestSourceSetPaths\n> Task :agent:generateDebugAndroidTestResources\n> Task :agent:processDebugAndroidTestManifest\n> Task :agent:processDebugManifestForPackage\n> Task :agent:javaPreCompileDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestShaders\n> Task :agent:compileDebugAndroidTestShaders NO-SOURCE\n> Task :agent:generateDebugAndroidTestAssets UP-TO-DATE\n> Task :agent:mergeDebugAndroidTestAssets\n> Task :agent:compressDebugAndroidTestAssets\n> Task :agent:desugarDebugAndroidTestFileDependencies\n> Task :agent:mergeDebugAndroidTestJniLibFolders\n> Task :agent:checkDebugAndroidTestDuplicateClasses\n> Task :agent:mergeDebugAndroidTestNativeLibs NO-SOURCE\n> Task :agent:stripDebugAndroidTestDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestResources\n> Task :agent:mergeLibDexDebugAndroidTest\n> Task :agent:writeDebugAndroidTestSigningConfigVersions\n> Task :agent:mergeExtDexDebugAndroidTest\n> Task :agent:processDebugResources\n> Task :agent:processDebugAndroidTestResources\n> Task :agent:mergeExtDexDebug\n> Task :agent:kspDebugKotlin\n> Task :agent:compileDebugKotlin\n> Task :agent:compileDebugJavaWithJavac\n> Task :agent:processDebugJavaRes\n> Task :agent:bundleDebugClassesToRuntimeJar\n> Task :agent:bundleDebugClassesToCompileJar\n> Task :agent:dexBuilderDebug\n> Task :agent:mergeDebugGlobalSynthetics\n> Task :agent:generateDebugAndroidTestLintModel\n> Task :agent:mergeProjectDexDebug\n> Task :agent:generateDebugLintReportModel\n> Task :agent:generateDebugUnitTestLintModel\n> Task :agent:kspDebugUnitTestKotlin\n> Task :agent:kspDebugAndroidTestKotlin\n> Task :agent:mergeDebugJavaResource\n> Task :agent:packageDebug\n> Task :agent:createDebugApkListingFileRedirect\n> Task :agent:assembleDebug\n> Task :agent:compileDebugUnitTestKotlin\n> Task :agent:compileDebugUnitTestJavaWithJavac NO-SOURCE\n> Task :agent:processDebugUnitTestJavaRes\n> Task :agent:compileDebugAndroidTestKotlin\n> Task :agent:testDebugUnitTest\n> Task :agent:compileDebugAndroidTestJavaWithJavac NO-SOURCE\n> Task :agent:dexBuilderDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestGlobalSynthetics\n> Task :agent:processDebugAndroidTestJavaRes\n> Task :agent:mergeProjectDexDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestJavaResource\n> Task :agent:packageDebugAndroidTest\n> Task :agent:createDebugAndroidTestApkListingFileRedirect\n> Task :agent:assembleDebugAndroidTest\n> Task :agent:lintAnalyzeDebug\n> Task :agent:lintAnalyzeDebugAndroidTest\n> Task :agent:lintAnalyzeDebugUnitTest\n\n> Task :agent:lintReportDebug\nWrote HTML report to file:///Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-scheduler-reboot/20261017T193741.727388Z/inputs/android/agent/build/reports/lint-results-debug.html\n\n> Task :agent:lintDebug\n\nBUILD SUCCESSFUL in 1m 21s\n78 actionable tasks: 78 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "returncode": 0,
+      "stdout": "Pixel_8\nOK\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "ls",
+        "/sdcard"
+      ],
+      "returncode": 0,
+      "stdout": "Alarms\nAndroid\nAudiobooks\nDCIM\nDocuments\nDownload\nMovies\nMusic\nNotifications\nPictures\nPodcasts\nRecordings\nRingtones\nfleet-evidence-window.xml\nfleet-runtime-evidence.mp4\nfleet-window.xml\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "ro.build.fingerprint"
+      ],
+      "returncode": 0,
+      "stdout": "Android/sdk_phone64_x86_64/emu64x:14/UE1A.230829.036.A1/11228894:userdebug/test-keys\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dpm",
+        "list-owners"
+      ],
+      "returncode": 0,
+      "stdout": "1 owner:\nUser  0: admin=dev.fleet.agent/.FleetAdminReceiver,DeviceOwner,Affiliated\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-scheduler-reboot/20261017T193741.727388Z/inputs/android/agent/build/outputs/apk/debug/agent-debug.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-scheduler-reboot/20261017T193741.727388Z/inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "-e",
+        "probe",
+        "fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b",
+        "-e",
+        "reboot",
+        "true",
+        "-e",
+        "class",
+        "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#preparePersistedWorkBeforeHostForceStop",
+        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "returncode": 0,
+      "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventSchedulerRecoveryInstrumentedTest:\nINSTRUMENTATION_STATUS: test=preparePersistedWorkBeforeHostForceStop\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=preparePersistedWorkBeforeHostForceStop\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 0.09\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "exec-out",
+        "run-as",
+        "dev.fleet.agent",
+        "cat",
+        "no_backup/scheduler-probe-fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b/prepared.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\"schemaVersion\":1,\"probe\":\"fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b\",\"workId\":\"9c6265ca-629b-408f-becb-dbab14d65179\",\"processId\":2165,\"bootCount\":30,\"elapsedMillis\":152140}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "force-stop",
+        "dev.fleet.agent"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "test",
+        "!",
+        "-d",
+        "/proc/2165"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "cat",
+        "/proc/sys/kernel/random/boot_id"
+      ],
+      "returncode": 0,
+      "stdout": "d5dadd07-c4ac-4ac5-9e06-8fe3de583794\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "reboot"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "wait-for-disconnect"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "wait-for-device"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "cat",
+        "/proc/sys/kernel/random/boot_id"
+      ],
+      "returncode": 0,
+      "stdout": "81de2046-38f6-445e-afad-d8e3dfaca124\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "ls",
+        "/sdcard"
+      ],
+      "returncode": 0,
+      "stdout": "Alarms\nAndroid\nAudiobooks\nDCIM\nDocuments\nDownload\nMovies\nMusic\nNotifications\nPictures\nPodcasts\nRecordings\nRingtones\nfleet-evidence-window.xml\nfleet-runtime-evidence.mp4\nfleet-window.xml\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "-e",
+        "probe",
+        "fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b",
+        "-e",
+        "reboot",
+        "true",
+        "-e",
+        "class",
+        "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#resumePersistedWorkAfterHostVerifiedForceStop",
+        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "returncode": 0,
+      "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventSchedulerRecoveryInstrumentedTest:\nINSTRUMENTATION_STATUS: test=resumePersistedWorkAfterHostVerifiedForceStop\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=resumePersistedWorkAfterHostVerifiedForceStop\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 30.527\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "exec-out",
+        "run-as",
+        "dev.fleet.agent",
+        "cat",
+        "no_backup/scheduler-probe-fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b/verified.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\"schemaVersion\":1,\"probe\":\"fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b\",\"workId\":\"9c6265ca-629b-408f-becb-dbab14d65179\",\"preparedProcessId\":2165,\"preparedBootCount\":30,\"recoveredBootCount\":31,\"recoveredProcessId\":1796,\"state\":\"SUCCEEDED\",\"first\":{\"attempt\":0,\"elapsedMillis\":45494,\"workId\":\"9c6265ca-629b-408f-becb-dbab14d65179\",\"processId\":1796},\"second\":{\"attempt\":1,\"elapsedMillis\":75580,\"workId\":\"9c6265ca-629b-408f-becb-dbab14d65179\",\"processId\":1796}}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "-e",
+        "probe",
+        "fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b",
+        "-e",
+        "reboot",
+        "true",
+        "-e",
+        "class",
+        "dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest#cleanupOnlyThisRecoveryProbe",
+        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "returncode": 0,
+      "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventSchedulerRecoveryInstrumentedTest:\nINSTRUMENTATION_STATUS: test=cleanupOnlyThisRecoveryProbe\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventSchedulerRecoveryInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=cleanupOnlyThisRecoveryProbe\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 0.052\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "run-as",
+        "dev.fleet.agent",
+        "test",
+        "!",
+        "-d",
+        "no_backup/scheduler-probe-fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "inputSha256": {
+    "android/agent/build.gradle.kts": "d4a81a5f9a7a6ac12460574b618565f6caf8cbd15eae88bc0a493f629dd352c3",
+    "android/agent/schemas/dev.fleet.agent.CommandDatabase/1.json": "291b257164e7e299370f4be9f8b98caf9c092cef4d4aa8e3c122a737e717184b",
+    "android/agent/src/androidTest/java/dev/fleet/agent/CommandJournalInstrumentedTest.kt": "07fc6c4e2abdbc7662005ad4b3f0e9e9aceef5397ce337a5506028a0d35dda2b",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentBackendInstrumentedTest.kt": "93be98d3be24a4be1a81c69f2ab3e789b81a69f35290f5988f6d609bf01e60a4",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentIdentityInstrumentedTest.kt": "639a5a01457da554584f76956ab49b71c8e647242334a2d9f1f63bfd6f68f252",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventAcknowledgementInstrumentedTest.kt": "9e6fa4f58b05980e4806bc1b95eb27e22a7801676545d5744d7933e7292345d8",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventSchedulerInstrumentedTest.kt": "690abe95f55228bd104a9d83d602fa1cb7a902488fcd0b67e5bf8ca034b87582",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventSchedulerRecoveryInstrumentedTest.kt": "9ddd36fc4f1a0b5691c9469f90a59caf77204c40fb2295d65bcd182faba33fd5",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EventUploadWorkerInstrumentedTest.kt": "cbb1e52934793e67273e4463c5718fcfcb8110fdfb2dc791c41c856116785461",
+    "android/agent/src/debug/java/dev/fleet/agent/SchedulerProbeWorker.kt": "8c8e64db5cf52fef7b7db1a30fc58132166bdf0736095ec2327a2d49345a0ef9",
+    "android/agent/src/main/AndroidManifest.xml": "9e5cb84180624fcab84dbda21116b1b7e0c299cadbe228b8181d5d7e00dd4909",
+    "android/agent/src/main/java/dev/fleet/agent/AndroidEnrollmentIdentity.kt": "005ccdc725009b80356443d59aaaf36ed4b2e2becf7c62e7da3686e330ced127",
+    "android/agent/src/main/java/dev/fleet/agent/CommandDatabase.kt": "36a9f54f89e7975c040fadde9b139066d0066b8a16cd7d538a9a8696ce6478c3",
+    "android/agent/src/main/java/dev/fleet/agent/CommandEventTransport.kt": "8fb46225282eff9579600b5124a64400f08941493d8af596d0206e8b1c415c63",
+    "android/agent/src/main/java/dev/fleet/agent/CommandJournal.kt": "5dea79ca8bc76c657969d99e551b8169a5e67a8ee0071c01655451d3cb2137f3",
+    "android/agent/src/main/java/dev/fleet/agent/CommandMessage.kt": "1e95b1e45fba3114472dc2bcf8a48c7c2da93df52f95af07481b7b5b7c14feda",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceIdentityTransport.kt": "bec83955691e1c9cf3dbabb0fceb29b5276068f5fe8c6854892e2959979dac2c",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceKeyManagerFactory.kt": "cdda7cd1bacc5465c2607bc2371c455bed02aa21b5f810521d17937e29180207",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceMqttTransport.kt": "f7fb643713f4f4ea58154e04f22c5bec1578e26fbe0e4f063fa9f495b1ff4ea7",
+    "android/agent/src/main/java/dev/fleet/agent/DeviceTlsIdentity.kt": "d11b8d5c0985df6ce187484678421cdd822308024bcb8ff7506afd28c3a78531",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentBootstrap.kt": "c8f9b9665c16c92aba1fe31bf30af0e354a4d4c1aeb14053c00e9e778a928d9a",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentProof.kt": "343c02b0a6e2d0e1bef01e7e920e08eab25a26d87a97e957f184825fff0bf017",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentResponse.kt": "cfb64c35dbee5ac81cc73dc389dacf7c358c012214ded79095db680f72c8f005",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentTransport.kt": "f7331739641acff3c21f79e768ecbd56ad4650d352a452c34abad214c0edc7f2",
+    "android/agent/src/main/java/dev/fleet/agent/EventAcknowledgement.kt": "1872c8e9f33e8fb310a1d225c894aea06add0d7052f8caa99d6b3f696773601b",
+    "android/agent/src/main/java/dev/fleet/agent/EventDeliveryPolicy.kt": "ccafa852188007579ae71fb884ee331a5a2e17233739010968b86d4ad96448e0",
+    "android/agent/src/main/java/dev/fleet/agent/EventUploadControl.kt": "48f4a56edde8a1b108986d5bcd952f4e99ce30cc40fed2912ed55fc5be2f5e8d",
+    "android/agent/src/main/java/dev/fleet/agent/EventUploadWorker.kt": "d6a5c1112bfc331364d185f72c29d45caf4ffece9099fee9cb6fd70e6610fde5",
+    "android/agent/src/main/java/dev/fleet/agent/FleetAdminReceiver.kt": "f6c58b7536af7a2fffd8657b6f0fda30ab1ca52fe362615de69d180119b7b6b5",
+    "android/agent/src/main/java/dev/fleet/agent/LabEnrollment.kt": "dbc0ea8f5a46b4feb1e13f5ab6e0133a709a56a018d0c1bf697e313bb4e23a6a",
+    "android/agent/src/main/java/dev/fleet/agent/LabKioskController.kt": "252ccbd400909f5066f7483b66ebfeed2ff6d4f4d7f2b4a926b1fa8af7c490e1",
+    "android/agent/src/main/java/dev/fleet/agent/LabMaintenance.kt": "c498a7ae19c93da8b3f93f495a3bb23ca5d638052c16136a881a557b12785213",
+    "android/agent/src/main/java/dev/fleet/agent/LabMqttService.kt": "085c412dad4d64673c70f3cd61821afcb99a02f55ee6c847026bcd6f1c4bb1a9",
+    "android/agent/src/main/java/dev/fleet/agent/LabUpdateInstaller.kt": "76d760bd2b4cdc427240179a583557df5c8a270d3ac0263fab6ba65ea308c231",
+    "android/agent/src/main/java/dev/fleet/agent/MainActivity.kt": "013d643598d4f88dd123ea4422c498b34d42f5c04153804a625fbe7629161ebb",
+    "android/agent/src/main/java/dev/fleet/agent/MaintenanceProof.kt": "08e6a371e43bbb9e4b19cf0a452cf4425c0b55efbdd94a3cd1a81d9221963db7",
+    "android/agent/src/main/res/xml/device_admin.xml": "1bd02fa6728fb70187e65af59c379f2f063aa995cf87f26da9c5ff9f550d9b2b",
+    "android/agent/src/test/java/dev/fleet/agent/CommandDecoderTest.kt": "86ca8dfcac5d3822b8745d713728b7093f08039c08f79fe818c1fcb03dac8cce",
+    "android/agent/src/test/java/dev/fleet/agent/CommandEventTransportTest.kt": "a62504c60dacfed760eff5cc4215efe98514f24c9d52146416cd15b306a8f477",
+    "android/agent/src/test/java/dev/fleet/agent/CommandJournalWireTest.kt": "2cab6337b5cc662cd3494793f085afb45d7c10da3f0553b282b86282be76eade",
+    "android/agent/src/test/java/dev/fleet/agent/DeviceIdentityTransportTest.kt": "4e0dc1e555e49115ed6d380db75d1ac0b52cbfdbc22bf0ee4ae6e501c66062cf",
+    "android/agent/src/test/java/dev/fleet/agent/DeviceMqttTransportTest.kt": "677022648067379ce5269268f7c32c08a56cb85d495aea9884b4d0f74cdca145",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentBootstrapTest.kt": "39813b448e04b8a7481232793c9cdc6e4df5ac5e41ccc1823a737953cc9103a8",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentProofTest.kt": "2d068834bcb9e2238939a173dd39a07b7fc19ed0caffa00f229ae96040ccc655",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentResponseTest.kt": "91be365b25c77fcbf7ece710b6ba1b34281f3e6b81c99d3d7989f4098995d35c",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentTransportTest.kt": "0fcac38c26e96d5d0ef43287239e34b47e2d6529e9816faa898de5b452bd0407",
+    "android/agent/src/test/java/dev/fleet/agent/EventAcknowledgementTest.kt": "e2a0f2291c14a8a8c3019e8243be3037b4bbcb157d22fd76ed30210e6772366d",
+    "android/agent/src/test/java/dev/fleet/agent/EventDeliveryPolicyTest.kt": "a2adccddb2c9190ffc4110830e4a4e1699d174c82e560d71031be90717c9ea7e",
+    "android/agent/src/test/java/dev/fleet/agent/EventUploadControlTest.kt": "abd3210e56a628a751c0c0b783f25481d6fe132c7868066dc0c4aa47547849d9",
+    "android/agent/src/test/java/dev/fleet/agent/MaintenanceProofTest.kt": "b87b5561797c2f107ca9a1a813a52c86f8836a89c3b1e13ae15208111f4a102a",
+    "android/build.gradle.kts": "1e9dff79349edce4b91e0ca63f6756c4efaa6810cbfb3dd01799828cabb49f8c",
+    "android/gradle/wrapper/gradle-wrapper.jar": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+    "android/gradle/wrapper/gradle-wrapper.properties": "dc0c4f45f299ac2d51077dd1587e619128d091816ad9170d535a23694ddf355b",
+    "android/gradle.properties": "093ce43bdf9c26b7d8cd424a4af4410ce7e17ced2d7b0f892d551525c94b16ef",
+    "android/gradlew": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+    "android/gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "android/sample-managed-app/build.gradle.kts": "3cb421c94b3a1e7c706f70bd03d11281b6e4c6693ec4c8ee93470d1b011833a8",
+    "android/sample-managed-app/src/main/AndroidManifest.xml": "8aa79ef57998ba89e35557046f473a6aaa7f3d11334145927da7b7205a6b9429",
+    "android/sample-managed-app/src/main/java/dev/fleet/sample/MainActivity.kt": "df7b313d6afde98ea41569f1d0a3201290a57bdd843edbaea61f47ac35decc19",
+    "android/settings.gradle.kts": "8d24e364f5cae7a9f812dd5967267ff18f60c9f9182d64bfd2022acabdbe0cad",
+    "contracts/events/command-event-v1.schema.json": "4b4f57280ef20fd6d68d338fdf26bf2a44587ced3f9d190534ede767e4b00dcf",
+    "contracts/events/command-v1.schema.json": "1bfb6392d23269facc7e2b81120cd1da60cee931307c220a5a06772b88eb06f5",
+    "contracts/events/event-ack-v1.schema.json": "a9fd2ebbdc6147cfb0b4e9357e37bacfb709c58e2d58c449b58042ba1fa10929",
+    "contracts/fixtures/command-events-v1.json": "50a0990d61eb46fc40f56538b07ae20c010fa9a2a9b99ac66a07c8d78a4bf299",
+    "contracts/fixtures/commands-v1.json": "77aca1bd11c5e6acd54da6812052bedb875e34cb0ea90aa22864921896756848",
+    "contracts/fixtures/event-acks-v1.json": "5aef24921f5d07368c8b79d5f2f24bf325b99f38dc8b72b38b7a6be179250269",
+    "tools/check_android_enrollment.py": "67ae7c915d8490d7cf8817f78e352df471f9fc24d01a2fb0e80104be2ef9efee",
+    "tools/test_android_enrollment.py": "6ed0571a62c24de3a8e53a855d8f07610f328e8596222bf5b990ba2654ab18e3"
+  },
+  "apkSha256": {
+    "inputs/android/agent/build/outputs/apk/debug/agent-debug.apk": "671d758c5f87d1af3888248fc5d014f650479e2161012c204cfad7b20612f9bf",
+    "inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk": "4fd9b675e96d765d4ceff92e84c83cfc561681f8aadb83ae9d2647b2cdc45441"
+  },
+  "jvmCounters": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "serial": "emulator-5554",
+  "expectedAvd": "Pixel_8",
+  "commandJournalRequested": false,
+  "eventAcknowledgementsRequested": false,
+  "eventWorkerRequested": false,
+  "eventSchedulerRequested": false,
+  "schedulerRecoveryRequested": false,
+  "schedulerRebootRequested": true,
+  "scope": "API34 debug-probe persisted WorkManager recovery across host force-stop, actual emulator reboot with changed kernel boot ID and increased Android boot count, then explicit instrumentation relaunch. Same work ID, attempts 0/1, real first backoff, scoped cleanup. No enqueue on resume or identity/journal reset. Package force-stopped until explicit launch; foreground GreedyScheduler possible. Not autonomous boot dispatch, JobScheduler-only execution, actual event/Keystore/backend recovery, abrupt power loss or production proof.",
+  "fileSha256": {
+    "command-01.json": "53d3d5010a1442c2f12308f75be0f507062eb6eacc0c882bfd092d4e7b5d3f12",
+    "command-02.json": "31371734905aa4894b8b8a0437be28bbd5ce31ac8a07a0a959e9df6a717a380e",
+    "command-03.json": "6f7f6e549ad2043e0e80ca03ec5c4c54884730c20868ca6a68e9fd3fe4b8d622",
+    "command-04.json": "c67091c8ba1db42a8d3437bf033b6b19c750f1d9e73cbfc910e3887c64c08242",
+    "command-05.json": "13ad7fc1cc0adeb0e85d2684ecae5e6c6f71193e0782b2b10b5809ad28727fcd",
+    "command-06.json": "d62bd4f8e980399621fdcd98639c180d09925140ebc79a8b4c48c5d3140f6eea",
+    "command-07.json": "2beac93e624b6250d62bc352fdac966fd0c7768601e719f2218311ea4f76b229",
+    "command-08.json": "ab256d55d7dbe0df2e64afa3687b26219917bd09df89e75967a12968ab0421ea",
+    "command-09.json": "14e4f7166f0772fe2b11a04107ff0a25a50d0d871a20a9c31c5f3231ca5ffef3",
+    "command-10.json": "b2e02e1866b50b787a302c3e7fd7f343b8a656c06110f9fc7e86bfbb0bd898f1",
+    "command-100.json": "d62bd4f8e980399621fdcd98639c180d09925140ebc79a8b4c48c5d3140f6eea",
+    "command-101.json": "4ae6a2db73291aefa272ec62a1948e933b10bcc51e397949fcf36c1a6d0cd13a",
+    "command-102.json": "6f7f75174e162f39c0de79be40cbb7c17df43a7a392da16c81d7b4e49430e6e2",
+    "command-103.json": "1ac7591ab87ac957eaf5eb8304ca450a6f89f9aea589cca653534aa4bc38d135",
+    "command-104.json": "d243740fd3051bed0df356559f8cc37975deaddea6b6c5c211c00d9afed704d4",
+    "command-11.json": "0cda8ff411d18bbad650a963842ac6b9a54b29d18195fc593a13361b585bfd67",
+    "command-12.json": "69a3395c77cb47ad0001ed4e310a0678f23742c82aec97eb9f31f70ad4e60547",
+    "command-13.json": "0e49d87c2e14d3f6cc1beadd38a2234636e14dd4d72b81b22d807e3457bf94ce",
+    "command-14.json": "6d2f0dbfda3a3958fa47381943ce9ae06f3fcf24462a540622c7ce686ce80d59",
+    "command-15.json": "6611f5ceba7cd9a8e8b224be1d8ba78681c34502b97ba75000dd4b2f8dd0ffed",
+    "command-16.json": "f5985a9ce99dcc15ad7f9d01e75c50ee4f1bd92b7a9b1f33e7f4a87887f046ca",
+    "command-17.json": "9fc68509e8d1d78269e4afce707381861eadce6fc7fdd89c06ceb2b2a349f16f",
+    "command-18.json": "79b1b71e98a53cea8c3c30751ad19330e69f766feefcb5c9296c0386b5085686",
+    "command-19.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-20.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-21.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-22.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-23.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-24.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-25.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-26.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-27.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-28.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-29.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-30.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-31.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-32.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-33.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-34.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-35.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-36.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-37.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-38.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-39.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-40.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-41.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-42.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-43.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-44.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-45.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-46.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-47.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-48.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-49.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-50.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-51.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-52.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-53.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-54.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-55.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-56.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-57.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-58.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-59.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-60.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-61.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-62.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-63.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-64.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-65.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-66.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-67.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-68.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-69.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-70.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-71.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-72.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-73.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-74.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-75.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-76.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-77.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-78.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-79.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-80.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-81.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-82.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-83.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-84.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-85.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-86.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-87.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-88.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-89.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-90.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-91.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-92.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-93.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-94.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-95.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-96.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-97.json": "d70f91ce2929d10bf99b7d1fea6e0857a3ed88609748ba0686a95409555cfa86",
+    "command-98.json": "13ad7fc1cc0adeb0e85d2684ecae5e6c6f71193e0782b2b10b5809ad28727fcd",
+    "command-99.json": "cdc9927e8940dbfad6a88b41eba63d72a7b34e955e9074ec81fda0fba6929c33",
+    "jvm-results/TEST-dev.fleet.agent.CommandDecoderTest.xml": "25b47947ed8bb8f5678d8cc2a7e7d9d72770b94545987cc4023128f0f7e16318",
+    "jvm-results/TEST-dev.fleet.agent.CommandEventTransportTest.xml": "d0c0cce524a58b4f858fd53e2d9386fbefdd61c808bf3cf73aff18da186ded84",
+    "jvm-results/TEST-dev.fleet.agent.CommandJournalWireTest.xml": "1edf51ac033897538be0ccaa9ef1e605360e67b9a17b550f6dd8f4e8ba01df5f",
+    "jvm-results/TEST-dev.fleet.agent.DeviceIdentityTransportTest.xml": "1532ddde4f6e2c39733711f5971994755343317103fb6ec93a93835c18e0d17f",
+    "jvm-results/TEST-dev.fleet.agent.DeviceMqttTransportTest.xml": "214a7604ae5c8663952f8f1fc6d59544163dadf65f26a2b86821467f4a1a9e70",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentBootstrapTest.xml": "72f5c9286b325c5c01dcc61239fab8bd5abe957e163474472061975b3246d4a0",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentProofTest.xml": "85a5a10eed3df2350908297d5514b0342b63ed99f1a970ec0d9ec7598e522d78",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentResponseTest.xml": "bbaa77cbee6cc83cdd4417ee59b8ff616d752608a2604c816860c72dd491c31b",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentTransportTest.xml": "cca80449170243442c308ae15a0d2753f498c2ff4fc3493877678745c6d6e7a6",
+    "jvm-results/TEST-dev.fleet.agent.EventAcknowledgementTest.xml": "6d9695419c30053d25f23089cb0f8a3b5e424a6385f51e1e973bf88a12536345",
+    "jvm-results/TEST-dev.fleet.agent.EventDeliveryPolicyTest.xml": "d2a0d4b9f2b342b7d09e5ef9f8516a6e7659f77f33ade017f499e9f45bb82a64",
+    "jvm-results/TEST-dev.fleet.agent.EventUploadControlTest.xml": "b3e4668fa5e84163be321f79d510e77a573d6e3cc367a312f497905ae2698e34",
+    "jvm-results/TEST-dev.fleet.agent.MaintenanceProofTest.xml": "63e6967e04541e2a652be2426da41c9480a9d965cc041d1e6198c022ec33ddf0",
+    "jvm-results/binary/output.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "jvm-results/binary/output.bin.idx": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "jvm-results/binary/results.bin": "8795c7953fb227a1561c9cbcb2626e462116a592bddbccec7bd1743721ab2dca",
+    "process-stop-verification.json": "8598ccdd9e48162b0160f993d5b734b644f5bfed77628a214a94d39b3d1e17d0",
+    "reboot-verification.json": "cf38660f4f991f70e715566db53a7b4e7cd918951b4c3982eed3e8397da51cc3",
+    "recovery-prepared.json": "ea16285798bcb989655ac72be1507058965f7b47d5776dd79a2775a1cc257f96",
+    "recovery-verified.json": "1112ca0815984a9d59e6b1c12ea57d6bd2fb163f67506b041c147d4fbc8b2c66",
+    "reports/lint-results-debug.html": "32a29f47c40942834561aa8f7400c408f2c0644d557330f20b168a3c1e7cf82a",
+    "reports/lint-results-debug.txt": "910e2c403a002e318fd5cded47407dd95f0555a3fb492437b8e255d3a6d17e9d",
+    "reports/lint-results-debug.xml": "5b45da2bad15370df9d7ef3fbac25e4771e7b36fe8f7708bca4d081ecb4d077d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandDecoderTest.html": "a9da864bddd45b80003f56e1deb65fadbc6a9ef13b6faa95bb5683548c515ab1",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandEventTransportTest.html": "a1b75d4e22e5232f4b80975cdbcb3cd7a87560b7fe765e730079ad6953cd5d6e",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.CommandJournalWireTest.html": "a5c3f917ba8060e972822cdb99cc39ba627afae86c3d4a6103eacbda8baa65b8",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.DeviceIdentityTransportTest.html": "e037437a3784b67c1b26d4d2f73467de9059323c0c760d6f59f7f0d7fb32739d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.DeviceMqttTransportTest.html": "6ba564c16d4e08a3e9214cef2fd4545c512b47d034f7545530c1e3b6dc5ddb79",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentBootstrapTest.html": "529d913d9fbbdd921b16c262fe9aad6f251dfb0b5e15b7062c5f27481af34c19",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentProofTest.html": "dc730988697733cf62146d6d2d6d93c85de0988554f02f7a69fdf55ff7312b00",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentResponseTest.html": "c343c50028018c1fef3896b8b8d9c8a56ace3da66a566b312ef00870fd3183e9",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentTransportTest.html": "2eb3c1c111036920145b6fb0ccbe9d86e6bf308fe69424477440fbc250c52e4a",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventAcknowledgementTest.html": "247a6ec2919b8ce010029ee1c485b96fc48539edb7ab19a05f2f4a3ac357689d",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventDeliveryPolicyTest.html": "dab78a361e06654169b5ec7c996b40a493b15b5d0dc9c168abb937cccab9bdbe",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EventUploadControlTest.html": "f5ca0087088c73293944c5b9ecdfdca0e47348cf83bf0284cd54e26bf0ab638e",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.MaintenanceProofTest.html": "6478e712feef1b9d21f5fee71629b9e4b8276b5bcbd8474abc1ccdcd8e268409",
+    "reports/tests/testDebugUnitTest/css/base-style.css": "a10a4ef75ca2601b44bfdaf3112a5854f6376f68d7cbaf6958286f04488d293b",
+    "reports/tests/testDebugUnitTest/css/style.css": "61866908fd7eb09c79e96239f69db2e8cc5c6526cdb308eba0535ed2a0f6a263",
+    "reports/tests/testDebugUnitTest/index.html": "a60634e6bc5d91f470c105f993c70c0a2b0cfd2441e6ce8e56a1f74f70422aff",
+    "reports/tests/testDebugUnitTest/js/report.js": "fc89c6d002d18f4662065c9887b2cda8f8486f2737d4ad0f2fdeac0ad58a44dc",
+    "reports/tests/testDebugUnitTest/packages/dev.fleet.agent.html": "24fc86bf585bd57330e90f9863ec3f1126deef78d05ba3705fffc61c9c3f7ec1"
+  }
+}

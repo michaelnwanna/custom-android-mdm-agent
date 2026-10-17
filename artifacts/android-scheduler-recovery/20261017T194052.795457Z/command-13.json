@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "force-stop",
+    "dev.fleet.agent"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

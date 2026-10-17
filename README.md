@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [persisted reboot probe](docs/android-scheduler-reboot.md) now verifies an actual non-wiping API 34 reboot with changed kernel boot ID and increased Android boot count, then same-work-ID completion after explicit relaunch. Reboot and same-boot recovery modes, 42 JVM tests/build/lint and all 78 tooling tests pass. This is debug-probe persistence, not automatic boot dispatch or real event recovery; older reboot limits below retain their milestone scope.
+
 The [persisted WorkManager recovery probe](docs/android-scheduler-recovery.md) now survives a host-issued app force-stop with verified old-PID absence, then completes the same work ID in an explicitly relaunched new process with real first-backoff timing. Three recovery phases, both prior scheduler scenarios, 42 JVM tests/build/lint and all 76 tooling tests pass. This debug-only no-credential proof is not autonomous dead-process/JobScheduler-only delivery, reboot recovery or real event recovery; earlier paragraphs retain their milestone scope.
 
 The [actual WorkManager scheduler probe](docs/android-event-scheduler.md) now verifies first-backoff retry timing with the same persisted work ID, unique `KEEP` deduplication and delayed-work cancellation on API 34. Both scheduler scenarios, all six worker regressions, 42 JVM tests/build/lint and 74 tooling tests pass. The debug-only probe never accesses enrollment keys or the event journal. Foreground instrumentation permits GreedyScheduler; JobScheduler-only event delivery, constraint transitions and reboot recovery remain unverified.
@@ -87,6 +89,7 @@ flowchart TB
 		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified] --> EventHttp
 		WorkerSchedule[Unique connected WorkManager scheduling - configured; first-backoff debug probe verified] --> EventWorker[Bounded worker body - API 34 and Keystore/PostgreSQL verified]
 		RecoveryProbe[Debug probe only - same-ID work after force-stop and explicit new-process relaunch verified] -.-> WorkerSchedule
+		RebootProbe[Debug probe only - actual reboot persistence and explicit resume verified; not autonomous boot dispatch] -.-> RecoveryProbe
 		EventWorker --> AndroidEventUpload
 		EventHttp --> AndroidEventUpload
 		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]

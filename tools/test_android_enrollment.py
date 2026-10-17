@@ -4,10 +4,52 @@ import json
 from pathlib import Path
 import tempfile
 
-from check_android_enrollment import COMMAND_CONTRACT_INPUTS, instrumentation_passed, verify_recovery_proof, run_process_recovery
+from check_android_enrollment import COMMAND_CONTRACT_INPUTS, instrumentation_passed, verify_recovery_proof, run_process_recovery, verify_boot_transition
 
 
 class EnrollmentEvidenceTests(unittest.TestCase):
+    def test_unchanged_boot_blocks_resume_and_still_cleans_up(self):
+        calls = []
+
+        def command(arguments, timeout):
+            calls.append(arguments)
+            if "instrument" in arguments:
+                return "OK (1 test)\nINSTRUMENTATION_CODE: -1\n"
+            if any(str(argument).endswith("/prepared.json") for argument in arguments):
+                return json.dumps({"processId": 123})
+            if "sys.boot_completed" in arguments:
+                return "1"
+            if "/proc/sys/kernel/random/boot_id" in arguments:
+                return "7512f600-bb5b-4353-b67a-3a56126308d7"
+            return ""
+
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "Kernel boot ID did not change"):
+                run_process_recovery(command, ["adb", "-s", "emulator-5554"], Path(directory), reboot=True)
+            self.assertFalse((Path(directory) / "reboot-verification.json").exists())
+        self.assertTrue(any("reboot" in call for call in calls))
+        self.assertTrue(any("wait-for-disconnect" in call for call in calls))
+        self.assertFalse(any(any("#resume" in str(argument) for argument in call) for call in calls))
+        self.assertTrue(any(any("#cleanupOnlyThisRecoveryProbe" in str(argument) for argument in call) for call in calls))
+
+    def test_reboot_proof_requires_changed_boot_id_and_increased_boot_count(self):
+        nonce = "7512f600-bb5b-4353-b67a-3a56126308d7"
+        work_id = "374823b7-0e54-4893-b661-e638cc03310c"
+        verify_boot_transition(nonce, work_id)
+        for before, after in ((nonce, nonce), ("invalid", work_id), (nonce, "invalid")):
+            with self.assertRaises(ValueError):
+                verify_boot_transition(before, after)
+        prepared = {"schemaVersion": 1, "probe": nonce, "workId": work_id, "processId": 100, "bootCount": 3}
+        recovered = {"schemaVersion": 1, "probe": nonce, "workId": work_id, "state": "SUCCEEDED",
+                     "preparedProcessId": 100, "recoveredProcessId": 100, "preparedBootCount": 3, "recoveredBootCount": 4,
+                     "first": {"attempt": 0, "workId": work_id, "processId": 100, "elapsedMillis": 10000},
+                     "second": {"attempt": 1, "workId": work_id, "processId": 100, "elapsedMillis": 40000}}
+        verify_recovery_proof(prepared, recovered, nonce, reboot=True)
+        for name, value in (("recoveredBootCount", 3), ("recoveredBootCount", True),
+                            ("preparedBootCount", 2), ("preparedBootCount", 3.0)):
+            with self.assertRaises(ValueError):
+                verify_recovery_proof(prepared, dict(recovered, **{name: value}), nonce, reboot=True)
+
     def test_recovery_orchestration_checks_process_absence_and_cleans_up_on_failure(self):
         calls = []
 

@@ -1,5 +1,7 @@
 # Bounded Background Event Delivery
 
+Reboot follow-up: [debug-probe persistence](android-scheduler-reboot.md) now survives an actual API 34 reboot and explicit resume. The probe does not touch event/identity state; automatic boot dispatch and actual event-worker recovery remain unverified.
+
 Recovery follow-up: the [persisted debug-probe run](android-scheduler-recovery.md) now crosses host-issued app force-stop and explicit new-process relaunch with the same work ID. It does not prove real event/Keystore/backend recovery or autonomous dead-process delivery; earlier limits below retain this worker-body milestone's scope.
 
 Follow-up: the [actual scheduler probe](android-event-scheduler.md) now verifies first-backoff timing, same-ID retry, unique `KEEP` and cancellation before dispatch using real WorkManager and a no-credential debug worker. Earlier absent-scheduler-proof statements below describe this worker-body milestone. JobScheduler-only real event delivery, constraints, OS-driven in-flight cancellation and reboot recovery remain unverified; the probe does not access the default identity or journal.

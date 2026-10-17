@@ -41,6 +41,7 @@ class EventSchedulerRecoveryInstrumentedTest {
         assertFalse(directory.listFiles()!!.any { it.name.startsWith("attempt-") })
         File(directory, "prepared.json").writeText(JSONObject().put("schemaVersion", 1)
             .put("probe", nonce).put("workId", request.id.toString()).put("processId", android.os.Process.myPid())
+            .put("bootCount", android.provider.Settings.Global.getInt(context.contentResolver, "boot_count"))
             .put("elapsedMillis", android.os.SystemClock.elapsedRealtime()).toString())
     }
 
@@ -62,7 +63,13 @@ class EventSchedulerRecoveryInstrumentedTest {
             }
         }
         try {
-            assertNotEquals(prepared.getInt("processId"), android.os.Process.myPid())
+            val bootCount = android.provider.Settings.Global.getInt(context.contentResolver, "boot_count")
+            if (InstrumentationRegistry.getArguments().getString("reboot") == "true") {
+                assertTrue(bootCount > prepared.getInt("bootCount"))
+            } else {
+                assertEquals(prepared.getInt("bootCount"), bootCount)
+                assertNotEquals(prepared.getInt("processId"), android.os.Process.myPid())
+            }
             val stored = manager.getWorkInfosForUniqueWork("test-event-recovery-$nonce").get(10, TimeUnit.SECONDS)
             assertEquals(listOf(id), stored.map { it.id })
             instrumentation.runOnMainSync { observed.observeForever(observer) }
@@ -80,6 +87,7 @@ class EventSchedulerRecoveryInstrumentedTest {
             assertEquals(2, directory.listFiles()!!.count { it.name.startsWith("attempt-") })
             File(directory, "verified.json").writeText(JSONObject().put("schemaVersion", 1).put("probe", nonce)
                 .put("workId", id.toString()).put("preparedProcessId", prepared.getInt("processId"))
+                .put("preparedBootCount", prepared.getInt("bootCount")).put("recoveredBootCount", bootCount)
                 .put("recoveredProcessId", android.os.Process.myPid()).put("state", "SUCCEEDED")
                 .put("first", first).put("second", second).toString())
         } finally {

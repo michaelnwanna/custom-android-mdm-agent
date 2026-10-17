@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "probe": "fc87e1f1-71a4-41fc-af3d-1ba7c4d2eb5b",
+  "beforeBootId": "d5dadd07-c4ac-4ac5-9e06-8fe3de583794",
+  "afterBootId": "81de2046-38f6-445e-afad-d8e3dfaca124",
+  "explicitRelaunch": true
+}

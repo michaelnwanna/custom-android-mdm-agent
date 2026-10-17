@@ -1,5 +1,7 @@
 # WorkManager Scheduler Probe
 
+Reboot follow-up: [persisted probe reboot recovery](android-scheduler-reboot.md) now passes across an actual API 34 reboot and explicit relaunch, with changed kernel boot ID/increased boot count. This does not establish automatic boot dispatch or real event recovery; earlier exclusions retain their milestone scope.
+
 Follow-up: [persisted probe recovery](android-scheduler-recovery.md) now verifies host-issued app force-stop, old-PID absence and same-ID completion after explicit new-process instrumentation relaunch. Earlier process-recovery limits below describe this initial scheduler milestone; autonomous dead-process/JobScheduler-only event delivery and reboot recovery remain unverified.
 
 Two actual API 34 WorkManager scheduling scenarios now pass alongside the separately verified [event worker body](android-event-worker.md). The [debug-only probe](../android/agent/src/debug/java/dev/fleet/agent/SchedulerProbeWorker.kt) uses the existing WorkManager instance, real dispatch and real backoff timers. It does not use `TestWorkerBuilder`, a test driver, a fake clock or a forced `cmd jobscheduler run` command.

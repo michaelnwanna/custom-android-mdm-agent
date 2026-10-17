@@ -1,5 +1,7 @@
 # Persisted Work Recovery After Force-Stop
 
+Follow-up: the [reboot probe](android-scheduler-reboot.md) now verifies changed kernel boot ID and increased Android boot count, followed by explicit same-ID resume. The reboot exclusions below describe this original same-boot milestone; autonomous boot dispatch and actual event recovery remain unverified.
+
 The debug-only WorkManager probe verifies persistence across a host-issued app force-stop followed by explicit instrumentation relaunch on API 34. This extends the [scheduler scenarios](android-event-scheduler.md), not production event-worker runtime acceptance.
 
 ```mermaid

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fleet:event-ack:v1",
+  "title": "Fleet durable event acknowledgement v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "deviceId", "eventId", "receivedAt"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "deviceId": {"type": "string", "format": "uuid"},
+    "eventId": {"type": "string", "format": "uuid"},
+    "receivedAt": {"type": "string", "format": "date-time"}
+  }
+}
