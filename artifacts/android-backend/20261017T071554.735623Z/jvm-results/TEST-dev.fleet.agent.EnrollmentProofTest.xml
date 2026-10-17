@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.EnrollmentProofTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-17T07:17:49" hostname="Michaels-MacBook-Pro.local" time="3.252">
+  <properties/>
+  <testcase name="csrRejectsAnotherCurve" classname="dev.fleet.agent.EnrollmentProofTest" time="0.24"/>
+  <testcase name="validRootSignedClientCertificateMatchesKeyIdentityAndTimes" classname="dev.fleet.agent.EnrollmentProofTest" time="2.788"/>
+  <testcase name="csrHasVerifiedP256ProofOfPossession" classname="dev.fleet.agent.EnrollmentProofTest" time="0.06"/>
+  <testcase name="rejectsExtraIdentityServerUsageAndCaLeaf" classname="dev.fleet.agent.EnrollmentProofTest" time="0.096"/>
+  <testcase name="rejectsWrongKeyIdentityTrustExpiryAndMetadata" classname="dev.fleet.agent.EnrollmentProofTest" time="0.066"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

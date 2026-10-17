@@ -43,8 +43,8 @@ object EnrollmentResponse {
                         reader.endArray()
                         intermediates = chain
                     }
-                    "notBefore" -> notBefore = Instant.parse(string(reader))
-                    "notAfter" -> notAfter = Instant.parse(string(reader))
+                    "issuedAt" -> notBefore = Instant.parse(string(reader))
+                    "expiresAt" -> notAfter = Instant.parse(string(reader))
                     else -> throw IllegalArgumentException("Unknown enrollment response field")
                 }
             }

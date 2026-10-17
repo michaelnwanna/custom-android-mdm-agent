@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "class",
+    "dev.fleet.agent.EnrollmentIdentityInstrumentedTest",
+    "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "returncode": 0,
+  "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentIdentityInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EnrollmentIdentityInstrumentedTest:\nINSTRUMENTATION_STATUS: test=nonExportableKeyExactCsrAndValidatedCertificateSurviveIdentityRecreation\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentIdentityInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=nonExportableKeyExactCsrAndValidatedCertificateSurviveIdentityRecreation\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 0.717\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+  "stderr": ""
+}

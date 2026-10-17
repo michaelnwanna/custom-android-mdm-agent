@@ -22,7 +22,17 @@ public sealed class LabLedgerEnrollmentSignerTests
         var verified = EnrollmentCertificateVerifier.Verify(fixture.Request.DeviceId,
             fixture.Request.SubjectPublicKeyInfoBase64, first.CertificateDer, [], fixture.Root,
             fixture.Clock.GetUtcNow(), TimeSpan.FromDays(2));
-        Assert.Equal(fixture.Clock.GetUtcNow().AddDays(1), verified.ExpiresAt);
+        Assert.Equal(fixture.Clock.GetUtcNow().AddSeconds(-30), verified.IssuedAt);
+        Assert.Equal(verified.IssuedAt.AddDays(1), verified.ExpiresAt);
+        EnrollmentCertificateVerifier.Verify(fixture.Request.DeviceId,
+            fixture.Request.SubjectPublicKeyInfoBase64, first.CertificateDer, [], fixture.Root,
+            fixture.Clock.GetUtcNow().AddSeconds(-2), TimeSpan.FromDays(2));
+        Assert.Throws<InvalidEnrollmentCertificateException>(() => EnrollmentCertificateVerifier.Verify(fixture.Request.DeviceId,
+            fixture.Request.SubjectPublicKeyInfoBase64, first.CertificateDer, [], fixture.Root,
+            fixture.Clock.GetUtcNow().AddSeconds(-31), TimeSpan.FromDays(2)));
+        Assert.Throws<InvalidEnrollmentCertificateException>(() => EnrollmentCertificateVerifier.Verify(fixture.Request.DeviceId,
+            fixture.Request.SubjectPublicKeyInfoBase64, first.CertificateDer, [], fixture.Root,
+            verified.ExpiresAt, TimeSpan.FromDays(2)));
         await Assert.ThrowsAsync<InvalidOperationException>(() => reopened.LookupAsync(
             fixture.Request with { DeviceId = Guid.NewGuid() }, default));
         await Assert.ThrowsAsync<InvalidOperationException>(() => reopened.IssueAsync(

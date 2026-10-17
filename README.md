@@ -12,11 +12,11 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
-The [Android enrollment client](docs/android-enrollment.md) now prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. Twenty JVM tests and an isolated API 34 Keystore scenario passed with retained build/lint evidence. The UI staging action is implemented but not runtime-verified end to end; combined Android/backend enrollment, secure production bootstrap delivery and mTLS remain unverified.
+The [Android enrollment client](docs/android-enrollment.md) prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. A [combined API 34 run](artifacts/android-backend/20261017T071554.735623Z/replay.html) passed real Kestrel HTTPS enrollment against PostgreSQL and the lab signer, including authorized administrator provisioning, exact response recovery, invalid-token/conflicting-CSR rejection and key-possession proof. Twenty JVM tests and APK build/lint also passed. The UI staging action, live identity-provider integration, secure production bootstrap delivery and mTLS remain unverified.
 
 The [administrator provisioning route](docs/administrator-enrollment.md) now validates issuer-signed API access tokens, requires `enrollments:create`, and atomically saves the pending credential digest and issuer/subject audit before one-time bootstrap-secret delivery. This uses a fourth database migration. It is not browser login, production identity-provider integration or secure Android token transfer; those boundaries remain unverified.
 
-The [enrollment HTTP lab](docs/enrollment-http.md) now implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate tests exercise real loopback TLS and HTTP with PostgreSQL/lab signing; combined Android enrollment and production deployment remain unverified. The backend solution now contains five live projects, including the API host.
+The [enrollment HTTP lab](docs/enrollment-http.md) implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate regression suites cover TLS and PostgreSQL behavior, with combined Android lab verification cited above; production deployment remains unverified. The backend solution also includes a test-only Android enrollment host, not a production API or credential bypass.
 
 The final local foundation regression passed [six contract checks](artifacts/contracts/20261016T215343.214977Z/replay.html), [sixty-six .NET component tests and ten tooling tests](artifacts/backend/20261016T215353.237189Z/replay.html), and [twelve PostgreSQL integration tests and ten tooling tests](artifacts/postgres/20261016T215647.644582Z/replay.html), including controlled database restart. The [foundation CI workflow and remaining MVP work](docs/foundation-ci.md) distinguish local verification from hosted CI and production readiness. For C# editing, open the four-project [backend solution](backend/FleetManagement.slnx), not the historical artifact snapshots.
 
@@ -42,7 +42,7 @@ Further [recovery experiments](docs/test-evidence.md#controlled-recovery-experim
 
 ## Architecture
 
-This diagram separates implemented API 34 diagnostics and the backend enrollment lab from the planned end-to-end fleet system. Enrollment HTTP/database integration and loopback TLS are separately verified; Android enrollment is not. The isolated loopback MQTT probe is not production transport. The numbered flow below describes the target fleet design, not an implemented integration.
+This diagram separates implemented API 34 diagnostics and the verified combined Android/backend enrollment lab from the planned end-to-end fleet system. The isolated loopback MQTT probe is not production transport. The numbered flow below describes the target fleet design, not an implemented fleet-management integration.
 
 ```mermaid
 flowchart TB
@@ -82,9 +82,9 @@ flowchart TB
 
 	subgraph Device["Managed Android device - basic API 34 kiosk lab verified"]
 		Agent[Kotlin Device Owner agent]
-		DeviceEnrollment[Keystore enrollment client - isolated API 34 verified]
+		DeviceEnrollment[Keystore enrollment client - combined API 34 lab verified]
 		Agent --> DeviceEnrollment
-		DeviceEnrollment -. combined enrollment not verified .-> EnrollmentAPI
+		DeviceEnrollment -->|Pinned HTTPS - PostgreSQL lab verified| EnrollmentAPI
 		Room[(Room inbox and outbox - planned)]
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]

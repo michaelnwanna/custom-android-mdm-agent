@@ -1,4 +1,6 @@
 <Solution>
+  <Folder Name="/src/" />
+  <Project Path="../tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj" />
   <Project Path="src/FleetManagement.Api/FleetManagement.Api.csproj" />
   <Project Path="src/FleetManagement/FleetManagement.csproj" />
   <Project Path="tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj" />

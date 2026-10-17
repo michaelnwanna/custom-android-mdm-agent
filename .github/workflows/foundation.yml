@@ -33,6 +33,7 @@ jobs:
       - name: Android enrollment build and JVM checks
         run: |
           python -m unittest discover -s tools -p test_android_enrollment.py -v
+          python -m unittest discover -s tools -p test_android_backend.py -v
           python tools/check_android_enrollment.py
       - name: Retain Android enrollment evidence
         if: ${{ always() }}
@@ -65,6 +66,8 @@ jobs:
       - name: Backend component and signer process checks
         if: ${{ !cancelled() && steps.contracts.outcome != 'skipped' }}
         run: python tools/check_backend.py
+      - name: Compile test-only Android enrollment host
+        run: dotnet build tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj --nologo --verbosity minimal
       - name: Retain evidence including failed checks
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

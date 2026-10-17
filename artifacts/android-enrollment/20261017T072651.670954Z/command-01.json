@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "./gradlew",
+    "--version"
+  ],
+  "returncode": 0,
+  "stdout": "\n------------------------------------------------------------\nGradle 8.9\n------------------------------------------------------------\n\nBuild time:    2024-07-11 14:37:41 UTC\nRevision:      d536ef36a19186ccc596d8817123e5445f30fef8\n\nKotlin:        1.9.23\nGroovy:        3.0.21\nAnt:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023\nLauncher JVM:  21.0.8 (Eclipse Adoptium 21.0.8+9-LTS)\nDaemon JVM:    /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home (no JDK specified, using current Java home)\nOS:            Mac OS X 15.7.8 x86_64\n\n",
+  "stderr": ""
+}

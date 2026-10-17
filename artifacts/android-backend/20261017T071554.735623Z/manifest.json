@@ -1,0 +1,490 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-17T07:15:54.735623+00:00",
+  "finishedAt": "2026-10-17T07:18:40.060597+00:00",
+  "result": "passed",
+  "error": null,
+  "serial": "emulator-5554",
+  "expectedAvd": "Pixel_8",
+  "serverStopped": true,
+  "inputSha256": {
+    "android/agent/build.gradle.kts": "1ba0dbcc65132ec66628625aa17c77cb3a62873cdad3f835530db2f1b546daa2",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentBackendInstrumentedTest.kt": "9d6454fe915f2e469efde230303c3e95a4e4ccb8a2094de9f0541a0bbc8a741b",
+    "android/agent/src/androidTest/java/dev/fleet/agent/EnrollmentIdentityInstrumentedTest.kt": "639a5a01457da554584f76956ab49b71c8e647242334a2d9f1f63bfd6f68f252",
+    "android/agent/src/main/AndroidManifest.xml": "a3669ff5a6278fa4acf0ad8e8f53add37b4210da77ba6f470c85c29178baec46",
+    "android/agent/src/main/java/dev/fleet/agent/AndroidEnrollmentIdentity.kt": "c456bad8fa29a1e487f26f41160834dcb43d2f9a738f5cd05c42c52532879db6",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentBootstrap.kt": "c8f9b9665c16c92aba1fe31bf30af0e354a4d4c1aeb14053c00e9e778a928d9a",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentProof.kt": "343c02b0a6e2d0e1bef01e7e920e08eab25a26d87a97e957f184825fff0bf017",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentResponse.kt": "cfb64c35dbee5ac81cc73dc389dacf7c358c012214ded79095db680f72c8f005",
+    "android/agent/src/main/java/dev/fleet/agent/EnrollmentTransport.kt": "f7331739641acff3c21f79e768ecbd56ad4650d352a452c34abad214c0edc7f2",
+    "android/agent/src/main/java/dev/fleet/agent/FleetAdminReceiver.kt": "f6c58b7536af7a2fffd8657b6f0fda30ab1ca52fe362615de69d180119b7b6b5",
+    "android/agent/src/main/java/dev/fleet/agent/LabEnrollment.kt": "4017ba2c86cef888559617ba323eb59884f70dc33b9dd4d96d0bcde1da4aacea",
+    "android/agent/src/main/java/dev/fleet/agent/LabKioskController.kt": "252ccbd400909f5066f7483b66ebfeed2ff6d4f4d7f2b4a926b1fa8af7c490e1",
+    "android/agent/src/main/java/dev/fleet/agent/LabMaintenance.kt": "c498a7ae19c93da8b3f93f495a3bb23ca5d638052c16136a881a557b12785213",
+    "android/agent/src/main/java/dev/fleet/agent/LabMqttService.kt": "085c412dad4d64673c70f3cd61821afcb99a02f55ee6c847026bcd6f1c4bb1a9",
+    "android/agent/src/main/java/dev/fleet/agent/LabUpdateInstaller.kt": "76d760bd2b4cdc427240179a583557df5c8a270d3ac0263fab6ba65ea308c231",
+    "android/agent/src/main/java/dev/fleet/agent/MainActivity.kt": "afef43a4c21a6832bf8ac5601c838d674769c1966a82d45d817f82a54bafb30c",
+    "android/agent/src/main/java/dev/fleet/agent/MaintenanceProof.kt": "08e6a371e43bbb9e4b19cf0a452cf4425c0b55efbdd94a3cd1a81d9221963db7",
+    "android/agent/src/main/res/xml/device_admin.xml": "1bd02fa6728fb70187e65af59c379f2f063aa995cf87f26da9c5ff9f550d9b2b",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentBootstrapTest.kt": "39813b448e04b8a7481232793c9cdc6e4df5ac5e41ccc1823a737953cc9103a8",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentProofTest.kt": "2d068834bcb9e2238939a173dd39a07b7fc19ed0caffa00f229ae96040ccc655",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentResponseTest.kt": "91be365b25c77fcbf7ece710b6ba1b34281f3e6b81c99d3d7989f4098995d35c",
+    "android/agent/src/test/java/dev/fleet/agent/EnrollmentTransportTest.kt": "0fcac38c26e96d5d0ef43287239e34b47e2d6529e9816faa898de5b452bd0407",
+    "android/agent/src/test/java/dev/fleet/agent/MaintenanceProofTest.kt": "b87b5561797c2f107ca9a1a813a52c86f8836a89c3b1e13ae15208111f4a102a",
+    "android/build.gradle.kts": "41cfe3c26ad4feb902ce9afd73f244fbb1d225f75136c1ba372844a0e551511c",
+    "android/gradle/wrapper/gradle-wrapper.jar": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+    "android/gradle/wrapper/gradle-wrapper.properties": "dc0c4f45f299ac2d51077dd1587e619128d091816ad9170d535a23694ddf355b",
+    "android/gradle.properties": "093ce43bdf9c26b7d8cd424a4af4410ce7e17ced2d7b0f892d551525c94b16ef",
+    "android/gradlew": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+    "android/gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "android/sample-managed-app/build.gradle.kts": "3cb421c94b3a1e7c706f70bd03d11281b6e4c6693ec4c8ee93470d1b011833a8",
+    "android/sample-managed-app/src/main/AndroidManifest.xml": "8aa79ef57998ba89e35557046f473a6aaa7f3d11334145927da7b7205a6b9429",
+    "android/sample-managed-app/src/main/java/dev/fleet/sample/MainActivity.kt": "df7b313d6afde98ea41569f1d0a3201290a57bdd843edbaea61f47ac35decc19",
+    "android/settings.gradle.kts": "8d24e364f5cae7a9f812dd5967267ff18f60c9f9182d64bfd2022acabdbe0cad",
+    "backend/.config/dotnet-tools.json": "a06c003f2d5b4a95d33b3a07584cbf0c89b87752e71b182ce8bbe294b4c842d7",
+    "backend/Directory.Build.props": "6569a8cbfe3b80a67413a955c172ece6ce23a2fb8edd175ee2c6504cabdbb274",
+    "backend/FleetManagement.slnx": "75d4f23e778dd43a09284ca63024c0b562f1ab0c38f1eafaa68f9ac1ddf3ad6c",
+    "backend/README.md": "b82f7b50452f739836f7e4e8c0f2aa764e6aef3f1d35ae12ec27c124f92f8ff7",
+    "backend/global.json": "48298858c2826f4cc9ab7ad3366df926a6195ed4e0594750992fc8c381659122",
+    "backend/src/FleetManagement/Enrollment/EnrollmentBootstrapTokens.cs": "3124e663119d53e85131dd74adc4730ecaf6f92935b82d4c92911b14d6596d9e",
+    "backend/src/FleetManagement/Enrollment/EnrollmentCertificateVerifier.cs": "daafa94649c224151fb713369248007a88322259fde501257e8c2d58afec0427",
+    "backend/src/FleetManagement/Enrollment/EnrollmentCsrVerifier.cs": "a3b5734a1ebcef98868fd75f0cafaed4dd105ec0526ca9131032de0cefca790c",
+    "backend/src/FleetManagement/Enrollment/EnrollmentHttpRequest.cs": "bf2b554a181a3d3b2331d0d4302b812d8607f3117c1f7aafe115ded9651ef287",
+    "backend/src/FleetManagement/Enrollment/EnrollmentRedemption.cs": "fe30fc3ddb2893b17171a9595dde555eab98e76c26639e4f78e1ac7fcf84487f",
+    "backend/src/FleetManagement/Enrollment/EnrollmentSigningCoordinator.cs": "dfc6ae01d88438b7f4481e522357e6aa8f8e523bfee295edb0b3eb2611daf19a",
+    "backend/src/FleetManagement/Enrollment/LabLedgerEnrollmentSigner.cs": "75d30cf23779e53ef9d5d13a6a9d75b45fd022bcf954e762af022ea6f41cc2ad",
+    "backend/src/FleetManagement/Enrollment/PendingEnrollment.cs": "b795c6078ebe9d843d3aa311b190cecd83f46fe2f8b2f6d9e1f2fa6cec588caa",
+    "backend/src/FleetManagement/Enrollment/PendingEnrollmentProvisioning.cs": "35779f1fac553fbbc4258170aba9e8a37c1e14621b41897881136a7bc36d521c",
+    "backend/src/FleetManagement/Enrollment/PostgresEnrollmentClaims.cs": "ba70a832f01afbefc922556ad1c59d56817114465e9ba2c308e17be0355b2489",
+    "backend/src/FleetManagement/FleetManagement.csproj": "2c49fb050333b28183d64b5c11a1e93b405562d404d47e15cd66daaaecd3c63b",
+    "backend/src/FleetManagement/Persistence/FleetDbContext.cs": "0e65eafce7bcfce4a9837714cabbd3dca997d17eb167ee02ec218264f7f7657d",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016133127_InitialEnrollmentClaims.Designer.cs": "aa8c18ea00fb6579cecb0cb29a1f49814671e6d068e9a553ff1be368c5cdc9df",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016133127_InitialEnrollmentClaims.cs": "a06ecae93dd7be3ddc562558cd3d4dcce5852033df01cf450db06deca69b4236",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016205321_EnrollmentCompletion.Designer.cs": "2e80c3e4e9d690c758a9a0ae93160796daed3235340fcb12040dd006d5345537",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016205321_EnrollmentCompletion.cs": "943eabc5347561e7481c4dc60d57ee93dbacf7eecb3acde0334175d39326a571",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016210434_EnrollmentSigningAttempt.Designer.cs": "c3b2bd14d45b5a4b4f137b9603faf0507624f61f21560d8dfcce1a18e79f86aa",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016210434_EnrollmentSigningAttempt.cs": "9a21f782b24b7dd6b692aba29157956d6018a24252f5bbea1325b7a19cfa5d73",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016225447_EnrollmentProvisioningAudit.Designer.cs": "ae33e0abc4b5d839bee6e66b43a54ccf50f1d1f426687dbcefbd94bafd7f8553",
+    "backend/src/FleetManagement/Persistence/Migrations/20261016225447_EnrollmentProvisioningAudit.cs": "26f3541efd3f9fce94c50a795250ec682a91bb15789315ae2dc081305ebae609",
+    "backend/src/FleetManagement/Persistence/Migrations/FleetDbContextModelSnapshot.cs": "97b5124e01a955ecc6c9192e0901f034ec22a5befb586c567a0997d104ad2a4e",
+    "backend/src/FleetManagement/Properties/AssemblyInfo.cs": "f1323f7b8b795cda3da1908fdb81523a5da7fea48563a1f26d9a3d1bd3f0fa07",
+    "backend/src/FleetManagement.Api/AdministratorAuthentication.cs": "c825d961d2778c2939274150f41240540501d375522dcf2c240456b0c449da2f",
+    "backend/src/FleetManagement.Api/FleetApi.cs": "2b30f72c3d4eba6986407176c0b517cc7b91c988060af7045755377352b8710d",
+    "backend/src/FleetManagement.Api/FleetManagement.Api.csproj": "d389a998fd59582af6f027b0bc5cd847e9bbf89b9312a786097fac469f1972e0",
+    "backend/src/FleetManagement.Api/PendingEnrollmentEndpoints.cs": "a4d5af61ec52d3c9537a91fe8c09f52d36f1da2026e2bcfe38d0abe02635ef1e",
+    "backend/src/FleetManagement.Api/Program.cs": "ae1a99baa1eb477b51f777f80ecc6da6100b99f6ac599906348f7194b1d428b4",
+    "backend/tests/FleetManagement.Postgres.Tests/EnrollmentClaimTests.cs": "2f6edb28c0d0db84b73040c1748d246660d3c97855f0b059cd090877403cc473",
+    "backend/tests/FleetManagement.Postgres.Tests/EnrollmentCompletionTests.cs": "7847e9917b63c0184c9df0c0f4c163d22064794cb3b6516e2419244ea2d65056",
+    "backend/tests/FleetManagement.Postgres.Tests/EnrollmentHttpPersistenceTests.cs": "437e2b53235b5dd262bbd4b4a116f869dd2082261bbdd4e77c9290141eb260c3",
+    "backend/tests/FleetManagement.Postgres.Tests/EnrollmentRestartTests.cs": "2fb89dd9de30fa23250c2b4b98ce2ef5ef54feb2491d4cda39496d9ad653097b",
+    "backend/tests/FleetManagement.Postgres.Tests/EnrollmentSigningTests.cs": "0750e87917c2635b38e4257f57796ca5520d76792a55970e470e025cc17bb83e",
+    "backend/tests/FleetManagement.Postgres.Tests/FleetManagement.Postgres.Tests.csproj": "01d9414031c4190f899c660a680e8bc7df13089ea6571b2ca918b3670d1301a8",
+    "backend/tests/FleetManagement.Postgres.Tests/PendingEnrollmentProvisioningTests.cs": "d65d3c5ad9f83782915085177eac680d6fdb81c5631e90db9c13118920ad46c7",
+    "backend/tests/FleetManagement.SignerProbe/FleetManagement.SignerProbe.csproj": "b685b1966cf5d1aa5732a9dd9fabccc686503c1c19c06f102a37e42680beb111",
+    "backend/tests/FleetManagement.SignerProbe/SignerProbe.cs": "96516b5e3bf9981d0139ac13bdd075843a71e2de004ac09aa15bbb1b4499395f",
+    "backend/tests/FleetManagement.Tests/AdministratorAuthenticationTests.cs": "eb8b0446025ad6789a02252ff0f7172c208d8f4da921fec3032e6071a5f2a264",
+    "backend/tests/FleetManagement.Tests/EnrollmentBootstrapTokensTests.cs": "53dbc5414c6172b3fbe710451f2d3597f890e250daf8128ad895244bd1343071",
+    "backend/tests/FleetManagement.Tests/EnrollmentCertificateVerifierTests.cs": "44c9e2e20cf182f29838c7ef0722fcaeee62b144d99c118700c77207c4a284e7",
+    "backend/tests/FleetManagement.Tests/EnrollmentCsrVerifierTests.cs": "594e3ab3e48dd134b286621df8e214e873a63188017453836d60821c0bffaec5",
+    "backend/tests/FleetManagement.Tests/EnrollmentHttpRequestTests.cs": "9d4097349c9e360130887065d03ba84ceea8b77b047ae95055c0746152ce83c4",
+    "backend/tests/FleetManagement.Tests/EnrollmentHttpTests.cs": "d3def73b221a25727d9274eaeeb89025124079808d0a91774b8f49c51ed4571c",
+    "backend/tests/FleetManagement.Tests/EnrollmentPersistenceTests.cs": "1485190b9ad53a7f589f7fc76d96e7d8fffc4d68c00187782fbf096db9161dd9",
+    "backend/tests/FleetManagement.Tests/EnrollmentSignerProcessTests.cs": "ab16fa5af9b30b8878c9061d390cc652d5a3a1114ae1dc66f5b6b32373b71312",
+    "backend/tests/FleetManagement.Tests/FleetManagement.Tests.csproj": "f1bf60568ce5f6eff95583dae6449ba7c465aa72470879b67bdeeab89ef3a5ee",
+    "backend/tests/FleetManagement.Tests/LabLedgerEnrollmentSignerTests.cs": "89f363453021c57e1ac11c4d190ad9a45f0f00541185c41dde92f5fd020350ae",
+    "backend/tests/FleetManagement.Tests/PendingEnrollmentHttpTests.cs": "3c2266e244125dfeec2647581006c490842004a8f1c5c806ebff9118a75032b8",
+    "tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj": "f994f0f5ea4bba2b42dd1f78220a072c54e5023815911a0eb753d38afccb364f",
+    "tools/android-enrollment-host/Program.cs": "24665658d09f3c81f53cd50faef944c96fb071cd8a59759c7383b4021f07860b",
+    "tools/check_android_backend.py": "547c4d72d3d7c97da0ef406eb48be1920ae49d3e5ea98be339e8a830c76447de",
+    "tools/check_android_enrollment.py": "9cdf809bf1b44635cd86e6cd8635161abf2dc67913cba9e1ea345b6d35759b73",
+    "tools/test_android_backend.py": "7d9a5f0e068f64d2210c868f30de8e13498502394107e93a2ee75b8d97076e18"
+  },
+  "apkSha256": {
+    "inputs/android/agent/build/outputs/apk/debug/agent-debug.apk": "d4eb761f1c5827c8eb466e6c0c56523139f22f6f730fe7088ce6decae8d2da74",
+    "inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk": "19baa3b6ac7ab0f368ad3666a0936e8039974a8241eb5266d1d6ba37f109ec06"
+  },
+  "jvmCounters": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "commands": [
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "returncode": 0,
+      "stdout": "Pixel_8\nOK\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "sys.boot_completed"
+      ],
+      "returncode": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "ls",
+        "/sdcard"
+      ],
+      "returncode": 0,
+      "stdout": "Alarms\nAndroid\nAudiobooks\nDCIM\nDocuments\nDownload\nMovies\nMusic\nNotifications\nPictures\nPodcasts\nRecordings\nRingtones\nfleet-evidence-window.xml\nfleet-runtime-evidence.mp4\nfleet-window.xml\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "getprop",
+        "ro.build.fingerprint"
+      ],
+      "returncode": 0,
+      "stdout": "Android/sdk_phone64_x86_64/emu64x:14/UE1A.230829.036.A1/11228894:userdebug/test-keys\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dpm",
+        "list-owners"
+      ],
+      "returncode": 0,
+      "stdout": "1 owner:\nUser  0: admin=dev.fleet.agent/.FleetAdminReceiver,DeviceOwner,Affiliated\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "--info"
+      ],
+      "returncode": 0,
+      "stdout": ".NET SDK:\n Version:           10.0.402\n Commit:            a8dd0577c5\n Workload version:  10.0.400-manifests.da132f47\n MSBuild version:   18.9.15+a8dd0577c\n\nRuntime Environment:\n OS Name:     Mac OS X\n OS Version:  15.7\n OS Platform: Darwin\n RID:         osx-x64\n Base Path:   /usr/local/share/dotnet/sdk/10.0.402/\n\n.NET workloads installed:\nThere are no installed workloads to display.\nConfigured to use workload sets when installing new manifests.\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\n\nHost:\n  Version:      10.0.13\n  Architecture: x64\n  Commit:       4099f83977\n\n.NET SDKs installed:\n  10.0.402 [/usr/local/share/dotnet/sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 10.0.13 [/usr/local/share/dotnet/shared/Microsoft.NETCore.App]\n\nOther architectures found:\n  None\n\nEnvironment variables:\n  Not set\n\nglobal.json file:\n  /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/backend/global.json\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj",
+        "--nologo",
+        "--verbosity",
+        "minimal"
+      ],
+      "returncode": 0,
+      "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/backend/src/FleetManagement.Api/FleetManagement.Api.csproj (in 709 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj (in 709 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 759 ms).\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Api -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll\n  FleetManagement.AndroidEnrollmentHost -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:16.20\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "list",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj",
+        "package",
+        "--include-transitive"
+      ],
+      "returncode": 0,
+      "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\nProject 'FleetManagement.AndroidEnrollmentHost' has the following package references\n   [net10.0]: \n   Transitive Package                                           Resolved\n   > Microsoft.AspNetCore.Authentication.JwtBearer              10.0.13 \n   > Microsoft.Bcl.Cryptography                                 10.0.2  \n   > Microsoft.EntityFrameworkCore                              10.0.13 \n   > Microsoft.EntityFrameworkCore.Abstractions                 10.0.13 \n   > Microsoft.EntityFrameworkCore.Analyzers                    10.0.13 \n   > Microsoft.EntityFrameworkCore.Relational                   10.0.13 \n   > Microsoft.Extensions.Caching.Abstractions                  10.0.13 \n   > Microsoft.Extensions.Caching.Memory                        10.0.13 \n   > Microsoft.Extensions.Configuration.Abstractions            10.0.13 \n   > Microsoft.Extensions.DependencyInjection                   10.0.13 \n   > Microsoft.Extensions.DependencyInjection.Abstractions      10.0.13 \n   > Microsoft.Extensions.Logging                               10.0.13 \n   > Microsoft.Extensions.Logging.Abstractions                  10.0.13 \n   > Microsoft.Extensions.Options                               10.0.13 \n   > Microsoft.Extensions.Primitives                            10.0.13 \n   > Microsoft.IdentityModel.Abstractions                       8.19.2  \n   > Microsoft.IdentityModel.JsonWebTokens                      8.19.2  \n   > Microsoft.IdentityModel.Logging                            8.19.2  \n   > Microsoft.IdentityModel.Protocols                          8.19.2  \n   > Microsoft.IdentityModel.Protocols.OpenIdConnect            8.19.2  \n   > Microsoft.IdentityModel.Tokens                             8.19.2  \n   > Npgsql                                                     10.0.3  \n   > Npgsql.EntityFrameworkCore.PostgreSQL                      10.0.3  \n   > System.IdentityModel.Tokens.Jwt                            8.19.2  \n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "\n------------------------------------------------------------\nGradle 8.9\n------------------------------------------------------------\n\nBuild time:    2024-07-11 14:37:41 UTC\nRevision:      d536ef36a19186ccc596d8817123e5445f30fef8\n\nKotlin:        1.9.23\nGroovy:        3.0.21\nAnt:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023\nLauncher JVM:  21.0.8 (Eclipse Adoptium 21.0.8+9-LTS)\nDaemon JVM:    /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home (no JDK specified, using current Java home)\nOS:            Mac OS X 15.7.8 x86_64\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:dependencies",
+        "--configuration",
+        "debugRuntimeClasspath",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "\n> Task :agent:dependencies\n\n------------------------------------------------------------\nProject ':agent'\n------------------------------------------------------------\n\ndebugRuntimeClasspath - Runtime classpath of '/debug'.\n+--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21\n|    +--- org.jetbrains:annotations:13.0 -> 16.0.3\n|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0 -> 1.8.21 (c)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0 -> 1.8.21 (c)\n+--- org.bouncycastle:bcpkix-jdk18on:1.83\n|    \\--- org.bouncycastle:bcutil-jdk18on:1.83\n|         \\--- org.bouncycastle:bcprov-jdk18on:1.83\n+--- com.squareup.moshi:moshi:1.15.2\n|    +--- com.squareup.okio:okio:3.7.0\n|    |    \\--- com.squareup.okio:okio-jvm:3.7.0\n|    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:1.9.21 -> 2.0.21 (*)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21\n|         +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.21 -> 2.0.21 (*)\n|         \\--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.21\n|              \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.21 -> 2.0.21 (*)\n\\--- com.hivemq:hivemq-mqtt-client:1.3.3\n     +--- io.netty:netty-buffer:4.1.99.Final\n     |    \\--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-codec:4.1.99.Final\n     |    +--- io.netty:netty-common:4.1.99.Final\n     |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    \\--- io.netty:netty-transport:4.1.99.Final\n     |         +--- io.netty:netty-common:4.1.99.Final\n     |         +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |         \\--- io.netty:netty-resolver:4.1.99.Final\n     |              \\--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-common:4.1.99.Final\n     +--- io.netty:netty-handler:4.1.99.Final\n     |    +--- io.netty:netty-common:4.1.99.Final\n     |    +--- io.netty:netty-resolver:4.1.99.Final (*)\n     |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    +--- io.netty:netty-transport:4.1.99.Final (*)\n     |    +--- io.netty:netty-transport-native-unix-common:4.1.99.Final\n     |    |    +--- io.netty:netty-common:4.1.99.Final\n     |    |    +--- io.netty:netty-buffer:4.1.99.Final (*)\n     |    |    \\--- io.netty:netty-transport:4.1.99.Final (*)\n     |    \\--- io.netty:netty-codec:4.1.99.Final (*)\n     +--- io.netty:netty-transport:4.1.99.Final (*)\n     +--- org.jctools:jctools-core:2.1.2\n     +--- org.jetbrains:annotations:16.0.3\n     +--- com.google.dagger:dagger:2.27\n     |    \\--- javax.inject:javax.inject:1\n     +--- io.reactivex.rxjava2:rxjava:2.2.21\n     |    \\--- org.reactivestreams:reactive-streams:1.0.3 -> 1.0.4\n     \\--- org.reactivestreams:reactive-streams:1.0.4\n\n(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.\n(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.\n\nA web-based, searchable dependency report is available by adding the --scan option.\n\nBUILD SUCCESSFUL in 12s\n1 actionable task: 1 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./gradlew",
+        ":agent:testDebugUnitTest",
+        ":agent:assembleDebug",
+        ":agent:lintDebug",
+        ":agent:assembleDebugAndroidTest",
+        "--console=plain"
+      ],
+      "returncode": 0,
+      "stdout": "> Task :agent:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :agent:preBuild UP-TO-DATE\n> Task :agent:preDebugBuild UP-TO-DATE\n> Task :agent:checkDebugAarMetadata\n> Task :agent:generateDebugResValues\n> Task :agent:mapDebugSourceSetPaths\n> Task :agent:generateDebugResources\n> Task :agent:packageDebugResources\n> Task :agent:mergeDebugResources\n> Task :agent:createDebugCompatibleScreenManifests\n> Task :agent:extractDeepLinksDebug\n> Task :agent:parseDebugLocalResources\n> Task :agent:processDebugMainManifest\n> Task :agent:processDebugManifest\n> Task :agent:preDebugUnitTestBuild UP-TO-DATE\n> Task :agent:javaPreCompileDebug\n> Task :agent:javaPreCompileDebugUnitTest\n> Task :agent:mergeDebugNativeDebugMetadata NO-SOURCE\n> Task :agent:mergeDebugShaders\n> Task :agent:compileDebugShaders NO-SOURCE\n> Task :agent:generateDebugAssets UP-TO-DATE\n> Task :agent:mergeDebugAssets\n> Task :agent:compressDebugAssets\n> Task :agent:desugarDebugFileDependencies\n> Task :agent:processDebugManifestForPackage\n> Task :agent:checkDebugDuplicateClasses\n> Task :agent:mergeDebugJniLibFolders\n> Task :agent:mergeDebugNativeLibs NO-SOURCE\n> Task :agent:stripDebugDebugSymbols NO-SOURCE\n> Task :agent:mergeLibDexDebug\n> Task :agent:validateSigningDebug\n> Task :agent:writeDebugAppMetadata\n> Task :agent:writeDebugSigningConfigVersions\n> Task :agent:preDebugAndroidTestBuild SKIPPED\n> Task :agent:generateDebugAndroidTestResValues\n> Task :agent:extractProguardFiles\n> Task :agent:mapDebugAndroidTestSourceSetPaths\n> Task :agent:checkDebugAndroidTestAarMetadata\n> Task :agent:generateDebugAndroidTestResources\n> Task :agent:mergeDebugAndroidTestResources\n> Task :agent:processDebugAndroidTestManifest\n> Task :agent:javaPreCompileDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestShaders\n> Task :agent:compileDebugAndroidTestShaders NO-SOURCE\n> Task :agent:generateDebugAndroidTestAssets UP-TO-DATE\n> Task :agent:mergeDebugAndroidTestAssets\n> Task :agent:compressDebugAndroidTestAssets\n> Task :agent:desugarDebugAndroidTestFileDependencies\n> Task :agent:mergeDebugAndroidTestJniLibFolders\n> Task :agent:mergeDebugAndroidTestNativeLibs NO-SOURCE\n> Task :agent:stripDebugAndroidTestDebugSymbols NO-SOURCE\n> Task :agent:validateSigningDebugAndroidTest\n> Task :agent:writeDebugAndroidTestSigningConfigVersions\n> Task :agent:checkDebugAndroidTestDuplicateClasses\n> Task :agent:mergeLibDexDebugAndroidTest\n> Task :agent:processDebugResources\n> Task :agent:processDebugAndroidTestResources\n> Task :agent:mergeExtDexDebugAndroidTest\n> Task :agent:mergeExtDexDebug\n> Task :agent:compileDebugKotlin\n> Task :agent:compileDebugJavaWithJavac NO-SOURCE\n> Task :agent:bundleDebugClassesToCompileJar\n> Task :agent:processDebugJavaRes\n> Task :agent:bundleDebugClassesToRuntimeJar\n> Task :agent:dexBuilderDebug\n> Task :agent:mergeDebugGlobalSynthetics\n> Task :agent:mergeProjectDexDebug\n> Task :agent:generateDebugAndroidTestLintModel\n> Task :agent:generateDebugLintReportModel\n> Task :agent:generateDebugUnitTestLintModel\n> Task :agent:mergeDebugJavaResource\n> Task :agent:compileDebugUnitTestKotlin\n> Task :agent:compileDebugUnitTestJavaWithJavac NO-SOURCE\n> Task :agent:processDebugUnitTestJavaRes\n> Task :agent:compileDebugAndroidTestKotlin\n> Task :agent:lintAnalyzeDebugAndroidTest\n> Task :agent:lintAnalyzeDebugUnitTest\n> Task :agent:testDebugUnitTest\n> Task :agent:compileDebugAndroidTestJavaWithJavac NO-SOURCE\n> Task :agent:dexBuilderDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestGlobalSynthetics\n> Task :agent:packageDebug\n> Task :agent:createDebugApkListingFileRedirect\n> Task :agent:assembleDebug\n> Task :agent:processDebugAndroidTestJavaRes\n> Task :agent:mergeProjectDexDebugAndroidTest\n> Task :agent:mergeDebugAndroidTestJavaResource\n> Task :agent:packageDebugAndroidTest\n> Task :agent:createDebugAndroidTestApkListingFileRedirect\n> Task :agent:assembleDebugAndroidTest\n> Task :agent:lintAnalyzeDebug\n\n> Task :agent:lintReportDebug\nWrote HTML report to file:///Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/android/agent/build/reports/lint-results-debug.html\n\n> Task :agent:lintDebug\n\nBUILD SUCCESSFUL in 1m 28s\n74 actionable tasks: 74 executed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/android/agent/build/outputs/apk/debug/agent-debug.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "install",
+        "-r",
+        "-t",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T071554.735623Z/inputs/android/agent/build/outputs/apk/androidTest/debug/agent-debug-androidTest.apk"
+      ],
+      "returncode": 0,
+      "stdout": "Performing Streamed Install\nSuccess\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/postgres",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "postgres (PostgreSQL) 17.11\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/initdb",
+        "-D",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/data",
+        "--username=fleet_lab",
+        "--encoding=UTF8",
+        "--locale=C",
+        "--auth-local=trust",
+        "--auth-host=reject"
+      ],
+      "returncode": 0,
+      "stdout": "The files belonging to this database system will be owned by user \"michaelnwanna\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are disabled.\n\ncreating directory /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/data ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... Africa/Nairobi\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl -D /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/data -l logfile start\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl",
+        "-D",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/data",
+        "-l",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/postgres.log",
+        "-w",
+        "-t",
+        "60",
+        "-o",
+        "-c listen_addresses='' -c unix_socket_directories='/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-o3qsmb0o' -c unix_socket_permissions=0700",
+        "start"
+      ],
+      "returncode": 0,
+      "stdout": "waiting for server to start.... done\nserver started\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/psql",
+        "-h",
+        "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-o3qsmb0o",
+        "-U",
+        "fleet_lab",
+        "-d",
+        "postgres",
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-c",
+        "SHOW listen_addresses; SHOW unix_socket_permissions; SHOW fsync; SHOW synchronous_commit;"
+      ],
+      "returncode": 0,
+      "stdout": " listen_addresses \n------------------\n \n(1 row)\n\n unix_socket_permissions \n-------------------------\n 0700\n(1 row)\n\n fsync \n-------\n on\n(1 row)\n\n synchronous_commit \n--------------------\n on\n(1 row)\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "run-as",
+        "dev.fleet.agent",
+        "sh",
+        "-c",
+        "'umask 077; mkdir -p files; cat > files/enrollment-integration-input.json'"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "instrument",
+        "-w",
+        "-r",
+        "-e",
+        "class",
+        "dev.fleet.agent.EnrollmentBackendInstrumentedTest",
+        "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "returncode": 0,
+      "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentBackendInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EnrollmentBackendInstrumentedTest:\nINSTRUMENTATION_STATUS: test=realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentBackendInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 4.188\n\nOK (1 test)\n\n\nINSTRUMENTATION_CODE: -1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "exec-out",
+        "run-as",
+        "dev.fleet.agent",
+        "cat",
+        "files/enrollment-integration-result.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\"schemaVersion\":1,\"deviceId\":\"c7380518-80d2-4b8b-a199-9f51c4ef668f\",\"csrDer\":\"MIHUMH0CAQAwGzEZMBcGA1UEAwwQRmxlZXQgZW5yb2xsbWVudDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABANRxgC3K\\/8Nb7vnCUS2U5V90q0WVRi5E6yWzubg\\/KTVCGWKMGzFvdFe1u6xKQd8O8vdM88GPZMS0TCSfCkfkUmgADAKBggqhkjOPQQDAgNHADBEAiAt0XSvV6IYGnW5vWgDfTCryboCuojepGP87nkMgfNZ5wIgRhjPxacdyB50hXTKAPK+SnFnwM1edjERtFZ\\/ldhV0zM=\",\"responseBase64\":\"eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXZpY2VJZCI6ImM3MzgwNTE4LTgwZDItNGI4Yi1hMTk5LTlmNTFjNGVmNjY4ZiIsImNlcnRpZmljYXRlRGVyIjoiTUlJQnpUQ0NBWE9nQXdJQkFnSVFjWmF0VGU0RFRCWFVwVmRJNHVXSUdqQUtCZ2dxaGtqT1BRUURBakFtTVNRd0lnWURWUVFERXh0QmJtUnliMmxrSUdKaFkydGxibVFnWkdWMmFXTmxJSEp2YjNRd0hoY05Nall4TURFM01EY3hPREEzV2hjTk1qWXhNREU0TURjeE9EQTNXakF2TVMwd0t3WURWUVFERXlSak56TTRNRFV4T0MwNE1HUXlMVFJpT0dJdFlURTVPUzA1WmpVeFl6UmxaalkyT0dZd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFRRFVjWUF0eXYvRFdcdTAwMkI3NXdsRXRsT1ZmZEt0RmxVWXVST3NsczdtNFB5azFRaGxpakJzeGIzUlh0YnVzU2tIZkR2TDNUUFBCajJURXRFd2tud3BINUZKbzNvd2VEQU1CZ05WSFJNQkFmOEVBakFBTUE0R0ExVWREd0VCL3dRRUF3SUhnREFXQmdOVkhTVUJBZjhFRERBS0JnZ3JCZ0VGQlFjREFqQkFCZ05WSFJFRU9UQTNoalYxY200NlpteGxaWFE2WkdWMmFXTmxPbU0zTXpnd05URTRMVGd3WkRJdE5HSTRZaTFoTVRrNUxUbG1OVEZqTkdWbU5qWTRaakFLQmdncWhrak9QUVFEQWdOSUFEQkZBaUFOXHUwMDJCdTVJNERFTkNKa1VIQUZ1Tmc2TG9xdGNWbGJ5STcyWGk1WlhyVEJJT0FJaEFLaHZ6Mjl0Nk1aU0hNc2F3OTg0MGpRbTUyYXdhVDVqZTl4cTNIdTRFY1VJIiwiaW50ZXJtZWRpYXRlQ2VydGlmaWNhdGVzRGVyIjpbXSwiaXNzdWVkQXQiOiIyMDI2LTEwLTE3VDA3OjE4OjA3KzAwOjAwIiwiZXhwaXJlc0F0IjoiMjAyNi0xMC0xOFQwNzoxODowNyswMDowMCJ9\",\"challengeBase64\":\"NTdlMzQ0MTAtZjFmNi00NmIzLTg3YmUtOGYwYjQxNGU1ZWE1\",\"signatureBase64\":\"MEYCIQDH+BnepYTn0yh8iYxTtcyoE70jFrwmmATfxZ70azbTFAIhAIjQHDx2pOMq\\/yuPyuqVnk1H5tJRvr\\/UL3wnf+DI4u39\"}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/psql",
+        "-h",
+        "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-o3qsmb0o",
+        "-U",
+        "fleet_lab",
+        "-d",
+        "postgres",
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "--tuples-only",
+        "--no-align",
+        "-c",
+        "SELECT count(*) FROM pg_namespace WHERE nspname ~ '^fleet_test_[0-9a-f]{32}$';"
+      ],
+      "returncode": 0,
+      "stdout": "0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "run-as",
+        "dev.fleet.agent",
+        "rm",
+        "-f",
+        "files/enrollment-integration-input.json",
+        "files/enrollment-integration-result.json"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/pg_ctl",
+        "-D",
+        "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/android-backend/20261017T071554.735623Z/data",
+        "-w",
+        "-t",
+        "60",
+        "-m",
+        "fast",
+        "stop"
+      ],
+      "returncode": 0,
+      "stdout": "waiting for server to shut down.... done\nserver stopped\n",
+      "stderr": ""
+    }
+  ],
+  "scope": "Real emulator Keystore CSR, Kestrel HTTPS, authorized admin API provisioning, PostgreSQL audit/completion and lab signer; exact response retry, invalid token/conflicting CSR rejection and key-possession proof. No UI workflow, live IdP, mTLS, reboot, power loss or production provisioning proof.",
+  "fileSha256": {
+    "backend-verification.json": "09c8f39396ec144da4587a65ee59025aa32fd35bc9a66db6b5801d93329c6d18",
+    "command-01.json": "c67091c8ba1db42a8d3437bf033b6b19c750f1d9e73cbfc910e3887c64c08242",
+    "command-02.json": "13ad7fc1cc0adeb0e85d2684ecae5e6c6f71193e0782b2b10b5809ad28727fcd",
+    "command-03.json": "d62bd4f8e980399621fdcd98639c180d09925140ebc79a8b4c48c5d3140f6eea",
+    "command-04.json": "2beac93e624b6250d62bc352fdac966fd0c7768601e719f2218311ea4f76b229",
+    "command-05.json": "ab256d55d7dbe0df2e64afa3687b26219917bd09df89e75967a12968ab0421ea",
+    "command-06.json": "63d5f4210baf33dcf868fe198e13675d1b14597358009df4d14c9d074ba66b6d",
+    "command-07.json": "50254c045b24bceb0fdb09ffb0b36e15fdd1564a8494529b84b934de866a3f7a",
+    "command-08.json": "da4b384839bba93b7eb04def521bb574ca386c9dc252b5c787d48def3ef8b279",
+    "command-09.json": "f89928e8aead9a77c62d3283684a6546558b26ccf33e47c42a88f075added3b4",
+    "command-10.json": "1581bafc1ae7f68248da9038f00ac601929d1d0a962dc6071a6e0dd8be321b6f",
+    "command-11.json": "41ebc691715a8bc9f841c2f269b35a10a3218dd54891aaf9931418d8846f942d",
+    "command-12.json": "aa80945bd88b4b43fc462f3a558eb0a7d2a07c2bc8a3f14f9c946c745aa0efbe",
+    "command-13.json": "f50b99f9bd6d031a20ceb160df16d33aabe5803dbec129d1556c7213e1dddc5f",
+    "command-14.json": "35a098f8691520226a3b87db5d2c7ed78f26bd81def7334daa23dd951de41dcf",
+    "command-15.json": "08c9b8c15fb936679819b4f922efe8de9f75dda752ba19c76dac4795ce0faf31",
+    "command-16.json": "19182d704511b1f06ace148889b0ce77c32bf013858b4d55f98ec06f015e610c",
+    "command-17.json": "79aef8a180310fb77348216d9f033a83e7871b9fccc1ca821ff4ec8ffa0a09b6",
+    "command-18.json": "de14f7bacaf0f8be22887302a4251be37327cfeaedd40d2ecf03400672219b92",
+    "command-19.json": "a4b5223e81eece1625fff0121b6541bc6718fec248dfdedb575f223a15b24efb",
+    "command-20.json": "1ac1e1237f855ed425748c073059bf8981fb829e5a68bed9d3270f9485426d2f",
+    "command-21.json": "710a8899001f9fe2a826c3c6ffd0d595be9fe17f28c4017ccab87a2266f6bcda",
+    "command-22.json": "1e5ac364ac2944a903cd0a55d5d7eafff05af33acd96b974ed3298e4254ab63e",
+    "command-23.json": "341d1e795026d51d7e141435ebde43d09dacd0b5799b182ca20bfca85eeb8ad7",
+    "device-public-proof.json": "b4cd57fa41cac241750540ce6a2817f503912fcef0099645e85085f802e69f4d",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentBootstrapTest.xml": "f3f1e4c4a94dfb4f78d8cc3aa1c950f9e08bccfb5e6b89ae30ed49f0c032cdb8",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentProofTest.xml": "479acc21d91943e55f95b82772457eb49ca3e977fa7b44caa6dca1c96b143c4f",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentResponseTest.xml": "c602d0ada4fcad1625d2277877f1e313b23367b8200e46bec736de96d9303e56",
+    "jvm-results/TEST-dev.fleet.agent.EnrollmentTransportTest.xml": "5930ce7e082c1b54d634db3b7b94dbf0c914c83af4bc894dcb753140a58af3c5",
+    "jvm-results/TEST-dev.fleet.agent.MaintenanceProofTest.xml": "5d09ba839936eaca0074b5e261ddea85c4d6db36049004febe63d622025daab9",
+    "jvm-results/binary/output.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "jvm-results/binary/output.bin.idx": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "jvm-results/binary/results.bin": "b76b84599b9994b59fc533ac881034f25b2e74d993a0f558e429a3d009ea0490",
+    "public-configuration.json": "0154ea50a45cc1de064d8d770530f500b6cb653e3453b5a16ba9720329abd086",
+    "reports/lint-results-debug.html": "5c821f5c6de2c30b9e8aa9fca98595953b6e603465654d3a5777ecd406b42e06",
+    "reports/lint-results-debug.txt": "be832beb2064cb4da1508ccf2d0835508bffb27a1ffa2619e6dd2113946b8726",
+    "reports/lint-results-debug.xml": "4f518496796b1dcd1b83b2994333fccc3bad8393db10c99e5008d65dac8c6ef7",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentBootstrapTest.html": "0ad94da5f2baafd3c587fb365e2b699fb4c702cd46b4d853562e0eb2d2a6bcb2",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentProofTest.html": "f867d1dbfcfe24f1fb9414adb9034c697b1bd4187083054c6d48c613fca8914b",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentResponseTest.html": "af187b4feb74183c1812fbb11e008b845fd57b33080472553b8e236ccf88e443",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.EnrollmentTransportTest.html": "5f0c944a7c437d7297c12d509e5de7e4807d1e8c094dc70ce2cba1c44d153bf5",
+    "reports/tests/testDebugUnitTest/classes/dev.fleet.agent.MaintenanceProofTest.html": "84f1eeafb435ac89e3dd674e44a5959c4556df760fe899ae4d8967b79dbb4064",
+    "reports/tests/testDebugUnitTest/css/base-style.css": "a10a4ef75ca2601b44bfdaf3112a5854f6376f68d7cbaf6958286f04488d293b",
+    "reports/tests/testDebugUnitTest/css/style.css": "61866908fd7eb09c79e96239f69db2e8cc5c6526cdb308eba0535ed2a0f6a263",
+    "reports/tests/testDebugUnitTest/index.html": "c6d15705cb32e926fcdb3b3a0080e83c05b69c531abd504f55e79c7431d0578d",
+    "reports/tests/testDebugUnitTest/js/report.js": "fc89c6d002d18f4662065c9887b2cda8f8486f2737d4ad0f2fdeac0ad58a44dc",
+    "reports/tests/testDebugUnitTest/packages/dev.fleet.agent.html": "27df273b9782bda46b23960f14007dc722a7eed99c93f1eca0971c735f810459"
+  }
+}

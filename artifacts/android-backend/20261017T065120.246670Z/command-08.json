@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "dotnet",
+    "list",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend/20261017T065120.246670Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj",
+    "package",
+    "--include-transitive"
+  ],
+  "returncode": 0,
+  "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\nProject 'FleetManagement.AndroidEnrollmentHost' has the following package references\n   [net10.0]: \n   Transitive Package                                           Resolved\n   > Microsoft.AspNetCore.Authentication.JwtBearer              10.0.13 \n   > Microsoft.Bcl.Cryptography                                 10.0.2  \n   > Microsoft.EntityFrameworkCore                              10.0.13 \n   > Microsoft.EntityFrameworkCore.Abstractions                 10.0.13 \n   > Microsoft.EntityFrameworkCore.Analyzers                    10.0.13 \n   > Microsoft.EntityFrameworkCore.Relational                   10.0.13 \n   > Microsoft.Extensions.Caching.Abstractions                  10.0.13 \n   > Microsoft.Extensions.Caching.Memory                        10.0.13 \n   > Microsoft.Extensions.Configuration.Abstractions            10.0.13 \n   > Microsoft.Extensions.DependencyInjection                   10.0.13 \n   > Microsoft.Extensions.DependencyInjection.Abstractions      10.0.13 \n   > Microsoft.Extensions.Logging                               10.0.13 \n   > Microsoft.Extensions.Logging.Abstractions                  10.0.13 \n   > Microsoft.Extensions.Options                               10.0.13 \n   > Microsoft.Extensions.Primitives                            10.0.13 \n   > Microsoft.IdentityModel.Abstractions                       8.19.2  \n   > Microsoft.IdentityModel.JsonWebTokens                      8.19.2  \n   > Microsoft.IdentityModel.Logging                            8.19.2  \n   > Microsoft.IdentityModel.Protocols                          8.19.2  \n   > Microsoft.IdentityModel.Protocols.OpenIdConnect            8.19.2  \n   > Microsoft.IdentityModel.Tokens                             8.19.2  \n   > Npgsql                                                     10.0.3  \n   > Npgsql.EntityFrameworkCore.PostgreSQL                      10.0.3  \n   > System.IdentityModel.Tokens.Jwt                            8.19.2  \n\n",
+  "stderr": ""
+}

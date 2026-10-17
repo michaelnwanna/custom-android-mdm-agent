@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "stage": "verified",
+  "deviceId": "c7380518-80d2-4b8b-a199-9f51c4ef668f",
+  "pendingEnrollmentId": "c21d134c-a690-4fbc-aac1-099a09e4d228",
+  "issuedCertificates": 1,
+  "provisioningAudits": 1,
+  "publicKeyProof": true,
+  "exactResponseReplay": true
+}

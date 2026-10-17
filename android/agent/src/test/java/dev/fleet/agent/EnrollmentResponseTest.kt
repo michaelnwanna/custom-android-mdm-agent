@@ -4,13 +4,15 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class EnrollmentResponseTest {
-    private val body = """{"schemaVersion":1,"deviceId":"a9373871-de89-4723-bc55-884e76916e67","certificateDer":"shape-only","intermediateCertificatesDer":[],"notBefore":"2026-10-17T12:00:00Z","notAfter":"2026-10-18T12:00:00Z"}"""
+    private val body = """{"schemaVersion":1,"deviceId":"a9373871-de89-4723-bc55-884e76916e67","certificateDer":"shape-only","intermediateCertificatesDer":[],"issuedAt":"2026-10-17T12:00:00Z","expiresAt":"2026-10-18T12:00:00Z"}"""
 
     @Test fun parsesBoundedVersionedResponseWithoutGrantingCertificateTrust() {
         val parsed = EnrollmentResponse.parse(body.toByteArray())
         assertEquals("a9373871-de89-4723-bc55-884e76916e67", parsed.deviceId.toString())
         assertEquals("shape-only", parsed.certificateDer)
         assertTrue(parsed.intermediateCertificatesDer.isEmpty())
+        assertEquals(java.time.Instant.parse("2026-10-17T12:00:00Z"), parsed.notBefore)
+        assertEquals(java.time.Instant.parse("2026-10-18T12:00:00Z"), parsed.notAfter)
     }
 
     @Test fun rejectsDuplicateUnknownVersionTypeAndMissingFields() {
@@ -24,6 +26,8 @@ class EnrollmentResponseTest {
             body.replace("\"certificateDer\":\"shape-only\"", "\"certificateDer\":1"),
             body.replace("a9373871-de89-4723-bc55-884e76916e67", "1-2-3-4-5"),
             body.replace("2026-10-17T12:00:00Z", "today"),
+            body.replace("issuedAt", "notBefore"),
+            body.replace("expiresAt", "notAfter"),
             body + "{}", "[]", "null"
         )
         for (text in invalid)

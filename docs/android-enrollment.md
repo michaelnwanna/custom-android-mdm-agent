@@ -1,6 +1,6 @@
 # Android Enrollment Lab
 
-The agent now has a manually initiated enrollment client: a non-exportable AndroidKeyStore P-256 signing key, PKCS#10 CSR, exact-request retry journal, pinned HTTPS transport, strict response decoding and pinned certificate validation. It is separate from the existing maintenance key and MQTT diagnostic. This is not yet a verified Android-to-ASP.NET/PostgreSQL enrollment deployment or functional device mTLS.
+The agent has a manually initiated enrollment client: a non-exportable AndroidKeyStore P-256 signing key, PKCS#10 CSR, exact-request retry journal, pinned HTTPS transport, strict response decoding and pinned certificate validation. It is separate from the existing maintenance key and MQTT diagnostic. Combined Android-to-ASP.NET/PostgreSQL enrollment is verified in the scoped API 34 harness below, not as a production deployment or functional device mTLS.
 
 ## Trusted Lab Setup
 
@@ -33,6 +33,26 @@ CSR construction uses Bouncy Castle's maintained PKCS#10 API with Android's sign
 Certificates must be canonical single-DER X.509 objects, with no duplicate entries or returned root and at most four supplied intermediates. Validation requires the existing P-256 public key, SHA256/ECDSA leaf signature, non-CA leaf, digitalSignature-only key usage, clientAuth-only EKU, exactly one URI SAN matching the server-assigned nonzero device UUID, exact response/certificate validity metadata, current validity and a two-day maximum lifetime. PKIX builds only from supplied ordered certificates and the separately configured root. Revocation is disabled; revocation and disabled-device enforcement remain server/client lifecycle work. CSR subject and SAN requests are not identity authority; the server assigns identity and the client checks it against the returned signed certificate.
 
 ## Verification
+
+### Combined Backend Runner
+
+The [successful replay](../artifacts/android-backend/20261017T071554.735623Z/replay.html) and [manifest](../artifacts/android-backend/20261017T071554.735623Z/manifest.json) record twenty passing JVM tests, APK build/lint, one real-backend instrumentation scenario, independent backend public-proof/database verification and clean database shutdown. Earlier readiness, response-field and certificate-time failures remain retained as failed snapshots.
+
+Integration exposed a wire mismatch: responses use the contract's `issuedAt` and `expiresAt`, mapped to internal certificate validity fields; `notBefore`/`notAfter` wire names are rejected. The lab signer backdates validity by thirty seconds to tolerate the observed two-second device clock lag, without increasing total certificate lifetime. Strict client not-before/expiry checks remain unchanged. This bounded lab allowance is not clock synchronization or arbitrary skew tolerance; clients outside the validity interval still fail.
+
+The test-only combined runner requires the existing private PostgreSQL 17.11 installation and an already booted, explicitly authorized disposable AVD:
+
+```sh
+python3 tools/check_android_backend.py --serial emulator-5554 --expected-avd Pixel_8
+```
+
+It snapshots Android/backend/test-host inputs, builds both clients, runs the twenty JVM tests and lint, installs debug APKs without clearing app data, starts a private Unix-socket-only PostgreSQL cluster and runs the actual API through loopback-bound Kestrel HTTPS. The standard emulator host alias `10.0.2.2` reaches that listener; the ephemeral TLS certificate explicitly contains that IP SAN. Device certificates use a different ephemeral CA. No host-wide trust store is changed and no production/test-backdoor API is added.
+
+The companion host uses an ephemeral test-issued API access token to call the existing authorized administrator provisioning route. It is not a live identity-provider login. The bootstrap token passes only through process pipes and a private target-app staging file, never command arguments or retained configuration. The runner refuses preexisting integration staging files. Instrumentation deletes its input, uses random test-only Keystore aliases, exercises the production transport/identity classes, compares exact response bytes on retry, rejects a wrong token and a conflicting CSR, then exports only public certificate/CSR/signature proof. The host independently verifies the signed proof, certificate, single persisted completion, provisioning audit and one issued ledger result. The runner removes its staging files and shuts down its own database; instrumentation removes its own aliases/journals. The normal `fleet-enrollment-device` identity is not used or reset.
+
+Evidence goes under `artifacts/android-backend`; a failed result remains failed even if some steps succeeded. An emulator boot-readiness failure is not enrollment execution. This harness does not establish the UI-button workflow, live OIDC, production token provisioning, mTLS, power-loss safety or process/reboot recovery. The combined run above is separate from earlier isolated evidence below; older statements about unverified combined redemption describe those older runs only.
+
+Cleanup is best effort after abnormal process/device termination: a hard crash can leave test aliases or private staging behind. The runner refuses preexisting staging instead of deleting unknown inputs; operators must inspect leftovers before another run. File deletion is unlinking, not guaranteed secure erasure, and managed secret strings cannot be reliably zeroized. The companion host emits private configuration only through the runner-owned stdout pipe; do not run it standalone under a console logger. No private stdout is copied into the public manifest.
 
 The final [runner revision replay](../artifacts/android-enrollment/20261016T234945.470559Z/replay.html) passed all twenty JVM tests, build/lint and the isolated API 34 scenario. Generated APK fingerprints are recorded separately from source fingerprints for both local runtime and build-only CI runs. Fifty repository Python tooling tests passed in the existing contract-validator environment.
 

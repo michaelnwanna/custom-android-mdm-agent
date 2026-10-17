@@ -53,7 +53,7 @@ public sealed class LabLedgerEnrollmentSigner : IEnrollmentSigner
         if (existing.State == EnrollmentSignerState.Unknown)
             throw new InvalidOperationException("The signing operation is unresolved; automatic reissuance is forbidden.");
         var now = clock.GetUtcNow();
-        var notBefore = new DateTimeOffset(now.UtcDateTime.AddTicks(-(now.Ticks % TimeSpan.TicksPerSecond)));
+        var notBefore = new DateTimeOffset(now.UtcDateTime.AddTicks(-(now.Ticks % TimeSpan.TicksPerSecond))).AddSeconds(-30);
         var notAfter = notBefore.Add(lifetime);
         if (notBefore < issuer.NotBefore.ToUniversalTime() || notAfter > issuer.NotAfter.ToUniversalTime())
             throw new InvalidOperationException("The lab issuer cannot cover the requested validity.");

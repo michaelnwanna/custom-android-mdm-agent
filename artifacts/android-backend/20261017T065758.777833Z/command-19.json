@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "class",
+    "dev.fleet.agent.EnrollmentBackendInstrumentedTest",
+    "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "returncode": 0,
+  "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentBackendInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EnrollmentBackendInstrumentedTest:\nINSTRUMENTATION_STATUS: test=realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EnrollmentBackendInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=1\nINSTRUMENTATION_STATUS: stack=java.lang.IllegalArgumentException: Failed requirement.\n\tat dev.fleet.agent.EnrollmentProof.verify(EnrollmentProof.kt:78)\n\tat dev.fleet.agent.EnrollmentProof.verify$default(EnrollmentProof.kt:54)\n\tat dev.fleet.agent.AndroidEnrollmentIdentity.complete(AndroidEnrollmentIdentity.kt:72)\n\tat dev.fleet.agent.EnrollmentBackendInstrumentedTest.realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity(EnrollmentBackendInstrumentedTest.kt:51)\n\nINSTRUMENTATION_STATUS: stream=\nError in realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity(dev.fleet.agent.EnrollmentBackendInstrumentedTest):\njava.lang.IllegalArgumentException: Failed requirement.\n\tat dev.fleet.agent.EnrollmentProof.verify(EnrollmentProof.kt:78)\n\tat dev.fleet.agent.EnrollmentProof.verify$default(EnrollmentProof.kt:54)\n\tat dev.fleet.agent.AndroidEnrollmentIdentity.complete(AndroidEnrollmentIdentity.kt:72)\n\tat dev.fleet.agent.EnrollmentBackendInstrumentedTest.realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity(EnrollmentBackendInstrumentedTest.kt:51)\n\nINSTRUMENTATION_STATUS: test=realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity\nINSTRUMENTATION_STATUS_CODE: -2\nINSTRUMENTATION_RESULT: stream=\n\nTime: 2.951\nThere was 1 failure:\n1) realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity(dev.fleet.agent.EnrollmentBackendInstrumentedTest)\njava.lang.IllegalArgumentException: Failed requirement.\n\tat dev.fleet.agent.EnrollmentProof.verify(EnrollmentProof.kt:78)\n\tat dev.fleet.agent.EnrollmentProof.verify$default(EnrollmentProof.kt:54)\n\tat dev.fleet.agent.AndroidEnrollmentIdentity.complete(AndroidEnrollmentIdentity.kt:72)\n\tat dev.fleet.agent.EnrollmentBackendInstrumentedTest.realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity(EnrollmentBackendInstrumentedTest.kt:51)\n\nFAILURES!!!\nTests run: 1,  Failures: 1\n\n\nINSTRUMENTATION_CODE: -1\n",
+  "stderr": ""
+}

@@ -1,0 +1,15 @@
+2026-10-17 10:21:56.132 EAT [56957] LOG:  starting PostgreSQL 17.11 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-10-17 10:21:56.132 EAT [56957] LOG:  listening on Unix socket "/var/folders/cd/wfqgv6hn3t7252cm958dq0pc0000gn/T/fleet-pg-f703ig3b/.s.PGSQL.5432"
+2026-10-17 10:21:56.149 EAT [56961] LOG:  database system was shut down at 2026-10-17 10:21:55 EAT
+2026-10-17 10:21:56.162 EAT [56957] LOG:  database system is ready to accept connections
+2026-10-17 10:21:56.537 EAT [56968] ERROR:  relation "__EFMigrationsHistory" does not exist at character 45
+2026-10-17 10:21:56.537 EAT [56968] STATEMENT:  SELECT "MigrationId", "ProductVersion"
+	FROM "__EFMigrationsHistory"
+	ORDER BY "MigrationId"
+2026-10-17 10:22:06.162 EAT [56957] LOG:  received fast shutdown request
+2026-10-17 10:22:06.173 EAT [56957] LOG:  aborting any active transactions
+2026-10-17 10:22:06.174 EAT [56957] LOG:  background worker "logical replication launcher" (PID 56964) exited with exit code 1
+2026-10-17 10:22:06.174 EAT [56959] LOG:  shutting down
+2026-10-17 10:22:06.175 EAT [56959] LOG:  checkpoint starting: shutdown immediate
+2026-10-17 10:22:06.198 EAT [56959] LOG:  checkpoint complete: wrote 49 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.012 s, total=0.024 s; sync files=47, longest=0.002 s, average=0.001 s; distance=279 kB, estimate=279 kB; lsn=0/1642308, redo lsn=0/1642308
+2026-10-17 10:22:06.206 EAT [56957] LOG:  database system is shut down
