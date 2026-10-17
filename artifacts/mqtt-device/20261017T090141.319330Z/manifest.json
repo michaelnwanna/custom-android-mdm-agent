@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-17T09:01:41.319330+00:00",
+  "finishedAt": "2026-10-17T09:01:44.025147+00:00",
+  "result": "passed",
+  "testCounters": {
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "unexpectedSuccesses": 0,
+    "expectedFailures": 0
+  },
+  "inputSha256": {
+    "tools/mqtt_device_policy.py": "7c00a5ea0cc8a2665bd34b0752f0d895ff788d6e598301d6e1eb58fb1abde189",
+    "tools/mqtt_device_broker.py": "17b58c9cd4d38365257bdde05f5771d7cf7f881db0143c6451530a303ca94b9f",
+    "tools/mqtt-lab-requirements.txt": "d40edee150529a0110a4e7088dd5e0a7fe39697c2f419da2775811bec674ac8c",
+    "tools/test_mqtt_device_policy.py": "3e38b756380c175eb2985e0aa5bd198c5bcd043366ee284ff97102e79f256bd6",
+    "tools/test_mqtt_device_broker.py": "665128d70eeb3f3b1c8b7d8856e94d6638215e920b0bdc242b8ae3b4bd838f38",
+    "tools/test_mqtt_device_wire.py": "894eefc62fb02981d86b35cc1198c0709704c156b06347aafddae453eef38a15",
+    "tools/check_mqtt_device.py": "86bb648e67fe138ba289ef1bb56688d53f1f5ae22ba99ad2ed8c8230a69148d5"
+  },
+  "pythonVersion": "3.13.2 (main, Mar 11 2025, 18:30:51) [Clang 13.1.6 (clang-1316.0.21.2.5)]",
+  "dependencies": {
+    "PyYAML": "6.0.2",
+    "Pygments": "2.21.0",
+    "amqtt": "0.11.3",
+    "cffi": "2.1.1",
+    "click": "8.1.8",
+    "cryptography": "46.0.5",
+    "dacite": "1.9.2",
+    "markdown-it-py": "4.2.0",
+    "mdurl": "0.1.2",
+    "passlib": "1.7.4",
+    "pip": "25.0",
+    "psutil": "7.2.2",
+    "pycparser": "3.11",
+    "rich": "15.0.0",
+    "shellingham": "1.5.4",
+    "six": "1.17.0",
+    "transitions": "0.9.2",
+    "typer": "0.15.4",
+    "typing_extensions": "4.16.0",
+    "websockets": "15.0.1"
+  },
+  "resultSha256": {
+    "command.json": "8f33937e9c1ea1ac32258434103998e10b0dc0f1950ba889ba83e51a911e4382",
+    "counters.json": "0dde139489051b387c06cf7cd64dc15c7d5e90442a3230dd02f7090ff154bf92"
+  },
+  "scope": "Real loopback MQTT TLS with ephemeral software keys, explicit lab certificate membership and directional ACLs; no Android Keystore, enrollment/PostgreSQL membership, session termination, payload validation, durable delivery or production infrastructure"
+}

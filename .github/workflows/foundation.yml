@@ -13,6 +13,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  mqtt-device:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install MQTT lab dependencies
+        run: python -m pip install -r tools/mqtt-lab-requirements.txt
+      - name: Real loopback MQTT mTLS and device ACL checks
+        run: python tools/check_mqtt_device.py
+      - name: Retain MQTT evidence including failed checks
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mqtt-device-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: artifacts/mqtt-device/
   android-enrollment:
     runs-on: ubuntu-24.04
     timeout-minutes: 25

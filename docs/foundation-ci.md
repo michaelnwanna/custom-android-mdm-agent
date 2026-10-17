@@ -8,6 +8,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 ## Verification Boundary
 
+The dedicated `mqtt-device` job installs the pinned MQTT lab requirements and runs the [isolated device MQTT snapshot checks](mqtt-device-lab.md) against actual ephemeral loopback TLS listeners and software certificates. It retains its own evidence for thirty days, even on failure. This job does not connect enrolled Android or PostgreSQL membership, and a local pass is not a hosted result. The preceding HTTPS milestone `e5a8fa9` passed its then-existing two jobs in [39018323220](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39018323220); that run did not contain this new MQTT job.
+
 The independent Android job uses Java 17 and Android platform/build-tools 34, runs the evidence-parser test and snapshot-based JVM/build/lint checks, and retains reports for thirty days. It also assembles the instrumentation APK but does not run it: API 34 Keystore execution is separately recorded local evidence. The client implementation and remaining integration gaps are described in the [Android runbook](android-enrollment.md). Hosted coverage is established only by the actual Actions result, not local execution of its command.
 
 The first Android hosted run, [38984092488](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/38984092488), failed during SDK setup before any Android checks ran: the setup action's default package list requested the obsolete `tools` package. The workflow explicitly requests only `platform-tools` from that action, then installs platform/build-tools 34 in the following step. The failed run's backend/contracts job passed. Its Android upload contains checked-in historical evidence, not newly executed hosted Android tests; a successful upload is not a test pass.
@@ -19,6 +21,8 @@ The combined enrollment follow-up also compiles the test-only integration host a
 Workflow YAML parsing and local test execution do not prove a hosted GitHub run passed. Inspect the actual Actions result after publication. Linux execution is a new platform gate: host-specific failures must remain failed and be investigated, not skipped. No PostgreSQL server, Android emulator, Device Owner runtime, OIDC, production CA or full-system deployment is exercised by this workflow. The private PostgreSQL runner remains a separately recorded local gate, not a CI pass inferred from test-project compilation.
 
 ## Remaining MVP Work
+
+The host-side [MQTT mTLS/ACL lab](mqtt-device-lab.md) narrows the transport gap to real enrolled-device/backend integration, authenticated backend publishers/ingestion, durable delivery and session/lifecycle controls. Its explicit lab membership is not a replacement for PostgreSQL enrollment or audited access management.
 
 The [HTTPS device identity follow-up](device-mtls.md) now has local API 34/Kestrel/PostgreSQL mTLS and persisted-disable evidence. Hosted CI covers its component/loopback and JVM tests, not emulator runtime. The older generic device-mTLS gap below is narrowed to MQTT mTLS, lifecycle/revocation workflows and deployment hardening; no full fleet acceptance is implied.
 

@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The separate [device MQTT authentication lab](docs/mqtt-device-lab.md) now verifies mandatory mTLS, exact enabled certificate membership and directional per-device topic ACLs over real loopback MQTT. Thirteen host-side tests pass, including cross-device/wildcard denial, forged-client-ID isolation, live disable checks and retained suppression. Its trusted local membership file and ephemeral software-key tests are not yet connected to enrolled Android Keystore identities or PostgreSQL; production transport and lifecycle work remain open. The original anonymous Android probe diagnostic is unchanged.
+
 The [HTTPS mTLS identity lab](docs/device-mtls.md) now authenticates Android using its enrolled Keystore key, exact completed certificate and current PostgreSQL enabled state. API 34 instrumentation passed a real mTLS request and rejection after persisted disable. A fifth migration is required. Earlier paragraphs about unverified mTLS describe prior milestones: HTTPS identity is now scoped lab-verified; MQTT mTLS, full revocation, secure production provisioning and the fleet workflow remain open.
 
 The [Android enrollment client](docs/android-enrollment.md) prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. A [combined API 34 run](artifacts/android-backend/20261017T071554.735623Z/replay.html) passed real Kestrel HTTPS enrollment against PostgreSQL and the lab signer, including authorized administrator provisioning, exact response recovery, invalid-token/conflicting-CSR rejection and key-possession proof. Twenty JVM tests and APK build/lint also passed. The UI staging action, live identity-provider integration, secure production bootstrap delivery and mTLS remain unverified.
@@ -80,6 +82,14 @@ flowchart TB
 	subgraph Diagnostics["MQTT diagnostics - implemented and API 34 verified"]
 		LabBroker[Loopback TLS amqtt synthetic probe broker]
 		LabService[HiveMQ client in user-started dataSync foreground service]
+	end
+
+	subgraph DeviceMqttLab["Device MQTT authentication - isolated host lab verified"]
+		SoftwareClients[Ephemeral software-key test clients]
+		DeviceLabBroker[Mandatory mTLS and directional topic ACLs]
+		LabMembership[Explicit lab certificate membership - no PostgreSQL integration]
+		SoftwareClients <--> DeviceLabBroker
+		LabMembership --> DeviceLabBroker
 	end
 
 	subgraph Device["Managed Android device - basic API 34 kiosk lab verified"]
