@@ -10,6 +10,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 The independent Android job uses Java 17 and Android platform/build-tools 34, runs the evidence-parser test and snapshot-based JVM/build/lint checks, and retains reports for thirty days. It also assembles the instrumentation APK but does not run it: API 34 Keystore execution is separately recorded local evidence. The client implementation and remaining integration gaps are described in the [Android runbook](android-enrollment.md). Hosted coverage is established only by the actual Actions result, not local execution of its command.
 
+The first Android hosted run, [38984092488](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/38984092488), failed during SDK setup before any Android checks ran: the setup action's default package list requested the obsolete `tools` package. The workflow explicitly requests only `platform-tools` from that action, then installs platform/build-tools 34 in the following step. The failed run's backend/contracts job passed. Its Android upload contains checked-in historical evidence, not newly executed hosted Android tests; a successful upload is not a test pass.
+
 Workflow YAML parsing and local test execution do not prove a hosted GitHub run passed. Inspect the actual Actions result after publication. Linux execution is a new platform gate: host-specific failures must remain failed and be investigated, not skipped. No PostgreSQL server, Android emulator, Device Owner runtime, OIDC, production CA or full-system deployment is exercised by this workflow. The private PostgreSQL runner remains a separately recorded local gate, not a CI pass inferred from test-project compilation.
 
 ## Remaining MVP Work

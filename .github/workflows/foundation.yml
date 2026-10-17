@@ -26,6 +26,8 @@ jobs:
         with:
           python-version: '3.13'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install pinned Android SDK tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
       - name: Android enrollment build and JVM checks
