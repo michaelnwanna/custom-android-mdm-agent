@@ -140,7 +140,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in jvm:
                 jvm[name] += int(suite.get(name, "0"))
-        if jvm["tests"] < 30 or any(jvm[name] for name in ("failures", "errors", "skipped")):
+        if jvm["tests"] < 32 or any(jvm[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         shutil.copytree(results, output / "jvm-results")
         shutil.copytree(android / "agent/build/reports", output / "reports")

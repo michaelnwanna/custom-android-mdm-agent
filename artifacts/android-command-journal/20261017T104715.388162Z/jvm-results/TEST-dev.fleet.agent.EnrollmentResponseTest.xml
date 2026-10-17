@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.EnrollmentResponseTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-17T10:49:22" hostname="Michaels-MacBook-Pro.local" time="0.008">
+  <properties/>
+  <testcase name="rejectsDuplicateUnknownVersionTypeAndMissingFields" classname="dev.fleet.agent.EnrollmentResponseTest" time="0.004"/>
+  <testcase name="rejectsOversizedBodiesAndChains" classname="dev.fleet.agent.EnrollmentResponseTest" time="0.002"/>
+  <testcase name="parsesBoundedVersionedResponseWithoutGrantingCertificateTrust" classname="dev.fleet.agent.EnrollmentResponseTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

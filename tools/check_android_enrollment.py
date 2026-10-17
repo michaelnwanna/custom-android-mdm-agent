@@ -13,11 +13,15 @@ import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMMAND_CONTRACT_INPUTS = ("contracts/events/command-v1.schema.json", "contracts/fixtures/commands-v1.json")
+COMMAND_CONTRACT_INPUTS = ("contracts/events/command-v1.schema.json", "contracts/fixtures/commands-v1.json",
+                           "contracts/events/command-event-v1.schema.json", "contracts/fixtures/command-events-v1.json")
 
 
-def instrumentation_passed(text):
-    return (re.search(r"^OK \(1 test\)$", text, re.MULTILINE) is not None
+def instrumentation_passed(text, expected_tests=1):
+    if type(expected_tests) is not int or expected_tests < 1:
+        return False
+    label = "test" if expected_tests == 1 else "tests"
+    return (re.search(rf"^OK \({expected_tests} {label}\)$", text, re.MULTILINE) is not None
             and "INSTRUMENTATION_CODE: -1" in text
             and "FAILURES" not in text and "INSTRUMENTATION_FAILED" not in text)
 
@@ -26,13 +30,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--serial")
     parser.add_argument("--expected-avd")
+    parser.add_argument("--command-journal", action="store_true", help="Run six isolated SQLite journal scenarios on the explicit emulator")
     args = parser.parse_args()
     if bool(args.serial) != bool(args.expected_avd):
         parser.error("--serial and --expected-avd must be supplied together")
     if args.serial and not args.serial.startswith("emulator-"):
         parser.error("Only an explicitly named disposable emulator is supported")
+    if args.command_journal and not args.serial:
+        parser.error("--command-journal requires an explicit emulator and expected AVD")
     started = datetime.datetime.now(datetime.timezone.utc)
-    output = ROOT / "artifacts/android-enrollment" / started.strftime("%Y%m%dT%H%M%S.%fZ")
+    output = ROOT / ("artifacts/android-command-journal" if args.command_journal else "artifacts/android-enrollment") / started.strftime("%Y%m%dT%H%M%S.%fZ")
     output.mkdir(parents=True)
     hashes = {}
     sources = [*list((ROOT / "android").rglob("*")), *(ROOT / name for name in COMMAND_CONTRACT_INPUTS)]
@@ -86,7 +93,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in counters:
                 counters[name] += int(suite.get(name, "0"))
-        if counters["tests"] < 30 or any(counters[name] for name in ("failures", "errors", "skipped")):
+        if counters["tests"] < 32 or any(counters[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         for source in (working / "agent/build/reports").rglob("*"):
             if source.is_file():
@@ -110,10 +117,11 @@ def main():
             command([*adb, "shell", "dpm", "list-owners"], 30)
             for apk in apks:
                 command([*adb, "install", "-r", "-t", apk], 120)
+            test_class = "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest"
             result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
-                              "dev.fleet.agent.EnrollmentIdentityInstrumentedTest",
+                              "dev.fleet.agent." + test_class,
                               "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 120)
-            if not instrumentation_passed(result):
+            if not instrumentation_passed(result, 6 if args.command_journal else 1):
                 raise RuntimeError("Instrumentation did not explicitly pass")
         passed = True
     except Exception as failure:
@@ -123,7 +131,8 @@ def main():
                 "result": "passed" if passed else "failed", "error": error, "commands": records,
                 "inputSha256": hashes, "apkSha256": apk_hashes, "jvmCounters": counters, "serial": args.serial,
                 "expectedAvd": args.expected_avd,
-                "scope": "Android JVM crypto/parser/loopback enrollment and mTLS, strict command decoding against shared fixtures, APK build/lint; optional isolated real Keystore instrumentation. No command intake/execution/persistence, combined ASP.NET/PostgreSQL/device runtime, MQTT runtime, process restart or power-loss proof.",
+                "commandJournalRequested": args.command_journal,
+                "scope": "Android JVM crypto/parser/loopback enrollment/mTLS and command/event encoding, APK build/lint; optional explicit emulator: six isolated Room receipt/outbox scenarios when commandJournalRequested, otherwise one Keystore scenario. No live command intake, execution, acknowledgement deletion, broker/backend runtime, process-kill or power-loss proof.",
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}

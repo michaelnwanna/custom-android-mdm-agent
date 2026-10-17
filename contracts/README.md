@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [Android receipt journal](../docs/android-command-journal.md) now produces shared command-state `received`/`expired` event shapes and commits each with its command in Room. Six isolated API 34 SQLite tests verify the local transaction boundary; two JVM tests cover canonical command and event encoding. No backend ingestion, transport publication or event acknowledgement/deletion path is implemented.
+
 The [Android command decoder](../docs/android-command-decoding.md) now consumes command v1 with shared acceptance/rejection fixtures, exact payloads and enrolled-device binding. It adds ordered lifetime checks, an 8192-byte receiver limit and nanosecond timestamp precision. This is not live MQTT intake, persistence, execution or acknowledgement handling; earlier descriptions of absent Kotlin consumers below retain their historical scope.
 
 Current device boundary: [device identity v1](http/device-identity-v1.schema.json) and its [shared fixtures](fixtures/device-identities-v1.json) declare the HTTPS mTLS diagnostic in [OpenAPI](openapi.json). Nine contract checks cover 17 valid and 83 rejection fixtures. Actual API 34/HTTPS/PostgreSQL authentication and request-level disable evidence is separate in the [mTLS runbook](../docs/device-mtls.md); schema validation is not proof of TLS, key possession or lifecycle security. Older planned-enrollment/mTLS statements below describe their historical slices.
@@ -20,6 +22,7 @@ flowchart LR
     Schemas[Implemented JSON schemas] --> Fixtures[Shared valid and rejection fixtures]
     Fixtures --> Checks[Verified Python schema checks]
     Fixtures --> Decoder[Android command decoder - JVM verified]
+    Decoder --> Journal[Atomic Room receipt and event - API 34 verified]
 ```
 
 ## Wire Rules

@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [Android command journal](docs/android-command-journal.md) now atomically records a command and its initial receipt event in Room. Six API 34 SQLite tests verify close/reopen, duplicate/conflict handling, rollback, concurrent delivery, expiry and scoped outbox reads; 32 JVM tests/build/lint also pass. It is not connected to live MQTT, execution, event publishing or acknowledgement deletion.
+
 The [Android command decoder](docs/android-command-decoding.md) now validates shared command v1 fixtures, exact payloads, safe integers, timestamps and enrolled-device binding. Five new decoder tests bring the recorded JVM suite to 30, with APK build/lint passing. It is not yet connected to MQTT intake, Room, execution or acknowledgements.
 
 The [enrolled Android MQTT follow-up](docs/android-mqtt-enrollment.md) now passes a real API 34 Keystore mTLS roundtrip against the device-scoped broker, including cross-device/wildcard denials and rejected subscription/reconnect after committed PostgreSQL disable. Its single-device local-file membership bridge is test-only, not production synchronization or forced session termination. The combined replay records 25 JVM tests, build/lint and one instrumentation scenario; older host-only MQTT limits below retain their historical scope.
@@ -105,9 +107,9 @@ flowchart TB
 		DeviceEnrollment -->|MQTT mTLS - API 34 test bridge verified| DeviceLabBroker
 		EnrollmentDB --> TestMembership[Test-only single-device membership propagation]
 		TestMembership --> LabMembership
-		Room[(Room inbox and outbox - planned)]
+		Room[(Room receipt inbox / initial event outbox - API 34 verified; execution planned)]
 		CommandFixtures[Shared command fixtures] --> CommandDecoder[Strict typed decoder - JVM verified; no live intake]
-		CommandDecoder -. future durable intake .-> Room
+		CommandDecoder -->|Atomic receipt and event - no live intake| Room
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]
 		Installer[PackageInstaller - local lab verified; release delivery planned]

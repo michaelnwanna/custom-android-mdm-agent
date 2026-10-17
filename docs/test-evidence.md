@@ -1,5 +1,9 @@
 # Recorded Tests
 
+## Android Room Journal
+
+The [journal replay](../artifacts/android-command-journal/20261017T104715.388162Z/replay.html) passes 32 JVM tests, APK builds/lint and six API 34 SQLite scenarios: close/reopen/replay, identity/sequence conflict, inbox/outbox rollback, eight concurrent deliveries across two handles, exact expiry and bounded device-scoped reads. All 69 Python tooling tests pass. The [first run](../artifacts/android-command-journal/20261017T100748.261156Z/replay.html) remains a Java 21 daemon/lint crash before instrumentation; the successful run explicitly uses private Temurin 17.0.20.1. See the [transaction boundary and limits](android-command-journal.md). No live transport, execution, publishing, acknowledgement deletion, process kill or power-loss behavior is established.
+
 ## Android Command Decoder
 
 The [saved replay](../artifacts/android-enrollment/20261017T095439.171027Z/replay.html) and [manifest](../artifacts/android-enrollment/20261017T095439.171027Z/manifest.json) pass 30 JVM tests, application/instrumentation APK assembly and lint. Five decoder tests expand three shared valid commands and fourteen rejection mutations, plus malformed-wire, device-binding, size/integer/UUID/timestamp boundaries. All 68 Python tooling tests passed. This local snapshot used Java 21.0.8, not the hosted Java 17 runtime. No emulator, MQTT or PostgreSQL runtime was rerun; this decoder is not connected to message intake, durable storage, execution or acknowledgements. See the [decoder boundary and replay instructions](android-command-decoding.md).

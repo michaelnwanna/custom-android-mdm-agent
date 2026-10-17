@@ -1,5 +1,7 @@
 # Android Command Decoding
 
+The follow-up [Room command journal](android-command-journal.md) now consumes this decoder for atomic local receipt/event storage. Its separate six-scenario API 34 replay does not wire live MQTT or execution. The parser-only evidence and historical limits below describe the earlier milestone.
+
 [CommandDecoder](../android/agent/src/main/java/dev/fleet/agent/CommandMessage.kt) is an internal, stateless consumer of the [command v1 contract](../contracts/events/command-v1.schema.json). It produces a typed envelope with `SetPolicy`, `InstallRelease` or `RequestSync` payloads. This is parser infrastructure only: neither the enrolled MQTT transport nor the anonymous diagnostic service calls it. No commands are persisted, executed or acknowledged by this change.
 
 ```mermaid

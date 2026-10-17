@@ -8,6 +8,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 ## Verification Boundary
 
+The [Room receipt journal](android-command-journal.md) adds pinned Room/KSP schema generation and two event/canonicalization JVM checks. Android runners now require at least 32 passing JVM tests and retain both command and command-state event fixtures. Hosted CI builds the six-scenario instrumentation class but does not execute it; actual SQLite behavior is separate local API 34 evidence. Prior decoder commit `0676404` passed [39023167649](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39023167649), which did not contain Room.
+
 The [Android command decoder](android-command-decoding.md) adds five fixture-backed JVM tests. Android evidence runners now retain the command schema/shared fixture and require at least 30 passing JVM tests; hosted APK build/lint exercises this resource wiring. The local decoder snapshot records Java 21, while this workflow explicitly installs Java 17. The preceding enrolled MQTT commit `6f54a3e` passed all three jobs in [39022430412](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39022430412); that result does not cover this later decoder or prove live message intake.
 
 The [enrolled Android MQTT follow-up](android-mqtt-enrollment.md) adds three JVM TLS/client checks, host bridge compilation and evidence-proof validation, plus a probe-wrapper unit test in the independent broker job. Its combined emulator/PostgreSQL test remains a local gate invoked with `--with-mqtt`, not hosted runtime coverage. The preceding `441b571` workflow passed all three jobs in [39019839922](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39019839922).
