@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "class",
+    "dev.fleet.agent.EventAcknowledgementInstrumentedTest",
+    "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "returncode": 0,
+  "stdout": "INSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\ndev.fleet.agent.EventAcknowledgementInstrumentedTest:\nINSTRUMENTATION_STATUS: test=deleteFailureRollsBackAndAuthenticatedRetryCanFinishAfterReopen\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=deleteFailureRollsBackAndAuthenticatedRetryCanFinishAfterReopen\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=untrustedMalformedMismatchedAndErrorRepliesLeaveOriginalRowUnchanged\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=untrustedMalformedMismatchedAndErrorRepliesLeaveOriginalRowUnchanged\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=matchingAuthenticatedReplyDeletesOnlyItsEventAndDuplicateDoesNotRecreateIt\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=dev.fleet.agent.EventAcknowledgementInstrumentedTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=matchingAuthenticatedReplyDeletesOnlyItsEventAndDuplicateDoesNotRecreateIt\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 3.226\n\nOK (3 tests)\n\n\nINSTRUMENTATION_CODE: -1\n",
+  "stderr": ""
+}

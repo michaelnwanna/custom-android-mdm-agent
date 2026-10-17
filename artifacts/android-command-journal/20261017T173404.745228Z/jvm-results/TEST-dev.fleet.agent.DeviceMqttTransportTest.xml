@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.DeviceMqttTransportTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-17T17:34:33" hostname="Michaels-MacBook-Pro.local" time="0.893">
+  <properties/>
+  <testcase name="realHiveMqTlsUsesPrivateKeyHandleAndRejectsHostnameMismatch" classname="dev.fleet.agent.DeviceMqttTransportTest" time="0.87"/>
+  <testcase name="keyFactoryRetainsOnlyOriginalManagerAndCannotBeReinitialized" classname="dev.fleet.agent.DeviceMqttTransportTest" time="0.008"/>
+  <testcase name="mqttUsesEnrolledAuthorityUuidAndExplicitTlsWithoutReconnect" classname="dev.fleet.agent.DeviceMqttTransportTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

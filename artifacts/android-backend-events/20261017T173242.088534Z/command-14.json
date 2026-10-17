@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/.lab-private/postgres-install/17.11/bin/postgres",
+    "--version"
+  ],
+  "returncode": 0,
+  "stdout": "postgres (PostgreSQL) 17.11\n",
+  "stderr": ""
+}

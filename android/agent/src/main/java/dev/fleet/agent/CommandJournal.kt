@@ -2,6 +2,7 @@ package dev.fleet.agent
 
 import com.squareup.moshi.JsonWriter
 import okio.Buffer
+import java.security.cert.X509Certificate
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
@@ -52,6 +53,26 @@ internal class CommandJournal(
     fun pendingEvents(limit: Int = 100): List<CommandEventRow> {
         require(limit in 1..100)
         return database.journal().pendingEvents(deviceId.toString(), limit)
+    }
+
+    fun uploadAndAcknowledge(
+        identity: DeviceTlsIdentity,
+        serverRoot: X509Certificate,
+        event: CommandEventRow,
+    ): EventAcknowledgement {
+        require(identity.deviceId == deviceId && event.deviceId == deviceId.toString())
+        require(database.journal().event(deviceId.toString(), event.eventId) == event) { "Pending event changed" }
+        val acknowledgement = CommandEventTransport.upload(identity, serverRoot, event)
+        database.runInTransaction {
+            val dao = database.journal()
+            val current = dao.event(deviceId.toString(), acknowledgement.eventId.toString())
+            if (current != null) {
+                require(current == event) { "Pending event changed" }
+                check(dao.deleteUploadedEvent(deviceId.toString(), acknowledgement.eventId.toString(),
+                    event.commandId, event.wireJson) == 1)
+            }
+        }
+        return acknowledgement
     }
 }
 

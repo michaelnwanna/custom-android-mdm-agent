@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "stage": "ready",
+  "namespace": "integration-6c68a78a-df0b-4df5-a147-ee73fe7adeac",
+  "serverRootDer": "MIIBgDCCASWgAwIBAgIJAMSpBo4cz+CNMAoGCCqGSM49BAMCMCMxITAfBgNVBAMTGEFuZHJvaWQgYmFja2VuZCBUTFMgcm9vdDAeFw0yNjEwMTYxNzIzNDVaFw0yNjEwMjQxNzIzNDVaMCMxITAfBgNVBAMTGEFuZHJvaWQgYmFja2VuZCBUTFMgcm9vdDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABMYrx0yMt38XdGvvnq69xf7+y+uvQmi/ypE5L8s7oWepg1RGX3q2tx7cErl6ZU9cmsQK74cR8IUGv6Px/MtlNcqjQjBAMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgIEMB0GA1UdDgQWBBSFyVXrBFuqCB4bddKFtYKnfRvpMjAKBggqhkjOPQQDAgNJADBGAiEAtzMTgUy+PMk9ox0IrMQKo+mZ9SoYmw3egXxrTLj+XjoCIQDVtTmxCaVBLEMJX/1VJ+cJauYYnnn0Mw0Wc+xA7spNAA==",
+  "deviceRootDer": "MIIBhjCCASugAwIBAgIJAPXnOBg9Jd1fMAoGCCqGSM49BAMCMCYxJDAiBgNVBAMTG0FuZHJvaWQgYmFja2VuZCBkZXZpY2Ugcm9vdDAeFw0yNjEwMTYxNzIzNDVaFw0yNjEwMjQxNzIzNDVaMCYxJDAiBgNVBAMTG0FuZHJvaWQgYmFja2VuZCBkZXZpY2Ugcm9vdDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJCuDkpsF3wcQYyIyAnIFEyyj2eTYRSi4kJnHXt4zZ4lt//rFXZqdXuOSwOmhAvwt0kivN2oPxgP3N8ek9qjuUyjQjBAMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgIEMB0GA1UdDgQWBBQ8xSiidtDIdGLzoZswkmkZg/9yijAKBggqhkjOPQQDAgNJADBGAiEAv6YMvcmkgP0skXlAkfRQkCC46yD1TXxjXCeSPZatPsgCIQDMgE4atmjHpALFBiWI8wdKLjIF67X5YlytYdJz7Fhy7A==",
+  "bootstrap": {
+    "schemaVersion": 1,
+    "endpoint": "https://10.0.2.2:53889/api/v1/enrollments",
+    "pendingEnrollmentId": "d6b67e64-ef84-4d8e-ae15-e843fb7715f0"
+  },
+  "eventUpload": true,
+  "eventCommandId": "f87731f7-f114-4d91-839d-6a125b8056f7",
+  "eventCorrelationId": "fa656b9b-ce8f-4faa-bd48-f7b90fe8eb9d",
+  "eventDeletion": true
+}

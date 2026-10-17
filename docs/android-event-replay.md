@@ -1,5 +1,7 @@
 # Combined Android Event Replay
 
+Follow-up: [authenticated acknowledgement deletion](android-event-acknowledgement.md) is now available through a separate journal operation and opt-in `--acknowledge-events` mode. This page describes the original transport-only retention scenario, which still passes [regression replay](../artifacts/android-backend-events/20261017T173242.088534Z/replay.html). Its absent-deletion statements describe that earlier milestone, not the newer journal operation.
+
 The opt-in `--with-events` mode of [the combined runner](../tools/check_android_backend.py) now verifies one real API 34 Room/Android Keystore/HTTPS/PostgreSQL event roundtrip and original acknowledgement recovery after a deliberately suppressed reply. This is an isolated test scenario, not a production upload worker, deletion implementation or packet-loss test.
 
 ```mermaid

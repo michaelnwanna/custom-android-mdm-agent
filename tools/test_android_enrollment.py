@@ -10,6 +10,7 @@ class EnrollmentEvidenceTests(unittest.TestCase):
         self.assertEqual(len(COMMAND_CONTRACT_INPUTS), len(set(COMMAND_CONTRACT_INPUTS)))
 
     def test_requires_exact_positive_instrumentation_count(self):
+        self.assertTrue(instrumentation_passed("OK (5 tests)\nINSTRUMENTATION_CODE: -1\n", 5))
         self.assertTrue(instrumentation_passed("OK (6 tests)\nINSTRUMENTATION_CODE: -1\n", 6))
         for count in (0, -1, True, "6", 1, 5, 7):
             with self.subTest(count=count):

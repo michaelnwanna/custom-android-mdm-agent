@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "files/enrollment-integration-result.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schemaVersion\":1,\"deviceId\":\"52d86ee1-6761-4f33-8270-c8f41aac57f1\",\"mtlsAuthenticated\":true,\"disabledRejected\":true,\"mqttAuthenticated\":false,\"mqttDisabledRejected\":false,\"mqttJournalVerified\":false,\"eventUploadVerified\":true,\"eventAcknowledgement\":{\"schemaVersion\":1,\"deviceId\":\"52d86ee1-6761-4f33-8270-c8f41aac57f1\",\"eventId\":\"891ac74c-276a-4c1e-bc72-70e6ffe2152d\",\"receivedAt\":\"2026-10-17T17:24:15.701821+00:00\"},\"retainedEventId\":\"891ac74c-276a-4c1e-bc72-70e6ffe2152d\",\"eventDeletionVerified\":true,\"eventDeleteRollbackVerified\":true,\"eventInboxRetained\":true,\"disabledEventRetained\":true,\"csrDer\":\"MIHVMH0CAQAwGzEZMBcGA1UEAwwQRmxlZXQgZW5yb2xsbWVudDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABMiHuok6V9DNsrEBzxn3NEeysfPVoH3+Odebko0ntrojhbjmwcBpFWQi87QcuS64AdArlGcjcdmAM6G8Dd5NZYygADAKBggqhkjOPQQDAgNIADBFAiBhC0NRxIPM9UzJ3GWUcaRUHpQVr7NERn9LMbanTjPaBwIhAKiZhqpUXsL8ZLFungC2KsNkQxD7mNGnvxx27c51FOqi\",\"responseBase64\":\"eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXZpY2VJZCI6IjUyZDg2ZWUxLTY3NjEtNGYzMy04MjcwLWM4ZjQxYWFjNTdmMSIsImNlcnRpZmljYXRlRGVyIjoiTUlJQ1J6Q0NBZXlnQXdJQkFnSVFaZXZvMWNra0ZvaURRVFQwcDV3b1JEQUtCZ2dxaGtqT1BRUURBakFtTVNRd0lnWURWUVFERXh0QmJtUnliMmxrSUdKaFkydGxibVFnWkdWMmFXTmxJSEp2YjNRd0hoY05Nall4TURFM01UY3lNelF5V2hjTk1qWXhNREU0TVRjeU16UXlXakF2TVMwd0t3WURWUVFERXlRMU1tUTRObVZsTVMwMk56WXhMVFJtTXpNdE9ESTNNQzFqT0dZME1XRmhZelUzWmpFd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFUSWg3cUpPbGZRemJLeEFjOFo5elJIc3JIejFhQjkvam5YbTVLTko3YTZJNFc0NXNIQWFSVmtJdk8wSExrdXVBSFFLNVJuSTNIWmdET2h2QTNlVFdXTW80SHlNSUh2TUF3R0ExVWRFd0VCL3dRQ01BQXdIUVlEVlIwT0JCWUVGQWRTbmNhOFVVN0pydzZIcFU4aFx1MDAyQnBIVUhQODRNRllHQTFVZEl3UlBNRTJBRkR6RktLSjIwTWgwWXZPaG16Q1NhUm1ELzNLS29TcWtLREFtTVNRd0lnWURWUVFERXh0QmJtUnliMmxrSUdKaFkydGxibVFnWkdWMmFXTmxJSEp2YjNTQ0NRRDE1emdZUFNYZFh6QU9CZ05WSFE4QkFmOEVCQU1DQjRBd0ZnWURWUjBsQVFIL0JBd3dDZ1lJS3dZQkJRVUhBd0l3UUFZRFZSMFJCRGt3TjRZMWRYSnVPbVpzWldWME9tUmxkbWxqWlRvMU1tUTRObVZsTVMwMk56WXhMVFJtTXpNdE9ESTNNQzFqT0dZME1XRmhZelUzWmpFd0NnWUlLb1pJemowRUF3SURTUUF3UmdJaEFLYkZnV1d5UFVDV0NQeXhMc3lNWE1jQjRVZTVaUUR3L3ZUdGhOWU1LUC82QWlFQW53NWtUMjRYM3Y5QXV6WXBhZnlDXHUwMDJCNlVBa2RlcHN0eTRsekUyTnkyUmd1UT0iLCJpbnRlcm1lZGlhdGVDZXJ0aWZpY2F0ZXNEZXIiOltdLCJpc3N1ZWRBdCI6IjIwMjYtMTAtMTdUMTc6MjM6NDIrMDA6MDAiLCJleHBpcmVzQXQiOiIyMDI2LTEwLTE4VDE3OjIzOjQyKzAwOjAwIn0=\",\"challengeBase64\":\"ZWExMTRjYjEtZTY4Ni00ZDc0LWJjNTgtZDFkMjViOTIyOWUw\",\"signatureBase64\":\"MEUCIA2suBgV5gZiyOjF7UtEjLDKaLHXZ2bl0qvJ9dRFfgWdAiEA23fWwZat4FGrLC\\/GxCMXnjObI0vWcy3wVyVcC5TMQdg=\"}",
+  "stderr": ""
+}

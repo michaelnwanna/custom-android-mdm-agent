@@ -1,5 +1,7 @@
 # Command Event HTTPS Ingestion
 
+The [authenticated Android journal acknowledgement](android-event-acknowledgement.md) now verifies deletion only after this endpoint's trusted matching reply, with real Keystore/Room/PostgreSQL rollback/retry and inbox retention. The endpoint and wire schema are unchanged; no production worker or MQTT ingestion is introduced. Earlier absent-deletion statements describe previous milestones.
+
 The [combined API 34 event replay](android-event-replay.md) now verifies this endpoint with the real Android Keystore and Room journal against PostgreSQL, including post-commit acknowledgement suppression/retry and disabled-device denial. The suppression is a test-only 503, not actual connection loss; no outbox deletion or production worker is introduced.
 
 Android follow-up: the [one-event upload component and strict acknowledgement decoder](android-event-upload.md) now have separate JVM TLS verification. They are not called by a Room upload worker; Android-to-backend Keystore runtime and outbox deletion remain unimplemented. Earlier absent-client statements below retain their historical scope.

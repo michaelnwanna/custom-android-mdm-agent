@@ -1,19 +1,19 @@
 # Android Event Upload Boundary
 
-Follow-up: the [combined API 34 replay lab](android-event-replay.md) now verifies actual Keystore/Room/HTTPS/PostgreSQL upload and original acknowledgement recovery after a post-commit test-only 503. Earlier JVM-only limits below describe the component milestone; deletion, real network disconnect, process-crash recovery and production worker integration remain unimplemented.
+Follow-up: the [combined API 34 replay lab](android-event-replay.md) verifies actual Keystore/Room/HTTPS/PostgreSQL upload and original acknowledgement recovery after a post-commit test-only 503. The [journal acknowledgement operation](android-event-acknowledgement.md) now also verifies transactional exact-event deletion, rollback and inbox retention. Earlier JVM-only/absent-deletion statements below describe the component milestone; transport-only `upload` remains nondeleting. Real network disconnect, process-crash recovery and production worker integration remain unverified.
 
 [CommandEventTransport](../android/agent/src/main/java/dev/fleet/agent/CommandEventTransport.kt) uploads one stored `CommandEventRow` using an existing enrolled `DeviceTlsIdentity` and explicitly supplied server root. [EventAcknowledgementDecoder](../android/agent/src/main/java/dev/fleet/agent/EventAcknowledgement.kt) accepts only a bounded, matching event acknowledgement. These are callable components, not a scheduled synchronization worker. There is no Room deletion or acknowledgement mutation in this milestone.
 
 ```mermaid
 flowchart LR
-    Journal[(Room pending event - existing API 34 verification)] -. caller integration planned .-> Upload[One-event uploader - JVM TLS verified]
+    Journal[(Room pending event)] --> Upload[One-event uploader - API 34 combined replay verified]
     Identity[Enrolled key manager and pinned server root] --> Upload
     Upload --> Request[Same-origin HTTPS POST / command-events]
     Request --> Server[Backend durable ingestion - separately TLS / PostgreSQL verified]
     Server --> Ack[Bounded strict acknowledgement decoder]
     Ack --> Match[Require expected device and event UUID]
     Match --> Result[Return validated acknowledgement - no database mutation]
-    Result -. combined verification planned .-> Delete[Room deletion - not implemented]
+    Result --> Delete[Journal caller: transactional exact-row deletion - API 34 verified]
 ```
 
 ## Transport Rules

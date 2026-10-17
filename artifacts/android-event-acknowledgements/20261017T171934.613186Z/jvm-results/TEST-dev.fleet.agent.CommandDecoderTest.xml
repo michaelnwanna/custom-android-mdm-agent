@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.CommandDecoderTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-17T17:20:40" hostname="Michaels-MacBook-Pro.local" time="0.848">
+  <properties/>
+  <testcase name="decodesTypedCommandWithoutTreatingItAsExecutionAcceptance" classname="dev.fleet.agent.CommandDecoderTest" time="0.408"/>
+  <testcase name="normalizesIdentifiersOffsetsAndExactJsonIntegers" classname="dev.fleet.agent.CommandDecoderTest" time="0.03"/>
+  <testcase name="sharedContractFixturesAgreeWithTheDeviceDecoder" classname="dev.fleet.agent.CommandDecoderTest" time="0.305"/>
+  <testcase name="rejectsMissingFieldsAndEveryPayloadMismatch" classname="dev.fleet.agent.CommandDecoderTest" time="0.063"/>
+  <testcase name="rejectsMalformedWireValuesAndWrongDevice" classname="dev.fleet.agent.CommandDecoderTest" time="0.039"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

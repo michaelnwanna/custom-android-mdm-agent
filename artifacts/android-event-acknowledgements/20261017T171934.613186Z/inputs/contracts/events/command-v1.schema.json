@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fleet:command:v1",
+  "title": "Fleet command v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "commandId", "deviceId", "sequence", "type", "payload", "issuedAt", "expiresAt", "correlationId"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "commandId": {"type": "string", "format": "uuid"},
+    "deviceId": {"type": "string", "format": "uuid"},
+    "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "type": {"enum": ["SET_POLICY", "INSTALL_RELEASE", "REQUEST_SYNC"]},
+    "payload": {"type": "object"},
+    "issuedAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "correlationId": {"type": "string", "format": "uuid"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"type": {"const": "SET_POLICY"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["policyId", "policyVersion"],
+            "properties": {
+              "policyId": {"type": "string", "format": "uuid"},
+              "policyVersion": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"type": {"const": "INSTALL_RELEASE"}}},
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["releaseId"],
+            "properties": {"releaseId": {"type": "string", "format": "uuid"}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"type": {"const": "REQUEST_SYNC"}}},
+      "then": {
+        "properties": {
+          "payload": {"type": "object", "additionalProperties": false, "maxProperties": 0}
+        }
+      }
+    }
+  ]
+}

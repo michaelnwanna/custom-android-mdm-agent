@@ -32,14 +32,16 @@ def public_configuration(configuration):
     if configuration.get("eventUpload") is True:
         result.update(eventUpload=True, eventCommandId=configuration["eventCommandId"],
                       eventCorrelationId=configuration["eventCorrelationId"])
+        if configuration.get("eventDeletion") is True:
+            result["eventDeletion"] = True
     return result
 
 
-def verify_event_proof(device, backend):
+def verify_event_proof(device, backend, deletion=False):
     acknowledgement = device.get("eventAcknowledgement")
     if (device.get("eventUploadVerified") is not True or backend.get("eventUploadVerified") is not True
             or type(backend.get("suppressedAcknowledgements")) is not int or backend["suppressedAcknowledgements"] != 1
-            or type(backend.get("recoveredAcknowledgements")) is not int or backend["recoveredAcknowledgements"] != 1
+            or type(backend.get("recoveredAcknowledgements")) is not int or backend["recoveredAcknowledgements"] != (3 if deletion else 1)
             or not isinstance(acknowledgement, dict)
             or set(acknowledgement) != {"schemaVersion", "deviceId", "eventId", "receivedAt"}
             or type(acknowledgement["schemaVersion"]) is not int or acknowledgement["schemaVersion"] != 1
@@ -51,6 +53,9 @@ def verify_event_proof(device, backend):
             raise ValueError("Invalid acknowledgement identifier")
     if datetime.datetime.fromisoformat(acknowledgement["receivedAt"].replace("Z", "+00:00")).tzinfo is None:
         raise ValueError("Invalid acknowledgement timestamp")
+    if deletion and (backend.get("eventDeletionVerified") is not True or not all(device.get(name) is True for name in
+            ("eventDeletionVerified", "eventDeleteRollbackVerified", "eventInboxRetained", "disabledEventRetained"))):
+        raise ValueError("Authenticated deletion/rollback/inbox/disabled retention proof missing")
 
 
 def verify_mqtt_proof(device, broker):
@@ -93,15 +98,19 @@ def main():
     parser.add_argument("--expected-avd", required=True)
     parser.add_argument("--with-mqtt", action="store_true", help="Also verify enrolled Keystore MQTT and test-host membership propagation")
     parser.add_argument("--with-events", action="store_true", help="Verify Room/Keystore event upload and post-commit acknowledgement recovery without deletion")
+    parser.add_argument("--acknowledge-events", action="store_true", help="Also verify authenticated deletion, rollback and retained inbox; requires --with-events")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
         parser.error("Only an explicitly named disposable emulator is supported")
     if args.with_events and args.with_mqtt:
         parser.error("Event replay and MQTT scenarios require separate isolated runs")
+    if args.acknowledge_events and not args.with_events:
+        parser.error("--acknowledge-events requires --with-events")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / ("artifacts/android-backend-events" if args.with_events else
+    output = ROOT / ("artifacts/android-backend-event-deletion" if args.acknowledge_events else
+                     "artifacts/android-backend-events" if args.with_events else
                      "artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
     output.mkdir(parents=True)
     inputs = output / "inputs"
@@ -203,6 +212,8 @@ def main():
             host_environment["FLEET_TEST_MQTT_DIRECTORY"] = str(mqtt_directory)
         if args.with_events:
             host_environment["FLEET_TEST_EVENT_UPLOAD"] = "1"
+        if args.acknowledge_events:
+            host_environment["FLEET_TEST_EVENT_ACK_DELETE"] = "1"
         executable = inputs / "tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll"
         host = subprocess.Popen(["dotnet", str(executable)], cwd=inputs / "backend", env=host_environment,
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -215,6 +226,8 @@ def main():
             raise RuntimeError("Integration host readiness was not explicit")
         if args.with_events and configuration.get("eventUpload") is not True:
             raise RuntimeError("Event integration host readiness missing")
+        if args.acknowledge_events and configuration.get("eventDeletion") is not True:
+            raise RuntimeError("Event deletion host readiness missing")
         configuration["namespace"] = "integration-" + str(uuid.uuid4())
         if args.with_mqtt:
             configuration["mqttProbe"] = "probe-" + str(uuid.uuid4())
@@ -261,7 +274,7 @@ def main():
             raise RuntimeError("mTLS access-control proof was not explicit")
         (output / "backend-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
         if args.with_events:
-            verify_event_proof(json.loads(proof), verification)
+            verify_event_proof(json.loads(proof), verification, args.acknowledge_events)
         if args.with_mqtt:
             broker_stdout, broker_stderr = broker.communicate(input="stop\n", timeout=30)
             if broker.returncode or broker_stderr:
@@ -319,10 +332,12 @@ def main():
                 "commands": records,
                 "mqttRequested": args.with_mqtt,
                 "eventUploadRequested": args.with_events,
+                "eventDeletionRequested": args.acknowledge_events,
                 "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
                 "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
                     for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
-                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL event upload: test-only 503 after durable commit, unchanged pending event across database reopen, original acknowledgement recovered on retry, event retained after 200 and disabled-device 401. No deletion, network disconnect/lost-packet simulation, process crash, production worker, MQTT ingestion or full fleet acceptance." if args.with_events else
+                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL authenticated event deletion: post-commit 503 preserves row, original acknowledgement recovery, forced delete rollback/reopen/retry, exact event deletion after valid reply, inbox retained across reopen/duplicate command, disabled upload preserves a new event. No actual network loss, process kill, worker or full fleet acceptance." if args.acknowledge_events else
+                    "Real API34 Keystore/Room/HTTPS/PostgreSQL event upload: test-only 503 after durable commit, unchanged pending event across database reopen, original acknowledgement recovered on retry, event retained after 200 and disabled-device 401. No deletion, network disconnect/lost-packet simulation, process crash, production worker, MQTT ingestion or full fleet acceptance." if args.with_events else
                     "Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else
                     "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof."),
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()

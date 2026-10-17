@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [authenticated acknowledgement operation](docs/android-event-acknowledgement.md) now uploads through the pinned enrolled HTTPS identity and transactionally deletes only the unchanged matching outbox event, retaining the command inbox. Five API 34 SQLite/TLS tests and a real Keystore/Room/HTTPS/PostgreSQL run verify rejection retention, delete rollback/retry, reopen/deduplication and concurrent uploads; the retention-only and six original journal scenarios still pass. All 37 JVM and 73 tooling tests pass. No worker, actual network-loss/process-crash proof or complete fleet workflow is introduced. The paragraphs below record earlier milestone boundaries; their absent-deletion statements describe those earlier snapshots.
+
 The [combined Android event replay lab](docs/android-event-replay.md) now verifies real API 34 Keystore/Room/HTTPS/PostgreSQL upload, a test-only 503 after commit, unchanged event recovery after Room reopen, original acknowledgement replay and disabled-device rejection. The run passes 37 JVM tests/build/lint and one instrumentation scenario; all 72 tooling tests pass. Events remain retained even after valid acknowledgement. This is not a real network-disconnect/process-crash test or an enabled deletion/worker path.
 
 The [Android event upload component](docs/android-event-upload.md) now posts one stored event using the enrolled HTTPS key manager and pinned root, then strictly validates the acknowledgement's device/event binding. Five new JVM tests bring the snapshot to 37 with APK build/lint passing; all 71 tooling tests pass. It is not wired to a scheduler or Room mutation; Android Keystore-to-backend event runtime and outbox deletion remain unverified.
@@ -77,6 +79,9 @@ flowchart TB
 		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
 		RecoveredAck --> EventHttp
 		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified; production worker planned] --> EventHttp
+		EventHttp --> AndroidEventUpload
+		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]
+		JournalAck --> ExactDelete[Transactional exact outbox deletion; retain inbox]
 	end
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]

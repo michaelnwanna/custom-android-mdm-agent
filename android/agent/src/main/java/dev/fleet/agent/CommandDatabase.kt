@@ -49,6 +49,12 @@ internal interface CommandJournalDao {
 
     @Query("SELECT * FROM command_event_outbox WHERE deviceId = :deviceId ORDER BY rowid LIMIT :limit")
     fun pendingEvents(deviceId: String, limit: Int): List<CommandEventRow>
+
+    @Query("SELECT * FROM command_event_outbox WHERE deviceId = :deviceId AND eventId = :eventId")
+    fun event(deviceId: String, eventId: String): CommandEventRow?
+
+    @Query("DELETE FROM command_event_outbox WHERE deviceId = :deviceId AND eventId = :eventId AND commandId = :commandId AND wireJson = :wireJson")
+    fun deleteUploadedEvent(deviceId: String, eventId: String, commandId: String, wireJson: String): Int
 }
 
 @Database(entities = [CommandInboxRow::class, CommandEventRow::class], version = 1, exportSchema = true)

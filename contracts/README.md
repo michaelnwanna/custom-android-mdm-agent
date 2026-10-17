@@ -1,5 +1,7 @@
 # Fleet Contracts
 
+The [authenticated journal acknowledgement follow-up](../docs/android-event-acknowledgement.md) now verifies exact-event outbox deletion after a pinned HTTPS matching reply, retaining the inbox for duplicate commands. Command/event/acknowledgement v1 contracts and Room schema v1 are unchanged. Earlier absent-deletion statements below refer to prior milestones; no production worker or full fleet acceptance is implied.
+
 The [combined event replay lab](../docs/android-event-replay.md) now verifies Android's event/acknowledgement consumers over actual Keystore HTTPS against PostgreSQL, with original acknowledgement recovery after a post-commit test-only 503. Shared wire versions are unchanged. Room rows remain retained; no deletion, real network-loss or production worker claim is implied.
 
 The [Android acknowledgement consumer](../docs/android-event-upload.md) now uses the shared event-ack v1 fixture, strict bounded UTF-8/JSON, exact numeric version and expected device/event binding. Its one-event HTTPS transport is JVM TLS verified; it does not delete Room rows or establish combined Android/backend runtime. Historical absent-consumer statements below describe earlier milestones.

@@ -48,6 +48,11 @@ class EnrollmentBackendInstrumentedTest {
         var mqttReceipt: JSONObject? = null
         var eventAcknowledgement: JSONObject? = null
         var retainedEventId: String? = null
+        val eventDeletion = configuration.optBoolean("eventDeletion", false)
+        var eventDeletionVerified = false
+        var eventDeleteRollbackVerified = false
+        var eventInboxRetained = false
+        var disabledEventRetained = false
         fun root(name: String): X509Certificate = CertificateFactory.getInstance("X.509")
             .generateCertificate(ByteArrayInputStream(Base64.getDecoder().decode(configuration.getString(name)))) as X509Certificate
         try {
@@ -95,7 +100,8 @@ class EnrollmentBackendInstrumentedTest {
                 val pending = journal.pendingEvents().single()
                 assertEquals(receipt.eventId.toString(), pending.eventId)
                 assertEquals(503, assertThrows(DeviceHttpException::class.java) {
-                    CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
+                    if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending)
+                    else CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
                 }.status)
                 assertEquals(pending, journal.pendingEvents().single())
                 journalDatabase.close()
@@ -112,6 +118,34 @@ class EnrollmentBackendInstrumentedTest {
                 eventAcknowledgement = JSONObject().put("schemaVersion", 1)
                     .put("deviceId", acknowledgement.deviceId.toString()).put("eventId", acknowledgement.eventId.toString())
                     .put("receivedAt", acknowledgement.receivedAt)
+                if (eventDeletion) {
+                    recoveredDatabase.openHelper.writableDatabase.execSQL("CREATE TRIGGER test_delete_failure AFTER DELETE ON command_event_outbox BEGIN SELECT RAISE(ABORT, 'forced delete failure'); END")
+                    assertThrows(Exception::class.java) {
+                        recoveredJournal.uploadAndAcknowledge(tlsIdentity, serverRoot, recoveredEvent)
+                    }
+                    assertEquals(listOf(pending), recoveredJournal.pendingEvents())
+                    recoveredDatabase.close()
+                    val retryDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                    database = retryDatabase
+                    val retryJournal = CommandJournal(retryDatabase, response.deviceId)
+                    assertEquals(listOf(pending), retryJournal.pendingEvents())
+                    eventDeleteRollbackVerified = true
+                    retryDatabase.openHelper.writableDatabase.execSQL("DROP TRIGGER test_delete_failure")
+                    assertEquals(acknowledgement, retryJournal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending))
+                    assertTrue(retryJournal.pendingEvents().isEmpty())
+                    retryDatabase.close()
+                    val finalDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                    database = finalDatabase
+                    val finalJournal = CommandJournal(finalDatabase, response.deviceId)
+                    assertTrue(finalJournal.pendingEvents().isEmpty())
+                    assertEquals(receipt.copy(duplicate = true), finalJournal.receive(command.toString().toByteArray()))
+                    assertTrue(finalJournal.pendingEvents().isEmpty())
+                    assertNotNull(finalDatabase.journal().command(receipt.commandId.toString()))
+                    eventInboxRetained = true
+                    eventDeletionVerified = true
+                    command.put("commandId", UUID.randomUUID().toString()).put("sequence", 2)
+                    finalJournal.receive(command.toString().toByteArray())
+                }
             }
             if (configuration.has("mqttPort")) {
                 val probe = configuration.getString("mqttProbe")
@@ -163,11 +197,14 @@ class EnrollmentBackendInstrumentedTest {
                 DeviceIdentityTransport.check(tlsIdentity, serverRoot)
             }.status)
             if (eventAcknowledgement != null) {
-                val retained = CommandJournal(requireNotNull(database), response.deviceId).pendingEvents().single()
+                val journal = CommandJournal(requireNotNull(database), response.deviceId)
+                val retained = journal.pendingEvents().single()
                 assertEquals(401, assertThrows(DeviceHttpException::class.java) {
-                    CommandEventTransport.upload(tlsIdentity, serverRoot, retained)
+                    if (eventDeletion) journal.uploadAndAcknowledge(tlsIdentity, serverRoot, retained)
+                    else CommandEventTransport.upload(tlsIdentity, serverRoot, retained)
                 }.status)
-                assertEquals(retained, CommandJournal(requireNotNull(database), response.deviceId).pendingEvents().single())
+                assertEquals(retained, journal.pendingEvents().single())
+                disabledEventRetained = true
             }
             mqtt?.let { client ->
                 rejectedSubscription(client, "fleet/devices/${response.deviceId}/commands")
@@ -198,6 +235,8 @@ class EnrollmentBackendInstrumentedTest {
                 .put("mqttJournalVerified", mqttReceipt != null).put("mqttReceipt", mqttReceipt)
                 .put("eventUploadVerified", eventAcknowledgement != null).put("eventAcknowledgement", eventAcknowledgement)
                 .put("retainedEventId", retainedEventId)
+                .put("eventDeletionVerified", eventDeletionVerified).put("eventDeleteRollbackVerified", eventDeleteRollbackVerified)
+                .put("eventInboxRetained", eventInboxRetained).put("disabledEventRetained", disabledEventRetained)
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())

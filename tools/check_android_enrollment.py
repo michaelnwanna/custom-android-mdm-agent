@@ -32,15 +32,19 @@ def main():
     parser.add_argument("--serial")
     parser.add_argument("--expected-avd")
     parser.add_argument("--command-journal", action="store_true", help="Run six isolated SQLite journal scenarios on the explicit emulator")
+    parser.add_argument("--event-acknowledgements", action="store_true", help="Run five isolated SQLite/TLS acknowledgement deletion scenarios")
     args = parser.parse_args()
     if bool(args.serial) != bool(args.expected_avd):
         parser.error("--serial and --expected-avd must be supplied together")
     if args.serial and not args.serial.startswith("emulator-"):
         parser.error("Only an explicitly named disposable emulator is supported")
-    if args.command_journal and not args.serial:
-        parser.error("--command-journal requires an explicit emulator and expected AVD")
+    if (args.command_journal or args.event_acknowledgements) and not args.serial:
+        parser.error("Journal scenarios require an explicit emulator and expected AVD")
+    if args.command_journal and args.event_acknowledgements:
+        parser.error("Choose one isolated journal suite")
     started = datetime.datetime.now(datetime.timezone.utc)
-    output = ROOT / ("artifacts/android-command-journal" if args.command_journal else "artifacts/android-enrollment") / started.strftime("%Y%m%dT%H%M%S.%fZ")
+    output = ROOT / ("artifacts/android-event-acknowledgements" if args.event_acknowledgements else
+                     "artifacts/android-command-journal" if args.command_journal else "artifacts/android-enrollment") / started.strftime("%Y%m%dT%H%M%S.%fZ")
     output.mkdir(parents=True)
     hashes = {}
     sources = [*list((ROOT / "android").rglob("*")), *(ROOT / name for name in COMMAND_CONTRACT_INPUTS)]
@@ -118,11 +122,12 @@ def main():
             command([*adb, "shell", "dpm", "list-owners"], 30)
             for apk in apks:
                 command([*adb, "install", "-r", "-t", apk], 120)
-            test_class = "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest"
+            test_class = ("EventAcknowledgementInstrumentedTest" if args.event_acknowledgements else
+                          "CommandJournalInstrumentedTest" if args.command_journal else "EnrollmentIdentityInstrumentedTest")
             result = command([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
                               "dev.fleet.agent." + test_class,
                               "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], 120)
-            if not instrumentation_passed(result, 6 if args.command_journal else 1):
+            if not instrumentation_passed(result, 5 if args.event_acknowledgements else 6 if args.command_journal else 1):
                 raise RuntimeError("Instrumentation did not explicitly pass")
         passed = True
     except Exception as failure:
@@ -133,7 +138,9 @@ def main():
                 "inputSha256": hashes, "apkSha256": apk_hashes, "jvmCounters": counters, "serial": args.serial,
                 "expectedAvd": args.expected_avd,
                 "commandJournalRequested": args.command_journal,
-                "scope": "Android JVM crypto/parser/loopback enrollment/mTLS and command/event encoding, APK build/lint; optional explicit emulator: six isolated Room receipt/outbox scenarios when commandJournalRequested, otherwise one Keystore scenario. No live command intake, execution, acknowledgement deletion, broker/backend runtime, process-kill or power-loss proof.",
+                "eventAcknowledgementsRequested": args.event_acknowledgements,
+                "scope": ("Five real SQLite/software-key loopback mTLS acknowledgement deletion scenarios: exact-row deletion, retained inbox/dedup after reopen, rejected replies preserve rows, delete failure rollback/retry, concurrent duplicate uploads and changed in-flight row preservation. No backend, real Keystore, worker, process kill or power loss." if args.event_acknowledgements else
+                    "Android JVM crypto/parser/loopback enrollment/mTLS and command/event encoding, APK build/lint; optional explicit emulator: six isolated Room receipt/outbox scenarios when commandJournalRequested, otherwise one Keystore scenario. No live command intake, execution, acknowledgement deletion, broker/backend runtime, process-kill or power-loss proof."),
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}

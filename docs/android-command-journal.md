@@ -1,5 +1,7 @@
 # Android Command Receipt Journal
 
+The [authenticated acknowledgement follow-up](android-event-acknowledgement.md) now adds `uploadAndAcknowledge`: it performs the authenticated upload itself, then transactionally deletes only the unchanged matching event. The inbox remains for duplicate-command suppression. Five API 34 SQLite/TLS tests and combined real Keystore/PostgreSQL evidence verify this path; the [six original scenarios](../artifacts/android-command-journal/20261017T173404.745228Z/replay.html) still pass. Absent-deletion/integration statements below describe the original receipt milestone; `pendingEvents` itself remains read-only and there is still no production worker.
+
 The [authenticated MQTT follow-up](android-mqtt-enrollment.md#durable-receipt-follow-up) now verifies the journal in a test-only enrolled-key callback: two identical command deliveries commit one event and recover it after database reopen. `receiveFromMqtt` checks the exact device command topic and forbids retained delivery before calling `receive`; it relies on the caller's authenticated connection and is not itself an authentication API. The [new six-scenario replay](../artifacts/android-command-journal/20261017T111337.575634Z/replay.html) adds rejection tests for wrong/wildcard topics and retained delivery. Earlier statements below about absent test wiring describe the original isolated journal milestone. No production service, event publishing, execution or acknowledgement deletion is implemented.
 
 The internal [CommandJournal](../android/agent/src/main/java/dev/fleet/agent/CommandJournal.kt) records a validated command and its initial command-state event in a single Room transaction. [CommandDatabase](../android/agent/src/main/java/dev/fleet/agent/CommandDatabase.kt) uses Room 2.6.1 with a pinned KSP compiler and an exported version-1 schema. This is a local receipt boundary, not a command execution engine or live fleet synchronization service.
@@ -13,7 +15,8 @@ flowchart LR
 		Retry[Identical command retry] --> Transaction
 		Transaction --> Receipt[Stable stored receipt after commit]
 		Outbox --> Read[Bounded device-scoped reads - no deletion]
-		Read -. planned .-> Publish[Authenticated publishing and durable server acknowledgement]
+		Read --> Publish[Caller-driven authenticated upload and matching acknowledgement]
+		Publish --> Delete[Transactional exact-row deletion; retain inbox - API 34 verified]
 ```
 
 ## Transaction Rules
