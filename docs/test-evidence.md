@@ -1,5 +1,9 @@
 # Recorded Tests
 
+## Combined Android Event Replay
+
+The [final replay](../artifacts/android-backend-events/20261017T165647.089929Z/replay.html) passes 37 JVM tests, build/lint and one real API 34 Keystore/Room/HTTPS/PostgreSQL instrumentation scenario. Independent [backend proof](../artifacts/android-backend-events/20261017T165647.089929Z/backend-verification.json) verifies one committed original event, one suppressed acknowledgement and one exact original recovery after retry; Android checks unchanged rows after post-commit 503, Room reopen, valid 200 and disabled 401. Zero test schemas remain and PostgreSQL stopped; all 72 tooling tests pass. The [first pass](../artifacts/android-backend-events/20261017T165408.405390Z/replay.html) predates explicit event-scope metadata. See [scope and reproduction](android-event-replay.md): no deletion, actual network disconnect, process crash, worker or full-system acceptance.
+
 ## Android Event Upload Component
 
 The [snapshot](../artifacts/android-enrollment/20261017T162936.002009Z/replay.html) passes 37 JVM tests, APK build/lint and instrumentation APK assembly with private Java 17. Five new tests cover shared acknowledgement fixtures, strict parser/device/event binding and real software-key loopback mTLS event upload, original/duplicate replies, trust/hostname failures, oversized chunked replies, media/encoding/errors and invalid local rows/origins. All 71 tooling tests pass. Both Android runners retain acknowledgement inputs and require at least 37 JVM tests. See [the component boundary](android-event-upload.md): no emulator/PostgreSQL runtime, Android Keystore upload, scheduled worker, journal deletion or response-loss/crash recovery is established.

@@ -29,7 +29,28 @@ def public_configuration(configuration):
             "bootstrap": {name: bootstrap[name] for name in ("schemaVersion", "endpoint", "pendingEnrollmentId")}}
     if "mqttPort" in configuration:
         result.update(mqttPort=configuration["mqttPort"], mqttProbe=configuration["mqttProbe"])
+    if configuration.get("eventUpload") is True:
+        result.update(eventUpload=True, eventCommandId=configuration["eventCommandId"],
+                      eventCorrelationId=configuration["eventCorrelationId"])
     return result
+
+
+def verify_event_proof(device, backend):
+    acknowledgement = device.get("eventAcknowledgement")
+    if (device.get("eventUploadVerified") is not True or backend.get("eventUploadVerified") is not True
+            or type(backend.get("suppressedAcknowledgements")) is not int or backend["suppressedAcknowledgements"] != 1
+            or type(backend.get("recoveredAcknowledgements")) is not int or backend["recoveredAcknowledgements"] != 1
+            or not isinstance(acknowledgement, dict)
+            or set(acknowledgement) != {"schemaVersion", "deviceId", "eventId", "receivedAt"}
+            or type(acknowledgement["schemaVersion"]) is not int or acknowledgement["schemaVersion"] != 1
+            or acknowledgement["deviceId"] != device["deviceId"]
+            or acknowledgement["eventId"] != device.get("retainedEventId")):
+        raise ValueError("Independent committed event/recovered acknowledgement proof missing")
+    for name in ("deviceId", "eventId"):
+        if str(uuid.UUID(acknowledgement[name])) != acknowledgement[name]:
+            raise ValueError("Invalid acknowledgement identifier")
+    if datetime.datetime.fromisoformat(acknowledgement["receivedAt"].replace("Z", "+00:00")).tzinfo is None:
+        raise ValueError("Invalid acknowledgement timestamp")
 
 
 def verify_mqtt_proof(device, broker):
@@ -71,13 +92,17 @@ def main():
     parser.add_argument("--serial", required=True)
     parser.add_argument("--expected-avd", required=True)
     parser.add_argument("--with-mqtt", action="store_true", help="Also verify enrolled Keystore MQTT and test-host membership propagation")
+    parser.add_argument("--with-events", action="store_true", help="Verify Room/Keystore event upload and post-commit acknowledgement recovery without deletion")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
         parser.error("Only an explicitly named disposable emulator is supported")
+    if args.with_events and args.with_mqtt:
+        parser.error("Event replay and MQTT scenarios require separate isolated runs")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / ("artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
+    output = ROOT / ("artifacts/android-backend-events" if args.with_events else
+                     "artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
     output.mkdir(parents=True)
     inputs = output / "inputs"
     hashes = {}
@@ -176,6 +201,8 @@ def main():
             f"Host={socket_directory};Database=postgres;Username=fleet_lab;Timeout=10;Command Timeout=30")
         if args.with_mqtt:
             host_environment["FLEET_TEST_MQTT_DIRECTORY"] = str(mqtt_directory)
+        if args.with_events:
+            host_environment["FLEET_TEST_EVENT_UPLOAD"] = "1"
         executable = inputs / "tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll"
         host = subprocess.Popen(["dotnet", str(executable)], cwd=inputs / "backend", env=host_environment,
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -186,6 +213,8 @@ def main():
             configuration = json.loads(host.stdout.readline())
         if configuration.get("stage") != "ready":
             raise RuntimeError("Integration host readiness was not explicit")
+        if args.with_events and configuration.get("eventUpload") is not True:
+            raise RuntimeError("Event integration host readiness missing")
         configuration["namespace"] = "integration-" + str(uuid.uuid4())
         if args.with_mqtt:
             configuration["mqttProbe"] = "probe-" + str(uuid.uuid4())
@@ -231,6 +260,8 @@ def main():
                    "alternateCertificateRejected", "forwardedCertificateRejected")):
             raise RuntimeError("mTLS access-control proof was not explicit")
         (output / "backend-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
+        if args.with_events:
+            verify_event_proof(json.loads(proof), verification)
         if args.with_mqtt:
             broker_stdout, broker_stderr = broker.communicate(input="stop\n", timeout=30)
             if broker.returncode or broker_stderr:
@@ -287,10 +318,12 @@ def main():
                 "inputSha256": hashes, "apkSha256": apks, "jvmCounters": jvm,
                 "commands": records,
                 "mqttRequested": args.with_mqtt,
+                "eventUploadRequested": args.with_events,
                 "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
                 "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
                     for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
-                "scope": ("Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else
+                "scope": ("Real API34 Keystore/Room/HTTPS/PostgreSQL event upload: test-only 503 after durable commit, unchanged pending event across database reopen, original acknowledgement recovered on retry, event retained after 200 and disabled-device 401. No deletion, network disconnect/lost-packet simulation, process crash, production worker, MQTT ingestion or full fleet acceptance." if args.with_events else
+                    "Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else
                     "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof."),
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()

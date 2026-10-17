@@ -46,6 +46,8 @@ class EnrollmentBackendInstrumentedTest {
         val databaseName = "test-mqtt-command-${UUID.randomUUID()}.db"
         var database: CommandDatabase? = null
         var mqttReceipt: JSONObject? = null
+        var eventAcknowledgement: JSONObject? = null
+        var retainedEventId: String? = null
         fun root(name: String): X509Certificate = CertificateFactory.getInstance("X.509")
             .generateCertificate(ByteArrayInputStream(Base64.getDecoder().decode(configuration.getString(name)))) as X509Certificate
         try {
@@ -78,6 +80,39 @@ class EnrollmentBackendInstrumentedTest {
             }
             assertEquals(409, conflict.status)
             val tlsIdentity = reopened.tlsIdentity(serverRoot, deviceRoot, Instant.now())
+            if (configuration.optBoolean("eventUpload", false)) {
+                val journalDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                database = journalDatabase
+                val now = Instant.now()
+                val command = JSONObject().put("schemaVersion", 1)
+                    .put("commandId", configuration.getString("eventCommandId"))
+                    .put("correlationId", configuration.getString("eventCorrelationId"))
+                    .put("deviceId", response.deviceId.toString()).put("sequence", 1)
+                    .put("type", "REQUEST_SYNC").put("payload", JSONObject())
+                    .put("issuedAt", now.toString()).put("expiresAt", now.plusSeconds(3600).toString())
+                val journal = CommandJournal(journalDatabase, response.deviceId)
+                val receipt = journal.receive(command.toString().toByteArray())
+                val pending = journal.pendingEvents().single()
+                assertEquals(receipt.eventId.toString(), pending.eventId)
+                assertEquals(503, assertThrows(DeviceHttpException::class.java) {
+                    CommandEventTransport.upload(tlsIdentity, serverRoot, pending)
+                }.status)
+                assertEquals(pending, journal.pendingEvents().single())
+                journalDatabase.close()
+                val recoveredDatabase = Room.databaseBuilder(context, CommandDatabase::class.java, databaseName).build()
+                database = recoveredDatabase
+                val recoveredJournal = CommandJournal(recoveredDatabase, response.deviceId)
+                val recoveredEvent = recoveredJournal.pendingEvents().single()
+                assertEquals(pending, recoveredEvent)
+                val acknowledgement = CommandEventTransport.upload(tlsIdentity, serverRoot, recoveredEvent)
+                assertEquals(receipt.eventId, acknowledgement.eventId)
+                assertEquals(response.deviceId, acknowledgement.deviceId)
+                assertEquals(pending, recoveredJournal.pendingEvents().single())
+                retainedEventId = pending.eventId
+                eventAcknowledgement = JSONObject().put("schemaVersion", 1)
+                    .put("deviceId", acknowledgement.deviceId.toString()).put("eventId", acknowledgement.eventId.toString())
+                    .put("receivedAt", acknowledgement.receivedAt)
+            }
             if (configuration.has("mqttPort")) {
                 val probe = configuration.getString("mqttProbe")
                 require(probe.matches(Regex("probe-[0-9a-f-]{36}")))
@@ -127,6 +162,13 @@ class EnrollmentBackendInstrumentedTest {
             assertEquals(401, assertThrows(DeviceHttpException::class.java) {
                 DeviceIdentityTransport.check(tlsIdentity, serverRoot)
             }.status)
+            if (eventAcknowledgement != null) {
+                val retained = CommandJournal(requireNotNull(database), response.deviceId).pendingEvents().single()
+                assertEquals(401, assertThrows(DeviceHttpException::class.java) {
+                    CommandEventTransport.upload(tlsIdentity, serverRoot, retained)
+                }.status)
+                assertEquals(retained, CommandJournal(requireNotNull(database), response.deviceId).pendingEvents().single())
+            }
             mqtt?.let { client ->
                 rejectedSubscription(client, "fleet/devices/${response.deviceId}/commands")
                 client.disconnect().get(10, TimeUnit.SECONDS)
@@ -154,6 +196,8 @@ class EnrollmentBackendInstrumentedTest {
                 .put("mqttAuthenticated", configuration.has("mqttPort"))
                 .put("mqttDisabledRejected", configuration.has("mqttPort"))
                 .put("mqttJournalVerified", mqttReceipt != null).put("mqttReceipt", mqttReceipt)
+                .put("eventUploadVerified", eventAcknowledgement != null).put("eventAcknowledgement", eventAcknowledgement)
+                .put("retainedEventId", retainedEventId)
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())

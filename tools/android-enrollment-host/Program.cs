@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using FleetManagement.Api;
 using FleetManagement.Enrollment;
+using FleetManagement.Messaging;
 using FleetManagement.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -69,7 +70,12 @@ static async Task<int> Run()
         var claims = new PostgresEnrollmentClaims(factory, clock);
         var signer = new LabLedgerEnrollmentSigner(ledger, deviceRoot, clock, TimeSpan.FromDays(1));
         var coordinator = new EnrollmentSigningCoordinator(claims, signer, deviceRoot, TimeSpan.FromDays(2));
-        var deviceAccess = new DisableAfterFirstIdentity(factory, deviceRoot, clock, mqttMembership);
+        var eventMode = Environment.GetEnvironmentVariable("FLEET_TEST_EVENT_UPLOAD") == "1";
+        var eventCommandId = Guid.NewGuid();
+        var eventCorrelationId = Guid.NewGuid();
+        var events = new SuppressFirstEventAcknowledgement(new PostgresCommandEvents(factory, clock));
+        var accessor = new Microsoft.AspNetCore.Http.HttpContextAccessor();
+        var deviceAccess = new DisableAfterFirstIdentity(factory, deviceRoot, clock, mqttMembership, accessor, eventMode);
         using var operatorKey = RSA.Create(2048);
         var operatorSecurityKey = new RsaSecurityKey(operatorKey);
         await using var app = FleetApi.Build([], builder =>
@@ -94,10 +100,14 @@ static async Task<int> Run()
                 });
             }));
             IEnrollmentRedemption redemption = new EnrollmentRedemptionService(claims, coordinator, digestKey);
+            if (eventMode)
+                redemption = new EventEnrollmentRedemption(redemption, new PostgresCommandEvents(factory, clock), eventCommandId, eventCorrelationId);
             builder.Services.AddSingleton<IEnrollmentRedemption>(mqttMembership is null ? redemption :
                 new MqttEnrollmentRedemption(redemption, mqttMembership));
             builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(new PendingEnrollmentProvisioner(factory, clock, digestKey));
             builder.Services.AddSingleton<IDeviceCertificateIdentity>(deviceAccess);
+            builder.Services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor>(accessor);
+            if (eventMode) builder.Services.AddSingleton<ICommandEventIngestion>(events);
             builder.Services.Configure<JwtBearerOptions>(AdministratorAuthentication.Scheme, options =>
             {
                 options.TokenValidationParameters.ValidIssuer = "https://identity.example.test";
@@ -133,7 +143,8 @@ static async Task<int> Run()
         var issued = (await provisioned.Content.ReadFromJsonAsync<PendingEnrollmentProvisioned>())!;
         Console.WriteLine(JsonSerializer.Serialize(new
         {
-            schemaVersion = 1, stage = "ready", serverRootDer = Convert.ToBase64String(serverRoot.RawData),
+            schemaVersion = 1, stage = "ready", eventUpload = eventMode,
+            eventCommandId, eventCorrelationId, serverRootDer = Convert.ToBase64String(serverRoot.RawData),
             deviceRootDer = Convert.ToBase64String(deviceRoot.RawData), bootstrap = new
             {
                 schemaVersion = 1, endpoint = $"https://10.0.2.2:{address.Port}/api/v1/enrollments",
@@ -155,6 +166,21 @@ static async Task<int> Run()
         EnrollmentCertificateVerifier.Verify(response.DeviceId, verified.SubjectPublicKeyInfoBase64,
             response.CertificateDer, response.IntermediateCertificatesDer, deviceRoot, clock.GetUtcNow(), TimeSpan.FromDays(2));
         Ensure(fields.GetProperty("deviceId").GetGuid() == response.DeviceId);
+        if (eventMode)
+        {
+            Ensure(fields.GetProperty("eventUploadVerified").GetBoolean());
+            Ensure(events.Suppressed == 1 && events.Recovered == 1 && events.Original is not null);
+            var acknowledgement = fields.GetProperty("eventAcknowledgement");
+            using var original = JsonDocument.Parse(events.Original!);
+            Ensure(acknowledgement.GetProperty("eventId").GetGuid() == original.RootElement.GetProperty("eventId").GetGuid());
+            Ensure(acknowledgement.GetProperty("deviceId").GetGuid() == response.DeviceId);
+            Ensure(acknowledgement.GetProperty("receivedAt").GetString() == original.RootElement.GetProperty("receivedAt").GetString());
+            await using var eventContext = factory.CreateDbContext();
+            var storedEvent = await eventContext.StoredCommandEvents.SingleAsync();
+            Ensure(storedEvent.CommandId == eventCommandId && storedEvent.CorrelationId == eventCorrelationId);
+            Ensure(storedEvent.AcknowledgementJson == events.Original);
+            Ensure(fields.GetProperty("retainedEventId").GetGuid() == storedEvent.EventId);
+        }
         using var leaf = X509CertificateLoader.LoadCertificate(Convert.FromBase64String(response.CertificateDer));
         using var devicePublicKey = leaf.GetECDsaPublicKey()!;
         Ensure(devicePublicKey.VerifyData(Convert.FromBase64String(fields.GetProperty("challengeBase64").GetString()!),
@@ -179,7 +205,9 @@ static async Task<int> Run()
         Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, stage = "verified", deviceId = response.DeviceId,
             pendingEnrollmentId = issued.PendingEnrollmentId, issuedCertificates = 1, provisioningAudits = 1,
             publicKeyProof = true, exactResponseReplay = true, mtlsAuthenticated = true,
-            disabledRejected = true, alternateCertificateRejected = true, forwardedCertificateRejected = true }));
+            disabledRejected = true, alternateCertificateRejected = true, forwardedCertificateRejected = true,
+            eventUploadVerified = eventMode, suppressedAcknowledgements = events.Suppressed,
+            recoveredAcknowledgements = events.Recovered }));
         return 0;
     }
     catch (Exception)
@@ -237,7 +265,7 @@ sealed class TlsDiagnosticLoggerProvider : ILoggerProvider
 }
 
 sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 root, TimeProvider clock,
-    MqttMembershipBridge? mqttMembership) : IDeviceCertificateIdentity
+    MqttMembershipBridge? mqttMembership, Microsoft.AspNetCore.Http.IHttpContextAccessor accessor, bool eventMode) : IDeviceCertificateIdentity
 {
     private readonly DeviceCertificateIdentity identity = new(factory, root, clock);
     public int Accepted { get; private set; }
@@ -252,6 +280,8 @@ sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 
             Denied++;
             return null;
         }
+        if (eventMode && accessor.HttpContext?.Request.Path == "/api/v1/device/command-events")
+            return deviceId;
         Accepted++;
         var now = clock.GetUtcNow();
         var request = new CertificateRequest(new X500DistinguishedName("CN=Unregistered alternate certificate"),
@@ -277,6 +307,41 @@ sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 
     private static void EnsureValid(bool condition)
     {
         if (!condition) throw new InvalidOperationException("Alternate certificate was not rejected.");
+    }
+}
+
+sealed class EventEnrollmentRedemption(IEnrollmentRedemption inner, PostgresCommandEvents events,
+    Guid commandId, Guid correlationId) : IEnrollmentRedemption
+{
+    public async Task<EnrollmentRedemption> RedeemAsync(EnrollmentHttpRequest request, string token, CancellationToken cancellationToken)
+    {
+        var result = await inner.RedeemAsync(request, token, cancellationToken);
+        if (result.Response is not null)
+            await events.RegisterOwnershipAsync(commandId, result.Response.DeviceId, correlationId, cancellationToken);
+        return result;
+    }
+}
+
+sealed class SuppressFirstEventAcknowledgement(PostgresCommandEvents inner) : ICommandEventIngestion
+{
+    public int Suppressed { get; private set; }
+    public int Recovered { get; private set; }
+    public string? Original { get; private set; }
+    public async Task<DurableCommandEventReceipt> IngestAsync(ReadOnlyMemory<byte> body, Guid authenticatedDeviceId,
+        CancellationToken cancellationToken)
+    {
+        var receipt = await inner.IngestAsync(body, authenticatedDeviceId, cancellationToken);
+        if (Original is null)
+        {
+            if (receipt.Duplicate) throw new InvalidOperationException("Expected original event.");
+            Original = receipt.AcknowledgementJson;
+            Suppressed++;
+            throw new IOException("Test-only acknowledgement suppression after commit.");
+        }
+        if (!receipt.Duplicate || receipt.AcknowledgementJson != Original)
+            throw new InvalidOperationException("Expected original acknowledgement recovery.");
+        Recovered++;
+        return receipt;
     }
 }
 

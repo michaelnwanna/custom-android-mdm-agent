@@ -1,5 +1,7 @@
 # Android Event Upload Boundary
 
+Follow-up: the [combined API 34 replay lab](android-event-replay.md) now verifies actual Keystore/Room/HTTPS/PostgreSQL upload and original acknowledgement recovery after a post-commit test-only 503. Earlier JVM-only limits below describe the component milestone; deletion, real network disconnect, process-crash recovery and production worker integration remain unimplemented.
+
 [CommandEventTransport](../android/agent/src/main/java/dev/fleet/agent/CommandEventTransport.kt) uploads one stored `CommandEventRow` using an existing enrolled `DeviceTlsIdentity` and explicitly supplied server root. [EventAcknowledgementDecoder](../android/agent/src/main/java/dev/fleet/agent/EventAcknowledgement.kt) accepts only a bounded, matching event acknowledgement. These are callable components, not a scheduled synchronization worker. There is no Room deletion or acknowledgement mutation in this milestone.
 
 ```mermaid

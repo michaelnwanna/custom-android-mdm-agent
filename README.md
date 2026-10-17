@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [combined Android event replay lab](docs/android-event-replay.md) now verifies real API 34 Keystore/Room/HTTPS/PostgreSQL upload, a test-only 503 after commit, unchanged event recovery after Room reopen, original acknowledgement replay and disabled-device rejection. The run passes 37 JVM tests/build/lint and one instrumentation scenario; all 72 tooling tests pass. Events remain retained even after valid acknowledgement. This is not a real network-disconnect/process-crash test or an enabled deletion/worker path.
+
 The [Android event upload component](docs/android-event-upload.md) now posts one stored event using the enrolled HTTPS key manager and pinned root, then strictly validates the acknowledgement's device/event binding. Five new JVM tests bring the snapshot to 37 with APK build/lint passing; all 71 tooling tests pass. It is not wired to a scheduler or Room mutation; Android Keystore-to-backend event runtime and outbox deletion remain unverified.
 
 The [certificate-authenticated event HTTPS endpoint](docs/command-event-http.md) now accepts one bounded command-state event and delivers its exact committed acknowledgement. Real loopback Kestrel TLS/PostgreSQL tests verify enrolled certificate membership, duplicate recovery, rollback/retry and disabled access. Final verification passes 158 component tests, 15 PostgreSQL tests, ten contract checks and 70 tooling tests. Android upload/acknowledgement validation and outbox deletion remain planned; this is not MQTT ingestion or full fleet acceptance.
@@ -74,7 +76,7 @@ flowchart TB
 		EventDecode[Strict device-bound event decoder] --> EventStore
 		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
 		RecoveredAck --> EventHttp
-		AndroidEventUpload[Android uploader and matching ack decoder - JVM TLS verified; caller integration planned] --> EventHttp
+		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified; production worker planned] --> EventHttp
 	end
 
 	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]
