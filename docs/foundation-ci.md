@@ -8,6 +8,8 @@ No repository secrets or private lab keys are required. Process tests generate t
 
 ## Verification Boundary
 
+The [enrolled Android MQTT follow-up](android-mqtt-enrollment.md) adds three JVM TLS/client checks, host bridge compilation and evidence-proof validation, plus a probe-wrapper unit test in the independent broker job. Its combined emulator/PostgreSQL test remains a local gate invoked with `--with-mqtt`, not hosted runtime coverage. The preceding `441b571` workflow passed all three jobs in [39019839922](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39019839922).
+
 The dedicated `mqtt-device` job installs the pinned MQTT lab requirements and runs the [isolated device MQTT snapshot checks](mqtt-device-lab.md) against actual ephemeral loopback TLS listeners and software certificates. It retains its own evidence for thirty days, even on failure. This job does not connect enrolled Android or PostgreSQL membership, and a local pass is not a hosted result. The preceding HTTPS milestone `e5a8fa9` passed its then-existing two jobs in [39018323220](https://github.com/michaelnwanna/custom-android-mdm-agent/actions/runs/39018323220); that run did not contain this new MQTT job.
 
 The independent Android job uses Java 17 and Android platform/build-tools 34, runs the evidence-parser test and snapshot-based JVM/build/lint checks, and retains reports for thirty days. It also assembles the instrumentation APK but does not run it: API 34 Keystore execution is separately recorded local evidence. The client implementation and remaining integration gaps are described in the [Android runbook](android-enrollment.md). Hosted coverage is established only by the actual Actions result, not local execution of its command.

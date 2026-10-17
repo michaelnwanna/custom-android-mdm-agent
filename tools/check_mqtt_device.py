@@ -17,6 +17,7 @@ SOURCES = (
     "tools/mqtt_device_policy.py", "tools/mqtt_device_broker.py", "tools/mqtt-lab-requirements.txt",
     "tools/test_mqtt_device_policy.py", "tools/test_mqtt_device_broker.py", "tools/test_mqtt_device_wire.py",
     "tools/check_mqtt_device.py",
+    "tools/mqtt_android_probe.py", "tools/test_mqtt_device_probe.py",
 )
 
 
@@ -28,7 +29,7 @@ def worker(filename):
                 "skipped": len(result.skipped), "unexpectedSuccesses": len(result.unexpectedSuccesses),
                 "expectedFailures": len(result.expectedFailures)}
     filename.write_text(json.dumps(counters, indent=2) + "\n")
-    return 0 if result.wasSuccessful() and result.testsRun >= 13 and not result.skipped and not result.expectedFailures else 1
+    return 0 if result.wasSuccessful() and result.testsRun >= 14 and not result.skipped and not result.expectedFailures else 1
 
 
 def main():
@@ -56,7 +57,7 @@ def main():
         stderr = (error.stderr or b"").decode(errors="replace") + "\nMQTT lab timed out after 120 seconds"
     counters_file = output / "counters.json"
     counters = json.loads(counters_file.read_text()) if counters_file.exists() else None
-    passed = (returncode == 0 and counters is not None and counters["tests"] >= 13
+    passed = (returncode == 0 and counters is not None and counters["tests"] >= 14
               and all(value == 0 for key, value in counters.items() if key != "tests"))
     (output / "command.json").write_text(json.dumps({"argv": command, "returncode": returncode,
                                                    "stdout": stdout, "stderr": stderr}, indent=2) + "\n")

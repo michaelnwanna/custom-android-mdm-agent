@@ -19,6 +19,9 @@ public sealed class LabLedgerEnrollmentSignerTests
         Assert.Equal(EnrollmentSignerState.Issued, lookup.State);
         Assert.Equal(first.CertificateDer, lookup.Certificate!.CertificateDer);
         Assert.Equal(first.CertificateDer, (await reopened.IssueAsync(fixture.Request, default)).CertificateDer);
+        using var leaf = X509CertificateLoader.LoadCertificate(Convert.FromBase64String(first.CertificateDer));
+        Assert.Single(leaf.Extensions.OfType<X509SubjectKeyIdentifierExtension>());
+        Assert.Single(leaf.Extensions.OfType<X509AuthorityKeyIdentifierExtension>());
         var verified = EnrollmentCertificateVerifier.Verify(fixture.Request.DeviceId,
             fixture.Request.SubjectPublicKeyInfoBase64, first.CertificateDer, [], fixture.Root,
             fixture.Clock.GetUtcNow(), TimeSpan.FromDays(2));

@@ -1,5 +1,7 @@
 # Device HTTPS Identity Lab
 
+The subsequent [combined Android MQTT run](android-mqtt-enrollment.md) now verifies the enrolled Keystore key and committed disable through a test-only membership bridge. This narrows older MQTT exclusions below without establishing production broker state synchronization or full revocation.
+
 Follow-up: a separate [host-side MQTT mTLS/ACL lab](mqtt-device-lab.md) verifies software-key clients and explicit local certificate membership. It does not yet use this Android Keystore identity or PostgreSQL enabled state; MQTT integration and lifecycle limits below remain open for the combined system.
 
 The API implements `GET /api/v1/device/identity` using a separate device-certificate authentication scheme. Android uses its existing enrolled Keystore key, not a bootstrap token, to authenticate the TLS connection. This is a read-only identity diagnostic, not command delivery, MQTT authentication or full fleet management.

@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [enrolled Android MQTT follow-up](docs/android-mqtt-enrollment.md) now passes a real API 34 Keystore mTLS roundtrip against the device-scoped broker, including cross-device/wildcard denials and rejected subscription/reconnect after committed PostgreSQL disable. Its single-device local-file membership bridge is test-only, not production synchronization or forced session termination. The combined replay records 25 JVM tests, build/lint and one instrumentation scenario; older host-only MQTT limits below retain their historical scope.
+
 The separate [device MQTT authentication lab](docs/mqtt-device-lab.md) now verifies mandatory mTLS, exact enabled certificate membership and directional per-device topic ACLs over real loopback MQTT. Thirteen host-side tests pass, including cross-device/wildcard denial, forged-client-ID isolation, live disable checks and retained suppression. Its trusted local membership file and ephemeral software-key tests are not yet connected to enrolled Android Keystore identities or PostgreSQL; production transport and lifecycle work remain open. The original anonymous Android probe diagnostic is unchanged.
 
 The [HTTPS mTLS identity lab](docs/device-mtls.md) now authenticates Android using its enrolled Keystore key, exact completed certificate and current PostgreSQL enabled state. API 34 instrumentation passed a real mTLS request and rejection after persisted disable. A fifth migration is required. Earlier paragraphs about unverified mTLS describe prior milestones: HTTPS identity is now scoped lab-verified; MQTT mTLS, full revocation, secure production provisioning and the fleet workflow remain open.
@@ -98,6 +100,9 @@ flowchart TB
 		Agent --> DeviceEnrollment
 		DeviceEnrollment -->|Pinned HTTPS - PostgreSQL lab verified| EnrollmentAPI
 		DeviceEnrollment -->|HTTPS mTLS - API 34 lab verified| DeviceIdentity[Device identity API and enabled-state check]
+		DeviceEnrollment -->|MQTT mTLS - API 34 test bridge verified| DeviceLabBroker
+		EnrollmentDB --> TestMembership[Test-only single-device membership propagation]
+		TestMembership --> LabMembership
 		Room[(Room inbox and outbox - planned)]
 		Policy[DevicePolicyManager: kiosk controls]
 		Boot[Persisted lab kiosk intent and post-unlock boot receiver]

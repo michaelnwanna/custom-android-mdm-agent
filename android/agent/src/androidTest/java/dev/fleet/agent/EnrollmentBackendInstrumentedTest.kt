@@ -2,6 +2,10 @@ package dev.fleet.agent
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.hivemq.client.mqtt.datatypes.MqttQos
+import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient
+import com.hivemq.client.mqtt.mqtt3.exceptions.Mqtt3SubAckException
+import com.hivemq.client.mqtt.mqtt3.message.subscribe.suback.Mqtt3SubAckReturnCode
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test
@@ -18,6 +22,9 @@ import java.security.cert.X509Certificate
 import java.time.Instant
 import java.util.Base64
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class EnrollmentBackendInstrumentedTest {
@@ -34,6 +41,7 @@ class EnrollmentBackendInstrumentedTest {
         val namespaces = listOf(namespace, "$namespace-conflict")
         val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         require(namespaces.none { keyStore.containsAlias("fleet-enrollment-$it") })
+        var mqtt: Mqtt3AsyncClient? = null
         fun root(name: String): X509Certificate = CertificateFactory.getInstance("X.509")
             .generateCertificate(ByteArrayInputStream(Base64.getDecoder().decode(configuration.getString(name)))) as X509Certificate
         try {
@@ -66,10 +74,38 @@ class EnrollmentBackendInstrumentedTest {
             }
             assertEquals(409, conflict.status)
             val tlsIdentity = reopened.tlsIdentity(serverRoot, deviceRoot, Instant.now())
+            if (configuration.has("mqttPort")) {
+                val probe = configuration.getString("mqttProbe")
+                require(probe.matches(Regex("probe-[0-9a-f-]{36}")))
+                val client = DeviceMqttTransport.client(tlsIdentity, serverRoot, configuration.getInt("mqttPort"))
+                mqtt = client
+                client.connectWith().cleanSession(true).keepAlive(15).send().get(15, TimeUnit.SECONDS)
+                val received = CompletableFuture<String>()
+                val subscribed = client.subscribeWith().topicFilter("fleet/devices/${response.deviceId}/commands")
+                    .qos(MqttQos.AT_LEAST_ONCE).callback { message ->
+                        if (message.payloadAsBytes.contentEquals(probe.toByteArray())) received.complete(probe)
+                        else received.completeExceptionally(IllegalStateException("Unexpected MQTT probe"))
+                    }.send().get(15, TimeUnit.SECONDS)
+                assertEquals(listOf(Mqtt3SubAckReturnCode.SUCCESS_MAXIMUM_QOS_1), subscribed.returnCodes)
+                rejectedSubscription(client, "fleet/devices/${UUID.randomUUID()}/commands")
+                rejectedSubscription(client, "fleet/#")
+                client.publishWith().topic("fleet/devices/${response.deviceId}/command-events")
+                    .qos(MqttQos.AT_LEAST_ONCE).payload(probe.toByteArray()).send().get(15, TimeUnit.SECONDS)
+                assertEquals(probe, received.get(15, TimeUnit.SECONDS))
+            }
             assertEquals(response.deviceId, DeviceIdentityTransport.check(tlsIdentity, serverRoot))
             assertEquals(401, assertThrows(DeviceHttpException::class.java) {
                 DeviceIdentityTransport.check(tlsIdentity, serverRoot)
             }.status)
+            mqtt?.let { client ->
+                rejectedSubscription(client, "fleet/devices/${response.deviceId}/commands")
+                client.disconnect().get(10, TimeUnit.SECONDS)
+                val reconnect = DeviceMqttTransport.client(tlsIdentity, serverRoot, configuration.getInt("mqttPort"))
+                mqtt = reconnect
+                assertThrows(ExecutionException::class.java) {
+                    reconnect.connectWith().cleanSession(true).send().get(15, TimeUnit.SECONDS)
+                }
+            }
             assertArrayEquals(Base64.getDecoder().decode(response.certificateDer), keyStore.getCertificate(alias).encoded)
             assertNull(keyStore.getKey(alias, null).encoded)
             val challenge = UUID.randomUUID().toString().toByteArray()
@@ -85,15 +121,29 @@ class EnrollmentBackendInstrumentedTest {
             })
             output.writeText(JSONObject().put("schemaVersion", 1).put("deviceId", response.deviceId.toString())
                 .put("mtlsAuthenticated", true).put("disabledRejected", true)
+                .put("mqttAuthenticated", configuration.has("mqttPort"))
+                .put("mqttDisabledRejected", configuration.has("mqttPort"))
                 .put("csrDer", csr).put("responseBase64", Base64.getEncoder().encodeToString(first))
                 .put("challengeBase64", Base64.getEncoder().encodeToString(challenge))
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())
         } finally {
+            try { mqtt?.disconnect()?.get(5, TimeUnit.SECONDS) } catch (_: Exception) { }
             namespaces.forEach { current ->
                 val alias = "fleet-enrollment-$current"
                 if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
                 File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively()
             }
+        }
+    }
+
+    private fun rejectedSubscription(client: Mqtt3AsyncClient, topic: String) {
+        try {
+            val result = client.subscribeWith().topicFilter(topic).qos(MqttQos.AT_LEAST_ONCE).send().get(15, TimeUnit.SECONDS)
+            assertEquals(listOf(Mqtt3SubAckReturnCode.FAILURE), result.returnCodes)
+        } catch (failure: ExecutionException) {
+            assertTrue(failure.cause is Mqtt3SubAckException)
+            val rejected = failure.cause as Mqtt3SubAckException
+            assertEquals(listOf(Mqtt3SubAckReturnCode.FAILURE), rejected.mqttMessage.returnCodes)
         }
     }
 }

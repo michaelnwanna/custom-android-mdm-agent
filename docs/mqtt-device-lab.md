@@ -1,5 +1,7 @@
 # Device MQTT Authentication Lab
 
+Follow-up: the [enrolled Android MQTT lab](android-mqtt-enrollment.md) now verifies a real Keystore client and committed PostgreSQL disable through an opt-in single-device test bridge. The original host-only results below remain historical evidence; a production membership service, authenticated backend ingestion/publishing and forced session termination remain unfinished. The [new broker/probe regression](../artifacts/mqtt-device/20261017T093926.685644Z/replay.html) passes fourteen checks.
+
 The separate [device broker](../tools/mqtt_device_broker.py) implements loopback MQTT 3.1.1 mTLS with explicit certificate membership and directional device-topic ACLs. The [final replay](../artifacts/mqtt-device/20261017T090429.856572Z/replay.html) records thirteen passing policy/plugin and real TLS tests. This is an isolated host-side transport boundary, not Android enrollment-to-MQTT integration or production fleet infrastructure. The existing anonymous [Android probe broker](../tools/mqtt_lab.py) and its historical API 34 results are unchanged.
 
 ```mermaid

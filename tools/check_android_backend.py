@@ -1,7 +1,9 @@
 import argparse
+import base64
 import datetime
 import hashlib
 import html
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -22,9 +24,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def public_configuration(configuration):
     bootstrap = configuration["bootstrap"]
-    return {"schemaVersion": 1, "stage": "ready", "namespace": configuration["namespace"],
+    result = {"schemaVersion": 1, "stage": "ready", "namespace": configuration["namespace"],
             "serverRootDer": configuration["serverRootDer"], "deviceRootDer": configuration["deviceRootDer"],
             "bootstrap": {name: bootstrap[name] for name in ("schemaVersion", "endpoint", "pendingEnrollmentId")}}
+    if "mqttPort" in configuration:
+        result.update(mqttPort=configuration["mqttPort"], mqttProbe=configuration["mqttProbe"])
+    return result
+
+
+def verify_mqtt_proof(device, broker):
+    if device.get("mqttAuthenticated") is not True or device.get("mqttDisabledRejected") is not True:
+        raise ValueError("Android MQTT proof missing")
+    response = json.loads(base64.b64decode(device["responseBase64"], validate=True))
+    fingerprint = hashlib.sha256(base64.b64decode(response["certificateDer"], validate=True)).hexdigest()
+    if (broker.get("stage") != "mqtt-verified" or broker.get("stopped") is not True
+            or broker.get("identities") != {device["deviceId"]: fingerprint}
+            or broker.get("probeRoundtrips") != 1):
+        raise ValueError("Independent broker identity/roundtrip proof missing")
+    if not all(type(broker.get(name)) is int and broker[name] >= 1 for name in
+               ("crossDeviceDenied", "wildcardDenied", "disabledSubscribeDenied", "disabledConnectionsRejected")):
+        raise ValueError("Independent broker rejection proof missing")
 
 
 def public_tls_diagnostics(stderr):
@@ -37,13 +56,14 @@ def main():
     parser = argparse.ArgumentParser(description="Record explicit emulator enrollment against private PostgreSQL and real Kestrel TLS.")
     parser.add_argument("--serial", required=True)
     parser.add_argument("--expected-avd", required=True)
+    parser.add_argument("--with-mqtt", action="store_true", help="Also verify enrolled Keystore MQTT and test-host membership propagation")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
         parser.error("Only an explicitly named disposable emulator is supported")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / "artifacts/android-backend" / stamp
+    output = ROOT / ("artifacts/android-backend-mqtt" if args.with_mqtt else "artifacts/android-backend") / stamp
     output.mkdir(parents=True)
     inputs = output / "inputs"
     hashes = {}
@@ -51,6 +71,9 @@ def main():
                *list((ROOT / "tools/android-enrollment-host").rglob("*")),
                ROOT / "tools/check_android_backend.py", ROOT / "tools/test_android_backend.py",
                ROOT / "tools/check_android_enrollment.py"]
+    if args.with_mqtt:
+        sources.extend(ROOT / "tools" / name for name in ("mqtt_device_broker.py", "mqtt_device_policy.py",
+            "mqtt_android_probe.py", "test_mqtt_device_probe.py", "mqtt-lab-requirements.txt"))
     for source in sorted(sources):
         relative = source.relative_to(ROOT)
         if not source.is_file() or {"bin", "obj", "build", ".gradle", ".kotlin"}.intersection(relative.parts):
@@ -63,6 +86,9 @@ def main():
         hashes[str(relative)] = hashlib.sha256(destination.read_bytes()).hexdigest()
     private = ROOT / ".lab-private/android-backend" / stamp
     private.mkdir(parents=True, mode=0o700)
+    mqtt_directory = private / "mqtt"
+    if args.with_mqtt:
+        mqtt_directory.mkdir(mode=0o700)
     data = private / "data"
     server_log = private / "postgres.log"
     socket_directory = Path(tempfile.mkdtemp(prefix="fleet-pg-"))
@@ -71,6 +97,7 @@ def main():
     adb = [str(sdk / "platform-tools/adb"), "-s", args.serial]
     records = []
     host = None
+    broker = None
     passed = False
     stopped = False
     error = None
@@ -113,7 +140,7 @@ def main():
             suite = ET.parse(filename).getroot()
             for name in jvm:
                 jvm[name] += int(suite.get(name, "0"))
-        if jvm["tests"] < 22 or any(jvm[name] for name in ("failures", "errors", "skipped")):
+        if jvm["tests"] < 25 or any(jvm[name] for name in ("failures", "errors", "skipped")):
             raise RuntimeError("Missing or unsuccessful JVM tests")
         shutil.copytree(results, output / "jvm-results")
         shutil.copytree(android / "agent/build/reports", output / "reports")
@@ -133,6 +160,8 @@ def main():
         execute([*psql, "-c", "SHOW listen_addresses; SHOW unix_socket_permissions; SHOW fsync; SHOW synchronous_commit;"])
         host_environment = dict(environment, FLEET_TEST_POSTGRES=
             f"Host={socket_directory};Database=postgres;Username=fleet_lab;Timeout=10;Command Timeout=30")
+        if args.with_mqtt:
+            host_environment["FLEET_TEST_MQTT_DIRECTORY"] = str(mqtt_directory)
         executable = inputs / "tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll"
         host = subprocess.Popen(["dotnet", str(executable)], cwd=inputs / "backend", env=host_environment,
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -144,6 +173,20 @@ def main():
         if configuration.get("stage") != "ready":
             raise RuntimeError("Integration host readiness was not explicit")
         configuration["namespace"] = "integration-" + str(uuid.uuid4())
+        if args.with_mqtt:
+            configuration["mqttProbe"] = "probe-" + str(uuid.uuid4())
+            broker = subprocess.Popen([sys.executable, str(inputs / "tools/mqtt_android_probe.py")], cwd=inputs,
+                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            broker.stdin.write(json.dumps({"directory": str(mqtt_directory), "probe": configuration["mqttProbe"]}) + "\n")
+            broker.stdin.flush()
+            with selectors.DefaultSelector() as selector:
+                selector.register(broker.stdout, selectors.EVENT_READ)
+                if not selector.select(30):
+                    raise RuntimeError("MQTT probe did not become ready")
+                readiness = json.loads(broker.stdout.readline())
+            if readiness.get("stage") != "mqtt-ready" or type(readiness.get("port")) is not int or not 1 <= readiness["port"] <= 65535:
+                raise RuntimeError("MQTT readiness was not explicit")
+            configuration["mqttPort"] = readiness["port"]
         (output / "public-configuration.json").write_text(json.dumps(public_configuration(configuration), indent=2) + "\n")
         for filename in ("enrollment-integration-input.json", "enrollment-integration-result.json"):
             existing = subprocess.run([*adb, "shell", "run-as", "dev.fleet.agent", "test", "-e", "files/" + filename],
@@ -174,6 +217,13 @@ def main():
                    "alternateCertificateRejected", "forwardedCertificateRejected")):
             raise RuntimeError("mTLS access-control proof was not explicit")
         (output / "backend-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
+        if args.with_mqtt:
+            broker_stdout, broker_stderr = broker.communicate(input="stop\n", timeout=30)
+            if broker.returncode or broker_stderr:
+                raise RuntimeError("MQTT broker verification failed")
+            broker_verification = json.loads(broker_stdout)
+            verify_mqtt_proof(json.loads(proof), broker_verification)
+            (output / "mqtt-verification.json").write_text(json.dumps(broker_verification, indent=2) + "\n")
         remaining = execute([*psql, "--tuples-only", "--no-align", "-c",
                              "SELECT count(*) FROM pg_namespace WHERE nspname ~ '^fleet_test_[0-9a-f]{32}$';"])
         if remaining.strip() != "0":
@@ -188,6 +238,19 @@ def main():
             except subprocess.TimeoutExpired:
                 host.kill()
                 _, host_stderr = host.communicate()
+                passed = False
+        if broker is not None and broker.poll() is None:
+            try:
+                broker.communicate(input="stop\n", timeout=20)
+            except subprocess.TimeoutExpired:
+                broker.kill()
+                broker.communicate()
+                passed = False
+        if args.with_mqtt and (broker is None or broker.poll() is not None) and (host is None or host.poll() is not None):
+            try:
+                shutil.rmtree(mqtt_directory)
+            except OSError:
+                passed = False
         if staged:
             try:
                 execute([*adb, "shell", "run-as", "dev.fleet.agent", "rm", "-f",
@@ -209,7 +272,12 @@ def main():
                 "serial": args.serial, "expectedAvd": args.expected_avd, "serverStopped": stopped,
                 "inputSha256": hashes, "apkSha256": apks, "jvmCounters": jvm,
                 "commands": records,
-                "scope": "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof.",
+                "mqttRequested": args.with_mqtt,
+                "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
+                "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
+                    for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
+                "scope": ("Real emulator enrolled Keystore MQTT mTLS, roundtrip, device-topic/wildcard denial and committed database disable propagated by a test-only local-file bridge, alongside HTTPS enrollment/identity and PostgreSQL audit/completion. No production membership service, forced session termination, durable event processing, UI, live IdP, reboot, power loss or production provisioning proof." if args.with_mqtt else
+                    "Real emulator Keystore enrollment and HTTPS mTLS identity request, authorized admin API provisioning, PostgreSQL audit/completion/access-disable and lab signer; exact response retry, invalid token/conflicting CSR/alternate certificate/header spoof rejection. No UI workflow, live IdP, MQTT mTLS, reboot, power loss or production provisioning proof."),
                 "fileSha256": {str(filename.relative_to(output)): hashlib.sha256(filename.read_bytes()).hexdigest()
                                for filename in sorted(output.rglob("*")) if filename.is_file()
                                and "inputs" not in filename.relative_to(output).parts}}

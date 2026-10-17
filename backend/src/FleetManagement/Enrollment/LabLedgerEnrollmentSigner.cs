@@ -61,6 +61,9 @@ public sealed class LabLedgerEnrollmentSigner : IEnrollmentSigner
         publicKey.ImportSubjectPublicKeyInfo(Convert.FromBase64String(request.SubjectPublicKeyInfoBase64), out _);
         var certificate = new CertificateRequest($"CN={request.DeviceId:D}", publicKey, HashAlgorithmName.SHA256);
         certificate.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
+        certificate.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(certificate.PublicKey, false));
+        certificate.CertificateExtensions.Add(X509AuthorityKeyIdentifierExtension.CreateFromCertificate(issuer,
+            issuer.Extensions.OfType<X509SubjectKeyIdentifierExtension>().Any(), true));
         certificate.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
         certificate.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(new OidCollection { new("1.3.6.1.5.5.7.3.2") }, true));
         var names = new SubjectAlternativeNameBuilder();

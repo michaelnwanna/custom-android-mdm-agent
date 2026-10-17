@@ -52,6 +52,8 @@ static async Task<int> Run()
         using var serverKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var request = new CertificateRequest("CN=localhost", serverKey, HashAlgorithmName.SHA256);
         request.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
+        request.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(request.PublicKey, false));
+        request.CertificateExtensions.Add(X509AuthorityKeyIdentifierExtension.CreateFromCertificate(serverRoot, true, true));
         request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
         request.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(new OidCollection { new("1.3.6.1.5.5.7.3.1") }, true));
         var names = new SubjectAlternativeNameBuilder();
@@ -60,10 +62,14 @@ static async Task<int> Run()
         request.CertificateExtensions.Add(names.Build());
         using var serverPublic = request.Create(serverRoot, now.AddMinutes(-1), now.AddDays(1), RandomNumberGenerator.GetBytes(16));
         using var serverCertificate = serverPublic.CopyWithPrivateKey(serverKey);
+        var mqttDirectory = Environment.GetEnvironmentVariable("FLEET_TEST_MQTT_DIRECTORY");
+        var mqttMembership = mqttDirectory is null ? null : new MqttMembershipBridge(mqttDirectory, factory);
+        if (mqttMembership is not null)
+            mqttMembership.Initialize(serverCertificate, serverKey, deviceRoot);
         var claims = new PostgresEnrollmentClaims(factory, clock);
         var signer = new LabLedgerEnrollmentSigner(ledger, deviceRoot, clock, TimeSpan.FromDays(1));
         var coordinator = new EnrollmentSigningCoordinator(claims, signer, deviceRoot, TimeSpan.FromDays(2));
-        var deviceAccess = new DisableAfterFirstIdentity(factory, deviceRoot, clock);
+        var deviceAccess = new DisableAfterFirstIdentity(factory, deviceRoot, clock, mqttMembership);
         using var operatorKey = RSA.Create(2048);
         var operatorSecurityKey = new RsaSecurityKey(operatorKey);
         await using var app = FleetApi.Build([], builder =>
@@ -87,7 +93,9 @@ static async Task<int> Run()
                     };
                 });
             }));
-            builder.Services.AddSingleton<IEnrollmentRedemption>(new EnrollmentRedemptionService(claims, coordinator, digestKey));
+            IEnrollmentRedemption redemption = new EnrollmentRedemptionService(claims, coordinator, digestKey);
+            builder.Services.AddSingleton<IEnrollmentRedemption>(mqttMembership is null ? redemption :
+                new MqttEnrollmentRedemption(redemption, mqttMembership));
             builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(new PendingEnrollmentProvisioner(factory, clock, digestKey));
             builder.Services.AddSingleton<IDeviceCertificateIdentity>(deviceAccess);
             builder.Services.Configure<JwtBearerOptions>(AdministratorAuthentication.Scheme, options =>
@@ -137,6 +145,8 @@ static async Task<int> Run()
         using var proof = JsonDocument.Parse(proofLine!);
         var fields = proof.RootElement;
         Ensure(fields.GetProperty("mtlsAuthenticated").GetBoolean() && fields.GetProperty("disabledRejected").GetBoolean());
+        if (mqttMembership is not null)
+            Ensure(fields.GetProperty("mqttAuthenticated").GetBoolean() && fields.GetProperty("mqttDisabledRejected").GetBoolean());
         Ensure(deviceAccess.Accepted == 1 && deviceAccess.Denied >= 1 && deviceAccess.AlternateCertificateRejected);
         var csr = fields.GetProperty("csrDer").GetString()!;
         var responseBytes = Convert.FromBase64String(fields.GetProperty("responseBase64").GetString()!);
@@ -193,6 +203,7 @@ static X509Certificate2 Root(string name, ECDsa key, DateTimeOffset now)
     var request = new CertificateRequest($"CN={name}", key, HashAlgorithmName.SHA256);
     request.CertificateExtensions.Add(new X509BasicConstraintsExtension(true, false, 0, true));
     request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.KeyCertSign, true));
+    request.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(request.PublicKey, false));
     return request.CreateSelfSigned(now.AddDays(-1), now.AddDays(7));
 }
 
@@ -225,7 +236,8 @@ sealed class TlsDiagnosticLoggerProvider : ILoggerProvider
     }
 }
 
-sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 root, TimeProvider clock) : IDeviceCertificateIdentity
+sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 root, TimeProvider clock,
+    MqttMembershipBridge? mqttMembership) : IDeviceCertificateIdentity
 {
     private readonly DeviceCertificateIdentity identity = new(factory, root, clock);
     public int Accepted { get; private set; }
@@ -258,11 +270,69 @@ sealed class DisableAfterFirstIdentity(ContextFactory factory, X509Certificate2 
         var enrollment = await context.PendingEnrollments.SingleAsync(value => value.DeviceId == deviceId, cancellationToken);
         enrollment.DisableDeviceAccess();
         await context.SaveChangesAsync(cancellationToken);
+        if (mqttMembership is not null) await mqttMembership.SyncAsync(deviceId.Value, cancellationToken);
         return deviceId;
     }
 
     private static void EnsureValid(bool condition)
     {
         if (!condition) throw new InvalidOperationException("Alternate certificate was not rejected.");
+    }
+}
+
+sealed class MqttEnrollmentRedemption(IEnrollmentRedemption inner, MqttMembershipBridge membership) : IEnrollmentRedemption
+{
+    public async Task<EnrollmentRedemption> RedeemAsync(EnrollmentHttpRequest request, string token, CancellationToken cancellationToken)
+    {
+        var result = await inner.RedeemAsync(request, token, cancellationToken);
+        if (result.Response is not null) await membership.SyncAsync(result.Response.DeviceId, cancellationToken);
+        return result;
+    }
+}
+
+sealed class MqttMembershipBridge(string directory, ContextFactory factory)
+{
+    private readonly SemaphoreSlim gate = new(1, 1);
+
+    public void Initialize(X509Certificate2 server, ECDsa serverKey, X509Certificate2 root)
+    {
+        if (!Path.IsPathFullyQualified(directory) || !Directory.Exists(directory) || Directory.EnumerateFileSystemEntries(directory).Any())
+            throw new InvalidOperationException("Fresh private MQTT directory required.");
+        WritePrivate("server.pem", server.ExportCertificatePem());
+        WritePrivate("server-key.pem", serverKey.ExportPkcs8PrivateKeyPem());
+        WritePrivate("device-root.pem", root.ExportCertificatePem());
+        WritePrivate("members.json", "{\"schemaVersion\":1,\"devices\":{}}");
+    }
+
+    public async Task SyncAsync(Guid deviceId, CancellationToken cancellationToken)
+    {
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            await using var context = factory.CreateDbContext();
+            var enrollment = await context.PendingEnrollments.AsNoTracking().SingleAsync(value => value.DeviceId == deviceId, cancellationToken);
+            var response = JsonSerializer.Deserialize<EnrollmentCertificateResponse>(enrollment.CompletedResponseJson!, JsonSerializerOptions.Web)!;
+            var members = new Dictionary<string, object>
+            {
+                [deviceId.ToString("D")] = new
+                {
+                    certificateSha256 = Convert.ToHexStringLower(SHA256.HashData(Convert.FromBase64String(response.CertificateDer))),
+                    enabled = !enrollment.DeviceAccessDisabled
+                }
+            };
+            var temporary = "members-" + Guid.NewGuid().ToString("N") + ".json";
+            WritePrivate(temporary, JsonSerializer.Serialize(new { schemaVersion = 1, devices = members }));
+            File.Move(Path.Combine(directory, temporary), Path.Combine(directory, "members.json"), overwrite: true);
+        }
+        finally { gate.Release(); }
+    }
+
+    private void WritePrivate(string name, string content)
+    {
+        var options = new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write };
+        if (!OperatingSystem.IsWindows()) options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        using var stream = new FileStream(Path.Combine(directory, name), options);
+        using var writer = new StreamWriter(stream);
+        writer.Write(content);
     }
 }
