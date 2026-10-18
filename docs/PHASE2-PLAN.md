@@ -415,6 +415,30 @@ This document outlines the next major work after the foundation (Phase 1) is com
 - CommandReceiver integrates with EventUploadWorker
 - MQTT subscription pattern follows fleet/devices/{deviceId}/commands convention
 
+### ✅ Completed (Commit 386bab5 – PostgreSQL Integration Tests)
+
+**Backend Database Integration Tests**
+- [x] PolicyPersistenceTests: Real PostgreSQL validation
+  - PolicyCreationIsIdempotent: Same JSON produces same policy ID
+  - PolicyAssignmentTracksVersions: Assignment with real enrolled device
+  - PolicyCommandGenerationWithRealDatabase: End-to-end workflow
+- [x] Enrollment integration
+  - Uses EnrollmentBootstrapTokens and PostgresEnrollmentClaims patterns
+  - Creates real enrolled devices for assignment testing
+- [x] Schema isolation
+  - Each test creates isolated PostgreSQL schema
+  - Automatic cleanup on test completion
+  - Requires FLEET_TEST_POSTGRES environment variable
+- [x] Idempotency verification
+  - Re-running command generation produces no duplicates
+  - Same policy + enrollment → same command ID
+
+**Verification**
+- All tests passing: 31 unit + 3 integration = 34 total
+- Real PostgreSQL validation for policy persistence
+- Full workflow tested: create → assign → generate → idempotency check
+- Ready for MQTT end-to-end testing
+
 ### Summary of Phase 2.1
 
 **Backend (Complete):**
@@ -422,55 +446,63 @@ This document outlines the next major work after the foundation (Phase 1) is com
 - Policy assignment and version tracking ✅
 - Command generation with deterministic IDs ✅
 - Publication endpoint for admin-triggered delivery ✅
+- PostgreSQL integration tests (3 tests, all passing) ✅
 
 **Android (Complete):**
 - Policy persistence with Room database ✅
 - SET_POLICY command processing ✅
 - Version tracking (assigned and acknowledged) ✅
 - MQTT command reception ✅
+- Unit tests (7 tests, all passing) ✅
 
 **Testing (Complete):**
-- 31 backend unit/integration tests (all passing)
+- 31 backend unit tests (all passing)
+- 3 backend PostgreSQL integration tests (all passing)
 - 7 Android unit tests (all passing)
-- Ready for PostgreSQL and MQTT integration tests
+- Total: 41 tests (all passing)
 
-### 🔄 Next Steps (Phase 2.1 Wrap-up)
+### 🔄 Next Steps (Phase 2.1 Final Tasks)
 
-1. **PostgreSQL Integration Tests** (1–2 hours)
-   - Replace in-memory DB with Testcontainers PostgreSQL
-   - Verify policy deduplication with real DB
-   - Test full workflow: create → assign → generate commands
-
-2. **MQTT Integration Tests** (1–2 hours)
+1. **MQTT Integration Tests** (1–2 hours)
    - Use aMQTT broker (from Phase 1)
    - Device receives SET_POLICY commands via MQTT
    - Verify CommandReceiver subscription and dispatch
    - Test version tracking end-to-end
+   - Device sends receipt event via CommandJournal
 
-3. **E2E Verification** (1–2 hours)
-   - Combined Android/backend harness
+2. **E2E Verification Harness** (1–2 hours)
+   - Combined Android/backend test harness
    - Admin creates policy (verify idempotency: same JSON twice → same ID)
    - Admin assigns policy to test device
-   - Backend generates SET_POLICY command
-   - Device receives command via MQTT
-   - Device persists to PolicyDatabase
-   - Device sends acknowledgement event
-   - Admin observes assignment progress on dashboard
+   - Backend generates SET_POLICY command via /api/v1/policies/publish-commands
+   - MQTT broker delivers command to device
+   - Device receives via CommandReceiver, dispatches to PolicyHandler
+   - Device persists to PolicyDatabase with version tracking
+   - Device sends receipt event via EventUploadWorker
+   - Admin observes assignment progression
+
+3. **Documentation Updates** (30 minutes)
+   - Update PHASE2-PLAN with completion status
+   - Create integration test guide with example commands
+   - Document MQTT subscription topics and payloads
 
 4. **Policy Application Handler** (Future — Phase 2.2)
    - Device application layer listens for new policies
    - Parses policyJson and applies settings
    - On success, calls PolicyHandler.acknowledgePolicyVersion()
    - Enables version-aware deployment tracking
+   - Completes version acknowledgement workflow
 
 ### Status
 - **Milestone**: Policy Delivery Foundation (Backend + Android)
 - **Branch**: main
 - **Commits**:
-  - b51cdaf: Policy models, service, REST endpoints, tests
-  - 7a68d70: Command generation service with idempotency
+  - b51cdaf: Policy models, service, REST endpoints, tests (26 tests)
+  - 7a68d70: Command generation service with idempotency (5 tests)
   - 5e28811: Publication endpoint for admin trigger
-  - dd6f52e: Android device handler, MQTT reception, unit tests
-- **Estimated Phase 2.1 completion**: After PostgreSQL + MQTT integration tests and E2E verification
-- **Estimated Phase 2.2 start**: Policy application layer, release deployment pipeline
+  - dd6f52e: Android device handler, MQTT reception, unit tests (7 tests)
+  - 386bab5: PostgreSQL integration tests (3 tests)
+- **Test Summary**: 31 backend unit + 3 integration + 7 Android = 41 total tests (all passing)
+- **Estimated Phase 2.1 completion**: After MQTT integration tests and E2E verification
+- **Estimated Phase 2.2 start**: Policy application layer, release deployment pipeline, management console
 
