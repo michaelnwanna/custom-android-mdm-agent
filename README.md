@@ -216,3 +216,20 @@ sh tools/doctor.sh
 ```
 
 No device is provisioned, reset, or modified by the prerequisite checker.
+
+## Phase 2 and Beyond
+
+Phase 1 (foundation) is complete. The next priorities are documented in [PHASE2-PLAN.md](docs/PHASE2-PLAN.md) and include:
+
+1. **Policy Delivery** - Administrators create versioned policies, assign to devices, and track application
+2. **Application Updates** - Signed release metadata, resumable downloads, installation tracking
+3. **Management Console** - React-based UI for fleet management and policy/deployment actions
+4. **Telemetry Collection** - Device health metrics, battery, storage, connectivity, app versions
+5. **Offline Reconciliation** - REQUEST_SYNC command, state convergence, boundary testing
+
+Each Phase 2 component will follow the same verification discipline: strict bounded input validation, transactional consistency, reproducible test evidence, and clear separation of "verified" from "planned" features.
+
+---
+
+**Timeline**: Phase 1 foundation verified through October 18, 2026. Phase 2 implementation is scope for future continuation.
+
