@@ -17,15 +17,18 @@ namespace FleetManagement.Api.Releases;
 public class ReleaseController : ControllerBase
 {
     private readonly ReleaseService _releaseService;
+    private readonly BulkAssignmentService _bulkAssignmentService;
     private readonly ICommandPublisher? _commandPublisher;
     private readonly IDbContextFactory<FleetDbContext> _dbContextFactory;
 
     public ReleaseController(
         ReleaseService releaseService,
+        BulkAssignmentService bulkAssignmentService,
         ICommandPublisher? commandPublisher,
         IDbContextFactory<FleetDbContext> dbContextFactory)
     {
         _releaseService = releaseService;
+        _bulkAssignmentService = bulkAssignmentService;
         _commandPublisher = commandPublisher;
         _dbContextFactory = dbContextFactory;
     }
@@ -499,6 +502,207 @@ public class ReleaseController : ControllerBase
             TotalInProgress = analytics.Totals.InProgress
         };
     }
+
+    /// <summary>
+    /// Assign a deployment to all devices with any of the specified tags (OR logic).
+    /// </summary>
+    [HttpPost("deployments/{deploymentId}/assign-by-any-tag")]
+    public async Task<ActionResult<BulkAssignmentResponse>> AssignToDevicesWithAnyTagAsync(
+        [FromRoute] string deploymentId,
+        [FromBody] BulkAssignByAnyTagRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        if (request == null || !request.TagNames.Any())
+            return BadRequest("At least one tag name is required");
+
+        try
+        {
+            var result = await _bulkAssignmentService.AssignToDevicesWithAnyTagAsync(deploymentGuid, request.TagNames);
+            return Ok(MapToResponse(result));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Assign a deployment to all devices with all specified tags (AND logic).
+    /// </summary>
+    [HttpPost("deployments/{deploymentId}/assign-by-all-tags")]
+    public async Task<ActionResult<BulkAssignmentResponse>> AssignToDevicesWithAllTagsAsync(
+        [FromRoute] string deploymentId,
+        [FromBody] BulkAssignByAllTagsRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        if (request == null || !request.TagNames.Any())
+            return BadRequest("At least one tag name is required");
+
+        try
+        {
+            var result = await _bulkAssignmentService.AssignToDevicesWithAllTagsAsync(deploymentGuid, request.TagNames);
+            return Ok(MapToResponse(result));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Assign a deployment to explicit list of devices.
+    /// </summary>
+    [HttpPost("deployments/{deploymentId}/assign-to-devices")]
+    public async Task<ActionResult<BulkAssignmentResponse>> AssignToDevicesAsync(
+        [FromRoute] string deploymentId,
+        [FromBody] BulkAssignToDevicesRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        if (request == null || !request.DeviceIds.Any())
+            return BadRequest("At least one device ID is required");
+
+        try
+        {
+            var deviceGuids = request.DeviceIds
+                .Select(id => Guid.TryParse(id, out var guid) ? guid : Guid.Empty)
+                .Where(id => id != Guid.Empty)
+                .ToList();
+
+            if (!deviceGuids.Any())
+                return BadRequest("Valid device IDs are required");
+
+            var result = await _bulkAssignmentService.AssignToDevicesAsync(deploymentGuid, deviceGuids);
+            return Ok(MapToResponse(result));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Get current assignment status of a deployment.
+    /// </summary>
+    [HttpGet("deployments/{deploymentId}/assignment-status")]
+    [AllowAnonymous]
+    public async Task<ActionResult<BulkAssignmentStatusResponse>> GetAssignmentStatusAsync(
+        [FromRoute] string deploymentId)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        try
+        {
+            var status = await _bulkAssignmentService.GetBulkAssignmentStatusAsync(deploymentGuid);
+            return Ok(MapToResponse(status));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Preview devices that would be assigned by tag criteria (without actually assigning).
+    /// </summary>
+    [HttpPost("deployments/preview-assignment-targets")]
+    [AllowAnonymous]
+    public async Task<ActionResult<AssignmentPreviewResponse>> PreviewAssignmentTargetsAsync(
+        [FromBody] PreviewAssignmentRequest request)
+    {
+        if (request == null || !request.TagNames.Any())
+            return BadRequest("At least one tag name is required");
+
+        try
+        {
+            var devices = await _bulkAssignmentService.PreviewAssignmentTargetsAsync(request.TagNames, request.UseAllLogic);
+
+            return Ok(new AssignmentPreviewResponse
+            {
+                TagNames = request.TagNames,
+                Logic = request.UseAllLogic ? "AND" : "OR",
+                DeviceCount = devices.Count,
+                Devices = devices.Select(d => new DevicePreview
+                {
+                    DeviceId = d.DeviceId.ToString(),
+                    DeviceType = d.DeviceType,
+                    Manufacturer = d.Manufacturer,
+                    Model = d.Model,
+                    State = d.State.ToString()
+                }).ToList()
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Map bulk assignment result to API response.
+    /// </summary>
+    private static BulkAssignmentResponse MapToResponse(BulkAssignmentResult result)
+    {
+        return new BulkAssignmentResponse
+        {
+            DeploymentId = result.DeploymentId.ToString(),
+            RequestedCount = result.RequestedCount,
+            SuccessCount = result.SuccessCount,
+            FailureCount = result.FailureCount,
+            Status = result.Status.ToString(),
+            FailureReasons = result.FailureReasons,
+            StartTime = result.StartTime.DateTime,
+            EndTime = result.EndTime.DateTime,
+            DurationMs = (int)result.Duration.TotalMilliseconds
+        };
+    }
+
+    /// <summary>
+    /// Map bulk assignment status to API response.
+    /// </summary>
+    private static BulkAssignmentStatusResponse MapToResponse(BulkAssignmentStatusSnapshot status)
+    {
+        return new BulkAssignmentStatusResponse
+        {
+            DeploymentId = status.DeploymentId.ToString(),
+            Total = status.Total,
+            Acknowledged = status.Pending,
+            Downloading = status.Downloading,
+            Installing = status.Installing,
+            Completed = status.Completed,
+            Failed = status.Failed,
+            InProgress = status.InProgress,
+            CompletionPercentage = status.CompletionPercentage,
+            SuccessPercentage = status.SuccessPercentage,
+            QueryTime = status.QueryTime.DateTime
+        };
+    }
 }
 
 /// <summary>
@@ -670,4 +874,94 @@ public class ReleaseProgressResponse
     public int TotalSuccessRate { get; set; }
     public int TotalFailureRate { get; set; }
     public int TotalInProgress { get; set; }
+}
+
+/// <summary>
+/// Request to assign a deployment to devices matching tag criteria (ANY logic - OR).
+/// </summary>
+public class BulkAssignByAnyTagRequest
+{
+    public List<string> TagNames { get; set; } = new();
+}
+
+/// <summary>
+/// Request to assign a deployment to devices matching tag criteria (ALL logic - AND).
+/// </summary>
+public class BulkAssignByAllTagsRequest
+{
+    public List<string> TagNames { get; set; } = new();
+}
+
+/// <summary>
+/// Request to assign a deployment to explicit device list.
+/// </summary>
+public class BulkAssignToDevicesRequest
+{
+    public List<string> DeviceIds { get; set; } = new();
+}
+
+/// <summary>
+/// Response from bulk assignment operation.
+/// </summary>
+public class BulkAssignmentResponse
+{
+    public string DeploymentId { get; set; } = null!;
+    public int RequestedCount { get; set; }
+    public int SuccessCount { get; set; }
+    public int FailureCount { get; set; }
+    public string Status { get; set; } = null!;
+    public List<string> FailureReasons { get; set; } = new();
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public int DurationMs { get; set; }
+}
+
+/// <summary>
+/// Response showing current deployment assignment status.
+/// </summary>
+public class BulkAssignmentStatusResponse
+{
+    public string DeploymentId { get; set; } = null!;
+    public int Total { get; set; }
+    public int Acknowledged { get; set; }
+    public int Downloading { get; set; }
+    public int Installing { get; set; }
+    public int Completed { get; set; }
+    public int Failed { get; set; }
+    public int InProgress { get; set; }
+    public double CompletionPercentage { get; set; }
+    public double SuccessPercentage { get; set; }
+    public DateTime QueryTime { get; set; }
+}
+
+/// <summary>
+/// Response showing devices that would be targeted by tag criteria.
+/// </summary>
+public class AssignmentPreviewResponse
+{
+    public List<string> TagNames { get; set; } = new();
+    public string Logic { get; set; } = null!;
+    public int DeviceCount { get; set; }
+    public List<DevicePreview> Devices { get; set; } = new();
+}
+
+/// <summary>
+/// Preview of a single device for assignment.
+/// </summary>
+public class DevicePreview
+{
+    public string DeviceId { get; set; } = null!;
+    public string? DeviceType { get; set; }
+    public string? Manufacturer { get; set; }
+    public string? Model { get; set; }
+    public string State { get; set; } = null!;
+}
+
+/// <summary>
+/// Request to preview assignment targets without actually assigning.
+/// </summary>
+public class PreviewAssignmentRequest
+{
+    public List<string> TagNames { get; set; } = new();
+    public bool UseAllLogic { get; set; } = false;
 }

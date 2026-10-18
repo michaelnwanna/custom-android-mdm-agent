@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FleetManagement.Api.Mqtt;
 using FleetManagement.Api.Releases;
+using FleetManagement.Devices;
 using FleetManagement.Enrollment;
 using FleetManagement.Persistence;
 using FleetManagement.Releases;
@@ -34,7 +35,8 @@ public class ReleaseDeploymentIntegrationTests
         // Arrange
         var dbContextFactory = new InMemoryDbContextFactory();
         var releaseService = new ReleaseService(dbContextFactory.CreateDbContext());
-        var controller = new ReleaseController(releaseService, null, dbContextFactory);
+        var tagService = new DeviceTagService(dbContextFactory.CreateDbContext());
+                var controller = new ReleaseController(releaseService, new BulkAssignmentService(dbContextFactory.CreateDbContext(), tagService, releaseService), null, dbContextFactory);
         controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
         // Act 1: Create Release
@@ -98,7 +100,8 @@ public class ReleaseDeploymentIntegrationTests
         // Arrange
         var dbContextFactory = new InMemoryDbContextFactory();
         var releaseService = new ReleaseService(dbContextFactory.CreateDbContext());
-        var controller = new ReleaseController(releaseService, null, dbContextFactory);
+        var tagService = new DeviceTagService(dbContextFactory.CreateDbContext());
+                var controller = new ReleaseController(releaseService, new BulkAssignmentService(dbContextFactory.CreateDbContext(), tagService, releaseService), null, dbContextFactory);
 
         using var db = dbContextFactory.CreateDbContext();
 
@@ -213,7 +216,8 @@ public class ReleaseDeploymentIntegrationTests
         // Arrange
         var dbContextFactory = new InMemoryDbContextFactory();
         var releaseService = new ReleaseService(dbContextFactory.CreateDbContext());
-        var controller = new ReleaseController(releaseService, null, dbContextFactory);
+        var tagService = new DeviceTagService(dbContextFactory.CreateDbContext());
+                var controller = new ReleaseController(releaseService, new BulkAssignmentService(dbContextFactory.CreateDbContext(), tagService, releaseService), null, dbContextFactory);
         controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
         using var db = dbContextFactory.CreateDbContext();

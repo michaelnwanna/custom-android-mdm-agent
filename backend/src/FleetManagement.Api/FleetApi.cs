@@ -144,8 +144,9 @@ public static class FleetApi
                             Path.Combine(AppContext.BaseDirectory, "apk-releases");
         builder.Services.AddSingleton<IApkFileStorage>(new LocalApkFileStorage(apkStoragePath));
 
-        // Deployment analytics service
+        // Deployment analytics and bulk assignment services
         builder.Services.AddScoped<DeploymentAnalyticsService>();
+        builder.Services.AddScoped<BulkAssignmentService>();
 
         // Device management services
         builder.Services.AddScoped<DeviceService>();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FleetManagement.Api.Releases;
 using FleetManagement.Enrollment;
 using FleetManagement.Persistence;
+using FleetManagement.Devices;
 using FleetManagement.Releases;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,9 @@ public class ReleaseControllerAssignmentTests
         db.Add(enrollment);
         await db.SaveChangesAsync();
 
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act
         var result = await controller.AssignDeploymentAsync(
@@ -78,7 +81,10 @@ public class ReleaseControllerAssignmentTests
     public async Task AssignDeployment_With_Invalid_DeploymentId_Returns_BadRequest()
     {
         // Arrange
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        using var db = _dbContextFactory.CreateDbContext();
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act
         var result = await controller.AssignDeploymentAsync(
@@ -102,7 +108,9 @@ public class ReleaseControllerAssignmentTests
         );
         var deploymentId = await _releaseService.CreatePilotDeploymentAsync(releaseId, "test-user");
 
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act
         var result = await controller.AssignDeploymentAsync(
@@ -126,7 +134,9 @@ public class ReleaseControllerAssignmentTests
         );
         var deploymentId = await _releaseService.CreatePilotDeploymentAsync(releaseId, "test-user");
 
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act
         var result = await controller.AssignDeploymentAsync(
@@ -155,7 +165,9 @@ public class ReleaseControllerAssignmentTests
         db.Add(enrollment);
         await db.SaveChangesAsync();
 
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act
         await controller.AssignDeploymentAsync(
@@ -192,7 +204,9 @@ public class ReleaseControllerAssignmentTests
         db.Add(enrollment);
         await db.SaveChangesAsync();
 
-        var controller = new ReleaseController(_releaseService, null, _dbContextFactory);
+        var tagService = new DeviceTagService(db);
+        var bulkAssignmentService = new BulkAssignmentService(db, tagService, _releaseService);
+        var controller = new ReleaseController(_releaseService, bulkAssignmentService, null, _dbContextFactory);
 
         // Act - Assign twice
         var result1 = await controller.AssignDeploymentAsync(
