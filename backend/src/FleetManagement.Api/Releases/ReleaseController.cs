@@ -404,6 +404,101 @@ public class ReleaseController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Get deployment progress analytics.
+    /// Returns device count breakdown by status, completion percentage, and success rate.
+    /// </summary>
+    [HttpGet("deployments/{deploymentId}/progress")]
+    [AllowAnonymous]
+    public async Task<ActionResult<DeploymentProgressResponse>> GetDeploymentProgressAsync(
+        [FromRoute] string deploymentId)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        var analyticsService = new DeploymentAnalyticsService(_dbContextFactory);
+        var analytics = await analyticsService.GetDeploymentProgressAsync(deploymentGuid);
+
+        if (analytics == null)
+            return NotFound();
+
+        return Ok(MapToResponse(analytics));
+    }
+
+    /// <summary>
+    /// Get release progress analytics.
+    /// Returns per-deployment breakdown plus aggregated totals.
+    /// </summary>
+    [HttpGet("{releaseId}/progress")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ReleaseProgressResponse>> GetReleaseProgressAsync(
+        [FromRoute] string releaseId)
+    {
+        if (string.IsNullOrWhiteSpace(releaseId) || !Guid.TryParse(releaseId, out var releaseGuid))
+            return BadRequest("Valid ReleaseId is required");
+
+        var analyticsService = new DeploymentAnalyticsService(_dbContextFactory);
+        var analytics = await analyticsService.GetReleaseProgressAsync(releaseGuid);
+
+        if (analytics == null)
+            return NotFound();
+
+        return Ok(MapToResponse(analytics));
+    }
+
+    /// <summary>
+    /// Map internal DeploymentProgressAnalytics to API response DTO.
+    /// </summary>
+    private static DeploymentProgressResponse MapToResponse(DeploymentProgressAnalytics analytics)
+    {
+        return new DeploymentProgressResponse
+        {
+            DeploymentId = analytics.DeploymentId.ToString(),
+            ReleaseId = analytics.ReleaseId.ToString(),
+            Stage = analytics.Stage,
+            TotalDevices = analytics.TotalDevices,
+            Counts = new StatusCountsResponse
+            {
+                Pending = analytics.Counts.Pending,
+                Downloading = analytics.Counts.Downloading,
+                Installing = analytics.Counts.Installing,
+                Completed = analytics.Counts.Completed,
+                Failed = analytics.Counts.Failed
+            },
+            CompletionPercentage = analytics.Counts.CompletionPercentage,
+            SuccessRate = analytics.Counts.SuccessRate,
+            FailureRate = analytics.Counts.FailureRate,
+            InProgress = analytics.Counts.InProgress,
+            LastUpdatedAt = analytics.LastUpdatedAt
+        };
+    }
+
+    /// <summary>
+    /// Map internal ReleaseProgressAnalytics to API response DTO.
+    /// </summary>
+    private static ReleaseProgressResponse MapToResponse(ReleaseProgressAnalytics analytics)
+    {
+        return new ReleaseProgressResponse
+        {
+            ReleaseId = analytics.ReleaseId.ToString(),
+            PackageName = analytics.PackageName,
+            VersionCode = analytics.VersionCode,
+            Deployments = analytics.Deployments.Select(MapToResponse).ToList(),
+            Totals = new StatusCountsResponse
+            {
+                Pending = analytics.Totals.Pending,
+                Downloading = analytics.Totals.Downloading,
+                Installing = analytics.Totals.Installing,
+                Completed = analytics.Totals.Completed,
+                Failed = analytics.Totals.Failed
+            },
+            TotalCompletionPercentage = analytics.Totals.CompletionPercentage,
+            TotalSuccessRate = analytics.Totals.SuccessRate,
+            TotalFailureRate = analytics.Totals.FailureRate,
+            TotalInProgress = analytics.Totals.InProgress
+        };
+    }
 }
 
 /// <summary>
@@ -529,4 +624,50 @@ public class AssignDeploymentResponse
     /// When the assignment was created.
     /// </summary>
     public DateTimeOffset CreatedAt { get; set; }
+}
+
+/// <summary>
+/// Status count breakdown response.
+/// </summary>
+public class StatusCountsResponse
+{
+    public int Pending { get; set; }
+    public int Downloading { get; set; }
+    public int Installing { get; set; }
+    public int Completed { get; set; }
+    public int Failed { get; set; }
+}
+
+/// <summary>
+/// Deployment progress analytics response.
+/// </summary>
+public class DeploymentProgressResponse
+{
+    public string DeploymentId { get; set; } = null!;
+    public string ReleaseId { get; set; } = null!;
+    public string Stage { get; set; } = null!;
+    public int TotalDevices { get; set; }
+    public StatusCountsResponse Counts { get; set; } = null!;
+    public int CompletionPercentage { get; set; }
+    public int SuccessRate { get; set; }
+    public int FailureRate { get; set; }
+    public int InProgress { get; set; }
+    public DateTime? LastUpdatedAt { get; set; }
+}
+
+/// <summary>
+/// Release progress analytics response.
+/// Includes all deployments and aggregated totals.
+/// </summary>
+public class ReleaseProgressResponse
+{
+    public string ReleaseId { get; set; } = null!;
+    public string PackageName { get; set; } = null!;
+    public long VersionCode { get; set; }
+    public List<DeploymentProgressResponse> Deployments { get; set; } = new();
+    public StatusCountsResponse Totals { get; set; } = null!;
+    public int TotalCompletionPercentage { get; set; }
+    public int TotalSuccessRate { get; set; }
+    public int TotalFailureRate { get; set; }
+    public int TotalInProgress { get; set; }
 }
