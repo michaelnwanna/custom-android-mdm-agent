@@ -300,3 +300,68 @@ This document outlines the next major work after the foundation (Phase 1) is com
 - Arbitrary remote command execution
 - Kubernetes deployment and high-availability setup
 - Performance load testing (100+ devices)
+
+---
+
+## Phase 2.1 Progress
+
+### ✅ Completed (Commit b51cdaf)
+
+**Backend Foundation**
+- [x] Policy domain models (`Policy`, `PolicyAssignment`, `DevicePolicyState`)
+  - Policy: immutable, versioned, JSON-based (max 64 KB)
+  - PolicyAssignment: tracks device assignment and acknowledgement state
+- [x] PolicyService with idempotent creation
+  - Same PolicyJson → same PolicyId (MD5 hash-derived UUID)
+  - Prevents duplicate policies in database
+- [x] REST API endpoints
+  - `POST /api/v1/policies/create`: Create or retrieve policy
+  - `POST /api/v1/policies/assign`: Assign policy to enrolled device
+- [x] Database migration (20261018100421_AddPolicies)
+  - `Policies` table with constraints and indexes
+  - `PolicyAssignments` table with FK relationships
+  - Cascading restrictions on policy/enrollment deletion
+- [x] Unit test suite (26 tests, all passing)
+  - Model creation and validation
+  - Idempotency verification (same JSON → same ID)
+  - JSON validation (empty, malformed, oversized, non-object)
+  - Service layer with in-memory DB
+  - Assignment creation and error cases
+
+**Verification**
+- All unit tests passing: 26/26
+- Backend builds successfully
+- Database schema supports policy versioning and multi-device assignment
+- Idempotency via content hash prevents duplicate policy storage
+
+### 🔄 Next Steps (Phase 2.1 Continuation)
+
+1. **Policy Command Generation** (2–3 hours)
+   - Query active policies for enrolled devices
+   - Generate `SET_POLICY` commands with current version
+   - Insert into CommandEventOwnership and publish to MQTT
+
+2. **Device-Side Policy Handler** (Android, 2–3 hours)
+   - Decode `SET_POLICY` command from inbox
+   - Apply policy JSON to Room storage
+   - Send acknowledgement event with assigned and acknowledged versions
+
+3. **Integration Tests** (PostgreSQL + device, 1–2 hours)
+   - Policy creation and deduplication with real DB
+   - Assignment to enrolled device
+   - Command generation and MQTT publication
+   - Device receives and persists policy
+
+4. **E2E Verification** (Combined harness, 1–2 hours)
+   - Admin creates policy (idempotent check)
+   - Assigns to test device
+   - Device receives SET_POLICY command
+   - Device applies and acknowledges
+   - Admin observes assignment completion
+
+### Status
+- **Milestone**: Policy Delivery Foundation
+- **Branch**: main
+- **Commits**: b51cdaf (policy models, service, tests)
+- **Estimated completion**: End of Phase 2.1 iteration
+
