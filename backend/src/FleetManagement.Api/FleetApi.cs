@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.RateLimiting;
+using FleetManagement.Api.Mqtt;
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Persistence;
@@ -141,6 +142,14 @@ public static class FleetApi
         var apkStoragePath = Environment.GetEnvironmentVariable("APK_STORAGE_PATH") ?? 
                             Path.Combine(AppContext.BaseDirectory, "apk-releases");
         builder.Services.AddSingleton<IApkFileStorage>(new LocalApkFileStorage(apkStoragePath));
+
+        // MQTT services
+        builder.Services.AddSingleton<MqttHostedService>();
+        builder.Services.AddSingleton<IMqttService>(sp => sp.GetRequiredService<MqttHostedService>());
+        builder.Services.AddSingleton<ICommandPublisher>(sp => sp.GetRequiredService<MqttHostedService>());
+        builder.Services.AddSingleton<IEventSubscriber>(sp => sp.GetRequiredService<MqttHostedService>());
+        builder.Services.AddHostedService<MqttHostedService>(sp => sp.GetRequiredService<MqttHostedService>());
+        builder.Services.AddHostedService<MqttAcknowledgementHandler>();
     }
 
     private static void MapEnrollment(this WebApplication app)
