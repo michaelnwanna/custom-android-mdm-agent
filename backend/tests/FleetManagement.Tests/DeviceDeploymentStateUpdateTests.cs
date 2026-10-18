@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using FleetManagement.Api.Releases;
 using FleetManagement.Persistence;
+using FleetManagement.Api.Releases;
 using FleetManagement.Releases;
 
 namespace FleetManagement.Tests;
@@ -39,7 +39,7 @@ public class DeviceDeploymentStateUpdateTests
 
         var service = new ReleaseService(db);
         var httpContext = new DefaultHttpContext();
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var request = new UpdateDeviceStatusRequest { Status = "Downloading" };
@@ -69,7 +69,7 @@ public class DeviceDeploymentStateUpdateTests
 
         var service = new ReleaseService(db);
         var httpContext = new DefaultHttpContext();
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var request = new UpdateDeviceStatusRequest { Status = "Installing" };
@@ -98,7 +98,7 @@ public class DeviceDeploymentStateUpdateTests
 
         var service = new ReleaseService(db);
         var httpContext = new DefaultHttpContext();
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var request = new UpdateDeviceStatusRequest { Status = "Completed" };
@@ -127,7 +127,7 @@ public class DeviceDeploymentStateUpdateTests
 
         var service = new ReleaseService(db);
         var httpContext = new DefaultHttpContext();
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
         var errorMsg = "APK signature verification failed";
@@ -156,7 +156,7 @@ public class DeviceDeploymentStateUpdateTests
     {
         using var db = CreateDbContext();
         var service = new ReleaseService(db);
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -178,7 +178,7 @@ public class DeviceDeploymentStateUpdateTests
     {
         using var db = CreateDbContext();
         var service = new ReleaseService(db);
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -200,7 +200,7 @@ public class DeviceDeploymentStateUpdateTests
     {
         using var db = CreateDbContext();
         var service = new ReleaseService(db);
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -219,7 +219,7 @@ public class DeviceDeploymentStateUpdateTests
     {
         using var db = CreateDbContext();
         var service = new ReleaseService(db);
-        var controller = new ReleaseController(service);
+        var controller = new ReleaseController(service, null, CreateDbContextFactory());
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -232,4 +232,29 @@ public class DeviceDeploymentStateUpdateTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
     }
+
+    private IDbContextFactory<FleetDbContext> CreateDbContextFactory()
+    {
+        var dbName = $"DeviceStateTests_{Guid.NewGuid()}";
+        return new InMemoryDbContextFactory(dbName);
+    }
+
+    private class InMemoryDbContextFactory : IDbContextFactory<FleetDbContext>
+    {
+        private readonly string _dbName;
+
+        public InMemoryDbContextFactory(string dbName)
+        {
+            _dbName = dbName;
+        }
+
+        public FleetDbContext CreateDbContext()
+        {
+            var options = new DbContextOptionsBuilder<FleetDbContext>()
+                .UseInMemoryDatabase(_dbName)
+                .Options;
+            return new FleetDbContext(options);
+        }
+    }
+
 }

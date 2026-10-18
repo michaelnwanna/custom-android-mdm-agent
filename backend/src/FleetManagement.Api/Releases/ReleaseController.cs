@@ -1,6 +1,9 @@
+using FleetManagement.Api.Mqtt;
+using FleetManagement.Persistence;
 using FleetManagement.Releases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagement.Api.Releases;
 
@@ -14,10 +17,17 @@ namespace FleetManagement.Api.Releases;
 public class ReleaseController : ControllerBase
 {
     private readonly ReleaseService _releaseService;
+    private readonly ICommandPublisher? _commandPublisher;
+    private readonly IDbContextFactory<FleetDbContext> _dbContextFactory;
 
-    public ReleaseController(ReleaseService releaseService)
+    public ReleaseController(
+        ReleaseService releaseService,
+        ICommandPublisher? commandPublisher,
+        IDbContextFactory<FleetDbContext> dbContextFactory)
     {
         _releaseService = releaseService;
+        _commandPublisher = commandPublisher;
+        _dbContextFactory = dbContextFactory;
     }
 
     /// <summary>
@@ -291,6 +301,77 @@ public class ReleaseController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Assign a deployment to an enrolled device.
+    /// Creates device state tracking and publishes INSTALL_RELEASE command via MQTT if available.
+    /// </summary>
+    [HttpPost("{deploymentId}/assign")]
+    public async Task<ActionResult<AssignDeploymentResponse>> AssignDeploymentAsync(
+        [FromRoute] string deploymentId,
+        [FromBody] AssignDeploymentRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        if (request == null)
+            return BadRequest("Request cannot be null");
+
+        if (string.IsNullOrWhiteSpace(request.EnrollmentId) || !Guid.TryParse(request.EnrollmentId, out var enrollmentGuid))
+            return BadRequest("Valid EnrollmentId is required");
+
+        try
+        {
+            // Perform the assignment in the domain
+            var stateId = await _releaseService.AssignDeploymentAsync(deploymentGuid, enrollmentGuid);
+
+            // If MQTT is available, publish the command
+            if (_commandPublisher != null)
+            {
+                try
+                {
+                    // Get the deployment to find the release ID and device ID
+                    var deployment = await _releaseService.GetDeploymentAsync(deploymentGuid);
+                    if (deployment != null)
+                    {
+                        using var db = _dbContextFactory.CreateDbContext();
+                        var enrollment = await db.Set<FleetManagement.Enrollment.PendingEnrollment>()
+                            .FirstOrDefaultAsync(e => e.Id == enrollmentGuid);
+
+                        if (enrollment?.DeviceId.HasValue == true)
+                        {
+                            await _commandPublisher.PublishInstallReleaseAsync(
+                                enrollment.DeviceId.Value,
+                                deployment.ReleaseId
+                            );
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log MQTT error but don't fail the assignment
+                    System.Console.WriteLine($"MQTT publish failed: {ex.Message}");
+                }
+            }
+
+            return Ok(new AssignDeploymentResponse
+            {
+                StateId = stateId.ToString(),
+                DeploymentId = deploymentId,
+                EnrollmentId = request.EnrollmentId,
+                Status = "Pending",
+                CreatedAt = DateTimeOffset.UtcNow
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }
 
 /// <summary>
@@ -380,4 +461,40 @@ public class UpdateDeviceStatusResponse
     public string EnrollmentId { get; set; } = null!;
     public string Status { get; set; } = null!;
     public DateTimeOffset UpdatedAt { get; set; }
+}
+
+public class AssignDeploymentRequest
+{
+    /// <summary>
+    /// Enrollment ID to assign the deployment to.
+    /// </summary>
+    public string EnrollmentId { get; set; } = null!;
+}
+
+public class AssignDeploymentResponse
+{
+    /// <summary>
+    /// The device deployment state ID.
+    /// </summary>
+    public string StateId { get; set; } = null!;
+
+    /// <summary>
+    /// The deployment that was assigned.
+    /// </summary>
+    public string DeploymentId { get; set; } = null!;
+
+    /// <summary>
+    /// The enrollment (device) assigned.
+    /// </summary>
+    public string EnrollmentId { get; set; } = null!;
+
+    /// <summary>
+    /// Initial status (always Pending for new assignments).
+    /// </summary>
+    public string Status { get; set; } = null!;
+
+    /// <summary>
+    /// When the assignment was created.
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; set; }
 }
