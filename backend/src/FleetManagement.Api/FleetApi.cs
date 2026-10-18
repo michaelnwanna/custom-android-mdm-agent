@@ -149,6 +149,7 @@ public static class FleetApi
         builder.Services.AddSingleton<ICommandPublisher>(sp => sp.GetRequiredService<MqttHostedService>());
         builder.Services.AddSingleton<IEventSubscriber>(sp => sp.GetRequiredService<MqttHostedService>());
         builder.Services.AddHostedService<MqttHostedService>(sp => sp.GetRequiredService<MqttHostedService>());
+        builder.Services.AddHostedService<MqttStatusReportHandler>();
         builder.Services.AddHostedService<MqttAcknowledgementHandler>();
     }
 

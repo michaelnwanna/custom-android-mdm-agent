@@ -9,6 +9,7 @@ namespace FleetManagement.Api.Mqtt;
 
 /// <summary>
 /// Hosted service that manages the MQTT broker connection and handles command publishing and event subscription.
+/// Supports both legacy acknowledgements and new status reports from devices.
 /// </summary>
 public class MqttHostedService : BackgroundService, IMqttService, ICommandPublisher, IEventSubscriber
 {
@@ -16,6 +17,7 @@ public class MqttHostedService : BackgroundService, IMqttService, ICommandPublis
     private readonly IConfiguration _configuration;
     private readonly IDbContextFactory<FleetDbContext> _dbContextFactory;
     private IManagedMqttClient? _client;
+    private readonly List<Func<DeviceStatusReport, Task>> _statusReportHandlers = [];
     private readonly List<Func<DeviceAcknowledgement, Task>> _acknowledgementHandlers = [];
     private readonly object _handlerLock = new();
 
@@ -99,17 +101,24 @@ public class MqttHostedService : BackgroundService, IMqttService, ICommandPublis
 
         _logger.LogInformation("Connected to MQTT broker at {Host}:{Port}", brokerHost, brokerPort);
 
-        // Subscribe to acknowledgement topic pattern: fleet/devices/+/ack
-        var topic = "fleet/devices/+/ack";
-        var subscription = new[] {
+        // Subscribe to acknowledgement topic pattern: fleet/devices/+/ack (legacy)
+        var ackTopic = "fleet/devices/+/ack";
+        // Subscribe to status report topic pattern: fleet/devices/+/status (new)
+        var statusTopic = "fleet/devices/+/status";
+
+        var subscriptions = new[] {
             new MqttTopicFilterBuilder()
-                .WithTopic(topic)
+                .WithTopic(ackTopic)
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                .Build(),
+            new MqttTopicFilterBuilder()
+                .WithTopic(statusTopic)
                 .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build()
         };
-        await _client.SubscribeAsync(subscription);
+        await _client.SubscribeAsync(subscriptions);
 
-        _logger.LogInformation("Subscribed to topic: {Topic}", topic);
+        _logger.LogInformation("Subscribed to topics: {Topics}", string.Join(", ", ackTopic, statusTopic));
     }
 
     private Task OnConnectedAsync(MqttClientConnectedEventArgs arg)
@@ -130,15 +139,51 @@ public class MqttHostedService : BackgroundService, IMqttService, ICommandPublis
         {
             var topic = arg.ApplicationMessage.Topic;
             var payload = arg.ApplicationMessage.PayloadSegment;
+            var json = System.Text.Encoding.UTF8.GetString(payload);
 
-            if (topic.StartsWith("fleet/devices/") && topic.EndsWith("/ack"))
+            // Handle status reports: fleet/devices/{deviceId}/status
+            if (topic.StartsWith("fleet/devices/") && topic.EndsWith("/status"))
             {
-                var json = System.Text.Encoding.UTF8.GetString(payload);
+                var statusReport = JsonSerializer.Deserialize<DeviceStatusReport>(json);
+
+                if (statusReport != null)
+                {
+                    _logger.LogInformation(
+                        "Received status report from device {DeviceId}: status={Status}, progress={Progress}",
+                        statusReport.DeviceId, statusReport.Status, statusReport.Progress);
+
+                    // Call all registered status report handlers
+                    List<Func<DeviceStatusReport, Task>> handlers;
+                    lock (_handlerLock)
+                    {
+                        handlers = new List<Func<DeviceStatusReport, Task>>(_statusReportHandlers);
+                    }
+
+                    foreach (var handler in handlers)
+                    {
+                        try
+                        {
+                            await handler(statusReport);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error in status report handler");
+                        }
+                    }
+                }
+            }
+            // Handle legacy acknowledgements: fleet/devices/{deviceId}/ack
+            else if (topic.StartsWith("fleet/devices/") && topic.EndsWith("/ack"))
+            {
                 var ack = JsonSerializer.Deserialize<DeviceAcknowledgement>(json);
 
                 if (ack != null)
                 {
-                    // Call all registered handlers
+                    _logger.LogInformation(
+                        "Received acknowledgement from device {DeviceId}: eventId={EventId}",
+                        ack.DeviceId, ack.EventId);
+
+                    // Call all registered acknowledgement handlers
                     List<Func<DeviceAcknowledgement, Task>> handlers;
                     lock (_handlerLock)
                     {
@@ -214,6 +259,24 @@ public class MqttHostedService : BackgroundService, IMqttService, ICommandPublis
             deviceId, releaseId);
     }
 
+    public IDisposable OnStatusReport(Func<DeviceStatusReport, Task> handler)
+    {
+        lock (_handlerLock)
+        {
+            _statusReportHandlers.Add(handler);
+        }
+
+        return new StatusReportHandlerRemover(this, handler);
+    }
+
+    private void RemoveStatusReportHandler(Func<DeviceStatusReport, Task> handler)
+    {
+        lock (_handlerLock)
+        {
+            _statusReportHandlers.Remove(handler);
+        }
+    }
+
     public IDisposable OnAcknowledgement(Func<DeviceAcknowledgement, Task> handler)
     {
         lock (_handlerLock)
@@ -229,6 +292,23 @@ public class MqttHostedService : BackgroundService, IMqttService, ICommandPublis
         lock (_handlerLock)
         {
             _acknowledgementHandlers.Remove(handler);
+        }
+    }
+
+    private class StatusReportHandlerRemover : IDisposable
+    {
+        private readonly MqttHostedService _service;
+        private readonly Func<DeviceStatusReport, Task> _handler;
+
+        public StatusReportHandlerRemover(MqttHostedService service, Func<DeviceStatusReport, Task> handler)
+        {
+            _service = service;
+            _handler = handler;
+        }
+
+        public void Dispose()
+        {
+            _service.RemoveStatusReportHandler(_handler);
         }
     }
 
