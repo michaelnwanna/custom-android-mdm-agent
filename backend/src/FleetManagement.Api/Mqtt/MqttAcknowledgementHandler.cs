@@ -1,11 +1,12 @@
 using FleetManagement.Persistence;
+using FleetManagement.Releases;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagement.Api.Mqtt;
 
 /// <summary>
-/// Background service that processes device acknowledgements from MQTT and logs them.
-/// Future enhancement: Update device deployment state when proper state tracking is implemented.
+/// Background service that processes device acknowledgements from MQTT and updates device deployment state.
+/// Maps acknowledgement events to device state transitions (Pending -> Downloading when acknowledged).
 /// </summary>
 public class MqttAcknowledgementHandler : BackgroundService
 {
@@ -52,12 +53,52 @@ public class MqttAcknowledgementHandler : BackgroundService
         try
         {
             _logger.LogInformation(
-                "Received device acknowledgement: deviceId={DeviceId}, commandId={CommandId}, receivedAt={ReceivedAt}",
+                "Received device acknowledgement: deviceId={DeviceId}, eventId={EventId}, receivedAt={ReceivedAt}",
                 ack.DeviceId, ack.EventId, ack.ReceivedAt);
 
-            // Future enhancement: Update device deployment state in database
-            // For now, just log the event
-            await Task.CompletedTask;
+            // Create a scope to get database factory and release service
+            using var scope = _serviceProvider.CreateScope();
+            var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<FleetDbContext>>();
+            using var db = dbContextFactory.CreateDbContext();
+            var releaseService = new ReleaseService(db);
+
+            // Find device deployment state matching this device
+            // We match on EnrollmentId (device ID) and look for the most recent deployment
+            var stateRecord = await db.DeploymentDeviceStates
+                .Where(s => s.EnrollmentId == ack.DeviceId)
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (stateRecord == null)
+            {
+                _logger.LogWarning(
+                    "No deployment found for device {DeviceId}",
+                    ack.DeviceId);
+                return;
+            }
+
+            // Transition from Pending to Downloading when device acknowledges receipt
+            if (stateRecord.Status == DeploymentDeviceStatus.Pending)
+            {
+                var updated = await releaseService.UpdateDeviceDeploymentStateAsync(
+                    stateRecord.DeploymentId,
+                    stateRecord.EnrollmentId,
+                    DeploymentDeviceStatus.Downloading
+                );
+
+                if (updated != null)
+                {
+                    _logger.LogInformation(
+                        "Updated device {DeviceId} deployment state to Downloading",
+                        ack.DeviceId);
+                }
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Device {DeviceId} acknowledged with status {CurrentStatus}, no state transition needed",
+                    ack.DeviceId, stateRecord.Status);
+            }
         }
         catch (Exception ex)
         {
