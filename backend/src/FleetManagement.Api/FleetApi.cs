@@ -8,6 +8,7 @@ using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Persistence;
 using FleetManagement.Policies;
+using FleetManagement.Releases;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -54,6 +55,7 @@ public static class FleetApi
             };
         });
         ConfigureEnrollment(builder);
+        builder.Services.AddControllers();
         builder.AddAdministratorAuthentication();
         builder.AddDeviceAuthentication();
         configure?.Invoke(builder);
@@ -132,6 +134,7 @@ public static class FleetApi
             services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), services.GetRequiredService<TimeProvider>(), digestKey));
         builder.Services.AddScoped<PolicyService>();
         builder.Services.AddScoped<PolicyCommandGenerator>();
+        builder.Services.AddScoped<ReleaseService>();
     }
 
     private static void MapEnrollment(this WebApplication app)

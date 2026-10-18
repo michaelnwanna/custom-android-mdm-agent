@@ -17,7 +17,7 @@ public sealed class EnrollmentPersistenceTests
         using var context = new FleetDbContext(new DbContextOptionsBuilder<FleetDbContext>()
             .UseNpgsql("Host=localhost;Database=not_connected;Username=unused").Options);
         Assert.False(context.Database.HasPendingModelChanges());
-        Assert.Equal(6, context.Database.GetMigrations().Count());
+        Assert.Equal(7, context.Database.GetMigrations().Count());
         var sql = context.GetService<IMigrator>().GenerateScript();
         Assert.Contains("CREATE TABLE \"PendingEnrollments\"", sql);
         Assert.Contains("CREATE TABLE \"CommandEventOwnerships\"", sql);
