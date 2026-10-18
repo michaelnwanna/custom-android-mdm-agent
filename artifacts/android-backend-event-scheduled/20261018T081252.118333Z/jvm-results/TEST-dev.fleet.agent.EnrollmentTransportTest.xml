@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.fleet.agent.EnrollmentTransportTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-18T08:13:51" hostname="Michaels-MacBook-Pro.local" time="0.292">
+  <properties/>
+  <testcase name="pinnedTlsSendsBoundedRequestAndRefusesRedirectsAndUntrustedServers" classname="dev.fleet.agent.EnrollmentTransportTest" time="0.15"/>
+  <testcase name="responseLimitAppliesToDeclaredAndChunkedBodies" classname="dev.fleet.agent.EnrollmentTransportTest" time="0.142"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

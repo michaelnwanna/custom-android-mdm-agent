@@ -59,6 +59,12 @@ class EnrollmentBackendInstrumentedTest {
         var retainedEventId: String? = null
         val eventDeletion = configuration.optBoolean("eventDeletion", false)
         val eventWorker = configuration.optBoolean("eventWorker", false)
+        val scheduled = InstrumentationRegistry.getArguments().getString("scheduledEvent") == "true"
+        require(!scheduled || (eventWorker && eventDeletion && phase == null))
+        val schedulerNonce = UUID.randomUUID().toString()
+        val schedulerDirectory = File(context.noBackupFilesDir, "event-scheduler-$schedulerNonce")
+        var scheduledId: UUID? = null
+        var schedulerProof: JSONObject? = null
         var eventWorkerRetryVerified = state?.getBoolean("workerRetryVerified") ?: false
         var eventWorkerVerified = false
         var eventWorkerDisabledRetained = false
@@ -150,8 +156,31 @@ class EnrollmentBackendInstrumentedTest {
                     assertEquals(state.getString("eventId"), pending.eventId)
                 } else {
                     if (eventWorker) {
+                        if (scheduled) {
+                            check(schedulerDirectory.mkdir())
+                            File(schedulerDirectory, "authorized.json").writeText(JSONObject()
+                                .put("namespace", namespace).put("databaseName", databaseName)
+                                .put("serverRootDer", configuration.getString("serverRootDer"))
+                                .put("deviceRootDer", configuration.getString("deviceRootDer")).toString())
+                            val request = androidx.work.OneTimeWorkRequest.Builder(EnrolledEventSchedulerWorker::class.java)
+                                .setInputData(androidx.work.Data.Builder().putString("fixture", schedulerNonce).build())
+                                .setConstraints(androidx.work.Constraints.Builder()
+                                    .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED).build())
+                                .setBackoffCriteria(androidx.work.BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build()
+                            scheduledId = request.id
+                            val manager = androidx.work.WorkManager.getInstance(context)
+                            manager.enqueueUniqueWork("test-enrolled-event-$schedulerNonce", androidx.work.ExistingWorkPolicy.KEEP, request)
+                                .result.get(10, TimeUnit.SECONDS)
+                            awaitScheduled(context, request.id) {
+                                (it.runAttemptCount == 1 && it.state == androidx.work.WorkInfo.State.ENQUEUED) || it.state.isFinished
+                            }
+                            val attempt = JSONObject(File(schedulerDirectory, "attempt-0.json").readText())
+                            assertEquals("retry", attempt.getString("result"))
+                            assertEquals(request.id.toString(), attempt.getString("workId"))
+                        } else {
                         assertEquals(androidx.work.ListenableWorker.Result.retry(),
                             runWorker(context, databaseName, tlsIdentity, serverRoot, 0))
+                        }
                         eventWorkerRetryVerified = true
                     } else {
                         assertEquals(503, assertThrows(DeviceHttpException::class.java) {
@@ -203,9 +232,28 @@ class EnrollmentBackendInstrumentedTest {
                     eventDeleteRollbackVerified = true
                     retryDatabase.openHelper.writableDatabase.execSQL("DROP TRIGGER test_delete_failure")
                     if (eventWorker) {
+                        if (scheduled) {
+                            val workId = requireNotNull(scheduledId)
+                            val info = awaitScheduled(context, workId) { it.state.isFinished }
+                            assertEquals(androidx.work.WorkInfo.State.SUCCEEDED, info.state)
+                            assertEquals(1, info.outputData.getInt("delivered", -1))
+                            val attempts = (0..1).map { attempt ->
+                                JSONObject(File(schedulerDirectory, "attempt-$attempt.json").readText())
+                            }
+                            attempts.forEachIndexed { attempt, record ->
+                                assertEquals(attempt, record.getInt("attempt"))
+                                assertEquals(workId.toString(), record.getString("workId"))
+                            }
+                            assertEquals("delivered", attempts[1].getString("result"))
+                            assertTrue(attempts[1].getLong("startedMillis") - attempts[0].getLong("finishedMillis") >= 29000)
+                            assertEquals(2, schedulerDirectory.listFiles()!!.count { it.name.startsWith("attempt-") })
+                            schedulerProof = JSONObject().put("workId", workId.toString()).put("state", "SUCCEEDED")
+                                .put("first", attempts[0]).put("second", attempts[1])
+                        } else {
                         assertEquals(androidx.work.ListenableWorker.Result.success(
                             androidx.work.Data.Builder().putInt("delivered", 1).build()),
                             runWorker(context, databaseName, tlsIdentity, serverRoot, 1))
+                        }
                         eventWorkerVerified = true
                     } else assertEquals(acknowledgement, retryJournal.uploadAndAcknowledge(tlsIdentity, serverRoot, pending))
                     assertTrue(retryJournal.pendingEvents().isEmpty())
@@ -311,6 +359,7 @@ class EnrollmentBackendInstrumentedTest {
                 verify(signature)
             })
             output.writeText(JSONObject().put("schemaVersion", 1).put("deviceId", response.deviceId.toString())
+                .put("eventScheduledVerified", schedulerProof != null).put("eventSchedulerProof", schedulerProof)
                 .put("eventProcessRecoveryVerified", resuming)
                 .put("eventRebootRecoveryVerified", resuming && reboot)
                 .put("preparedBootCount", state?.getInt("preparedBootCount") ?: bootCount)
@@ -334,16 +383,46 @@ class EnrollmentBackendInstrumentedTest {
                 .put("signatureBase64", Base64.getEncoder().encodeToString(signature)).toString())
         } finally {
             try { mqtt?.disconnect()?.get(5, TimeUnit.SECONDS) } catch (_: Exception) { }
-            database?.close()
-            if (!checkpointRetained && phase != null) cleanupOnlyEventRecoveryFixture()
-            if (phase == null) {
-                context.deleteDatabase(databaseName)
-                namespaces.forEach { current ->
-                    val alias = "fleet-enrollment-$current"
-                    if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
-                    File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively()
+            if (scheduledId != null) {
+                val manager = androidx.work.WorkManager.getInstance(context)
+                manager.cancelUniqueWork("test-enrolled-event-$schedulerNonce").result.get(10, TimeUnit.SECONDS)
+                check(manager.getWorkInfosForUniqueWork("test-enrolled-event-$schedulerNonce").get(10, TimeUnit.SECONDS)
+                    .all { it.state.isFinished })
+            }
+            EnrolledEventSchedulerWorker.withFixtureLock(schedulerNonce) {
+                if (schedulerDirectory.exists()) check(schedulerDirectory.deleteRecursively())
+                database?.close()
+                if (!checkpointRetained && phase != null) cleanupOnlyEventRecoveryFixture()
+                if (phase == null) {
+                    context.deleteDatabase(databaseName)
+                    namespaces.forEach { current ->
+                        val alias = "fleet-enrollment-$current"
+                        if (keyStore.containsAlias(alias)) keyStore.deleteEntry(alias)
+                        File(context.noBackupFilesDir, "enrollment-$current").deleteRecursively()
+                    }
                 }
             }
+        }
+    }
+
+    private fun awaitScheduled(context: android.content.Context, id: UUID,
+        ready: (androidx.work.WorkInfo) -> Boolean): androidx.work.WorkInfo {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val observed = androidx.work.WorkManager.getInstance(context).getWorkInfoByIdLiveData(id)
+        val finished = java.util.concurrent.CountDownLatch(1)
+        var result: androidx.work.WorkInfo? = null
+        val observer = androidx.lifecycle.Observer<androidx.work.WorkInfo?> { info ->
+            if (info != null && ready(info)) {
+                result = info
+                finished.countDown()
+            }
+        }
+        try {
+            instrumentation.runOnMainSync { observed.observeForever(observer) }
+            check(finished.await(100, TimeUnit.SECONDS)) { "Scheduled event did not reach expected state" }
+            return requireNotNull(result)
+        } finally {
+            instrumentation.runOnMainSync { observed.removeObserver(observer) }
         }
     }
 

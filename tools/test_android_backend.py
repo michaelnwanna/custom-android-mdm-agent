@@ -5,10 +5,26 @@ import unittest
 import tempfile
 from pathlib import Path
 
-from check_android_backend import public_configuration, public_tls_diagnostics, verify_event_proof, verify_mqtt_proof, verify_event_process_proof, run_event_process_phases
+from check_android_backend import public_configuration, public_tls_diagnostics, verify_event_proof, verify_mqtt_proof, verify_event_process_proof, run_event_process_phases, verify_scheduled_event_proof
 
 
 class AndroidBackendEvidenceTests(unittest.TestCase):
+    def test_scheduled_event_requires_same_work_real_attempts_results_and_backoff(self):
+        work_id = "7512f600-bb5b-4353-b67a-3a56126308d7"
+        proof = {"workId": work_id, "state": "SUCCEEDED",
+                 "first": {"workId": work_id, "attempt": 0, "result": "retry", "startedMillis": 1000, "finishedMillis": 2000},
+                 "second": {"workId": work_id, "attempt": 1, "result": "delivered", "startedMillis": 32000, "finishedMillis": 33000}}
+        verify_scheduled_event_proof({"eventScheduledVerified": True, "eventSchedulerProof": proof})
+        for name, value in (("attempt", True), ("workId", "other"), ("result", "retry"),
+                            ("startedMillis", 30000), ("finishedMillis", 1), ("startedMillis", 32000.0)):
+            invalid = dict(proof, second=dict(proof["second"], **{name: value}))
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                verify_scheduled_event_proof({"eventScheduledVerified": True, "eventSchedulerProof": invalid})
+        with self.assertRaises(ValueError):
+            verify_scheduled_event_proof({"eventScheduledVerified": False, "eventSchedulerProof": proof})
+        with self.assertRaises(ValueError):
+            verify_scheduled_event_proof({"eventScheduledVerified": True, "eventSchedulerProof": dict(proof, state="ENQUEUED")})
+
     def test_event_reboot_proof_requires_increased_boot_count_not_distinct_pid(self):
         prepared = {"schemaVersion": 1, "preparedProcessId": 123, "preparedBootCount": 10,
                     "deviceId": "7512f600-bb5b-4353-b67a-3a56126308d7",

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "dotnet",
+    "build",
+    "/Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj",
+    "--nologo",
+    "--verbosity",
+    "minimal"
+  ],
+  "returncode": 0,
+  "stdout": "  Determining projects to restore...\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/backend/src/FleetManagement.Api/FleetManagement.Api.csproj (in 730 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/tools/android-enrollment-host/FleetManagement.AndroidEnrollmentHost.csproj (in 730 ms).\n  Restored /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/backend/src/FleetManagement/FleetManagement.csproj (in 787 ms).\n  FleetManagement -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/backend/src/FleetManagement/bin/Debug/net10.0/FleetManagement.dll\n  FleetManagement.Api -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/backend/src/FleetManagement.Api/bin/Debug/net10.0/FleetManagement.Api.dll\n  FleetManagement.AndroidEnrollmentHost -> /Users/michaelnwanna/Documents/Projects/Github/custom-android-mdm-agent/artifacts/android-backend-event-worker/20261018T081457.729847Z/inputs/tools/android-enrollment-host/bin/Debug/net10.0/FleetManagement.AndroidEnrollmentHost.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:06.84\n",
+  "stderr": ""
+}

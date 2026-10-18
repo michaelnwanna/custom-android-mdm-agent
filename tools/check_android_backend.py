@@ -92,6 +92,25 @@ def verify_mqtt_proof(device, broker):
         raise ValueError("Invalid receipt timestamp")
 
 
+def verify_scheduled_event_proof(device):
+    proof = device.get("eventSchedulerProof")
+    if (device.get("eventScheduledVerified") is not True or not isinstance(proof, dict)
+            or proof.get("state") != "SUCCEEDED"
+            or str(uuid.UUID(proof["workId"])) != proof["workId"]):
+        raise ValueError("Scheduled enrolled event proof missing")
+    for attempt, name, result in ((0, "first", "retry"), (1, "second", "delivered")):
+        record = proof.get(name, {})
+        if (record.get("workId") != proof["workId"]
+                or type(record.get("attempt")) is not int or record["attempt"] != attempt
+                or record.get("result") != result
+                or type(record.get("startedMillis")) is not int or record["startedMillis"] < 0
+                or type(record.get("finishedMillis")) is not int
+                or record["finishedMillis"] < record["startedMillis"]):
+            raise ValueError("Scheduled enrolled event attempt proof missing")
+    if proof["second"]["startedMillis"] - proof["first"]["finishedMillis"] < 29000:
+        raise ValueError("Scheduled enrolled event backoff missing")
+
+
 def verify_event_process_proof(prepared, recovered, reboot=False):
     if (type(prepared.get("schemaVersion")) is not int or prepared["schemaVersion"] != 1
             or recovered.get("eventProcessRecoveryVerified") is not True
@@ -174,6 +193,7 @@ def main():
     parser.add_argument("--event-worker", action="store_true", help="Use the real event worker body for retry/deletion; requires --acknowledge-events")
     parser.add_argument("--event-process-recovery", action="store_true", help="Force-stop between committed event retry and fresh-process identity/journal recovery; requires --event-worker")
     parser.add_argument("--event-reboot-recovery", action="store_true", help="Also reboot the explicit emulator before event recovery; requires --event-process-recovery")
+    parser.add_argument("--scheduled-event", action="store_true", help="Verify actual connected WorkManager event dispatch/retry; requires --event-worker and excludes recovery modes")
     parser.add_argument("--bin-dir", type=Path, default=ROOT / ".lab-private/postgres-install/17.11/bin")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
@@ -188,9 +208,12 @@ def main():
         parser.error("--event-process-recovery requires --event-worker")
     if args.event_reboot_recovery and not args.event_process_recovery:
         parser.error("--event-reboot-recovery requires --event-process-recovery")
+    if args.scheduled_event and (not args.event_worker or args.event_process_recovery):
+        parser.error("--scheduled-event requires --event-worker and cannot combine with process/reboot recovery")
     started = datetime.datetime.now(datetime.timezone.utc)
     stamp = started.strftime("%Y%m%dT%H%M%S.%fZ")
-    output = ROOT / ("artifacts/android-backend-event-reboot" if args.event_reboot_recovery else
+    output = ROOT / ("artifacts/android-backend-event-scheduled" if args.scheduled_event else
+                     "artifacts/android-backend-event-reboot" if args.event_reboot_recovery else
                      "artifacts/android-backend-event-process" if args.event_process_recovery else
                      "artifacts/android-backend-event-worker" if args.event_worker else
                      "artifacts/android-backend-event-deletion" if args.acknowledge_events else
@@ -349,12 +372,15 @@ def main():
         else:
             result = execute([*adb, "shell", "am", "instrument", "-w", "-r", "-e", "class",
                           "dev.fleet.agent.EnrollmentBackendInstrumentedTest#realHttpsEnrollmentPersistsAndRecoversTheKeystoreIdentity",
-                          "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], timeout=120)
+                          "-e", "scheduledEvent", "true" if args.scheduled_event else "false",
+                          "dev.fleet.agent.test/androidx.test.runner.AndroidJUnitRunner"], timeout=240 if args.scheduled_event else 120)
             if not instrumentation_passed(result):
                 raise RuntimeError("Real-backend instrumentation did not explicitly pass")
         proof = execute([*adb, "exec-out", "run-as", "dev.fleet.agent", "cat", "files/enrollment-integration-result.json"], timeout=30)
         json.loads(proof)
         (output / "device-public-proof.json").write_text(proof + "\n")
+        if args.scheduled_event:
+            verify_scheduled_event_proof(json.loads(proof))
         if args.event_process_recovery:
             verify_event_process_proof(prepared, json.loads(proof), reboot=args.event_reboot_recovery)
         stdout, stderr = host.communicate(input=proof + "\n", timeout=60)
@@ -439,10 +465,12 @@ def main():
                 "eventWorkerRequested": args.event_worker,
                 "eventProcessRecoveryRequested": args.event_process_recovery,
                 "eventRebootRecoveryRequested": args.event_reboot_recovery,
+                "scheduledEventRequested": args.scheduled_event,
                 "mqttStopped": broker is not None and broker.poll() is not None if args.with_mqtt else None,
                 "pythonDependencies": dict(sorted((distribution.metadata["Name"], distribution.version)
                     for distribution in importlib.metadata.distributions())) if args.with_mqtt else {},
-                "scope": ("Real API34 isolated enrolled Keystore/Room/HTTPS/PostgreSQL event recovery across host force-stop and actual emulator reboot: changed kernel boot ID and increased Android boot count, then explicit instrumentation resume. Same test identity and exact persisted event wire; original ACK recovery, local delete rollback, worker-body deletion, inbox and disabled-event retention. TestWorkerBuilder supplies attempts; package stopped until explicit launch. No autonomous boot delivery, JobScheduler-only execution, default identity mutation, in-flight crash, real network loss, backend restart, abrupt power loss or full fleet acceptance." if args.event_reboot_recovery else
+                "scope": ("Real API34 connected WorkManager dispatch of a debug-only authorized isolated identity/session adapter delegating to EventUploadWorker: actual attempt0 post-commit503 retry, same persisted work ID attempt1 after real30s backoff, enrolled Keystore/Room/HTTPS/PostgreSQL original ACK recovery and exact deletion; retained inbox, rollback and disabled-event retention checks. No TestWorkerBuilder for these scheduled attempts, fake clock, forced scheduler run or production default identity/journal reset. Foreground instrumentation may use GreedyScheduler; not JobScheduler-only dead-process dispatch, boot recovery, OS constraint transitions, in-flight crash, real packet loss or full fleet acceptance." if args.scheduled_event else
+                    "Real API34 isolated enrolled Keystore/Room/HTTPS/PostgreSQL event recovery across host force-stop and actual emulator reboot: changed kernel boot ID and increased Android boot count, then explicit instrumentation resume. Same test identity and exact persisted event wire; original ACK recovery, local delete rollback, worker-body deletion, inbox and disabled-event retention. TestWorkerBuilder supplies attempts; package stopped until explicit launch. No autonomous boot delivery, JobScheduler-only execution, default identity mutation, in-flight crash, real network loss, backend restart, abrupt power loss or full fleet acceptance." if args.event_reboot_recovery else
                     "Real API34 isolated enrolled Keystore/Room/HTTPS/PostgreSQL event recovery across host force-stop with verified old PID absence and explicit new-process instrumentation relaunch. Worker body via test builder first returns retry after committed event/test-only 503; fresh process restores same test identity, verifies exact persisted event wire, recovers original ACK, verifies local delete rollback, worker deletion, retained inbox and disabled-event retention. No autonomous scheduling, production default identity mutation, crash during execution, actual network loss, reboot, power loss or full fleet acceptance." if args.event_process_recovery else
                     "Real API34 Keystore/Room/HTTPS/PostgreSQL worker-body replay via WorkManager test builder: post-commit 503 returns retry and preserves row, original ACK recovery, local delete rollback, worker retry deletes exact event, inbox/reopen dedup and disabled failure retains a new event. No OS-scheduled timing/backoff/reboot/cancel, actual network loss, process kill or full fleet acceptance." if args.event_worker else
                     "Real API34 Keystore/Room/HTTPS/PostgreSQL authenticated event deletion: post-commit 503 preserves row, original acknowledgement recovery, forced delete rollback/reopen/retry, exact event deletion after valid reply, inbox retained across reopen/duplicate command, disabled upload preserves a new event. No actual network loss, process kill, worker or full fleet acceptance." if args.acknowledge_events else
