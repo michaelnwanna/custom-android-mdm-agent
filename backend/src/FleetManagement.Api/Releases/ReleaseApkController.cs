@@ -1,6 +1,7 @@
 namespace FleetManagement.Api.Releases;
 
 using System;
+using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FleetManagement.Releases;
@@ -20,10 +21,12 @@ using FleetManagement.Enrollment;
 public class ReleaseApkController : ControllerBase
 {
     private readonly IDbContextFactory<FleetDbContext> _dbFactory;
+    private readonly IApkFileStorage _fileStorage;
 
-    public ReleaseApkController(IDbContextFactory<FleetDbContext> dbFactory)
+    public ReleaseApkController(IDbContextFactory<FleetDbContext> dbFactory, IApkFileStorage fileStorage)
     {
         _dbFactory = dbFactory;
+        _fileStorage = fileStorage;
     }
 
     /// <summary>
@@ -84,32 +87,53 @@ public class ReleaseApkController : ControllerBase
         var apkSizeBytes = release.ApkSizeBytes;
         var rangeHeader = Request.Headers.Range.ToString();
 
-        if (!string.IsNullOrWhiteSpace(rangeHeader))
+        try
         {
-            // Parse Range header (e.g., "bytes=0-1023" or "bytes=1024-")
-            if (TryParseRangeHeader(rangeHeader, apkSizeBytes, out var start, out var end))
+            Stream fileStream;
+            long streamStart = 0;
+            long streamEnd = apkSizeBytes - 1;
+
+            if (!string.IsNullOrWhiteSpace(rangeHeader) && TryParseRangeHeader(rangeHeader, apkSizeBytes, out var start, out var end))
             {
+                // Partial content: open stream and seek to start position
+                fileStream = await _fileStorage.OpenReadAsync(releaseId, release.GetApkFilename());
+                fileStream.Seek(start, SeekOrigin.Begin);
+                streamStart = start;
+                streamEnd = end;
+
                 // Return 206 Partial Content
-                var contentLength = end - start + 1;
+                var contentLength = streamEnd - streamStart + 1;
                 Response.StatusCode = 206;
-                Response.Headers.ContentRange = $"bytes {start}-{end}/{apkSizeBytes}";
+                Response.Headers.ContentRange = $"bytes {streamStart}-{streamEnd}/{apkSizeBytes}";
                 Response.Headers.ContentLength = contentLength;
                 Response.Headers.ContentType = "application/vnd.android.package-archive";
                 Response.Headers.AcceptRanges = "bytes";
                 Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
-                return Ok(new { message = "Would stream bytes range", start, end, contentLength });
+
+                return new FileStreamResult(fileStream, "application/vnd.android.package-archive")
+                {
+                    FileDownloadName = release.GetApkFilename()
+                };
             }
+
+            // Full file download
+            fileStream = await _fileStorage.OpenReadAsync(releaseId, release.GetApkFilename());
+            Response.StatusCode = 200;
+            Response.Headers.ContentLength = apkSizeBytes;
+            Response.Headers.ContentType = "application/vnd.android.package-archive";
+            Response.Headers.AcceptRanges = "bytes";
+            Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+            Response.Headers.ContentDisposition = $"attachment; filename=\"{release.GetApkFilename()}\"";
+
+            return new FileStreamResult(fileStream, "application/vnd.android.package-archive")
+            {
+                FileDownloadName = release.GetApkFilename()
+            };
         }
-
-        // Full file download
-        Response.StatusCode = 200;
-        Response.Headers.ContentLength = apkSizeBytes;
-        Response.Headers.ContentType = "application/vnd.android.package-archive";
-        Response.Headers.AcceptRanges = "bytes";
-        Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
-        Response.Headers.ContentDisposition = $"attachment; filename=\"{release.PackageName}.apk\"";
-
-        return Ok(new { message = "Would stream full file", sizeBytes = apkSizeBytes });
+        catch (FileNotFoundException)
+        {
+            return NotFound(new { error = "APK file not found in storage" });
+        }
     }
 
     /// <summary>

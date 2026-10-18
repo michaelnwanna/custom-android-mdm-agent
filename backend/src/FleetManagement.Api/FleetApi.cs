@@ -136,6 +136,11 @@ public static class FleetApi
         builder.Services.AddScoped<PolicyCommandGenerator>();
         builder.Services.AddScoped<ReleaseService>();
         builder.Services.AddScoped<ReleaseCommandGenerator>();
+        
+        // APK file storage (using local filesystem by default)
+        var apkStoragePath = Environment.GetEnvironmentVariable("APK_STORAGE_PATH") ?? 
+                            Path.Combine(AppContext.BaseDirectory, "apk-releases");
+        builder.Services.AddSingleton<IApkFileStorage>(new LocalApkFileStorage(apkStoragePath));
     }
 
     private static void MapEnrollment(this WebApplication app)

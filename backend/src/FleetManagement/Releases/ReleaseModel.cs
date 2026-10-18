@@ -150,6 +150,12 @@ public sealed class Release
         var hash = MD5.HashData(bytes);
         return new Guid(hash);
     }
+
+    /// <summary>
+    /// Get the APK filename for this release in storage.
+    /// Format: "{packageName}-{versionCode}.apk"
+    /// </summary>
+    public string GetApkFilename() => $"{PackageName}-{VersionCode}.apk";
 }
 
 /// <summary>

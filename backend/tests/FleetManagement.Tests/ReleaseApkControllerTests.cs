@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -22,6 +23,44 @@ namespace FleetManagement.Tests;
 /// </summary>
 public class ReleaseApkControllerTests
 {
+    /// <summary>
+    /// Mock APK file storage for testing.
+    /// </summary>
+    private class MockApkFileStorage : IApkFileStorage
+    {
+        private readonly Dictionary<string, byte[]> _files = new();
+
+        public void AddFile(string releaseId, string filename, byte[] content)
+        {
+            _files[$"{releaseId}/{filename}"] = content;
+        }
+
+        public Task<Stream> OpenReadAsync(string releaseId, string filename)
+        {
+            var key = $"{releaseId}/{filename}";
+            if (!_files.ContainsKey(key))
+                throw new FileNotFoundException($"File not found: {key}");
+
+            var stream = new MemoryStream(_files[key]) { Position = 0 };
+            return Task.FromResult<Stream>(stream);
+        }
+
+        public Task<long> GetFileSizeAsync(string releaseId, string filename)
+        {
+            var key = $"{releaseId}/{filename}";
+            if (!_files.ContainsKey(key))
+                throw new FileNotFoundException($"File not found: {key}");
+
+            return Task.FromResult((long)_files[key].Length);
+        }
+
+        public Task<bool> FileExistsAsync(string releaseId, string filename)
+        {
+            var key = $"{releaseId}/{filename}";
+            return Task.FromResult(_files.ContainsKey(key));
+        }
+    }
+
     private FleetDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<FleetDbContext>()
@@ -77,7 +116,8 @@ public class ReleaseApkControllerTests
     {
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -92,7 +132,8 @@ public class ReleaseApkControllerTests
     {
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, Guid.NewGuid());
@@ -113,7 +154,8 @@ public class ReleaseApkControllerTests
         await db.SaveChangesAsync();
 
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         var unauthenticatedDeviceId = Guid.NewGuid();
@@ -130,7 +172,8 @@ public class ReleaseApkControllerTests
     {
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, Guid.NewGuid());
@@ -156,7 +199,8 @@ public class ReleaseApkControllerTests
         await db.SaveChangesAsync();
 
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, deviceId);
@@ -184,19 +228,27 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, deviceId);
 
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status200OK, httpContext.Response.StatusCode);
         Assert.Equal(release.ApkSizeBytes, httpContext.Response.ContentLength);
         Assert.Equal("application/vnd.android.package-archive", httpContext.Response.ContentType);
         Assert.Equal("bytes", httpContext.Response.Headers.AcceptRanges.ToString());
+        fileStreamResult.FileStream?.Dispose();
     }
 
     [Fact]
@@ -216,8 +268,15 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=0-1023";
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
@@ -225,10 +284,11 @@ public class ReleaseApkControllerTests
 
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status206PartialContent, httpContext.Response.StatusCode);
         Assert.Equal("bytes 0-1023/" + release.ApkSizeBytes, httpContext.Response.Headers.ContentRange.ToString());
         Assert.Equal(1024L, httpContext.Response.ContentLength);
+        fileStreamResult.FileStream?.Dispose();
     }
 
     [Fact]
@@ -248,8 +308,15 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=1000000-1000999";
@@ -258,10 +325,11 @@ public class ReleaseApkControllerTests
 
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status206PartialContent, httpContext.Response.StatusCode);
         Assert.Equal("bytes 1000000-1000999/" + release.ApkSizeBytes, httpContext.Response.Headers.ContentRange.ToString());
         Assert.Equal(1000L, httpContext.Response.ContentLength);
+        fileStreamResult.FileStream?.Dispose();
     }
 
     [Fact]
@@ -281,8 +349,15 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=5000000-";
@@ -291,11 +366,12 @@ public class ReleaseApkControllerTests
 
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status206PartialContent, httpContext.Response.StatusCode);
         var contentRange = httpContext.Response.Headers.ContentRange.ToString();
         Assert.StartsWith("bytes 5000000-", contentRange);
         Assert.EndsWith($"/{release.ApkSizeBytes}", contentRange);
+        fileStreamResult.FileStream?.Dispose();
     }
 
     [Fact]
@@ -315,8 +391,15 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=-1000";
@@ -325,11 +408,12 @@ public class ReleaseApkControllerTests
 
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status206PartialContent, httpContext.Response.StatusCode);
         var expectedStart = release.ApkSizeBytes - 1000;
         var contentRange = httpContext.Response.Headers.ContentRange.ToString();
         Assert.Equal($"bytes {expectedStart}-{release.ApkSizeBytes - 1}/{release.ApkSizeBytes}", contentRange);
+        fileStreamResult.FileStream?.Dispose();
     }
 
     [Fact]
@@ -349,8 +433,15 @@ public class ReleaseApkControllerTests
         db.Set<DeploymentDeviceState>().Add(deploymentDeviceState);
         await db.SaveChangesAsync();
 
+        // Create mock APK file data
+        var apkData = new byte[release.ApkSizeBytes];
+        for (int i = 0; i < apkData.Length; i++)
+            apkData[i] = (byte)(i % 256);
+
         var factory = new FakeDbContextFactory(db);
-        var controller = new ReleaseApkController(factory);
+        var storage = new MockApkFileStorage();
+        storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
+        var controller = new ReleaseApkController(factory, storage);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "invalid-range";
@@ -360,8 +451,9 @@ public class ReleaseApkControllerTests
         var result = await controller.DownloadApkAsync(release.ReleaseId.ToString());
 
         // Invalid range should fall back to full file
-        Assert.IsType<OkObjectResult>(result);
+        var fileStreamResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(StatusCodes.Status200OK, httpContext.Response.StatusCode);
+        fileStreamResult.FileStream?.Dispose();
     }
 }
 
