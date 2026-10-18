@@ -168,6 +168,208 @@ namespace FleetManagement.Persistence.Migrations
                     b.ToTable("StoredCommandEvents", (string)null);
                 });
 
+            modelBuilder.Entity("FleetManagement.Policies.Policy", b =>
+                {
+                    b.Property<Guid>("PolicyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<long>("CurrentVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PolicyJson")
+                        .IsRequired()
+                        .HasMaxLength(65536)
+                        .HasColumnType("character varying(65536)");
+
+                    b.HasKey("PolicyId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("IsActive", "ModifiedAt");
+
+                    b.ToTable("Policies", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Policies.PolicyAssignment", b =>
+                {
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("AcknowledgedVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("AssignedVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("LastReportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PolicyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PolicyId1")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AssignmentId");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.HasIndex("PolicyId");
+
+                    b.HasIndex("PolicyId1");
+
+                    b.HasIndex("EnrollmentId", "AssignedAt");
+
+                    b.ToTable("PolicyAssignments", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Releases.DeploymentDeviceState", b =>
+                {
+                    b.Property<Guid>("StateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeploymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("StateId");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("DeploymentId", "EnrollmentId")
+                        .IsUnique();
+
+                    b.ToTable("DeploymentDeviceStates", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Releases.Release", b =>
+                {
+                    b.Property<Guid>("ReleaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ApkSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<long>("ApkSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MetadataJson")
+                        .IsRequired()
+                        .HasMaxLength(65536)
+                        .HasColumnType("character varying(65536)");
+
+                    b.Property<string>("MetadataSignature")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("MinSdkLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PackageName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<long>("VersionCode")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ReleaseId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("IsActive", "CreatedAt");
+
+                    b.ToTable("Releases", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Releases.ReleaseDeployment", b =>
+                {
+                    b.Property<Guid>("DeploymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ReleaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("RolloutPercentage")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Stage")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DeploymentId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("ReleaseId");
+
+                    b.ToTable("ReleaseDeployments", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
                 {
                     b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
@@ -193,6 +395,88 @@ namespace FleetManagement.Persistence.Migrations
                         .HasForeignKey("CommandId", "DeviceId", "CorrelationId")
                         .HasPrincipalKey("CommandId", "DeviceId", "CorrelationId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Policies.PolicyAssignment", b =>
+                {
+                    b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FleetManagement.Policies.Policy", null)
+                        .WithMany()
+                        .HasForeignKey("PolicyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FleetManagement.Policies.Policy", "Policy")
+                        .WithMany()
+                        .HasForeignKey("PolicyId1");
+
+                    b.Navigation("Policy");
+                });
+
+            modelBuilder.Entity("FleetManagement.Releases.DeploymentDeviceState", b =>
+                {
+                    b.HasOne("FleetManagement.Releases.ReleaseDeployment", null)
+                        .WithMany()
+                        .HasForeignKey("DeploymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Releases.ReleaseDeployment", b =>
+                {
+                    b.HasOne("FleetManagement.Releases.Release", null)
+                        .WithMany()
+                        .HasForeignKey("ReleaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("FleetManagement.Releases.DeploymentProgress", "Progress", b1 =>
+                        {
+                            b1.Property<Guid>("ReleaseDeploymentDeploymentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("CompletedDevices")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("DownloadingDevices")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("FailedDevices")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("InstallingDevices")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTimeOffset>("LastUpdatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<int>("PendingDevices")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("TotalDevices")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("ReleaseDeploymentDeploymentId");
+
+                            b1.ToTable("ReleaseDeployments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ReleaseDeploymentDeploymentId");
+                        });
+
+                    b.Navigation("Progress")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

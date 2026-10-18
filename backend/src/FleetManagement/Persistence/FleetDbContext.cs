@@ -1,6 +1,7 @@
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Policies;
+using FleetManagement.Releases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -14,6 +15,9 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
     public DbSet<StoredCommandEvent> StoredCommandEvents => Set<StoredCommandEvent>();
     public DbSet<Policy> Policies => Set<Policy>();
     public DbSet<PolicyAssignment> PolicyAssignments => Set<PolicyAssignment>();
+    public DbSet<Release> Releases => Set<Release>();
+    public DbSet<ReleaseDeployment> ReleaseDeployments => Set<ReleaseDeployment>();
+    public DbSet<DeploymentDeviceState> DeploymentDeviceStates => Set<DeploymentDeviceState>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,6 +97,52 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
             .OnDelete(DeleteBehavior.Restrict);
         assignment.HasIndex(value => value.EnrollmentId);
         assignment.HasIndex(value => new { value.EnrollmentId, value.AssignedAt });
+
+        // Release entities
+        var release = modelBuilder.Entity<Release>();
+        release.ToTable("Releases");
+        release.HasKey(value => value.ReleaseId);
+        release.Property(value => value.ReleaseId).ValueGeneratedNever();
+        release.Property(value => value.PackageName).HasMaxLength(256).IsRequired();
+        release.Property(value => value.VersionCode).IsRequired();
+        release.Property(value => value.ApkSha256).HasMaxLength(64).IsRequired();
+        release.Property(value => value.ApkSizeBytes).IsRequired();
+        release.Property(value => value.MinSdkLevel).IsRequired();
+        release.Property(value => value.ExpiresAt).IsRequired();
+        release.Property(value => value.MetadataJson).HasMaxLength(65536).IsRequired();
+        release.Property(value => value.MetadataSignature).HasMaxLength(256).IsRequired();
+        release.Property(value => value.CreatedBy).HasMaxLength(256).IsRequired();
+        release.HasIndex(value => value.IsActive);
+        release.HasIndex(value => new { value.IsActive, value.CreatedAt });
+
+        var deployment = modelBuilder.Entity<ReleaseDeployment>();
+        deployment.ToTable("ReleaseDeployments");
+        deployment.HasKey(value => value.DeploymentId);
+        deployment.Property(value => value.DeploymentId).ValueGeneratedNever();
+        deployment.Property(value => value.ReleaseId).IsRequired();
+        deployment.Property(value => value.Stage).IsRequired();
+        deployment.Property(value => value.RolloutPercentage).IsRequired();
+        deployment.Property(value => value.CreatedBy).HasMaxLength(256).IsRequired();
+        deployment.OwnsOne(value => value.Progress);
+        deployment.HasOne<Release>().WithMany().HasForeignKey(value => value.ReleaseId)
+            .OnDelete(DeleteBehavior.Restrict);
+        deployment.HasIndex(value => value.IsActive);
+        deployment.HasIndex(value => value.ReleaseId);
+
+        var deviceState = modelBuilder.Entity<DeploymentDeviceState>();
+        deviceState.ToTable("DeploymentDeviceStates");
+        deviceState.HasKey(value => value.StateId);
+        deviceState.Property(value => value.StateId).ValueGeneratedNever();
+        deviceState.Property(value => value.DeploymentId).IsRequired();
+        deviceState.Property(value => value.EnrollmentId).IsRequired();
+        deviceState.Property(value => value.Status).IsRequired();
+        deviceState.Property(value => value.ErrorMessage).HasMaxLength(512);
+        deviceState.HasOne<ReleaseDeployment>().WithMany().HasForeignKey(value => value.DeploymentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        deviceState.HasOne<PendingEnrollment>().WithMany().HasForeignKey(value => value.EnrollmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        deviceState.HasIndex(value => new { value.DeploymentId, value.EnrollmentId }).IsUnique();
+        deviceState.HasIndex(value => value.Status);
     }
 }
 
