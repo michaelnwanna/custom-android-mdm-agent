@@ -111,13 +111,19 @@ public class ReleaseApkControllerTests
         return enrollment;
     }
 
+    private ReleaseService CreateReleaseService(FleetDbContext db)
+    {
+        return new ReleaseService(db);
+    }
+
     [Fact]
     public async Task DownloadApkAsync_ReturnsUnauthorized_WhenDeviceNotAuthenticated()
     {
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
@@ -133,7 +139,8 @@ public class ReleaseApkControllerTests
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, Guid.NewGuid());
@@ -155,7 +162,8 @@ public class ReleaseApkControllerTests
 
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         var unauthenticatedDeviceId = Guid.NewGuid();
@@ -173,7 +181,8 @@ public class ReleaseApkControllerTests
         using var db = CreateDbContext();
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, Guid.NewGuid());
@@ -200,7 +209,8 @@ public class ReleaseApkControllerTests
 
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, deviceId);
@@ -236,7 +246,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         SetupAuthenticatedDevice(controller, deviceId);
@@ -276,7 +287,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=0-1023";
         controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
@@ -316,7 +328,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=1000000-1000999";
@@ -357,7 +370,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=5000000-";
@@ -399,7 +413,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "bytes=-1000";
@@ -441,7 +456,8 @@ public class ReleaseApkControllerTests
         var factory = new FakeDbContextFactory(db);
         var storage = new MockApkFileStorage();
         storage.AddFile(release.ReleaseId.ToString(), release.GetApkFilename(), apkData);
-        var controller = new ReleaseApkController(factory, storage);
+        var releaseService = CreateReleaseService(db);
+        var controller = new ReleaseApkController(factory, storage, releaseService);
 
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Headers.Range = "invalid-range";

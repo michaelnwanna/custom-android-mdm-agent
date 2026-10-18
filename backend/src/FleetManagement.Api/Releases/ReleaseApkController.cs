@@ -22,11 +22,13 @@ public class ReleaseApkController : ControllerBase
 {
     private readonly IDbContextFactory<FleetDbContext> _dbFactory;
     private readonly IApkFileStorage _fileStorage;
+    private readonly ReleaseService _releaseService;
 
-    public ReleaseApkController(IDbContextFactory<FleetDbContext> dbFactory, IApkFileStorage fileStorage)
+    public ReleaseApkController(IDbContextFactory<FleetDbContext> dbFactory, IApkFileStorage fileStorage, ReleaseService releaseService)
     {
         _dbFactory = dbFactory;
         _fileStorage = fileStorage;
+        _releaseService = releaseService;
     }
 
     /// <summary>
@@ -83,6 +85,15 @@ public class ReleaseApkController : ControllerBase
 
         if (deploymentDeviceState is null)
             return StatusCode(403, new { error = "Device does not have an active deployment for this release" });
+
+        // Update device state to Downloading if it's still Pending
+        if (deploymentDeviceState.Status == DeploymentDeviceStatus.Pending)
+        {
+            await _releaseService.UpdateDeviceDeploymentStateAsync(
+                deploymentDeviceState.DeploymentId,
+                enrollment.Id,
+                DeploymentDeviceStatus.Downloading);
+        }
 
         var apkSizeBytes = release.ApkSizeBytes;
         var rangeHeader = Request.Headers.Range.ToString();
