@@ -207,6 +207,38 @@ public class ReleaseController : ControllerBase
             await _releaseService.PromoteStagedDeploymentAsync(deploymentGuid);
             var promoted = await _releaseService.GetDeploymentAsync(deploymentGuid);
 
+            // Publish INSTALL_RELEASE commands to all assigned devices via MQTT
+            if (_commandPublisher != null)
+            {
+                using var db = _dbContextFactory.CreateDbContext();
+                var assignedDevices = await db.DeploymentDeviceStates
+                    .Where(s => s.DeploymentId == deploymentGuid)
+                    .Select(s => new { s.DeploymentId, s.EnrollmentId })
+                    .ToListAsync();
+
+                foreach (var device in assignedDevices)
+                {
+                    try
+                    {
+                        var release = await _releaseService.GetReleaseAsync(promoted!.ReleaseId);
+                        if (release != null)
+                        {
+                            await _commandPublisher.PublishInstallReleaseAsync(
+                                device.EnrollmentId,
+                                release.ReleaseId
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log but don't fail promotion if MQTT publishing fails
+                        // The device state can be published later via retry or manual intervention
+                        // For now, just log the error
+                        System.Diagnostics.Debug.WriteLine($"Failed to publish MQTT command for device {device.EnrollmentId}: {ex.Message}");
+                    }
+                }
+            }
+
             return Ok(new PromoteDeploymentResponse
             {
                 DeploymentId = promoted!.DeploymentId.ToString(),
