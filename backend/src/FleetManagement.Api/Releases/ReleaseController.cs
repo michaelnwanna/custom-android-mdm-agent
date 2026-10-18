@@ -238,6 +238,59 @@ public class ReleaseController : ControllerBase
             UpdatedAt = deviceState.UpdatedAt
         });
     }
+
+    /// <summary>
+    /// Update device deployment state as it progresses through install.
+    /// Devices call this endpoint to report: Downloading, Installing, Completed, or Failed.
+    /// </summary>
+    [HttpPut("deployments/{deploymentId}/devices/{enrollmentId}/status")]
+    [AllowAnonymous]
+    public async Task<ActionResult> UpdateDeviceStatusAsync(
+        [FromRoute] string deploymentId,
+        [FromRoute] string enrollmentId,
+        [FromBody] UpdateDeviceStatusRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(deploymentId) || !Guid.TryParse(deploymentId, out var deploymentGuid))
+            return BadRequest("Valid DeploymentId is required");
+
+        if (string.IsNullOrWhiteSpace(enrollmentId) || !Guid.TryParse(enrollmentId, out var enrollmentGuid))
+            return BadRequest("Valid EnrollmentId is required");
+
+        if (request == null)
+            return BadRequest("Request cannot be null");
+
+        if (string.IsNullOrWhiteSpace(request.Status))
+            return BadRequest("Status is required");
+
+        // Parse status
+        if (!Enum.TryParse<DeploymentDeviceStatus>(request.Status, ignoreCase: true, out var status))
+            return BadRequest($"Invalid status. Must be one of: {string.Join(", ", Enum.GetNames(typeof(DeploymentDeviceStatus)))}");
+
+        try
+        {
+            var updated = await _releaseService.UpdateDeviceDeploymentStateAsync(
+                deploymentGuid,
+                enrollmentGuid,
+                status,
+                request.ErrorMessage
+            );
+
+            if (updated == null)
+                return NotFound(new { error = "Device deployment state not found" });
+
+            return Ok(new UpdateDeviceStatusResponse
+            {
+                DeploymentId = updated.DeploymentId.ToString(),
+                EnrollmentId = updated.EnrollmentId.ToString(),
+                Status = updated.Status.ToString(),
+                UpdatedAt = updated.UpdatedAt
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }
 
 /// <summary>
@@ -305,5 +358,26 @@ public class GetDeviceStateResponse
     public string Status { get; set; } = null!;
     public string? ErrorMessage { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
+}
+
+public class UpdateDeviceStatusRequest
+{
+    /// <summary>
+    /// New status: Downloading, Installing, Completed, or Failed.
+    /// </summary>
+    public string Status { get; set; } = null!;
+
+    /// <summary>
+    /// Optional error message for Failed status.
+    /// </summary>
+    public string? ErrorMessage { get; set; }
+}
+
+public class UpdateDeviceStatusResponse
+{
+    public string DeploymentId { get; set; } = null!;
+    public string EnrollmentId { get; set; } = null!;
+    public string Status { get; set; } = null!;
     public DateTimeOffset UpdatedAt { get; set; }
 }

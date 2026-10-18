@@ -190,7 +190,7 @@ public sealed class ReleaseService
     /// <summary>
     /// Update device deployment state based on progress event from device.
     /// </summary>
-    public async Task UpdateDeviceDeploymentStateAsync(
+    public async Task<DeploymentDeviceState?> UpdateDeviceDeploymentStateAsync(
         Guid deploymentId,
         Guid enrollmentId,
         DeploymentDeviceStatus newStatus,
@@ -198,10 +198,11 @@ public sealed class ReleaseService
     {
         var state = await GetDeviceDeploymentStateAsync(deploymentId, enrollmentId);
         if (state == null)
-            throw new ArgumentException($"Device state for deployment {deploymentId} and enrollment {enrollmentId} not found");
+            return null;
 
         state.UpdateStatus(newStatus, errorMessage, DateTimeOffset.UtcNow);
         _db.Update(state);
         await _db.SaveChangesAsync();
+        return state;
     }
 }
