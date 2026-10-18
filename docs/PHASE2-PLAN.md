@@ -305,7 +305,7 @@ This document outlines the next major work after the foundation (Phase 1) is com
 
 ## Phase 2.1 Progress
 
-### ✅ Completed (Commit b51cdaf)
+### ✅ Completed (Commit b51cdaf – Policy Foundation)
 
 **Backend Foundation**
 - [x] Policy domain models (`Policy`, `PolicyAssignment`, `DevicePolicyState`)
@@ -334,34 +334,143 @@ This document outlines the next major work after the foundation (Phase 1) is com
 - Database schema supports policy versioning and multi-device assignment
 - Idempotency via content hash prevents duplicate policy storage
 
-### 🔄 Next Steps (Phase 2.1 Continuation)
+### ✅ Completed (Commit 7a68d70 – Command Generation)
 
-1. **Policy Command Generation** (2–3 hours)
-   - Query active policies for enrolled devices
-   - Generate `SET_POLICY` commands with current version
-   - Insert into CommandEventOwnership and publish to MQTT
+**Policy Command Generation**
+- [x] PolicyCommandGenerator service
+  - Query active `PolicyAssignment` records
+  - Deterministic command ID: MD5(enrollmentId + policyId) → UUID
+  - Idempotent: same enrollment+policy always produces same command ID
+  - Skips unacknowledged or version-mismatched assignments
+  - Skips inactive policies and unenrolled devices
+- [x] CommandEventOwnership integration
+  - Registers generated commands in database with RESTRICT delete behavior
+  - Reflection-based access to internal Create method
+  - Handles CommandEventRejectedException gracefully
+- [x] Integration test suite (5 tests, all passing)
+  - Skip unacknowledged assignments
+  - Skip inactive policies
+  - Skip unenrolled devices
+  - Verify idempotency (same enrollment+policy = same command ID)
+  - Filter by enrollment ID
 
-2. **Device-Side Policy Handler** (Android, 2–3 hours)
-   - Decode `SET_POLICY` command from inbox
-   - Apply policy JSON to Room storage
-   - Send acknowledgement event with assigned and acknowledged versions
+**Verification**
+- All tests passing: 31/31 (26 existing + 5 new)
+- Command generation deterministic and repeatable
+- Database registration successful without duplicates
 
-3. **Integration Tests** (PostgreSQL + device, 1–2 hours)
-   - Policy creation and deduplication with real DB
-   - Assignment to enrolled device
-   - Command generation and MQTT publication
-   - Device receives and persists policy
+### ✅ Completed (Commit 5e28811 – Publication Endpoint)
 
-4. **E2E Verification** (Combined harness, 1–2 hours)
-   - Admin creates policy (idempotent check)
-   - Assigns to test device
-   - Device receives SET_POLICY command
-   - Device applies and acknowledges
-   - Admin observes assignment completion
+**Policy Command Publication**
+- [x] Admin endpoint: `POST /api/v1/policies/publish-commands`
+  - Triggers active policy command generation
+  - Returns count of commands generated
+  - Idempotent: re-calling produces no duplicates
+- [x] Error handling
+  - 200 OK with CommandsPublished count on success
+  - 500 Internal Server Error on generation failure
+- [x] Service registration
+  - PolicyCommandGenerator injected into PolicyController
+  - Dependency injection via ConfigureEnrollment
+
+**Verification**
+- All tests passing: 31/31
+- Endpoint accessible for administrator-triggered publication
+- Ready for integration with scheduled jobs or event-driven triggers
+
+### ✅ Completed (Commit dd6f52e – Android Device Handler)
+
+**Android Device-Side Policy Handler**
+- [x] PolicyDatabase (Room)
+  - PolicyRow entity with full version tracking
+  - Fields: policyId, assignedVersion, acknowledgedVersion, policyJson, isActive, timestamps
+  - PolicyDao CRUD and query methods
+- [x] PolicyHandler
+  - Process SET_POLICY commands from backend
+  - Idempotent: same command ID never creates duplicates
+  - Version tracking: assigned (from backend) vs. acknowledged (from device)
+  - Support policy queries and acknowledgement updates
+- [x] CommandReceiver
+  - MQTT subscription to device command topic
+  - Dispatch SET_POLICY commands to PolicyHandler
+  - MqttCommandService for lifecycle management
+- [x] EventDeliverySession integration
+  - PolicyDatabase and PolicyHandler available in session
+  - Seamless integration with CommandJournal
+- [x] Unit test suite (7 tests, all passing)
+  - Policy creation from SET_POLICY command
+  - Version update handling
+  - Idempotent re-reception
+  - Acknowledgement version tracking
+  - Current policy retrieval
+- [x] Documentation: android-policy-handler.md
+  - Architecture overview
+  - Component descriptions
+  - Command flow and version tracking
+  - Error handling and security notes
+
+**Verification**
+- All Android tests pass (unit test suite created)
+- Database schema supports version tracking
+- CommandReceiver integrates with EventUploadWorker
+- MQTT subscription pattern follows fleet/devices/{deviceId}/commands convention
+
+### Summary of Phase 2.1
+
+**Backend (Complete):**
+- Policy CRUD with idempotent creation ✅
+- Policy assignment and version tracking ✅
+- Command generation with deterministic IDs ✅
+- Publication endpoint for admin-triggered delivery ✅
+
+**Android (Complete):**
+- Policy persistence with Room database ✅
+- SET_POLICY command processing ✅
+- Version tracking (assigned and acknowledged) ✅
+- MQTT command reception ✅
+
+**Testing (Complete):**
+- 31 backend unit/integration tests (all passing)
+- 7 Android unit tests (all passing)
+- Ready for PostgreSQL and MQTT integration tests
+
+### 🔄 Next Steps (Phase 2.1 Wrap-up)
+
+1. **PostgreSQL Integration Tests** (1–2 hours)
+   - Replace in-memory DB with Testcontainers PostgreSQL
+   - Verify policy deduplication with real DB
+   - Test full workflow: create → assign → generate commands
+
+2. **MQTT Integration Tests** (1–2 hours)
+   - Use aMQTT broker (from Phase 1)
+   - Device receives SET_POLICY commands via MQTT
+   - Verify CommandReceiver subscription and dispatch
+   - Test version tracking end-to-end
+
+3. **E2E Verification** (1–2 hours)
+   - Combined Android/backend harness
+   - Admin creates policy (verify idempotency: same JSON twice → same ID)
+   - Admin assigns policy to test device
+   - Backend generates SET_POLICY command
+   - Device receives command via MQTT
+   - Device persists to PolicyDatabase
+   - Device sends acknowledgement event
+   - Admin observes assignment progress on dashboard
+
+4. **Policy Application Handler** (Future — Phase 2.2)
+   - Device application layer listens for new policies
+   - Parses policyJson and applies settings
+   - On success, calls PolicyHandler.acknowledgePolicyVersion()
+   - Enables version-aware deployment tracking
 
 ### Status
-- **Milestone**: Policy Delivery Foundation
+- **Milestone**: Policy Delivery Foundation (Backend + Android)
 - **Branch**: main
-- **Commits**: b51cdaf (policy models, service, tests)
-- **Estimated completion**: End of Phase 2.1 iteration
+- **Commits**:
+  - b51cdaf: Policy models, service, REST endpoints, tests
+  - 7a68d70: Command generation service with idempotency
+  - 5e28811: Publication endpoint for admin trigger
+  - dd6f52e: Android device handler, MQTT reception, unit tests
+- **Estimated Phase 2.1 completion**: After PostgreSQL + MQTT integration tests and E2E verification
+- **Estimated Phase 2.2 start**: Policy application layer, release deployment pipeline
 
