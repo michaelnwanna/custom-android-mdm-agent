@@ -22,6 +22,163 @@ namespace FleetManagement.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FleetManagement.Devices.Device", b =>
+                {
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeviceId");
+
+                    b.Property<bool>("AccessDisabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeviceType")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("EnrollmentId");
+
+                    b.Property<DateTimeOffset>("FirstEnrolledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Manufacturer")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int?>("OsVersion")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("DeviceId");
+
+                    b.HasIndex("AccessDisabled")
+                        .HasDatabaseName("IX_Devices_AccessDisabled");
+
+                    b.HasIndex("EnrollmentId")
+                        .HasDatabaseName("IX_Devices_EnrollmentId");
+
+                    b.HasIndex("LastSeenAt")
+                        .HasDatabaseName("IX_Devices_LastSeenAt");
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("IX_Devices_State");
+
+                    b.ToTable("Devices", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTag", b =>
+                {
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TagId");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("TagId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_DeviceTags_IsActive");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_DeviceTags_Name_Unique");
+
+                    b.ToTable("DeviceTags", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTagAssignment", b =>
+                {
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("AssignmentId");
+
+                    b.Property<DateTimeOffset>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AssignedBy")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeviceId");
+
+                    b.Property<DateTimeOffset?>("RemovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RemovedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TagId");
+
+                    b.HasKey("AssignmentId");
+
+                    b.HasIndex("DeviceId")
+                        .HasDatabaseName("IX_DeviceTagAssignments_DeviceId");
+
+                    b.HasIndex("RemovedAt")
+                        .HasDatabaseName("IX_DeviceTagAssignments_RemovedAt");
+
+                    b.HasIndex("TagId")
+                        .HasDatabaseName("IX_DeviceTagAssignments_TagId");
+
+                    b.HasIndex("DeviceId", "TagId", "RemovedAt")
+                        .IsUnique()
+                        .HasDatabaseName("IX_DeviceTagAssignments_Device_Tag_Active");
+
+                    b.ToTable("DeviceTagAssignments", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
                 {
                     b.Property<Guid>("PendingEnrollmentId")
@@ -370,6 +527,34 @@ namespace FleetManagement.Persistence.Migrations
                     b.ToTable("ReleaseDeployments", (string)null);
                 });
 
+            modelBuilder.Entity("FleetManagement.Devices.Device", b =>
+                {
+                    b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTagAssignment", b =>
+                {
+                    b.HasOne("FleetManagement.Devices.Device", "Device")
+                        .WithMany("TagAssignments")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FleetManagement.Devices.DeviceTag", "Tag")
+                        .WithMany("Assignments")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
                 {
                     b.HasOne("FleetManagement.Enrollment.PendingEnrollment", null)
@@ -478,6 +663,16 @@ namespace FleetManagement.Persistence.Migrations
 
                     b.Navigation("Progress")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.Device", b =>
+                {
+                    b.Navigation("TagAssignments");
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTag", b =>
+                {
+                    b.Navigation("Assignments");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using FleetManagement.Api.Mqtt;
+using FleetManagement.Devices;
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Persistence;
@@ -145,6 +146,10 @@ public static class FleetApi
 
         // Deployment analytics service
         builder.Services.AddScoped<DeploymentAnalyticsService>();
+
+        // Device management services
+        builder.Services.AddScoped<DeviceService>();
+        builder.Services.AddScoped<DeviceTagService>();
 
         // MQTT services
         builder.Services.AddSingleton<MqttHostedService>();

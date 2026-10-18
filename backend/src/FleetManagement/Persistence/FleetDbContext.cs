@@ -1,3 +1,4 @@
+using FleetManagement.Devices;
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Policies;
@@ -18,6 +19,9 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
     public DbSet<Release> Releases => Set<Release>();
     public DbSet<ReleaseDeployment> ReleaseDeployments => Set<ReleaseDeployment>();
     public DbSet<DeploymentDeviceState> DeploymentDeviceStates => Set<DeploymentDeviceState>();
+    public DbSet<Device> Devices => Set<Device>();
+    public DbSet<DeviceTag> DeviceTags => Set<DeviceTag>();
+    public DbSet<DeviceTagAssignment> DeviceTagAssignments => Set<DeviceTagAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -143,6 +147,11 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
             .OnDelete(DeleteBehavior.Restrict);
         deviceState.HasIndex(value => new { value.DeploymentId, value.EnrollmentId }).IsUnique();
         deviceState.HasIndex(value => value.Status);
+
+        // Apply Device entity configurations
+        modelBuilder.ApplyConfiguration(new DeviceConfiguration());
+        modelBuilder.ApplyConfiguration(new DeviceTagConfiguration());
+        modelBuilder.ApplyConfiguration(new DeviceTagAssignmentConfiguration());
     }
 }
 
