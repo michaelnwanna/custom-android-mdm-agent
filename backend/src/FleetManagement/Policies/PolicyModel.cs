@@ -82,6 +82,11 @@ public sealed class PolicyAssignment
     public Guid PolicyId { get; set; }
 
     /// <summary>
+    /// Navigation property to the policy (for eager loading).
+    /// </summary>
+    public Policy? Policy { get; set; }
+
+    /// <summary>
     /// Policy version at the time of assignment.
     /// Commands will include this version so devices can detect updates.
     /// </summary>
