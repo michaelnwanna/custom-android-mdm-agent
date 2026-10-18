@@ -131,6 +131,7 @@ public static class FleetApi
         builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(services => new PendingEnrollmentProvisioner(
             services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), services.GetRequiredService<TimeProvider>(), digestKey));
         builder.Services.AddScoped<PolicyService>();
+        builder.Services.AddScoped<PolicyCommandGenerator>();
     }
 
     private static void MapEnrollment(this WebApplication app)

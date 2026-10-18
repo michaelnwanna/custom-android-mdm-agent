@@ -88,10 +88,12 @@ public sealed record AssignPolicyResponse
 public sealed class PolicyController : ControllerBase
 {
     private readonly PolicyService _service;
+    private readonly PolicyCommandGenerator _commandGenerator;
 
-    public PolicyController(PolicyService service)
+    public PolicyController(PolicyService service, PolicyCommandGenerator commandGenerator)
     {
         _service = service;
+        _commandGenerator = commandGenerator;
     }
 
     /// <summary>
@@ -165,4 +167,39 @@ public sealed class PolicyController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Generate and register SET_POLICY commands for active assignments.
+    /// Idempotent: calling multiple times produces no duplicate commands.
+    /// </summary>
+    /// <returns>Number of commands generated</returns>
+    /// <response code="200">Commands generated and registered</response>
+    /// <response code="500">Database error during command generation</response>
+    [HttpPost("publish-commands")]
+    [ProducesResponseType(typeof(PublishCommandsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PublishCommandsResponse>> PublishCommands()
+    {
+        try
+        {
+            int published = await _commandGenerator.GenerateActiveAssignmentsAsync();
+            return Ok(new PublishCommandsResponse { CommandsPublished = published });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { error = $"Command generation failed: {ex.Message}" });
+        }
+    }
+}
+
+/// <summary>
+/// Response from publish command request.
+/// </summary>
+public sealed record PublishCommandsResponse
+{
+    /// <summary>
+    /// Number of SET_POLICY commands published.
+    /// </summary>
+    public required int CommandsPublished { get; init; }
 }
