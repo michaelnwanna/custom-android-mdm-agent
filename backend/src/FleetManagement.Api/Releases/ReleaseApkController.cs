@@ -1,6 +1,7 @@
 namespace FleetManagement.Api.Releases;
 
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FleetManagement.Releases;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,6 @@ using FleetManagement.Enrollment;
 /// </summary>
 [ApiController]
 [Route("api/v1/releases")]
-[Authorize(Policy = "DeviceOnly")]
 public class ReleaseApkController : ControllerBase
 {
     private readonly IDbContextFactory<FleetDbContext> _dbFactory;
@@ -34,11 +34,16 @@ public class ReleaseApkController : ControllerBase
     /// <param name="releaseId">Release ID (UUID)</param>
     /// <returns>APK file stream or 206 Partial Content if Range request</returns>
     [HttpGet("{releaseId}/apk")]
-    [AllowAnonymous]
+    [Authorize(Policy = DeviceAuthentication.Policy)]
     public async Task<IActionResult> DownloadApkAsync([FromRoute] string releaseId)
     {
         if (string.IsNullOrWhiteSpace(releaseId) || !Guid.TryParse(releaseId, out var releaseGuid))
             return BadRequest("Valid ReleaseId is required");
+
+        // Extract authenticated device ID from claims
+        var deviceIdClaim = User.FindFirst("device_id");
+        if (deviceIdClaim is null || !Guid.TryParse(deviceIdClaim.Value, out var deviceId))
+            return Unauthorized(new { error = "Device authentication required" });
 
         await using var db = await _dbFactory.CreateDbContextAsync();
 
@@ -53,13 +58,28 @@ public class ReleaseApkController : ControllerBase
         if (!release.IsActive)
             return BadRequest(new { error = "Release is not active" });
 
-        // In a real implementation, we would:
-        // 1. Stream the APK from storage (S3, local file system, etc.)
-        // 2. Validate the device is enrolled and has a deployment for this release
-        // 3. Update deployment device state to "Downloading"
-        // 4. Support HTTP Range requests for resumable downloads
-        //
-        // For now, return a placeholder response that describes what headers we would set
+        // Find the enrollment for this device
+        var enrollment = await db.Set<PendingEnrollment>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.DeviceId == deviceId && !e.DeviceAccessDisabled);
+
+        if (enrollment is null)
+            return StatusCode(403, new { error = "Device is not enrolled or access is disabled" });
+
+        // Find an active deployment for this release that includes this device
+        var deploymentDeviceState = await db.Set<DeploymentDeviceState>()
+            .AsNoTracking()
+            .Where(s => s.EnrollmentId == enrollment.Id)
+            .Join(
+                db.Set<ReleaseDeployment>().Where(d => d.ReleaseId == releaseGuid && d.IsActive),
+                s => s.DeploymentId,
+                d => d.DeploymentId,
+                (s, d) => s
+            )
+            .FirstOrDefaultAsync();
+
+        if (deploymentDeviceState is null)
+            return StatusCode(403, new { error = "Device does not have an active deployment for this release" });
 
         var apkSizeBytes = release.ApkSizeBytes;
         var rangeHeader = Request.Headers.Range.ToString();
