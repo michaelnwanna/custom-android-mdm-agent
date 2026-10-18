@@ -135,6 +135,7 @@ public static class FleetApi
         builder.Services.AddScoped<PolicyService>();
         builder.Services.AddScoped<PolicyCommandGenerator>();
         builder.Services.AddScoped<ReleaseService>();
+        builder.Services.AddScoped<ReleaseCommandGenerator>();
     }
 
     private static void MapEnrollment(this WebApplication app)
