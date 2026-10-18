@@ -1,5 +1,6 @@
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
+using FleetManagement.Policies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -11,6 +12,8 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
     public DbSet<EnrollmentProvisioningAudit> EnrollmentProvisioningAudits => Set<EnrollmentProvisioningAudit>();
     public DbSet<CommandEventOwnership> CommandEventOwnerships => Set<CommandEventOwnership>();
     public DbSet<StoredCommandEvent> StoredCommandEvents => Set<StoredCommandEvent>();
+    public DbSet<Policy> Policies => Set<Policy>();
+    public DbSet<PolicyAssignment> PolicyAssignments => Set<PolicyAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,6 +72,27 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
         enrollment.HasIndex(value => value.OperationId).IsUnique();
         enrollment.HasIndex(value => value.DeviceId).IsUnique();
         enrollment.Ignore(value => value.Credential);
+        
+        // Policy entities
+        var policy = modelBuilder.Entity<Policy>();
+        policy.ToTable("Policies");
+        policy.HasKey(value => value.PolicyId);
+        policy.Property(value => value.PolicyId).ValueGeneratedNever();
+        policy.Property(value => value.Creator).HasMaxLength(256).IsRequired();
+        policy.Property(value => value.PolicyJson).HasMaxLength(65536).IsRequired();
+        policy.HasIndex(value => value.IsActive);
+        policy.HasIndex(value => new { value.IsActive, value.ModifiedAt });
+
+        var assignment = modelBuilder.Entity<PolicyAssignment>();
+        assignment.ToTable("PolicyAssignments");
+        assignment.HasKey(value => value.AssignmentId);
+        assignment.Property(value => value.AssignmentId).ValueGeneratedNever();
+        assignment.HasOne<PendingEnrollment>().WithMany().HasForeignKey(value => value.EnrollmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        assignment.HasOne<Policy>().WithMany().HasForeignKey(value => value.PolicyId)
+            .OnDelete(DeleteBehavior.Restrict);
+        assignment.HasIndex(value => value.EnrollmentId);
+        assignment.HasIndex(value => new { value.EnrollmentId, value.AssignedAt });
     }
 }
 

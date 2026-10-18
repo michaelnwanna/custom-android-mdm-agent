@@ -7,6 +7,7 @@ using System.Threading.RateLimiting;
 using FleetManagement.Enrollment;
 using FleetManagement.Messaging;
 using FleetManagement.Persistence;
+using FleetManagement.Policies;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -94,6 +95,7 @@ public static class FleetApi
         app.MapPendingEnrollment();
         app.MapDeviceIdentity();
         app.MapCommandEvents();
+        app.MapControllers();
         return app;
     }
 
@@ -128,6 +130,7 @@ public static class FleetApi
             services.GetRequiredService<PostgresEnrollmentClaims>(), services.GetRequiredService<EnrollmentSigningCoordinator>(), digestKey));
         builder.Services.AddSingleton<IPendingEnrollmentProvisioner>(services => new PendingEnrollmentProvisioner(
             services.GetRequiredService<IDbContextFactory<FleetDbContext>>(), services.GetRequiredService<TimeProvider>(), digestKey));
+        builder.Services.AddScoped<PolicyService>();
     }
 
     private static void MapEnrollment(this WebApplication app)
