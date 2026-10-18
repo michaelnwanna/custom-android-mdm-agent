@@ -47,12 +47,17 @@ internal object EventUploadScheduler {
 
 internal class EventDeliverySession(
     val database: CommandDatabase,
+    val policyDatabase: PolicyDatabase,
     val identity: DeviceTlsIdentity,
     val serverRoot: X509Certificate,
 ) : java.io.Closeable {
     val journal = CommandJournal(database, identity.deviceId)
+    val policyHandler = PolicyHandler(policyDatabase, identity.deviceId)
 
-    override fun close() = database.close()
+    override fun close() {
+        database.close()
+        policyDatabase.close()
+    }
 
     companion object {
         fun open(context: Context): EventDeliverySession {
@@ -60,7 +65,12 @@ internal class EventDeliverySession(
             val serverRoot = root(File(context.filesDir, "enrollment-server-ca.pem"))
             val deviceRoot = root(File(context.filesDir, "enrollment-device-ca.pem"))
             val identity = AndroidEnrollmentIdentity(context).tlsIdentity(serverRoot, deviceRoot, Instant.now())
-            return EventDeliverySession(CommandDatabase.open(context), identity, serverRoot)
+            return EventDeliverySession(
+                CommandDatabase.open(context),
+                PolicyDatabase.open(context),
+                identity,
+                serverRoot
+            )
         }
 
         private fun root(file: File): X509Certificate {
