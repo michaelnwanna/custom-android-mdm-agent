@@ -12,6 +12,8 @@ A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verifi
 
 ### Phase 2 Contract Foundation
 
+The [enrolled event reboot-recovery lab](docs/android-event-reboot-recovery.md) now verifies the same test Keystore identity and exact Room event after an actual API 34 reboot and explicit resume, with changed kernel boot ID and increased Android boot count. Original acknowledgement recovery, rollback/deletion, inbox retention and disabled-event retention pass, alongside same-boot regression, 42 JVM tests/build/lint and 82 tooling tests. This is worker-body recovery, not autonomous boot dispatch or OS-scheduled retry; earlier reboot exclusions below retain their milestone scope.
+
 The [enrolled event process-recovery lab](docs/android-event-process-recovery.md) now verifies a persisted Room event and the same enrolled Keystore identity after host force-stop and explicit new-process relaunch. Worker-body replay recovers the original committed acknowledgement, verifies delete rollback, deletes the exact event and retains the inbox; disabled-event retention still passes. The new combined run and single-process regression, 42 JVM tests/build/lint and all 80 tooling tests pass. This is not autonomous scheduling, a crash during upload or event recovery across reboot; earlier limits below retain their milestone scope.
 
 The [persisted reboot probe](docs/android-scheduler-reboot.md) now verifies an actual non-wiping API 34 reboot with changed kernel boot ID and increased Android boot count, then same-work-ID completion after explicit relaunch. Reboot and same-boot recovery modes, 42 JVM tests/build/lint and all 78 tooling tests pass. This is debug-probe persistence, not automatic boot dispatch or real event recovery; older reboot limits below retain their milestone scope.
@@ -94,6 +96,7 @@ flowchart TB
 		RebootProbe[Debug probe only - actual reboot persistence and explicit resume verified; not autonomous boot dispatch] -.-> RecoveryProbe
 		EventWorker --> AndroidEventUpload
 		EventProcessRecovery[Isolated real identity and event recovery - force-stop and explicit new-process worker body verified] -.-> EventWorker
+		EventRebootRecovery[Isolated enrolled event reboot persistence - explicit resume verified; not autonomous boot delivery] -.-> EventProcessRecovery
 		EventHttp --> AndroidEventUpload
 		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]
 		JournalAck --> ExactDelete[Transactional exact outbox deletion; retain inbox]

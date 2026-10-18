@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "files/enrollment-integration-prepared.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schemaVersion\":1,\"preparedProcessId\":2210,\"preparedBootCount\":33,\"deviceId\":\"41f3975d-4280-4f9f-8b3e-ea28263880c0\",\"eventId\":\"8634473d-5abb-4374-8b5a-aa4d925cc876\",\"wireSha256\":\"e0dedc9096c92c343d15b50301470e3a5dce691ebb516f67dd4aa82e2fef857b\"}",
+  "stderr": ""
+}

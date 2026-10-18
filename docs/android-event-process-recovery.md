@@ -1,5 +1,7 @@
 # Enrolled Event Recovery Across Process Restart
 
+Reboot follow-up: [enrolled event reboot recovery](android-event-reboot-recovery.md) now verifies the same isolated identity/event across actual reboot and explicit resume. Earlier reboot exclusions below describe this same-boot milestone; autonomous boot dispatch and OS-managed retry remain unverified.
+
 The combined API 34 lab now verifies a real enrolled Android Keystore identity and Room event surviving host-issued app force-stop, followed by explicit instrumentation relaunch and worker-body recovery against the same running HTTPS/PostgreSQL host. This extends the [bounded worker acceptance](android-event-worker.md); no production worker configuration or default enrolled identity is changed.
 
 ```mermaid

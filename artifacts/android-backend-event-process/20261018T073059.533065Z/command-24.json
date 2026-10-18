@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "exec-out",
+    "run-as",
+    "dev.fleet.agent",
+    "cat",
+    "files/enrollment-integration-result.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schemaVersion\":1,\"deviceId\":\"4790df67-25d7-4a62-b67f-872e30ac0d2d\",\"eventProcessRecoveryVerified\":true,\"eventRebootRecoveryVerified\":false,\"preparedBootCount\":34,\"recoveredBootCount\":34,\"preparedProcessId\":2439,\"recoveredProcessId\":2499,\"recoveredWireSha256\":\"0c4b981e96fad3b9367258be4017da1d6beec32292218217eb40198d81ac384a\",\"mtlsAuthenticated\":true,\"disabledRejected\":true,\"mqttAuthenticated\":false,\"mqttDisabledRejected\":false,\"mqttJournalVerified\":false,\"eventUploadVerified\":true,\"eventAcknowledgement\":{\"schemaVersion\":1,\"deviceId\":\"4790df67-25d7-4a62-b67f-872e30ac0d2d\",\"eventId\":\"1ef7366f-f783-485a-be35-ec8f1ee13cb6\",\"receivedAt\":\"2026-10-18T07:32:58.789082+00:00\"},\"retainedEventId\":\"1ef7366f-f783-485a-be35-ec8f1ee13cb6\",\"eventDeletionVerified\":true,\"eventDeleteRollbackVerified\":true,\"eventInboxRetained\":true,\"disabledEventRetained\":true,\"eventWorkerVerified\":true,\"eventWorkerRetryVerified\":true,\"eventWorkerDisabledRetained\":true,\"csrDer\":\"MIHVMH0CAQAwGzEZMBcGA1UEAwwQRmxlZXQgZW5yb2xsbWVudDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABHOpJJVimVE409EElmSE05d4tqYFiYFe510fdMavdlUWdVErEpjnXa+PH\\/arNb1YAiFb3dJZ12F724JMD4LSa2egADAKBggqhkjOPQQDAgNIADBFAiEAy9nlIuyith1uEuNAH0ImC0WEU9pvKkgCqPkFXJqIH98CICzMq9OlibT4tPnL+qOFVq2RX6NlIwCoDEvMNQQeAaz6\",\"responseBase64\":\"eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXZpY2VJZCI6IjQ3OTBkZjY3LTI1ZDctNGE2Mi1iNjdmLTg3MmUzMGFjMGQyZCIsImNlcnRpZmljYXRlRGVyIjoiTUlJQ1JEQ0NBZXVnQXdJQkFnSVFJaE82UkdZMTZxTUw1Q2ZPSDhNbGtqQUtCZ2dxaGtqT1BRUURBakFtTVNRd0lnWURWUVFERXh0QmJtUnliMmxrSUdKaFkydGxibVFnWkdWMmFXTmxJSEp2YjNRd0hoY05Nall4TURFNE1EY3pNakkyV2hjTk1qWXhNREU1TURjek1qSTJXakF2TVMwd0t3WURWUVFERXlRME56a3daR1kyTnkweU5XUTNMVFJoTmpJdFlqWTNaaTA0TnpKbE16QmhZekJrTW1Rd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFSenFTU1ZZcGxST05QUkJKWmtoTk9YZUxhbUJZbUJYdWRkSDNUR3IzWlZGblZSS3hLWTUxMnZqeC8ycXpXOVdBSWhXOTNTV2RkaGU5dUNUQVx1MDAyQkMwbXRubzRIeE1JSHVNQXdHQTFVZEV3RUIvd1FDTUFBd0hRWURWUjBPQkJZRUZGVUVnQVNMS0ZhaS95NFNOZHI5MVx1MDAyQjZFc21PbE1GVUdBMVVkSXdST01FeUFGR0VpZnhQdHNuS29SMXZsWG1mZTJJaVRwQzlpb1Nxa0tEQW1NU1F3SWdZRFZRUURFeHRCYm1SeWIybGtJR0poWTJ0bGJtUWdaR1YyYVdObElISnZiM1NDQ0ZGXHUwMDJCWVhkNDFkL3ZNQTRHQTFVZER3RUIvd1FFQXdJSGdEQVdCZ05WSFNVQkFmOEVEREFLQmdnckJnRUZCUWNEQWpCQUJnTlZIUkVFT1RBM2hqVjFjbTQ2Wm14bFpYUTZaR1YyYVdObE9qUTNPVEJrWmpZM0xUSTFaRGN0TkdFMk1pMWlOamRtTFRnM01tVXpNR0ZqTUdReVpEQUtCZ2dxaGtqT1BRUURBZ05IQURCRUFpQUhxUWluNVovakFJQlAxXHUwMDJCT1BIN3NmS0ZCOWk4OG95NlZSMW9PZjQ3MnNMd0lnTlVWXHUwMDJCa29TYktOQ254YXNYczQxNzVyRmM1czF3QlRJaERpZ00vdHR2NW5jPSIsImludGVybWVkaWF0ZUNlcnRpZmljYXRlc0RlciI6W10sImlzc3VlZEF0IjoiMjAyNi0xMC0xOFQwNzozMjoyNiswMDowMCIsImV4cGlyZXNBdCI6IjIwMjYtMTAtMTlUMDc6MzI6MjYrMDA6MDAifQ==\",\"challengeBase64\":\"MTQ3NzQwNzktOWViMS00NGU3LTgzMDUtZDk4MDBjOGNhOWM2\",\"signatureBase64\":\"MEUCIBNpYfqE+3\\/PvZv7yZsWAp\\/dvBZyLuR+9l2BerrpirbDAiEAtLpzvZulALRRueraLaTwoaJkS8jS2TLiXOCC5V8mQgM=\"}",
+  "stderr": ""
+}

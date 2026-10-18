@@ -37,6 +37,8 @@ class EnrollmentBackendInstrumentedTest {
         val phase = InstrumentationRegistry.getArguments().getString("recoveryPhase")
         require(phase == null || phase == "prepare" || phase == "resume")
         val resuming = phase == "resume"
+        val reboot = InstrumentationRegistry.getArguments().getString("recoveryReboot") == "true"
+        val bootCount = android.provider.Settings.Global.getInt(context.contentResolver, "boot_count")
         val state = if (resuming) JSONObject(recoveryFile.readText()) else null
         if (!resuming) require(input.length() in 1..100000)
         val configuration = state?.getJSONObject("configuration") ?: JSONObject(input.readText())
@@ -75,6 +77,7 @@ class EnrollmentBackendInstrumentedTest {
                 val publicConfiguration = JSONObject(configuration.toString())
                 publicConfiguration.remove("bootstrap")
                 recoveryFile.writeText(JSONObject().put("configuration", publicConfiguration)
+                    .put("preparedBootCount", bootCount)
                     .put("databaseName", databaseName).put("preparedProcessId", android.os.Process.myPid()).toString())
             }
             val identity = AndroidEnrollmentIdentity(context, namespace)
@@ -82,7 +85,11 @@ class EnrollmentBackendInstrumentedTest {
             var csr: String
             var first: ByteArray
             if (resuming) {
-                assertNotEquals(state!!.getInt("preparedProcessId"), android.os.Process.myPid())
+                if (reboot) assertTrue(bootCount > state!!.getInt("preparedBootCount"))
+                else {
+                    assertEquals(state!!.getInt("preparedBootCount"), bootCount)
+                    assertNotEquals(state.getInt("preparedProcessId"), android.os.Process.myPid())
+                }
                 assertTrue(eventWorkerRetryVerified)
                 csr = state.getString("csrDer")
                 first = Base64.getDecoder().decode(state.getString("responseBase64"))
@@ -160,6 +167,7 @@ class EnrollmentBackendInstrumentedTest {
                         recoveryFile.writeText(checkpoint.toString())
                         File(context.filesDir, "enrollment-integration-prepared.json").writeText(JSONObject()
                             .put("schemaVersion", 1).put("preparedProcessId", android.os.Process.myPid())
+                            .put("preparedBootCount", bootCount)
                             .put("deviceId", response.deviceId.toString()).put("eventId", pending.eventId)
                             .put("wireSha256", java.security.MessageDigest.getInstance("SHA-256")
                                 .digest(pending.wireJson.toByteArray()).joinToString("") { byte -> "%02x".format(byte) }).toString())
@@ -304,6 +312,9 @@ class EnrollmentBackendInstrumentedTest {
             })
             output.writeText(JSONObject().put("schemaVersion", 1).put("deviceId", response.deviceId.toString())
                 .put("eventProcessRecoveryVerified", resuming)
+                .put("eventRebootRecoveryVerified", resuming && reboot)
+                .put("preparedBootCount", state?.getInt("preparedBootCount") ?: bootCount)
+                .put("recoveredBootCount", bootCount)
                 .put("preparedProcessId", state?.getInt("preparedProcessId") ?: android.os.Process.myPid())
                 .put("recoveredProcessId", android.os.Process.myPid())
                 .put("recoveredWireSha256", if (resuming) java.security.MessageDigest.getInstance("SHA-256")

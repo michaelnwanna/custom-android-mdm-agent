@@ -9,6 +9,43 @@ from check_android_backend import public_configuration, public_tls_diagnostics, 
 
 
 class AndroidBackendEvidenceTests(unittest.TestCase):
+    def test_event_reboot_proof_requires_increased_boot_count_not_distinct_pid(self):
+        prepared = {"schemaVersion": 1, "preparedProcessId": 123, "preparedBootCount": 10,
+                    "deviceId": "7512f600-bb5b-4353-b67a-3a56126308d7",
+                    "eventId": "374823b7-0e54-4893-b661-e638cc03310c", "wireSha256": "a" * 64}
+        recovered = {"eventProcessRecoveryVerified": True, "eventRebootRecoveryVerified": True,
+                     "preparedProcessId": 123, "recoveredProcessId": 123,
+                     "preparedBootCount": 10, "recoveredBootCount": 11,
+                     "deviceId": prepared["deviceId"], "retainedEventId": prepared["eventId"],
+                     "recoveredWireSha256": "a" * 64}
+        verify_event_process_proof(prepared, recovered, reboot=True)
+        for name, value in (("eventRebootRecoveryVerified", False), ("preparedBootCount", 9),
+                            ("preparedBootCount", 10.0), ("recoveredBootCount", 10), ("recoveredBootCount", True),
+                            ("recoveredWireSha256", "b" * 64)):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                verify_event_process_proof(prepared, dict(recovered, **{name: value}), reboot=True)
+
+    def test_event_reboot_rejects_unchanged_kernel_boot_before_resume(self):
+        calls = []
+
+        def execute(arguments, timeout):
+            calls.append(arguments)
+            if "instrument" in arguments:
+                return "OK (1 test)\nINSTRUMENTATION_CODE: -1\n"
+            if "sys.boot_completed" in arguments:
+                return "1"
+            if "/proc/sys/kernel/random/boot_id" in arguments:
+                return "7512f600-bb5b-4353-b67a-3a56126308d7"
+            return json.dumps({"preparedProcessId": 123})
+
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "Kernel boot ID did not change"):
+                run_event_process_phases(execute, ["adb"], Path(directory), reboot=True)
+            self.assertFalse((Path(directory) / "event-reboot-verification.json").exists())
+        self.assertTrue(any("reboot" in call for call in calls))
+        self.assertTrue(any("wait-for-disconnect" in call for call in calls))
+        self.assertFalse(any("resume" in call for call in calls))
+
     def test_event_recovery_requires_new_process_same_identity_event_and_wire(self):
         prepared = {"schemaVersion": 1, "preparedProcessId": 123,
                     "deviceId": "7512f600-bb5b-4353-b67a-3a56126308d7",

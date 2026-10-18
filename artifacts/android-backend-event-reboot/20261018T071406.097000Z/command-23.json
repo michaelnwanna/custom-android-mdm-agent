@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/Users/michaelnwanna/Library/Android/sdk/platform-tools/adb",
+    "-s",
+    "emulator-5554",
+    "shell",
+    "cat",
+    "/proc/sys/kernel/random/boot_id"
+  ],
+  "returncode": 0,
+  "stdout": "2d1e2d48-41f7-4a16-897f-d33e4e8825d6\n",
+  "stderr": ""
+}
