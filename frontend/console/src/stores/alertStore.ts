@@ -19,10 +19,11 @@ export const useAlertStore = defineStore('alert', () => {
   const alertsByType = computed(() => {
     const grouped: Record<string, HealthAlert[]> = {}
     activeAlerts.value.forEach(alert => {
-      if (!grouped[alert.alertType]) {
-        grouped[alert.alertType] = []
+      const key = alert.alertType || alert.type || 'Unknown'
+      if (!grouped[key]) {
+        grouped[key] = []
       }
-      grouped[alert.alertType].push(alert)
+      grouped[key].push(alert)
     })
     return grouped
   })

@@ -1,7 +1,9 @@
 // Device types
 export interface Device {
+  id?: string // For mock data
   deviceId: string
   enrollmentId: string
+  name?: string // For mock data
   deviceName: string
   model: string
   osVersion: string
@@ -26,26 +28,51 @@ export interface DeviceTelemetry {
 }
 
 export interface HealthAlert {
-  alertId: string
+  id?: string // For mock data
+  alertId?: string
   deviceId: string
-  alertType: string
+  deviceName?: string // For mock data
+  alertType?: string
+  type?: string // For mock data
   severity: 'Critical' | 'High' | 'Medium' | 'Low'
   message: string
-  createdAt: string
-  resolvedAt: string | null
+  createdAt?: string
+  timestamp?: string // For mock data
+  resolvedAt?: string | null
+  resolved?: boolean // For mock data
 }
 
 // Fleet types
 export interface FleetHealthMetrics {
   totalDevices: number
-  enrolledDevices: number
+  enrolledDevices?: number // Alias for mock data
+  onlineDevices?: number // For mock data
   offlineDevices: number
-  lowBatteryDevices: number
-  lowStorageDevices: number
+  lowBatteryDevices?: number
+  lowStorageDevices?: number
   activeAlerts: number
   criticalAlerts: number
-  averageBatteryPercentage: number
-  averageStorageUsagePercentage: number
+  averageBatteryPercentage?: number
+  averageStorageUsagePercentage?: number
+  devicesByStatus?: {
+    healthy: number
+    warning: number
+    critical: number
+    unknown: number
+  }
+  batteryDistribution?: {
+    charging: number
+    discharging: number
+    critical: number
+    unknown: number
+  }
+  storageDistribution?: Array<{
+    deviceId: string
+    name: string
+    storageUsedPercent: number
+  }>
+  healthScore?: number
+  lastUpdated?: string
 }
 
 // Policy types

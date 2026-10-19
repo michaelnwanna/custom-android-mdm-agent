@@ -1,0 +1,2 @@
+import{_ as a}from"./index-f0d49501.js";import{c as s,e as o,g as e}from"./vue-vendor-e1a6d5f9.js";const r={},c={class:"space-y-6"};function i(d,t){return s(),o("div",c,[...t[0]||(t[0]=[e("h1",{class:"text-3xl font-bold text-gray-900 dark:text-white"},"Device Detail",-1),e("div",{class:"bg-white dark:bg-gray-800 rounded-lg shadow p-6"},[e("p",{class:"text-gray-600 dark:text-gray-400"},"Device detail view - Coming soon")],-1)])])}const g=a(r,[["render",i]]);export{g as default};
+//# sourceMappingURL=DeviceDetailView-86ee45a2.js.map

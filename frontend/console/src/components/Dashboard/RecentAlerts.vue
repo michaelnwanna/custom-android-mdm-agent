@@ -10,22 +10,22 @@
     <div v-else>
       <div
         v-for="alert in activeAlerts.slice(0, 5)"
-        :key="alert.alertId"
+        :key="alert.alertId || alert.id"
         class="flex items-start justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group"
       >
         <div class="flex items-start space-x-3 flex-1 min-w-0">
           <div :class="['w-2 h-2 mt-2 rounded-full flex-shrink-0', getSeverityColor(alert.severity)]" />
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ alert.alertType }}</p>
-            <p class="text-xs text-gray-600 dark:text-gray-400">{{ timeAgo(alert.createdAt) }}</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ alert.alertType || alert.type || 'Alert' }}</p>
+            <p class="text-xs text-gray-600 dark:text-gray-400">{{ timeAgo(alert.createdAt || alert.timestamp || new Date().toISOString()) }}</p>
           </div>
         </div>
         <button
-          @click="handleResolveAlert(alert.alertId)"
+          @click="handleResolveAlert(alert.alertId || alert.id || '')"
           class="ml-2 px-2 py-1 text-xs bg-primary text-white rounded opacity-0 group-hover:opacity-100 hover:bg-blue-600 transition-all"
-          :disabled="resolving.includes(alert.alertId)"
+          :disabled="resolving.includes(alert.alertId || alert.id || '')"
         >
-          {{ resolving.includes(alert.alertId) ? '...' : 'Resolve' }}
+          {{ resolving.includes(alert.alertId || alert.id || '') ? '...' : 'Resolve' }}
         </button>
       </div>
       <router-link

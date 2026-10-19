@@ -1,2 +1,0 @@
-import{_ as t}from"./_plugin-vue_export-helper-c27b6911.js";import{c as a,e as o,g as e}from"./vue-vendor-8b2e0b54.js";const r={},c={class:"space-y-6"};function n(d,s){return a(),o("div",c,[...s[0]||(s[0]=[e("h1",{class:"text-3xl font-bold text-gray-900 dark:text-white"},"Releases",-1),e("div",{class:"bg-white dark:bg-gray-800 rounded-lg shadow p-6"},[e("p",{class:"text-gray-600 dark:text-gray-400"},"Releases view - Coming soon")],-1)])])}const g=t(r,[["render",n]]);export{g as default};
-//# sourceMappingURL=ReleasesView-1a2063d4.js.map
