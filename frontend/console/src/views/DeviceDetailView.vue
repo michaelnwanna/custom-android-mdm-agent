@@ -162,28 +162,39 @@
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Actions</h3>
             <div class="space-y-2">
               <button
-                @click="sendCommand('ping')"
-                class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                @click="restartDevice"
+                :disabled="executing"
+                class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm disabled:opacity-50"
               >
-                Ping Device
+                {{ executing ? 'Executing...' : 'Restart Device' }}
               </button>
               <button
-                @click="sendCommand('lockdevice')"
-                class="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors text-sm"
+                @click="lockDevice"
+                :disabled="executing"
+                class="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors text-sm disabled:opacity-50"
               >
-                Lock Device
+                {{ executing ? 'Executing...' : 'Lock Device' }}
+              </button>
+              <button
+                @click="wipeDevice"
+                :disabled="executing"
+                class="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm disabled:opacity-50"
+              >
+                {{ executing ? 'Executing...' : 'Wipe Device' }}
               </button>
               <button
                 @click="suspendDevice"
-                class="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors text-sm"
+                :disabled="executing"
+                class="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors text-sm disabled:opacity-50"
               >
-                Suspend
+                {{ executing ? 'Executing...' : 'Suspend' }}
               </button>
               <button
                 @click="decommissionDevice"
-                class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                :disabled="executing"
+                class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm disabled:opacity-50"
               >
-                Decommission
+                {{ executing ? 'Executing...' : 'Decommission' }}
               </button>
             </div>
           </div>
@@ -224,6 +235,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDeviceStore } from '@stores/deviceStore'
+import * as deviceApi from '@/api/deviceApi'
 import toastService from '@services/toastService'
 import type { Device, DeviceTelemetry } from '@types'
 
@@ -236,6 +248,8 @@ const editMode = ref(false)
 const editedDevice = ref<Partial<Device>>({})
 const telemetry = ref<DeviceTelemetry | null>(null)
 const deviceAlerts = ref<any[]>([])
+const commandHistory = ref<any[]>([])
+const executing = ref(false)
 
 // Computed
 const deviceId = computed(() => route.params.id as string)
@@ -245,9 +259,30 @@ const error = computed(() => deviceStore.error)
 
 // Methods
 const refreshDevice = async () => {
-  await deviceStore.fetchDeviceById(deviceId.value)
-  // TODO: Fetch device telemetry and alerts
-  resetEdit()
+  try {
+    await deviceStore.fetchDeviceById(deviceId.value)
+    await fetchTelemetry()
+    await fetchCommandHistory()
+    resetEdit()
+  } catch (err) {
+    console.error('Failed to refresh device:', err)
+  }
+}
+
+const fetchTelemetry = async () => {
+  try {
+    telemetry.value = await deviceApi.fetchDeviceTelemetry(deviceId.value)
+  } catch (err) {
+    console.error('Failed to fetch telemetry:', err)
+  }
+}
+
+const fetchCommandHistory = async () => {
+  try {
+    commandHistory.value = await deviceApi.getCommandHistory(deviceId.value, 20)
+  } catch (err) {
+    console.error('Failed to fetch command history:', err)
+  }
 }
 
 const resetEdit = () => {
@@ -258,7 +293,11 @@ const resetEdit = () => {
 
 const saveChanges = async () => {
   try {
-    // TODO: Call API to update device
+    if (!device.value?.deviceId) return
+    await deviceStore.updateDevice({
+      ...device.value,
+      ...editedDevice.value
+    })
     toastService.success('Device updated successfully')
     editMode.value = false
     await refreshDevice()
@@ -267,36 +306,81 @@ const saveChanges = async () => {
   }
 }
 
-const sendCommand = async (command: string) => {
+const lockDevice = async () => {
+  if (!confirm('Lock this device? The user will not be able to use it until unlocked.')) return
+  
+  executing.value = true
   try {
-    // TODO: Call API to send command
-    toastService.success(`Command '${command}' sent to device`)
+    await deviceStore.lockDevice(deviceId.value)
+    toastService.success('Lock command sent to device')
+    await fetchCommandHistory()
   } catch (err) {
-    toastService.error('Failed to send command')
+    toastService.error('Failed to lock device')
+  } finally {
+    executing.value = false
+  }
+}
+
+const wipeDevice = async () => {
+  if (!confirm('Wipe this device? This will perform a factory reset and cannot be undone.')) return
+  
+  executing.value = true
+  try {
+    await deviceStore.wipeDevice(deviceId.value)
+    toastService.success('Wipe command sent to device')
+    await fetchCommandHistory()
+    await refreshDevice()
+  } catch (err) {
+    toastService.error('Failed to wipe device')
+  } finally {
+    executing.value = false
+  }
+}
+
+const restartDevice = async () => {
+  if (!confirm('Restart this device?')) return
+  
+  executing.value = true
+  try {
+    await deviceStore.restartDevice(deviceId.value)
+    toastService.success('Restart command sent to device')
+    await fetchCommandHistory()
+  } catch (err) {
+    toastService.error('Failed to restart device')
+  } finally {
+    executing.value = false
   }
 }
 
 const suspendDevice = async () => {
   if (!confirm('Suspend this device?')) return
   
+  executing.value = true
   try {
-    // TODO: Call API to suspend device
+    await deviceStore.lockDevice(deviceId.value)
     toastService.success('Device suspended')
     await refreshDevice()
   } catch (err) {
     toastService.error('Failed to suspend device')
+  } finally {
+    executing.value = false
   }
 }
 
 const decommissionDevice = async () => {
   if (!confirm('Decommission this device? This cannot be undone.')) return
   
+  executing.value = true
   try {
-    // TODO: Call API to decommission device
+    if (device.value?.deviceId) {
+      await deviceStore.deleteDevice(device.value.deviceId)
+    }
     toastService.success('Device decommissioned')
     await router.push('/devices')
   } catch (err) {
     toastService.error('Failed to decommission device')
+  } finally {
+    executing.value = false
   }
 }
 
