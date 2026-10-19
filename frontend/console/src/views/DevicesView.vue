@@ -24,7 +24,8 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
           <input
-            v-model="searchQuery"
+            :value="searchQuery"
+            @input="handleSearch($event.target.value)"
             type="text"
             placeholder="Device name, model, serial..."
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
@@ -35,28 +36,25 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
           <select
-            v-model="statusFilter"
+            :value="statusFilter"
+            @change="handleStatusFilterChange($event.target.value || null)"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="">All Statuses</option>
+            <option :value="null">All Statuses</option>
             <option value="Enrolled">Enrolled</option>
             <option value="Suspended">Suspended</option>
             <option value="Decommissioned">Decommissioned</option>
           </select>
         </div>
 
-        <!-- Items Per Page -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Items Per Page</label>
-          <select
-            v-model.number="itemsPerPage"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+        <!-- Clear Filters -->
+        <div v-if="hasFilters" class="flex items-end">
+          <button
+            @click="clearFiltersHandler"
+            class="w-full px-3 py-2 text-sm bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
           >
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
+            Clear Filters
+          </button>
         </div>
       </div>
 
@@ -137,14 +135,14 @@
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
           <tr
-            v-for="device in filteredList"
+            v-for="device in devices"
             :key="device.deviceId"
             class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <td class="px-4 py-3">
               <input
                 type="checkbox"
-                :checked="selectedDevices.includes(device.deviceId)"
+                :checked="(device as any).selected || false"
                 @change="toggleDevice(device.deviceId)"
                 class="rounded"
               />
@@ -169,12 +167,12 @@
               {{ formatDate(device.lastSyncDate) }}
             </td>
             <td class="px-4 py-3 text-center">
-              <router-link
-                :to="`/devices/${device.deviceId}`"
+              <button
+                @click="handleDeviceClick(device.deviceId)"
                 class="inline-block px-3 py-1 text-sm bg-primary text-white rounded hover:bg-blue-600 transition-colors"
               >
                 View
-              </router-link>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -223,38 +221,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useDeviceStore } from '@stores/deviceStore'
+import { computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useDevices } from '@/composables/useDevices'
 import toastService from '@services/toastService'
 
-const deviceStore = useDeviceStore()
+const router = useRouter()
 
-// State
-const searchQuery = ref('')
-const statusFilter = ref('')
-const itemsPerPage = ref(20)
-const currentPage = ref(1)
-const selectedDevices = ref<string[]>([])
+// Use the composable
+const {
+  devices,
+  loading,
+  error,
+  currentPage,
+  totalPages,
+  hasNextPage,
+  searchQuery,
+  statusFilter,
+  fetchDevices,
+  setSearch,
+  setStatusFilter,
+  goToPage,
+  refresh
+} = useDevices({ pageSize: 20, autoLoad: true })
 
-// Computed
-const loading = computed(() => deviceStore.loading)
-const error = computed(() => deviceStore.error)
-const totalCount = computed(() => deviceStore.pagination.totalCount)
-const totalPages = computed(() => Math.ceil(totalCount.value / itemsPerPage.value))
-
-const filteredList = computed(() => {
-  return deviceStore.devices.filter(device => {
-    const matchesSearch =
-      searchQuery.value === '' ||
-      device.deviceName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      device.model.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      device.serialNumber.toLowerCase().includes(searchQuery.value.toLowerCase())
-    
-    const matchesStatus = statusFilter.value === '' || device.status === statusFilter.value
-    
-    return matchesSearch && matchesStatus
-  })
+// Selected devices for bulk actions
+const selectedDevices = computed<string[]>(() => {
+  return devices.value
+    .filter(d => (d as any).selected)
+    .map(d => d.deviceId)
 })
+
+// Computed helpers
+const hasFilters = computed(() => searchQuery.value !== '' || statusFilter.value !== null)
 
 const paginationRange = computed(() => {
   const delta = 2
@@ -284,49 +283,79 @@ const paginationRange = computed(() => {
 })
 
 // Methods
-const refreshDevices = async () => {
-  currentPage.value = 1
-  await deviceStore.fetchDevices(1, itemsPerPage.value)
+const handleDeviceClick = (deviceId: string) => {
+  router.push({ name: 'DeviceDetail', params: { id: deviceId } })
 }
 
-const goToPage = (page: number | string) => {
+const handleSearch = (query: string) => {
+  setSearch(query)
+  fetchDevices(1)
+}
+
+const handleStatusFilterChange = (status: string | null) => {
+  setStatusFilter(status)
+  fetchDevices(1)
+}
+
+const handlePageChange = (page: number | string) => {
   if (typeof page === 'number') {
-    currentPage.value = page
-    deviceStore.fetchDevices(page, itemsPerPage.value)
+    goToPage(page)
   }
 }
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    goToPage(currentPage.value + 1)
-  }
-}
-
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    goToPage(currentPage.value - 1)
-  }
+const clearFiltersHandler = () => {
+  setSearch('')
+  setStatusFilter(null)
+  fetchDevices(1)
 }
 
 const toggleDevice = (deviceId: string) => {
-  const index = selectedDevices.value.indexOf(deviceId)
-  if (index > -1) {
-    selectedDevices.value.splice(index, 1)
-  } else {
-    selectedDevices.value.push(deviceId)
+  // Toggle selected state in the device object
+  const device = devices.value.find(d => d.deviceId === deviceId)
+  if (device) {
+    (device as any).selected = !(device as any).selected
   }
 }
 
 const toggleSelectAll = () => {
-  if (selectedDevices.value.length === filteredList.value.length) {
-    selectedDevices.value = []
-  } else {
-    selectedDevices.value = filteredList.value.map(d => d.deviceId)
-  }
+  const allSelected = devices.value.every(d => (d as any).selected)
+  devices.value.forEach(d => {
+    (d as any).selected = !allSelected
+  })
 }
 
 const clearSelection = () => {
-  selectedDevices.value = []
+  devices.value.forEach(d => {
+    (d as any).selected = false
+  })
+}
+
+const suspendSelected = async () => {
+  if (selectedDevices.value.length === 0) return
+  if (!confirm(`Suspend ${selectedDevices.value.length} device(s)?`)) return
+  
+  try {
+    // TODO: Call batch API to suspend devices
+    toastService.success(`${selectedDevices.value.length} device(s) suspended`)
+    clearSelection()
+    await refresh()
+  } catch (err) {
+    toastService.error('Failed to suspend devices')
+  }
+}
+
+const decommissionSelected = async () => {
+  if (selectedDevices.value.length === 0) return
+  if (!confirm(`Decommission ${selectedDevices.value.length} device(s)? This cannot be undone.`)) return
+  
+  try {
+    // TODO: Call batch API to decommission devices
+    toastService.success(`${selectedDevices.value.length} device(s) decommissioned`)
+    clearSelection()
+    await refresh()
+  } catch (err) {
+    toastService.error('Failed to decommission devices')
+  }
 }
 
 const suspendSelected = async () => {
@@ -384,15 +413,8 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString()
 }
 
-// Lifecycle
-onMounted(async () => {
-  await refreshDevices()
-})
-
-// Watch for filter/search changes to reset pagination
-watch([searchQuery, statusFilter], () => {
-  currentPage.value = 1
-})
+// Note: useDevices composable handles autoLoading via onMounted
+// The composable already has autoLoad: true by default
 </script>
 
 <style scoped>

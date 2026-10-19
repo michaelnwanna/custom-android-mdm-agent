@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { apiClient } from '@/api/client'
 import { API_ENDPOINTS } from '@/api/endpoints'
+import * as deviceApi from '@/api/deviceApi'
 import type { Device, PaginatedResult } from '@types'
 
 export const useDeviceStore = defineStore('device', () => {
@@ -112,6 +113,107 @@ export const useDeviceStore = defineStore('device', () => {
     error.value = null
   }
 
+  /**
+   * Lock a device
+   */
+  async function lockDevice(deviceId: string) {
+    try {
+      const result = await deviceApi.lockDevice(deviceId)
+      const device = devices.value.find(d => d.deviceId === deviceId)
+      if (device) {
+        device.status = 'Suspended' as const
+      }
+      return result
+    } catch (err) {
+      error.value = 'Failed to lock device'
+      throw err
+    }
+  }
+
+  /**
+   * Wipe a device (factory reset)
+   */
+  async function wipeDevice(deviceId: string) {
+    try {
+      const result = await deviceApi.wipeDevice(deviceId)
+      const device = devices.value.find(d => d.deviceId === deviceId)
+      if (device) {
+        device.status = 'Decommissioned' as const
+      }
+      return result
+    } catch (err) {
+      error.value = 'Failed to wipe device'
+      throw err
+    }
+  }
+
+  /**
+   * Restart a device
+   */
+  async function restartDevice(deviceId: string) {
+    try {
+      return await deviceApi.restartDevice(deviceId)
+    } catch (err) {
+      error.value = 'Failed to restart device'
+      throw err
+    }
+  }
+
+  /**
+   * Update device policy
+   */
+  async function updateDevicePolicy(deviceId: string, policyId: string) {
+    try {
+      return await deviceApi.updateDevicePolicy(deviceId, policyId)
+    } catch (err) {
+      error.value = 'Failed to update device policy'
+      throw err
+    }
+  }
+
+  /**
+   * Get command status
+   */
+  async function getCommandStatus(deviceId: string, commandId: string) {
+    try {
+      return await deviceApi.getCommandStatus(deviceId, commandId)
+    } catch (err) {
+      error.value = 'Failed to get command status'
+      throw err
+    }
+  }
+
+  /**
+   * Get command history
+   */
+  async function getCommandHistory(deviceId: string, limit: number = 50) {
+    try {
+      return await deviceApi.getCommandHistory(deviceId, limit)
+    } catch (err) {
+      error.value = 'Failed to get command history'
+      throw err
+    }
+  }
+
+  /**
+   * Delete a device
+   */
+  async function deleteDevice(deviceId: string) {
+    try {
+      await deviceApi.deleteDevice(deviceId)
+      const index = devices.value.findIndex(d => d.deviceId === deviceId)
+      if (index > -1) {
+        devices.value.splice(index, 1)
+      }
+      if (selectedDevice.value?.deviceId === deviceId) {
+        selectedDevice.value = null
+      }
+    } catch (err) {
+      error.value = 'Failed to delete device'
+      throw err
+    }
+  }
+
   return {
     devices,
     selectedDevice,
@@ -124,6 +226,13 @@ export const useDeviceStore = defineStore('device', () => {
     fetchDeviceById,
     setSelectedDevice,
     updateDevice,
-    clearError
+    clearError,
+    lockDevice,
+    wipeDevice,
+    restartDevice,
+    updateDevicePolicy,
+    getCommandStatus,
+    getCommandHistory,
+    deleteDevice
   }
 })
