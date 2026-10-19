@@ -252,3 +252,158 @@ public class DeviceReconciliationAuditLogDto
         };
     }
 }
+
+/// <summary>
+/// DTO for reconciliation command in REST API.
+/// </summary>
+public class ReconciliationCommandDto
+{
+    /// <summary>Command ID.</summary>
+    public Guid Id { get; set; }
+
+    /// <summary>Device ID.</summary>
+    public Guid DeviceId { get; set; }
+
+    /// <summary>Enrollment ID.</summary>
+    public Guid EnrollmentId { get; set; }
+
+    /// <summary>Audit log ID that triggered this command.</summary>
+    public Guid? AuditLogId { get; set; }
+
+    /// <summary>Type of command.</summary>
+    public string CommandType { get; set; } = string.Empty;
+
+    /// <summary>Current status.</summary>
+    public string Status { get; set; } = string.Empty;
+
+    /// <summary>Priority (lower number = higher priority).</summary>
+    public int Priority { get; set; }
+
+    /// <summary>Resource ID affected by this command.</summary>
+    public Guid? ResourceId { get; set; }
+
+    /// <summary>Human-readable description.</summary>
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>Command payload as JSON.</summary>
+    public string PayloadJson { get; set; } = string.Empty;
+
+    /// <summary>When created.</summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>When command expires.</summary>
+    public DateTime? ExpiresAt { get; set; }
+
+    /// <summary>When to execute (if scheduled).</summary>
+    public DateTime? ScheduledFor { get; set; }
+
+    /// <summary>Last status update.</summary>
+    public DateTime? LastStatusUpdate { get; set; }
+
+    /// <summary>Delivery attempts made.</summary>
+    public int DeliveryAttempts { get; set; }
+
+    /// <summary>Max delivery attempts.</summary>
+    public int MaxDeliveryAttempts { get; set; }
+
+    /// <summary>Execution result from device.</summary>
+    public string? ExecutionResultJson { get; set; }
+
+    /// <summary>Error message if failed.</summary>
+    public string? ErrorMessage { get; set; }
+
+    /// <summary>When completed.</summary>
+    public DateTime? CompletedAt { get; set; }
+
+    /// <summary>Factory: Create DTO from domain model.</summary>
+    public static ReconciliationCommandDto FromDomain(ReconciliationCommand domain)
+    {
+        return new ReconciliationCommandDto
+        {
+            Id = domain.Id,
+            DeviceId = domain.DeviceId,
+            EnrollmentId = domain.EnrollmentId,
+            AuditLogId = domain.AuditLogId,
+            CommandType = domain.CommandType.ToString(),
+            Status = domain.Status.ToString(),
+            Priority = domain.Priority,
+            ResourceId = domain.ResourceId,
+            Description = domain.Description,
+            PayloadJson = domain.PayloadJson,
+            CreatedAt = domain.CreatedAt,
+            ExpiresAt = domain.ExpiresAt,
+            ScheduledFor = domain.ScheduledFor,
+            LastStatusUpdate = domain.LastStatusUpdate,
+            DeliveryAttempts = domain.DeliveryAttempts,
+            MaxDeliveryAttempts = domain.MaxDeliveryAttempts,
+            ExecutionResultJson = domain.ExecutionResultJson,
+            ErrorMessage = domain.ErrorMessage,
+            CompletedAt = domain.CompletedAt
+        };
+    }
+}
+
+/// <summary>
+/// DTO for command statistics.
+/// </summary>
+public class CommandStatisticsDto
+{
+    /// <summary>Total commands for device.</summary>
+    public int TotalCommands { get; set; }
+
+    /// <summary>Pending commands.</summary>
+    public int Pending { get; set; }
+
+    /// <summary>Delivered commands.</summary>
+    public int Delivered { get; set; }
+
+    /// <summary>Executed commands.</summary>
+    public int Executed { get; set; }
+
+    /// <summary>Failed commands.</summary>
+    public int Failed { get; set; }
+
+    /// <summary>Expired commands.</summary>
+    public int Expired { get; set; }
+
+    /// <summary>Cancelled commands.</summary>
+    public int Cancelled { get; set; }
+
+    /// <summary>Average delivery attempts.</summary>
+    public double AverageDeliveryAttempts { get; set; }
+
+    /// <summary>Oldest pending command timestamp.</summary>
+    public DateTime? OldestPendingCommand { get; set; }
+
+    /// <summary>Factory: Create DTO from domain model.</summary>
+    public static CommandStatisticsDto FromDomain(CommandStatistics domain)
+    {
+        return new CommandStatisticsDto
+        {
+            TotalCommands = domain.TotalCommands,
+            Pending = domain.Pending,
+            Delivered = domain.Delivered,
+            Executed = domain.Executed,
+            Failed = domain.Failed,
+            Expired = domain.Expired,
+            Cancelled = domain.Cancelled,
+            AverageDeliveryAttempts = domain.AverageDeliveryAttempts,
+            OldestPendingCommand = domain.OldestPendingCommand
+        };
+    }
+}
+
+/// <summary>
+/// Request body for command execution report from device.
+/// </summary>
+public class CommandExecutionRequest
+{
+    /// <summary>Whether command executed successfully.</summary>
+    public bool Success { get; set; }
+
+    /// <summary>Result/response from command execution (JSON).</summary>
+    public string? ResultJson { get; set; }
+
+    /// <summary>Error message if execution failed.</summary>
+    public string? ErrorMessage { get; set; }
+}

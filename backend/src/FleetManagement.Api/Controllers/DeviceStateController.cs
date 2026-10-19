@@ -20,11 +20,13 @@ public class DeviceStateController : ControllerBase
 {
     private readonly FleetDbContext _context;
     private readonly StateComputationService _stateComputation;
+    private readonly ReconciliationCommandService _commandService;
 
-    public DeviceStateController(FleetDbContext context, StateComputationService stateComputation)
+    public DeviceStateController(FleetDbContext context, StateComputationService stateComputation, ReconciliationCommandService commandService)
     {
         _context = context;
         _stateComputation = stateComputation;
+        _commandService = commandService;
     }
 
     /// <summary>
@@ -283,7 +285,6 @@ public class DeviceStateController : ControllerBase
         }
     }
 
-    /// <summary>
     /// Get a specific reconciliation audit log entry by ID.
     /// 
     /// Endpoint: GET /api/v1/devices/reconciliation-history/{auditLogId}
@@ -314,6 +315,151 @@ public class DeviceStateController : ControllerBase
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
                 new { error = "Failed to retrieve audit log entry.", detail = ex.Message }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Get pending reconciliation commands for a device.
+    /// 
+    /// Returns commands that need to be delivered and executed to bring
+    /// the device to desired state. Results are ordered by priority.
+    /// 
+    /// Endpoint: GET /api/v1/devices/{enrollmentId}/pending-commands
+    /// </summary>
+    /// <param name="enrollmentId">The device's enrollment ID.</param>
+    /// <param name="maxCommands">Maximum commands to return (default 10, max 100).</param>
+    /// <returns>List of pending commands.</returns>
+    [HttpGet("{enrollmentId:guid}/pending-commands")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetPendingCommands(Guid enrollmentId, [FromQuery] int maxCommands = 10)
+    {
+        maxCommands = Math.Min(Math.Max(maxCommands, 1), 100);
+
+        // Verify device exists
+        var device = await _context.Devices
+            .FirstOrDefaultAsync(d => d.EnrollmentId == enrollmentId);
+        
+        if (device == null)
+        {
+            return NotFound(new { error = $"Device with enrollment ID {enrollmentId} not found." });
+        }
+
+        try
+        {
+            var commands = await _commandService.GetPendingCommandsAsync(device.DeviceId, maxCommands);
+            var dtos = commands.Select(ReconciliationCommandDto.FromDomain).ToList();
+
+            return Ok(new { count = dtos.Count, commands = dtos });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { error = "Failed to retrieve pending commands.", detail = ex.Message }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Get statistics for reconciliation commands targeting a device.
+    /// 
+    /// Returns counts of commands in each status and related metrics.
+    /// 
+    /// Endpoint: GET /api/v1/devices/{enrollmentId}/command-statistics
+    /// </summary>
+    /// <param name="enrollmentId">The device's enrollment ID.</param>
+    /// <returns>Command statistics.</returns>
+    [HttpGet("{enrollmentId:guid}/command-statistics")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCommandStatistics(Guid enrollmentId)
+    {
+        // Verify device exists
+        var device = await _context.Devices
+            .FirstOrDefaultAsync(d => d.EnrollmentId == enrollmentId);
+        
+        if (device == null)
+        {
+            return NotFound(new { error = $"Device with enrollment ID {enrollmentId} not found." });
+        }
+
+        try
+        {
+            var stats = await _commandService.GetCommandStatisticsAsync(device.DeviceId);
+            var dto = CommandStatisticsDto.FromDomain(stats);
+
+            return Ok(dto);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { error = "Failed to retrieve command statistics.", detail = ex.Message }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Report device execution result for a command.
+    /// 
+    /// Called by device after command execution to update command status.
+    /// 
+    /// Endpoint: POST /api/v1/devices/{enrollmentId}/command/{commandId}/executed
+    /// </summary>
+    /// <param name="enrollmentId">The device's enrollment ID.</param>
+    /// <param name="commandId">The command ID.</param>
+    /// <param name="request">Execution result details.</param>
+    /// <returns>Success or error response.</returns>
+    [HttpPost("{enrollmentId:guid}/command/{commandId:guid}/executed")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ReportCommandExecution(
+        Guid enrollmentId,
+        Guid commandId,
+        [FromBody] CommandExecutionRequest request)
+    {
+        // Verify device exists
+        var device = await _context.Devices
+            .FirstOrDefaultAsync(d => d.EnrollmentId == enrollmentId);
+        
+        if (device == null)
+        {
+            return NotFound(new { error = $"Device with enrollment ID {enrollmentId} not found." });
+        }
+
+        try
+        {
+            var command = await _context.ReconciliationCommands
+                .FirstOrDefaultAsync(c => c.Id == commandId && c.DeviceId == device.DeviceId);
+
+            if (command == null)
+            {
+                return NotFound(new { error = $"Command {commandId} not found for this device." });
+            }
+
+            var status = request.Success 
+                ? ReconciliationCommandStatus.Executed 
+                : ReconciliationCommandStatus.Failed;
+
+            await _commandService.UpdateCommandStatusAsync(
+                commandId,
+                status,
+                request.ResultJson,
+                request.ErrorMessage);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { error = "Failed to report command execution.", detail = ex.Message }
             );
         }
     }

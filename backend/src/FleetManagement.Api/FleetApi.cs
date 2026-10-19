@@ -152,6 +152,7 @@ public static class FleetApi
         builder.Services.AddScoped<DeviceService>();
         builder.Services.AddScoped<DeviceTagService>();
         builder.Services.AddScoped<StateComputationService>();
+        builder.Services.AddScoped<ReconciliationCommandService>();
 
         // MQTT services
         builder.Services.AddSingleton<MqttHostedService>();

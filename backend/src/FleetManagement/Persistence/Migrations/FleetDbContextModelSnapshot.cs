@@ -347,6 +347,110 @@ namespace FleetManagement.Persistence.Migrations
                     b.ToTable("DeviceTagAssignments", (string)null);
                 });
 
+            modelBuilder.Entity("FleetManagement.Devices.ReconciliationCommand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuditLogId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CommandType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("DeliveryAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ExecutionResultJson")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastStatusUpdate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MaxDeliveryAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(3);
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<int>("Priority")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(50);
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ScheduledFor")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuditLogId")
+                        .HasDatabaseName("IX_ReconciliationCommands_AuditLogId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_ReconciliationCommands_CreatedAt");
+
+                    b.HasIndex("DeviceId")
+                        .HasDatabaseName("IX_ReconciliationCommands_DeviceId");
+
+                    b.HasIndex("EnrollmentId")
+                        .HasDatabaseName("IX_ReconciliationCommands_EnrollmentId");
+
+                    b.HasIndex("Priority")
+                        .HasDatabaseName("IX_ReconciliationCommands_Priority");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_ReconciliationCommands_Status");
+
+                    b.HasIndex("DeviceId", "Status")
+                        .HasDatabaseName("IX_ReconciliationCommands_DeviceId_Status");
+
+                    b.HasIndex("Status", "Priority", "ScheduledFor")
+                        .HasDatabaseName("IX_ReconciliationCommands_ReadyForDelivery");
+
+                    b.ToTable("ReconciliationCommands", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>
                 {
                     b.Property<Guid>("PendingEnrollmentId")
