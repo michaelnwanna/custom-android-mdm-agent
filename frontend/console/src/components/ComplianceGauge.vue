@@ -21,7 +21,7 @@
           fill="none"
           :stroke="gaugeColor"
           stroke-width="8"
-          stroke-dasharray="282.7" <!-- 2 * π * 45 -->
+          stroke-dasharray="282.7"
           :stroke-dashoffset="strokeOffset"
           stroke-linecap="round"
           class="transition-all duration-1000"
@@ -46,7 +46,7 @@
         <div :class="['text-lg font-semibold', greenClass]">{{ compliantCount }}</div>
       </div>
       <div class="flex-1 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
-        <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">Non-compliant</div>
+        <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">Not compliant</div>
         <div :class="['text-lg font-semibold', redClass]">{{ nonCompliantCount }}</div>
       </div>
     </div>

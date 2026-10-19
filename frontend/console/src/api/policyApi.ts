@@ -1,4 +1,5 @@
 import { apiClient } from '@/api/client'
+import { API_ENDPOINTS } from '@/api/endpoints'
 import type { Policy } from '@types'
 
 export interface PolicyQueryParams {
@@ -26,8 +27,35 @@ export interface UpdatePolicyInput {
 }
 
 export interface PolicyAssignment {
-  deviceIds?: string[]
-  groupIds?: string[]
+  enrollmentIds: string[]
+}
+
+export interface PolicyAssignmentResult {
+  enrollmentId: string
+  assignmentId?: string
+  assignedVersion?: number
+  assignedAt?: string
+  error?: string
+}
+
+export interface AssignmentStatus {
+  enrollmentId: string
+  status: 'queued' | 'failed'
+  message: string
+}
+
+export interface PolicyManagementDevice {
+  deviceId: string
+  enrollmentId: string
+  deviceName: string
+  deviceState: string
+  complianceStatus: 'compliant' | 'non-compliant' | 'pending' | 'unassigned'
+  compliancePercentage: number
+  lastChecked: string
+  policyId?: string
+  policyName?: string
+  assignedVersion?: number
+  acknowledgedVersion?: number
 }
 
 export interface PolicyVersion {
@@ -60,37 +88,26 @@ export interface PaginatedPolicies {
  * Fetch policies with pagination and filtering
  */
 export async function fetchPolicies(options: PolicyQueryParams = {}): Promise<PaginatedPolicies> {
-  try {
-    const params = new URLSearchParams()
-    if (options.page) params.append('page', options.page.toString())
-    if (options.pageSize) params.append('pageSize', options.pageSize.toString())
-    if (options.type) params.append('type', options.type)
-    if (options.status) params.append('status', options.status)
-    if (options.search) params.append('search', options.search)
-    if (options.sortBy) params.append('sortBy', options.sortBy)
-    if (options.sortOrder) params.append('sortOrder', options.sortOrder)
+  const params = new URLSearchParams()
+  if (options.page) params.append('page', options.page.toString())
+  if (options.pageSize) params.append('pageSize', options.pageSize.toString())
+  if (options.status) params.append('status', options.status)
+  if (options.type) params.append('type', options.type)
+  if (options.search) params.append('search', options.search)
+  if (options.sortBy) params.append('sortBy', options.sortBy)
+  if (options.sortOrder) params.append('sortOrder', options.sortOrder)
 
-    const url = `/api/v1/policies?${params.toString()}`
-    const response = await apiClient.get<PaginatedPolicies>(url)
-    return response
-  } catch (error) {
-    console.error('Failed to fetch policies:', error)
-    // Return mock data
-    return generateMockPaginatedPolicies(options)
-  }
+  const query = params.toString()
+  return apiClient.get<PaginatedPolicies>(
+    `${API_ENDPOINTS.POLICIES.LIST}${query ? `?${query}` : ''}`
+  )
 }
 
 /**
  * Get single policy by ID
  */
-export async function fetchPolicyById(policyId: string): Promise<Policy | null> {
-  try {
-    const response = await apiClient.get<Policy>(`/api/v1/policies/${policyId}`)
-    return response
-  } catch (error) {
-    console.error(`Failed to fetch policy ${policyId}:`, error)
-    return null
-  }
+export async function fetchPolicyById(policyId: string): Promise<Policy> {
+  return apiClient.get<Policy>(API_ENDPOINTS.POLICIES.GET(policyId))
 }
 
 /**
@@ -140,13 +157,37 @@ export async function deletePolicy(policyId: string): Promise<void> {
 export async function assignPolicy(
   policyId: string,
   assignment: PolicyAssignment
-): Promise<void> {
-  try {
-    await apiClient.post(`/api/v1/policies/${policyId}/assign`, assignment)
-  } catch (error) {
-    console.error(`Failed to assign policy ${policyId}:`, error)
-    throw error
-  }
+): Promise<PolicyAssignmentResult[]> {
+  return Promise.all(assignment.enrollmentIds.map(async enrollmentId => {
+    try {
+      return await assignPolicyToDevice(policyId, enrollmentId)
+    } catch (error) {
+      return {
+        enrollmentId,
+        error: error instanceof Error ? error.message : 'Assignment failed'
+      }
+    }
+  }))
+}
+
+export async function assignPolicyToDevice(
+  policyId: string,
+  enrollmentId: string
+): Promise<PolicyAssignmentResult> {
+  const response = await apiClient.post<{
+    assignmentId: string
+    assignedVersion: number
+    assignedAt: string
+  }>(API_ENDPOINTS.POLICIES.ASSIGN, { enrollmentId, policyId })
+  return { enrollmentId, ...response }
+}
+
+export async function fetchAssignableDevices(): Promise<PolicyManagementDevice[]> {
+  return apiClient.get<PolicyManagementDevice[]>(API_ENDPOINTS.POLICIES.ASSIGNABLE_DEVICES)
+}
+
+export async function fetchComplianceReport(): Promise<PolicyManagementDevice[]> {
+  return apiClient.get<PolicyManagementDevice[]>(API_ENDPOINTS.POLICIES.COMPLIANCE_REPORT)
 }
 
 /**
@@ -200,141 +241,12 @@ export async function rollbackPolicy(policyId: string, versionId: string): Promi
  * Get policy compliance report
  */
 export async function getPolicyCompliance(policyId: string): Promise<PolicyCompliance> {
-  try {
-    const response = await apiClient.get<PolicyCompliance>(
-      `/api/v1/policies/${policyId}/compliance`
-    )
-    return response
-  } catch (error) {
-    console.error(`Failed to fetch compliance for policy ${policyId}:`, error)
-    // Return mock compliance
-    return {
-      policyId,
-      totalDevices: 0,
-      compliantDevices: 0,
-      nonCompliantDevices: 0,
-      unknownDevices: 0,
-      compliancePercentage: 0,
-      lastUpdated: new Date().toISOString()
-    }
-  }
+  return apiClient.get<PolicyCompliance>(`/api/v1/policies/${policyId}/compliance`)
 }
 
 /**
  * Get policies for specific device
  */
 export async function getDevicePolicies(deviceId: string): Promise<Policy[]> {
-  try {
-    const response = await apiClient.get<Policy[]>(`/api/v1/policies/device/${deviceId}`)
-    return response
-  } catch (error) {
-    console.error(`Failed to fetch policies for device ${deviceId}:`, error)
-    return []
-  }
-}
-
-/**
- * Generate mock paginated policies for development/testing
- */
-function generateMockPaginatedPolicies(options: PolicyQueryParams): PaginatedPolicies {
-  const mockPolicies = generateMockPolicies(50)
-  
-  let filtered = mockPolicies
-  
-  // Apply filters
-  if (options.type) {
-    filtered = filtered.filter(p => p.type === options.type)
-  }
-  if (options.status) {
-    filtered = filtered.filter(p => p.status === options.status)
-  }
-  if (options.search) {
-    const search = options.search.toLowerCase()
-    filtered = filtered.filter(p => 
-      p.name.toLowerCase().includes(search) ||
-      p.description.toLowerCase().includes(search)
-    )
-  }
-
-  // Sort
-  if (options.sortBy === 'name') {
-    filtered.sort((a, b) => a.name.localeCompare(b.name))
-  } else {
-    filtered.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
-  }
-
-  if (options.sortOrder === 'asc') {
-    filtered.reverse()
-  }
-
-  // Paginate
-  const pageNumber = options.page || 1
-  const pageSize = options.pageSize || 20
-  const startIndex = (pageNumber - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  const items = filtered.slice(startIndex, endIndex)
-  const totalPages = Math.ceil(filtered.length / pageSize)
-
-  return {
-    items,
-    totalCount: filtered.length,
-    pageNumber,
-    pageSize,
-    totalPages
-  }
-}
-
-/**
- * Generate mock policies for development
- */
-function generateMockPolicies(count: number): Policy[] {
-  const policyTypes = ['Security', 'Compliance', 'Performance', 'Custom']
-  const policyStatuses = ['Active', 'Archived', 'Draft']
-  const policyNames = [
-    'Enterprise Security Policy',
-    'GDPR Compliance Policy',
-    'Mobile Device Protection',
-    'Password Management Policy',
-    'Data Encryption Policy',
-    'App Restriction Policy',
-    'Network Security Policy',
-    'Update Management Policy',
-    'Backup & Recovery Policy',
-    'Device Hardening Policy'
-  ]
-
-  const policies: Policy[] = []
-  for (let i = 0; i < count; i++) {
-    const policyType = policyTypes[Math.floor(Math.random() * policyTypes.length)]
-    const status = policyStatuses[Math.floor(Math.random() * policyStatuses.length)]
-    const name = policyNames[Math.floor(Math.random() * policyNames.length)]
-    const deviceCount = Math.floor(Math.random() * 200) + 10
-    const compliantCount = Math.floor(deviceCount * (0.5 + Math.random() * 0.5))
-
-    const createdAt = new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000)
-    const lastUpdated = new Date(createdAt.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000)
-
-    policies.push({
-      policyId: `policy-${String(i + 1).padStart(6, '0')}`,
-      name: `${name} #${i + 1}`,
-      description: `${policyType} policy for managing device configuration and compliance`,
-      type: policyType,
-      status,
-      version: Math.floor(Math.random() * 5) + 1,
-      deviceCount,
-      compliantDeviceCount: compliantCount,
-      compliancePercentage: Math.round((compliantCount / deviceCount) * 100),
-      createdAt: createdAt.toISOString(),
-      lastUpdated: lastUpdated.toISOString(),
-      createdBy: 'Admin',
-      settings: {
-        passwordLength: 8,
-        encryptionEnabled: true,
-        biometricRequired: false,
-        cameraDisabled: false
-      }
-    } as Policy)
-  }
-
-  return policies
+  return apiClient.get<Policy[]>(`/api/v1/policies/device/${deviceId}`)
 }

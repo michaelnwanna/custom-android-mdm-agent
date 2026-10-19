@@ -1,6 +1,7 @@
 import { ref, computed, onMounted } from 'vue'
 import * as policyApi from '@/api/policyApi'
-import type { Policy, PolicyQueryParams } from '@types'
+import type { Policy } from '@types'
+import type { PolicyQueryParams } from '@/api/policyApi'
 
 interface UsePoliciesOptions {
   pageSize?: number
@@ -148,17 +149,18 @@ export function usePolicies(options: UsePoliciesOptions = {}) {
     }
   }
 
-  const assignPolicy = async (policyId: string, deviceIds: string[]) => {
+  const assignPolicy = async (policyId: string, enrollmentIds: string[]) => {
     try {
-      await policyApi.assignPolicy(policyId, { deviceIds })
+      const results = await policyApi.assignPolicy(policyId, { enrollmentIds })
       const policy = policies.value.find(p => p.policyId === policyId)
       if (policy) {
-        policy.deviceCount = (policy.deviceCount || 0) + deviceIds.length
+        policy.deviceCount = (policy.deviceCount || 0) +
+          results.filter(result => !result.error).length
       }
-      return true
+      return results
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to assign policy'
-      return false
+      return []
     }
   }
 

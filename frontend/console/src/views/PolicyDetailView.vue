@@ -53,7 +53,7 @@
         <!-- Policy Card -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <!-- Header -->
-          <div :class="['px-6 py-4 border-b border-gray-200 dark:border-gray-700', getTypeBgClass(policy.type)]">
+          <div :class="['px-6 py-4 border-b border-gray-200 dark:border-gray-700', getTypeBgClass(policy.type || 'Custom')]">
             <div class="flex items-start justify-between">
               <div>
                 <h2 class="text-2xl font-bold">{{ policy.name }}</h2>
@@ -100,7 +100,7 @@
                 </div>
                 <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                   <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">Compliance</p>
-                  <p :class="['text-2xl font-bold', getComplianceColorClass(policy.compliancePercentage)]">
+                  <p :class="['text-2xl font-bold', getComplianceColorClass(policy.compliancePercentage || 0)]">
                     {{ policy.compliancePercentage || 0 }}%
                   </p>
                 </div>
@@ -110,7 +110,7 @@
               <div class="mt-4 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
                 <div
                   :style="{ width: `${policy.compliancePercentage || 0}%` }"
-                  :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage)]"
+                  :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage || 0)]"
                 />
               </div>
             </div>
@@ -137,15 +137,7 @@
             <div v-else class="space-y-2">
               <div v-for="(version, idx) in versionHistory" :key="idx" class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                 <span class="font-medium text-gray-900 dark:text-white">v{{ version }}</span>
-                <button
-                  v-if="idx > 0"
-                  @click="handleRollback(version)"
-                  :disabled="isActioning"
-                  class="px-3 py-1 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 disabled:bg-gray-400 transition"
-                >
-                  Rollback
-                </button>
-                <span v-else class="text-xs text-gray-600 dark:text-gray-400">Current</span>
+                <span class="text-xs text-gray-600 dark:text-gray-400">Current</span>
               </div>
             </div>
           </div>
@@ -206,10 +198,10 @@
             <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 mb-2">
               <div
                 :style="{ width: `${policy.compliancePercentage || 0}%` }"
-                :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage)]"
+                :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage || 0)]"
               />
             </div>
-            <p :class="['text-sm font-bold', getComplianceColorClass(policy.compliancePercentage)]">
+            <p :class="['text-sm font-bold', getComplianceColorClass(policy.compliancePercentage || 0)]">
               {{ policy.compliancePercentage || 0 }}% Compliant
             </p>
           </div>
@@ -218,10 +210,13 @@
     </div>
 
     <!-- Assign Policy Modal -->
-    <AssignPolicyModal
+    <PolicyAssignmentModal
       :is-open="showAssignModal"
       :policy="policy"
-      @close="showAssignModal = false"
+      :is-assigning="isActioning"
+      :assignment-progress="assignmentProgress"
+      :assignment-statuses="assignmentStatuses"
+      @close="closeAssignmentModal"
       @assign="handleAssignSubmit"
     />
   </div>
@@ -232,13 +227,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
-import AssignPolicyModal from '@components/AssignPolicyModal.vue'
+import PolicyAssignmentModal from '@components/PolicyAssignmentModal.vue'
+import { assignPolicyToDevice, fetchPolicyById, type AssignmentStatus } from '@/api/policyApi'
 import type { Policy } from '@types'
 
 const router = useRouter()
 const route = useRoute()
 
-const { fetchPolicyById, deletePolicy, rollbackPolicy } = usePolicies()
+const { deletePolicy } = usePolicies()
 
 const policy = ref<Policy | null>(null)
 const loading = ref(true)
@@ -246,22 +242,14 @@ const error = ref<string | null>(null)
 const isActioning = ref(false)
 const isLoading = ref(false)
 const showAssignModal = ref(false)
+const assignmentProgress = ref(0)
+const assignmentStatuses = ref<AssignmentStatus[]>([])
 
 const policyId = computed(() => route.params.id as string)
 
 const versionHistory = computed(() => {
   if (!policy.value) return []
-  const versions = [policy.value.version || 1]
-  
-  // Add previous versions (mock)
-  for (let i = 1; i < 3; i++) {
-    const prevVersion = (policy.value.version || 1) - i
-    if (prevVersion > 0) {
-      versions.push(prevVersion)
-    }
-  }
-  
-  return versions
+  return [policy.value.version || 1]
 })
 
 const loadPolicy = async () => {
@@ -269,13 +257,8 @@ const loadPolicy = async () => {
   loading.value = true
   try {
     const data = await fetchPolicyById(policyId.value)
-    if (data) {
-      policy.value = data
-      error.value = null
-    } else {
-      policy.value = null
-      error.value = 'Policy not found'
-    }
+    policy.value = data
+    error.value = null
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load policy'
     policy.value = null
@@ -286,21 +269,52 @@ const loadPolicy = async () => {
 }
 
 const handleAssignPolicy = async () => {
+  assignmentProgress.value = 0
+  assignmentStatuses.value = []
   showAssignModal.value = true
 }
 
-const handleAssignSubmit = async (deviceIds: string[], groupId?: string) => {
-  if (!policy.value) return
-  
+const closeAssignmentModal = () => {
+  if (isActioning.value) return
+  showAssignModal.value = false
+  assignmentStatuses.value = []
+  assignmentProgress.value = 0
+}
+
+const handleAssignSubmit = async (enrollmentIds: string[]) => {
+  if (!policy.value || enrollmentIds.length === 0) return
+
   isActioning.value = true
-  try {
-    // In mock mode, just show success
-    const targetCount = groupId ? 5 : deviceIds.length // Mock: group has 5 devices
-    toastService.success(`Policy assigned to ${targetCount} device(s)`)
-    
-    // In real implementation, call: await policyApi.assignPolicy(policy.value.policyId, deviceIds, groupId)
-  } finally {
-    isActioning.value = false
+  assignmentStatuses.value = []
+  assignmentProgress.value = 0
+  let queuedCount = 0
+
+  for (const [index, enrollmentId] of enrollmentIds.entries()) {
+    try {
+      const result = await assignPolicyToDevice(policy.value.policyId, enrollmentId)
+      assignmentStatuses.value.push({
+        enrollmentId,
+        status: 'queued',
+        message: `Queued (version ${result.assignedVersion})`
+      })
+      queuedCount++
+    } catch (err) {
+      assignmentStatuses.value.push({
+        enrollmentId,
+        status: 'failed',
+        message: err instanceof Error ? err.message : 'Assignment failed'
+      })
+    }
+    assignmentProgress.value = Math.round(((index + 1) / enrollmentIds.length) * 100)
+  }
+
+  isActioning.value = false
+  if (queuedCount === enrollmentIds.length) {
+    toastService.success(`Policy assignment queued for ${queuedCount} device(s)`)
+  } else if (queuedCount > 0) {
+    toastService.error(`Policy assignment queued for ${queuedCount} of ${enrollmentIds.length} devices`)
+  } else {
+    toastService.error('Unable to assign policy to the selected devices')
   }
 }
 
@@ -315,24 +329,6 @@ const handleDelete = async () => {
       router.push('/policies')
     } else {
       toastService.error('Failed to delete policy')
-    }
-  } finally {
-    isActioning.value = false
-  }
-}
-
-const handleRollback = async (version: number) => {
-  if (!policy.value) return
-  if (!confirm(`Rollback to version ${version}?`)) return
-  
-  isActioning.value = true
-  try {
-    const success = await rollbackPolicy(policy.value.policyId, version)
-    if (success) {
-      toastService.success(`Rolled back to version ${version}`)
-      await loadPolicy()
-    } else {
-      toastService.error('Failed to rollback policy')
     }
   } finally {
     isActioning.value = false

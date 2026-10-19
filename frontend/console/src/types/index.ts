@@ -83,6 +83,15 @@ export interface Policy {
   createdAt: string
   updatedAt: string
   status: 'Active' | 'Draft' | 'Archived'
+  type?: string
+  version?: number
+  deviceCount?: number
+  compliantDeviceCount?: number
+  compliancePercentage?: number
+  lastUpdated?: string
+  createdBy?: string
+  settings?: Record<string, unknown>
+  configuration?: Record<string, unknown>
 }
 
 // Release types

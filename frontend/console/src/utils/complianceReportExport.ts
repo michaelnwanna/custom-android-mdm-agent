@@ -100,7 +100,7 @@ export const buildCompliancePrintHtml = (
   <section class="summary">
     <div>Devices<strong>${summary.totalDevices}</strong></div>
     <div>Compliant<strong>${summary.compliantDevices}</strong></div>
-    <div>Non-compliant<strong>${summary.nonCompliantDevices}</strong></div>
+    <div>Not currently compliant<strong>${summary.nonCompliantDevices}</strong></div>
     <div>Compliance rate<strong>${summary.complianceRate}%</strong></div>
   </section>
   <table>

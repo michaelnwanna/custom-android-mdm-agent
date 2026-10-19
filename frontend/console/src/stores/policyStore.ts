@@ -117,13 +117,15 @@ export const usePolicyStore = defineStore('policy', () => {
     }
   }
 
-  async function assignPolicy(policyId: string, deviceIds: string[]) {
+  async function assignPolicy(policyId: string, enrollmentIds: string[]) {
     try {
-      await policyApi.assignPolicy(policyId, { deviceIds })
+      const results = await policyApi.assignPolicy(policyId, { enrollmentIds })
       const policy = policies.value.find(p => p.policyId === policyId)
       if (policy) {
-        policy.deviceCount = (policy.deviceCount || 0) + deviceIds.length
+        policy.deviceCount = (policy.deviceCount || 0) +
+          results.filter(result => !result.error).length
       }
+      return results
     } catch (err) {
       console.error('Assign policy error:', err)
       throw err
@@ -213,185 +215,5 @@ export const usePolicyStore = defineStore('policy', () => {
     getPolicyVersions,
     clearError,
     clearSelectedPolicy
-  }
-})
-      policyId: `policy-${String(i + 1).padStart(6, '0')}`,
-      name: `${name}${i > 14 ? ` (${i})` : ''}`,
-      description: descriptions[name] || `Policy configuration for ${name}`,
-      status,
-      createdAt: createdDate.toISOString(),
-      updatedAt: lastModifiedDate.toISOString(),
-      enforcementLevel,
-      isActive: status === 'Active',
-      deviceCount: Math.floor(Math.random() * 500) + 10,
-      rules: rules[name] || [],
-      targetDevices: Array.from({ length: Math.floor(Math.random() * 50) + 5 }, (_, i) => `device-${String(i + 1).padStart(6, '0')}`)
-    })
-  }
-
-  return policies
-}
-
-export const usePolicyStore = defineStore('policy', () => {
-  const policies = ref<PolicyDetails[]>([])
-  const loading = ref(false)
-  const error = ref<string | null>(null)
-
-  const activePolicies = computed(() =>
-    policies.value.filter(p => p.status === 'Active')
-  )
-
-  const draftPolicies = computed(() =>
-    policies.value.filter(p => p.status === 'Draft')
-  )
-
-  const archivedPolicies = computed(() =>
-    policies.value.filter(p => p.status === 'Archived')
-  )
-
-  const policiesByEnforcement = computed(() => {
-    const grouped: Record<string, PolicyDetails[]> = {
-      'Strict': [],
-      'Standard': [],
-      'Permissive': []
-    }
-    policies.value.forEach(policy => {
-      grouped[policy.enforcementLevel].push(policy)
-    })
-    return grouped
-  })
-
-  async function fetchPolicies() {
-    loading.value = true
-    error.value = null
-    
-    try {
-      const response = await apiClient.get<PolicyDetails[]>(API_ENDPOINTS.POLICIES.LIST)
-      policies.value = response
-    } catch (err) {
-      // Fallback to mock data
-      policies.value = generateMockPolicies(30)
-      error.value = null // Don't show error if we have mock data
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function createPolicy(policy: Omit<PolicyDetails, 'policyId' | 'createdAt' | 'updatedAt'>) {
-    try {
-      const response = await apiClient.post<PolicyDetails>(API_ENDPOINTS.POLICIES.CREATE, policy)
-      policies.value.push(response)
-      return response
-    } catch (err) {
-      // Fallback: create locally
-      const newPolicy: PolicyDetails = {
-        ...policy,
-        policyId: `policy-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      policies.value.push(newPolicy)
-      return newPolicy
-    }
-  }
-
-  async function updatePolicy(policyId: string, updates: Partial<PolicyDetails>) {
-    try {
-      await apiClient.put(API_ENDPOINTS.POLICIES.UPDATE(policyId), updates)
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        Object.assign(policy, updates)
-        policy.updatedAt = new Date().toISOString()
-      }
-    } catch (err) {
-      // Fallback: update locally
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        Object.assign(policy, updates)
-        policy.updatedAt = new Date().toISOString()
-      }
-    }
-  }
-
-  async function deletePolicy(policyId: string) {
-    try {
-      await apiClient.delete(API_ENDPOINTS.POLICIES.DELETE(policyId))
-      const index = policies.value.findIndex(p => p.policyId === policyId)
-      if (index > -1) {
-        policies.value.splice(index, 1)
-      }
-    } catch (err) {
-      // Fallback: delete locally
-      const index = policies.value.findIndex(p => p.policyId === policyId)
-      if (index > -1) {
-        policies.value.splice(index, 1)
-      }
-    }
-  }
-
-  async function activatePolicy(policyId: string) {
-    try {
-      await apiClient.post(API_ENDPOINTS.POLICIES.ACTIVATE(policyId), {})
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        policy.status = 'Active'
-        policy.isActive = true
-        policy.updatedAt = new Date().toISOString()
-      }
-    } catch (err) {
-      // Fallback: update locally
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        policy.status = 'Active'
-        policy.isActive = true
-        policy.updatedAt = new Date().toISOString()
-      }
-    }
-  }
-
-  async function deactivatePolicy(policyId: string) {
-    try {
-      await apiClient.post(API_ENDPOINTS.POLICIES.DEACTIVATE(policyId), {})
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        policy.status = 'Draft'
-        policy.isActive = false
-        policy.updatedAt = new Date().toISOString()
-      }
-    } catch (err) {
-      // Fallback: update locally
-      const policy = policies.value.find(p => p.policyId === policyId)
-      if (policy) {
-        policy.status = 'Draft'
-        policy.isActive = false
-        policy.updatedAt = new Date().toISOString()
-      }
-    }
-  }
-
-  function getPolicyById(policyId: string): PolicyDetails | undefined {
-    return policies.value.find(p => p.policyId === policyId)
-  }
-
-  function clearError() {
-    error.value = null
-  }
-
-  return {
-    policies,
-    loading,
-    error,
-    activePolicies,
-    draftPolicies,
-    archivedPolicies,
-    policiesByEnforcement,
-    fetchPolicies,
-    createPolicy,
-    updatePolicy,
-    deletePolicy,
-    activatePolicy,
-    deactivatePolicy,
-    getPolicyById,
-    clearError
   }
 })

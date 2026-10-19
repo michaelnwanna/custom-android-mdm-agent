@@ -4,9 +4,19 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Compliance Report</h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-1">Real-time device compliance status and trends</p>
+        <p class="text-gray-600 dark:text-gray-400 mt-1">
+          Policy delivery status from device acknowledgements · refreshes every 30 seconds
+        </p>
       </div>
       <div class="flex gap-3">
+        <button
+          type="button"
+          :disabled="loading"
+          @click="loadReport"
+          class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+        >
+          {{ loading ? 'Refreshing...' : 'Refresh' }}
+        </button>
         <button
           @click="exportReport('csv')"
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"
@@ -74,6 +84,7 @@
             <option value="compliant">Compliant</option>
             <option value="non-compliant">Non-Compliant</option>
             <option value="pending">Pending</option>
+            <option value="unassigned">Unassigned</option>
           </select>
         </div>
       </div>
@@ -112,7 +123,7 @@
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Non-Compliant</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Not Compliant</p>
             <p class="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">{{ nonCompliantDevices }}</p>
           </div>
           <div class="p-3 bg-red-100 dark:bg-red-900/20 rounded-lg">
@@ -146,15 +157,10 @@
           :percentage="complianceRate"
           :compliant-count="compliantDevices"
           :non-compliant-count="nonCompliantDevices"
-          :label="selectedPolicy ? 'Policy Compliance' : 'Overall Compliance'"
+          label="Acknowledged policy version"
           :is-dark-mode="isDarkMode"
         />
       </div>
-    </div>
-
-    <!-- Compliance Trend Chart -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <ComplianceChart :is-dark-mode="isDarkMode" />
     </div>
 
     <!-- Device Compliance Table -->
@@ -163,7 +169,16 @@
         <h2 class="text-xl font-bold text-gray-900 dark:text-white">Device Compliance Details</h2>
       </div>
 
-      <div v-if="filteredDevices.length === 0" class="p-6 text-center">
+      <div v-if="loading" class="p-8 text-center text-gray-600 dark:text-gray-400">
+        Loading compliance report...
+      </div>
+
+      <div v-else-if="error" role="alert" class="m-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200">
+        {{ error }}
+        <button type="button" class="ml-2 font-medium underline" @click="loadReport">Retry</button>
+      </div>
+
+      <div v-else-if="filteredDevices.length === 0" class="p-6 text-center">
         <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
         </svg>
@@ -249,12 +264,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ComplianceGauge from '@components/ComplianceGauge.vue'
-import ComplianceChart from '@components/ComplianceChart.vue'
-import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
 import type { Policy } from '@types'
+import {
+  fetchPolicies,
+  fetchComplianceReport,
+  type PolicyManagementDevice
+} from '@/api/policyApi'
 import {
   buildComplianceCsv,
   buildCompliancePrintHtml,
@@ -263,16 +281,19 @@ import {
 
 interface ComplianceDevice {
   deviceId: string
+  enrollmentId: string
   deviceName: string
+  policyId?: string
   policyName: string
-  status: 'compliant' | 'non-compliant' | 'pending'
+  status: PolicyManagementDevice['complianceStatus']
   compliance: number
   lastChecked: string
 }
 
-const { fetchPolicies } = usePolicies()
-
 const policies = ref<Policy[]>([])
+const devices = ref<ComplianceDevice[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
 const startDate = ref(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
 const endDate = ref(new Date().toISOString().split('T')[0])
 const selectedPolicy = ref('')
@@ -281,20 +302,9 @@ const currentPage = ref(1)
 const itemsPerPage = 10
 const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 
-// Mock device compliance data
-const mockDevices: ComplianceDevice[] = Array.from({ length: 45 }, (_, i) => ({
-  deviceId: `device-${String(i + 1).padStart(3, '0')}`,
-  deviceName: `Samsung Galaxy S${23 - (i % 4)} #${i + 1}`,
-  policyName: ['Security Policy', 'Compliance Policy', 'Performance Policy'][i % 3],
-  status: i % 5 === 0 ? 'non-compliant' : i % 4 === 0 ? 'pending' : 'compliant',
-  compliance: Math.floor(Math.random() * 40) + 60,
-  lastChecked: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
-}))
-
 const filteredDevices = computed(() => {
-  const selectedPolicyName = policies.value.find(policy => policy.policyId === selectedPolicy.value)?.name
-  return mockDevices.filter(device => {
-    if (selectedPolicy.value && device.policyName !== selectedPolicyName) return false
+  return devices.value.filter(device => {
+    if (selectedPolicy.value && device.policyId !== selectedPolicy.value) return false
     if (selectedStatus.value && device.status !== selectedStatus.value) return false
     const checkedDate = new Date(device.lastChecked).toISOString().slice(0, 10)
     if (startDate.value && checkedDate < startDate.value) return false
@@ -305,7 +315,7 @@ const filteredDevices = computed(() => {
 
 const totalDevices = computed(() => filteredDevices.value.length)
 const compliantDevices = computed(() => filteredDevices.value.filter(d => d.status === 'compliant').length)
-const nonCompliantDevices = computed(() => filteredDevices.value.filter(d => d.status === 'non-compliant').length)
+const nonCompliantDevices = computed(() => filteredDevices.value.length - compliantDevices.value)
 const complianceRate = computed(() => {
   if (filteredDevices.value.length === 0) return 0
   return Math.round((compliantDevices.value / filteredDevices.value.length) * 100)
@@ -342,6 +352,8 @@ const getStatusBadgeClass = (status: string) => {
       return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
     case 'pending':
       return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
+    case 'unassigned':
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
     default:
       return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
   }
@@ -394,8 +406,42 @@ const exportReport = (format: 'csv' | 'pdf') => {
 
 const formatDate = formatComplianceDate
 
-onMounted(async () => {
-  const result = await fetchPolicies()
-  if (result.success) policies.value = result.data || []
+const loadReport = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const [report, policyResult] = await Promise.all([
+      fetchComplianceReport(),
+      fetchPolicies({ page: 1, pageSize: 500 })
+    ])
+    devices.value = report.map(device => ({
+      deviceId: device.deviceId,
+      enrollmentId: device.enrollmentId,
+      deviceName: device.deviceName,
+      policyId: device.policyId,
+      policyName: device.policyName || 'Unassigned',
+      status: device.complianceStatus,
+      compliance: device.compliancePercentage,
+      lastChecked: device.lastChecked
+    }))
+    policies.value = policyResult.items
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load compliance report'
+  } finally {
+    loading.value = false
+  }
+}
+
+let reportRefreshTimer: number | undefined
+
+onMounted(() => {
+  void loadReport()
+  reportRefreshTimer = window.setInterval(() => {
+    if (!loading.value) void loadReport()
+  }, 30_000)
+})
+
+onBeforeUnmount(() => {
+  if (reportRefreshTimer !== undefined) window.clearInterval(reportRefreshTimer)
 })
 </script>

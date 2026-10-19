@@ -46,7 +46,10 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `${API_BASE_URL}${API_VERSION}/policies/${id}`,
     DELETE: (id: string) => `${API_BASE_URL}${API_VERSION}/policies/${id}`,
     ACTIVATE: (id: string) => `${API_BASE_URL}${API_VERSION}/policies/${id}/activate`,
-    DEACTIVATE: (id: string) => `${API_BASE_URL}${API_VERSION}/policies/${id}/deactivate`
+    DEACTIVATE: (id: string) => `${API_BASE_URL}${API_VERSION}/policies/${id}/deactivate`,
+    ASSIGN: `${API_BASE_URL}${API_VERSION}/policies/assign`,
+    ASSIGNABLE_DEVICES: `${API_BASE_URL}${API_VERSION}/policies/assignable-devices`,
+    COMPLIANCE_REPORT: `${API_BASE_URL}${API_VERSION}/policies/compliance-report`
   },
 
   // Releases
