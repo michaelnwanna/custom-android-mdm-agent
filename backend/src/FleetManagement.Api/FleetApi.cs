@@ -151,6 +151,7 @@ public static class FleetApi
         // Device management services
         builder.Services.AddScoped<DeviceService>();
         builder.Services.AddScoped<DeviceTagService>();
+        builder.Services.AddScoped<StateComputationService>();
 
         // MQTT services
         builder.Services.AddSingleton<MqttHostedService>();

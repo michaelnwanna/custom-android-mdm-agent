@@ -22,6 +22,70 @@ namespace FleetManagement.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FleetManagement.Devices.DesiredDeviceState", b =>
+                {
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid")
+                        .HasJsonPropertyName("deviceId");
+
+                    b.Property<string>("AssignedTagIdsString")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)")
+                        .HasDefaultValue("")
+                        .HasColumnName("AssignedTagIds");
+
+                    b.Property<string>("ComputationHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasJsonPropertyName("computationHash");
+
+                    b.Property<DateTimeOffset>("ComputedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasJsonPropertyName("computedAt");
+
+                    b.Property<Guid?>("CurrentPolicyId")
+                        .HasColumnType("uuid")
+                        .HasJsonPropertyName("currentPolicyId");
+
+                    b.Property<long?>("CurrentPolicyVersion")
+                        .HasColumnType("bigint")
+                        .HasJsonPropertyName("currentPolicyVersion");
+
+                    b.Property<string>("DesiredReleaseIdsString")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)")
+                        .HasDefaultValue("")
+                        .HasColumnName("DesiredReleaseIds");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasJsonPropertyName("expiresAt");
+
+                    b.Property<bool>("IsValid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasJsonPropertyName("isValid");
+
+                    b.HasKey("DeviceId");
+
+                    b.HasIndex("ComputedAt")
+                        .HasDatabaseName("IX_DesiredDeviceStates_ComputedAt");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("IX_DesiredDeviceStates_ExpiresAt");
+
+                    b.HasIndex("IsValid")
+                        .HasDatabaseName("IX_DesiredDeviceStates_IsValid");
+
+                    b.ToTable("DesiredDeviceStates", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Devices.Device", b =>
                 {
                     b.Property<Guid>("DeviceId")
