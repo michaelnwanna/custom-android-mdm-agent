@@ -52,6 +52,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@views/TagsView.vue')
   },
   {
+    path: '/tags/:id',
+    name: 'TagDetail',
+    component: () => import('@views/TagDetailView.vue')
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('@views/SettingsView.vue')
