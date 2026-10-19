@@ -7,6 +7,10 @@ class AppConfig {
     required this.apiScope,
     required this.apiBaseUrl,
     required this.androidSignatureHash,
+    this.agentApkUrl = '',
+    this.agentSignatureChecksum = '',
+    this.serverRootCa = '',
+    this.deviceRootCa = '',
   });
 
   const AppConfig.fromEnvironment()
@@ -16,7 +20,13 @@ class AppConfig {
       apiBaseUrl = const String.fromEnvironment('API_BASE_URL'),
       androidSignatureHash = const String.fromEnvironment(
         'ENTRA_ANDROID_SIGNATURE_HASH',
-      );
+      ),
+      agentApkUrl = const String.fromEnvironment('AGENT_APK_URL'),
+      agentSignatureChecksum = const String.fromEnvironment(
+        'AGENT_SIGNATURE_CHECKSUM',
+      ),
+      serverRootCa = const String.fromEnvironment('SERVER_ROOT_CA'),
+      deviceRootCa = const String.fromEnvironment('DEVICE_ROOT_CA');
 
   // Must match applicationId in android/app/build.gradle.kts.
   static const androidPackageName = 'com.michaelnwanna.mdm_companion';
@@ -37,12 +47,52 @@ class AppConfig {
   final String apiBaseUrl;
   final String androidSignatureHash;
 
+  /// HTTPS download URL of the agent APK used by Android Enterprise QR provisioning.
+  final String agentApkUrl;
+
+  /// Base64url SHA-256 of the agent signing certificate (no padding).
+  final String agentSignatureChecksum;
+
+  /// Base64 DER CA certificate the agent trusts for the HTTPS server.
+  final String serverRootCa;
+
+  /// Base64 DER root the agent trusts for issued device certificates.
+  final String deviceRootCa;
+
+  static final _base64Url43 = RegExp(r'^[A-Za-z0-9_-]{43}$');
+  static final _base64Der = RegExp(r'^[A-Za-z0-9+/]+={0,2}$');
+
   String get authority =>
       'https://login.microsoftonline.com/${entraTenantId.trim()}';
 
   String get androidRedirectUri =>
       'msauth://$androidPackageName/'
       '${Uri.encodeComponent(androidSignatureHash.trim())}';
+
+  Uri get enrollmentEndpoint =>
+      Uri.parse(apiBaseUrl.trim()).replace(path: '/api/v1/enrollments');
+
+  /// Whether QR enrollment can be offered. The device endpoint must be HTTPS.
+  bool get isQrEnrollmentConfigured {
+    final apk = Uri.tryParse(agentApkUrl.trim());
+    return _isSecureApiBaseUrl(apiBaseUrl) &&
+        Uri.parse(apiBaseUrl.trim()).scheme == 'https' &&
+        apk != null &&
+        apk.scheme == 'https' &&
+        apk.host.isNotEmpty &&
+        apk.userInfo.isEmpty &&
+        _base64Url43.hasMatch(agentSignatureChecksum.trim()) &&
+        _isDer(serverRootCa) &&
+        _isDer(deviceRootCa);
+  }
+
+  static bool _isDer(String value) {
+    final text = value.trim();
+    return text.length >= 100 &&
+        text.length <= 4096 &&
+        text.length % 4 == 0 &&
+        _base64Der.hasMatch(text);
+  }
 
   bool get isComplete =>
       isCompleteFor(android: defaultTargetPlatform == TargetPlatform.android);

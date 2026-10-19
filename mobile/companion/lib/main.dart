@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'api/fleet_api_client.dart';
 import 'app_config.dart';
 import 'auth/auth_service.dart';
+import 'enrollment/enrollment_page.dart';
 
 void main() {
   const config = AppConfig.fromEnvironment();
@@ -130,6 +132,21 @@ class _CompanionHomePageState extends State<CompanionHomePage> {
     }
   }
 
+  void _openEnrollment() {
+    final api = FleetApiClient(
+      baseUrl: Uri.parse(widget.config.apiBaseUrl.trim()),
+      accessToken: widget.authService!.accessToken,
+    );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => EnrollmentPage(
+          config: widget.config,
+          createPendingEnrollment: api.createPendingEnrollment,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!widget.config.isComplete || widget.authService == null) {
@@ -139,7 +156,12 @@ class _CompanionHomePageState extends State<CompanionHomePage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (_user case final user?) {
-      return _SignedInPage(user: user, onSignOut: _signOut, error: _error);
+      return _SignedInPage(
+        user: user,
+        onSignOut: _signOut,
+        onEnroll: _openEnrollment,
+        error: _error,
+      );
     }
     return _SignInPage(onSignIn: _signIn, error: _error);
   }
@@ -234,11 +256,13 @@ class _SignedInPage extends StatelessWidget {
   const _SignedInPage({
     required this.user,
     required this.onSignOut,
+    required this.onEnroll,
     required this.error,
   });
 
   final UserSession user;
   final VoidCallback onSignOut;
+  final VoidCallback onEnroll;
   final String? error;
 
   @override
@@ -268,11 +292,15 @@ class _SignedInPage extends StatelessWidget {
             _ErrorMessage(message: error!),
           ],
           const SizedBox(height: 24),
-          const Card(
+          Card(
             child: ListTile(
-              leading: Icon(Icons.qr_code_scanner),
-              title: Text('Device enrollment'),
-              subtitle: Text('QR-based enrollment is the next mobile feature.'),
+              leading: const Icon(Icons.qr_code_2),
+              title: const Text('Enroll a device'),
+              subtitle: const Text(
+                'Show a single-use Android Enterprise QR code.',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: onEnroll,
             ),
           ),
           const Card(

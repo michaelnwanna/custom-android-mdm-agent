@@ -16,6 +16,9 @@ abstract interface class CompanionAuthService {
   Future<UserSession?> signIn();
 
   Future<void> signOut();
+
+  /// Returns an API access token, prompting only when the cache cannot refresh.
+  Future<String> accessToken();
 }
 
 class EntraCompanionAuthService implements CompanionAuthService {
@@ -72,6 +75,24 @@ class EntraCompanionAuthService implements CompanionAuthService {
   Future<void> signOut() async {
     final client = await _client;
     await client.signOut();
+  }
+
+  @override
+  Future<String> accessToken() async {
+    final client = await _client;
+    try {
+      final result = await client.acquireTokenSilent(
+        scopes: _scopes,
+        authority: _config.authority,
+      );
+      return result.accessToken;
+    } on MsalUiRequiredException {
+      final result = await client.acquireToken(
+        scopes: _scopes,
+        authority: _config.authority,
+      );
+      return result.accessToken;
+    }
   }
 
   UserSession _toSession(Account account) => UserSession(

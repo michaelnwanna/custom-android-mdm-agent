@@ -20,6 +20,14 @@ The input shape is distinct from the administrator API response: the operator ad
 
 After staging, select **Enroll staged lab identity** in the Device Owner agent. The operation runs on a single background executor, not the main thread. There is no automatic retry, WorkManager scheduler or exported enrollment receiver. Roots must be present even for certificate restoration. The app does not accept a new trust root from the server or download intermediates. No trust-all or permissive hostname-verifier callback is installed.
 
+## QR Provisioning Intake
+
+Android Enterprise QR provisioning (API 30+) is the non-ADB path. The [mobile companion](../mobile/companion/README.md#qr-device-enrollment) shows the QR code. `GetProvisioningModeActivity` answers `GET_PROVISIONING_MODE` with fully managed device mode only. `PolicyComplianceActivity` handles `ADMIN_POLICY_COMPLIANCE`, which runs after Android has made the agent Device Owner. Both activities are protected by `BIND_DEVICE_ADMIN`.
+
+`ProvisioningExtras` accepts exactly three string admin extras: `dev.fleet.agent.ENROLLMENT_BOOTSTRAP` (the bootstrap JSON above, validated by the same parser), plus `dev.fleet.agent.SERVER_ROOT_CA` and `dev.fleet.agent.DEVICE_ROOT_CA`. The two roots must be canonical single base64 DER CA certificates. They are written as the same private `enrollment-server-ca.pem`, `enrollment-device-ca.pem` and `enrollment-bootstrap.json` files used by lab staging. Writes go through a temporary file and rename. An existing root is never replaced by a different one, and an existing staged bootstrap is never overwritten. After staging, the activity starts the normal enrollment flow. The setup wizard always continues: rejected extras are recorded as the enrollment status, and staging can be repeated through the lab path.
+
+Device Owner provisioning cannot install `testOnly` APKs. The manifest flag stays `true` by default for lab ADB workflows; build the QR-hosted APK with `-PagentTestOnly=false`. The roots and endpoint in the QR come from the administrator's trusted companion configuration. Their safety depends on that configuration and on the QR code staying confidential until its single-use token expires. No physical-device QR provisioning run has been recorded yet.
+
 ## Keys and Recovery
 
 Before network I/O the agent saves the exact signed CSR, pending ID, endpoint and both trust-root fingerprints in an AtomicFile journal under `noBackupFilesDir`. It never exports or stores the private key in that file. The fixed key alias is `fleet-enrollment-device`; new generation uses AndroidKeyStore with P-256 and SHA256withECDSA and checks that private-key encoding is unavailable. This does not establish hardware-backed/StrongBox storage, attestation or protection against a privileged device administrator.

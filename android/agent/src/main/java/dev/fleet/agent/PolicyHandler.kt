@@ -27,7 +27,7 @@ internal class PolicyHandler(
         val policyId = payload.policyId.toString()
         val assignedVersion = payload.policyVersion
 
-        return database.runInTransaction {
+        return database.runInTransaction<PolicyHandlerResult> {
             val dao = database.policies()
             val existing = dao.policy(policyId)
 

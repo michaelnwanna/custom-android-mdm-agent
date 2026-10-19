@@ -2,7 +2,7 @@
 
 Flutter companion app for fleet administrators (roadmap Phase 2.13). It signs administrators in with **Microsoft Entra ID** through native MSAL ([`msal_auth`](https://pub.dev/packages/msal_auth)), which provides a token cache, silent refresh, and support for Microsoft Authenticator/Company Portal brokers and Conditional Access.
 
-Current scope: sign-in, session restore, and sign-out. QR enrollment is the next step (see [QR enrollment plan](#qr-enrollment-plan)).
+Current scope: sign-in, session restore, sign-out, and [QR device enrollment](#qr-device-enrollment).
 
 ## 1. Entra tenant setup
 
@@ -70,15 +70,40 @@ Notes:
 - iOS requires 16.0+ (MSAL). Device builds need a development team because the app uses the keychain group `com.microsoft.adalcache` ([Runner.entitlements](ios/Runner/Runner.entitlements)).
 - If Microsoft Authenticator is installed, sign-in goes through it (broker), which enables SSO and device-based Conditional Access.
 
-## QR enrollment plan
+## QR device enrollment
 
-1. Admin signs in to the companion (Entra token with `Enrollments.Create`).
-2. Companion calls `POST /api/v1/admin/pending-enrollments` (`lifetimeSeconds` 60–900) and receives a single-use `pendingEnrollmentId` and `bootstrapToken`.
-3. Companion renders an **Android Enterprise provisioning QR** containing the agent's device-admin component, APK download URL and SHA-256 checksum, optional Wi-Fi, and `PROVISIONING_ADMIN_EXTRAS_BUNDLE` with the bootstrap JSON (`schemaVersion`, `endpoint`, `pendingEnrollmentId`, `bootstrapToken`).
-4. On a factory-reset device, tap the welcome screen six times, scan the QR, and Android installs the agent as Device Owner.
-5. The agent reads the admin extras, generates its key and CSR, and redeems the bootstrap token at `/api/v1/enrollments`.
+**Enroll a device** creates a single-use pending enrollment (`POST /api/v1/admin/pending-enrollments`, 5/10/15 min) and shows an Android Enterprise provisioning QR code with a countdown. The code is hidden when it expires. On Android the app sets `FLAG_SECURE`, which blocks screenshots and recents previews. iOS cannot block screenshots, so treat the screen as sensitive.
 
-Still to build: QR rendering with a countdown and screenshot protection (the QR carries a short-lived secret); agent intake of the provisioning extras (it currently reads a staged lab file); trust-root distribution to the device; and hosting the signed agent APK with its checksum.
+On a **factory-reset** Android device (API 30+), tap the welcome screen six times, connect to Wi-Fi if it wasn't in the QR, and scan. Android downloads the agent, verifies its signing certificate, makes it Device Owner and opens its `ADMIN_POLICY_COMPLIANCE` screen. The agent stages the extras and enrolls automatically (see [Android enrollment](../../docs/android-enrollment.md#qr-provisioning-intake)).
+
+QR payload: device-admin component `dev.fleet.agent/dev.fleet.agent.FleetAdminReceiver`, APK URL, signature checksum, optional Wi-Fi, and admin extras:
+
+| Extra | Value |
+|---|---|
+| `dev.fleet.agent.ENROLLMENT_BOOTSTRAP` | Bootstrap JSON: `schemaVersion`, `endpoint` (`API_BASE_URL` + `/api/v1/enrollments`), `pendingEnrollmentId`, `bootstrapToken` |
+| `dev.fleet.agent.SERVER_ROOT_CA` | Base64 DER CA the agent trusts for the HTTPS server |
+| `dev.fleet.agent.DEVICE_ROOT_CA` | Base64 DER root for issued device certificates |
+
+### QR configuration
+
+The feature needs an HTTPS `API_BASE_URL` plus these extra environment variables for [`tool/flutter_entra.sh`](tool/flutter_entra.sh):
+
+```bash
+# Agent APK built without testOnly (QR provisioning cannot install testOnly apps):
+#   cd android && ./gradlew :agent:assembleRelease -PagentTestOnly=false   (sign it), then host it over HTTPS
+export AGENT_APK_URL=https://downloads.example.com/fleet-agent.apk
+
+# Base64url SHA-256 of the agent signing certificate (debug keystore shown)
+export AGENT_SIGNATURE_CHECKSUM=$(keytool -exportcert -alias androiddebugkey \
+  -keystore ~/.android/debug.keystore -storepass android \
+  | openssl dgst -binary -sha256 | openssl base64 | tr '+/' '-_' | tr -d '=')
+
+# Trust roots as single-line base64 DER (use P-256/EC roots so the QR stays scannable)
+export SERVER_ROOT_CA=$(openssl x509 -in server-ca.pem -outform DER | base64 | tr -d '\n')
+export DEVICE_ROOT_CA=$(openssl x509 -in device-ca.pem -outform DER | base64 | tr -d '\n')
+```
+
+The QR carries a live bootstrap secret: show it only to the person enrolling, and let it expire if it is not used. The roots and endpoint come from the admin's trusted app configuration, not from the server response.
 
 ## Tests
 

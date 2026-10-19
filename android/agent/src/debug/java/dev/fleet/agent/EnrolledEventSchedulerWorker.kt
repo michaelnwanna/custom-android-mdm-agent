@@ -44,7 +44,7 @@ class EnrolledEventSchedulerWorker(context: Context, private val parameters: Wor
             val identity = AndroidEnrollmentIdentity(applicationContext, namespace)
                 .tlsIdentity(serverRoot, deviceRoot, Instant.now())
             EventDeliverySession(Room.databaseBuilder(applicationContext, CommandDatabase::class.java, databaseName).build(),
-                identity, serverRoot)
+                Room.inMemoryDatabaseBuilder(applicationContext, PolicyDatabase::class.java).build(), identity, serverRoot)
         }
         delegate = worker
         if (isStopped) worker.onStopped()

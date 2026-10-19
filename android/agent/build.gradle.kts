@@ -45,6 +45,8 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // QR (Device Owner) provisioning cannot install testOnly APKs; build those with -PagentTestOnly=false.
+        manifestPlaceholders["agentTestOnly"] = providers.gradleProperty("agentTestOnly").orElse("true").get()
     }
 
     compileOptions {

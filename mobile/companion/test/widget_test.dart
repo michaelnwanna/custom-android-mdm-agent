@@ -171,4 +171,7 @@ class FakeCompanionAuthService implements CompanionAuthService {
   Future<void> signOut() async {
     signOutCalls++;
   }
+
+  @override
+  Future<String> accessToken() async => 'test-access-token';
 }

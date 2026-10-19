@@ -1,0 +1,89 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e01e1d44bb539f6d21d39186f8fef1de",
+    "entities": [
+      {
+        "tableName": "policies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`policyId` TEXT NOT NULL, `assignedVersion` INTEGER NOT NULL, `acknowledgedVersion` INTEGER, `policyJson` TEXT NOT NULL, `isActive` INTEGER NOT NULL, `assignedAt` TEXT NOT NULL, `acknowledgedAt` TEXT, PRIMARY KEY(`policyId`))",
+        "fields": [
+          {
+            "fieldPath": "policyId",
+            "columnName": "policyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assignedVersion",
+            "columnName": "assignedVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acknowledgedVersion",
+            "columnName": "acknowledgedVersion",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "policyJson",
+            "columnName": "policyJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "isActive",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assignedAt",
+            "columnName": "assignedAt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acknowledgedAt",
+            "columnName": "acknowledgedAt",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "policyId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_policies_policyId",
+            "unique": true,
+            "columnNames": [
+              "policyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_policies_policyId` ON `${TABLE_NAME}` (`policyId`)"
+          },
+          {
+            "name": "index_policies_isActive",
+            "unique": false,
+            "columnNames": [
+              "isActive"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_policies_isActive` ON `${TABLE_NAME}` (`isActive`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e01e1d44bb539f6d21d39186f8fef1de')"
+    ]
+  }
+}

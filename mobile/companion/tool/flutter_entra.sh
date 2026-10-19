@@ -2,6 +2,7 @@
 # Runs a Flutter command with Entra dart-defines and the Android signature hash.
 # Usage: ENTRA_TENANT_ID=... ENTRA_CLIENT_ID=... ENTRA_API_SCOPE=... API_BASE_URL=... \
 #   tool/flutter_entra.sh run|build apk|build ios ... [extra flutter args]
+# Optional QR enrollment values: AGENT_APK_URL, AGENT_SIGNATURE_CHECKSUM, SERVER_ROOT_CA, DEVICE_ROOT_CA.
 set -euo pipefail
 
 for name in ENTRA_TENANT_ID ENTRA_CLIENT_ID ENTRA_API_SCOPE API_BASE_URL; do
@@ -28,6 +29,12 @@ args=(
   "--dart-define=ENTRA_API_SCOPE=$ENTRA_API_SCOPE"
   "--dart-define=API_BASE_URL=$API_BASE_URL"
 )
+for name in AGENT_APK_URL AGENT_SIGNATURE_CHECKSUM SERVER_ROOT_CA DEVICE_ROOT_CA; do
+  if [[ -n "${!name:-}" ]]; then
+    args+=("--dart-define=$name=${!name}")
+  fi
+done
+
 android_capable=false
 case "${1:-} ${2:-}" in
   "run "* | "build apk" | "build appbundle") android_capable=true ;;
