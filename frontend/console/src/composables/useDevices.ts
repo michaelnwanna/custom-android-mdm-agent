@@ -4,7 +4,7 @@
 
 import { ref, computed, onMounted } from 'vue'
 import * as deviceApi from '@/api/deviceApi'
-import type { Device, PaginatedResult } from '@/types'
+import type { Device } from '@/types'
 
 export interface UseDevicesOptions {
   pageSize?: number

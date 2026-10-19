@@ -325,7 +325,8 @@ const getSeverityBgClass = (sev: string) => {
   }
 }
 
-const formatTime = (dateString: string): string => {
+const formatTime = (dateString?: string | null): string => {
+  if (!dateString) return 'Unknown'
   const date = new Date(dateString)
   const now = new Date()
   const diff = now.getTime() - date.getTime()
@@ -341,7 +342,8 @@ const formatTime = (dateString: string): string => {
   return date.toLocaleDateString()
 }
 
-const formatDateTime = (dateString: string): string => {
+const formatDateTime = (dateString?: string | null): string => {
+  if (!dateString) return 'Unknown'
   const date = new Date(dateString)
   return date.toLocaleString()
 }

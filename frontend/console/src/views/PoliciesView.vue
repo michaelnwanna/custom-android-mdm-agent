@@ -39,7 +39,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
           <input
             :value="search"
-            @input="updateSearch($event.target.value)"
+            @input="handleSearchInput"
             type="text"
             placeholder="Search by policy name..."
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -51,7 +51,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
           <select
             :value="status"
-            @change="updateStatus($event.target.value)"
+            @change="handleStatusEvent"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Statuses</option>
@@ -66,7 +66,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
           <select
             :value="type"
-            @change="updateType($event.target.value)"
+            @change="handleTypeEvent"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Types</option>
@@ -148,7 +148,7 @@
         @click="selectPolicy(policy.policyId)"
       >
         <!-- Card Header -->
-        <div :class="['px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-start justify-between', getTypeBgClass(policy.type)]">
+        <div :class="['px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-start justify-between', getTypeBgClass(policy.type || 'Custom')]">
           <div class="flex-1">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ policy.name }}</h3>
             <p class="text-sm mt-1">{{ policy.type || 'Policy' }}</p>
@@ -182,7 +182,7 @@
             </div>
             <div>
               <p class="text-xs text-gray-600 dark:text-gray-400">Compliance</p>
-              <p :class="['text-lg font-bold', getComplianceColorClass(policy.compliancePercentage)]">
+              <p :class="['text-lg font-bold', getComplianceColorClass(policy.compliancePercentage ?? 0)]">
                 {{ policy.compliancePercentage || 0 }}%
               </p>
             </div>
@@ -192,7 +192,7 @@
           <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
             <div
               :style="{ width: `${policy.compliancePercentage || 0}%` }"
-              :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage)]"
+              :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage ?? 0)]"
             />
           </div>
 
@@ -273,7 +273,7 @@ const {
   pageNumber,
   totalPages,
   pageRange,
-  totalPolicies,
+  totalCount: totalPolicies,
   averageCompliance,
   displayText,
   fetchPolicies,
@@ -291,6 +291,18 @@ const selectedPolicies = ref<string[]>([])
 const isActioning = ref(false)
 
 const isFilterActive = computed(() => search.value || status.value || type.value)
+
+const handleSearchInput = (event: Event) => {
+  if (event.target instanceof HTMLInputElement) updateSearch(event.target.value)
+}
+
+const handleStatusEvent = (event: Event) => {
+  if (event.target instanceof HTMLSelectElement) updateStatus(event.target.value)
+}
+
+const handleTypeEvent = (event: Event) => {
+  if (event.target instanceof HTMLSelectElement) updateType(event.target.value)
+}
 
 const refreshPolicies = async () => {
   await fetchPolicies()
@@ -396,7 +408,7 @@ onMounted(async () => {
       }
       toastService.info(`Policy "${policy.name}" updated`)
     },
-    onPolicyDeployed: (policyId: string, deviceIds: string[]) => {
+    onPolicyDeployed: (_policyId: string, deviceIds: string[]) => {
       toastService.success(`Policy deployed to ${deviceIds.length} device(s)`)
       refreshPolicies()
     },

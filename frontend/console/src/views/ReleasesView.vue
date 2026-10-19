@@ -271,7 +271,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useReleaseStore } from '@stores/releaseStore'
 
 const releaseStore = useReleaseStore()
@@ -308,13 +308,8 @@ const filteredReleases = computed(() => {
   return result.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
 })
 
-// Reset to page 1 when filters change
-const _ = computed(() => {
-  searchQuery.value
-  selectedStatus.value
-  selectedPriority.value
+watch([searchQuery, selectedStatus, selectedPriority], () => {
   currentPage.value = 1
-  return null
 })
 
 // Pagination info

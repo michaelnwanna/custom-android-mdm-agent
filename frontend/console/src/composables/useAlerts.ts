@@ -1,6 +1,7 @@
 import { ref, computed, onMounted } from 'vue'
 import * as alertApi from '@/api/alertApi'
-import type { HealthAlert, AlertQueryParams } from '@types'
+import type { AlertQueryParams } from '@/api/alertApi'
+import type { HealthAlert } from '@types'
 
 interface UseAlertsOptions {
   pageSize?: number
@@ -81,6 +82,8 @@ export function useAlerts(options: UseAlertsOptions = {}) {
       loading.value = false
     }
   }
+
+  const fetchAlertById = (alertId: string) => alertApi.fetchAlertById(alertId)
 
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages.value) {
@@ -240,6 +243,7 @@ export function useAlerts(options: UseAlertsOptions = {}) {
     
     // Methods
     fetchAlerts,
+    fetchAlertById,
     goToPage,
     nextPage,
     prevPage,

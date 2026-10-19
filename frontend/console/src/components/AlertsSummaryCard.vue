@@ -155,7 +155,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAlerts } from '@/composables/useAlerts'
 import signalRService from '@services/signalRService'
-import type { HealthAlert } from '@types'
 
 const { alerts, fetchAlerts } = useAlerts({ autoLoad: false })
 

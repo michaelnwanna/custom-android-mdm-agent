@@ -7,7 +7,7 @@
         <p class="text-gray-600 dark:text-gray-400 mt-2">Manage and monitor your fleet devices</p>
       </div>
       <button
-        @click="refreshDevices"
+        @click="refresh"
         class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +25,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
           <input
             :value="searchQuery"
-            @input="handleSearch($event.target.value)"
+            @input="handleSearchInput"
             type="text"
             placeholder="Device name, model, serial..."
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
@@ -37,7 +37,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
           <select
             :value="statusFilter"
-            @change="handleStatusFilterChange($event.target.value || null)"
+            @change="handleStatusFilterEvent"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option :value="null">All Statuses</option>
@@ -98,7 +98,7 @@
       <div v-else-if="error" class="p-8 text-center text-red-600 dark:text-red-400">
         <p class="font-medium">{{ error }}</p>
         <button
-          @click="refreshDevices"
+          @click="refresh"
           class="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
         >
           Try Again
@@ -106,7 +106,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="filteredList.length === 0" class="p-8 text-center">
+      <div v-else-if="devices.length === 0" class="p-8 text-center">
         <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c4.418 0 8-1.79 8-4s-3.582-4-8-4-8 1.79-8 4 3.582 4 8 4zm0 0c-4.418 0-8 1.79-8 4v4c0 2.21 3.582 4 8 4s8-1.79 8-4v-4c0-2.21-3.582-4-8-4z" />
         </svg>
@@ -121,7 +121,7 @@
               <input
                 type="checkbox"
                 @change="toggleSelectAll"
-                :checked="selectedDevices.length === filteredList.length && filteredList.length > 0"
+                :checked="selectedDevices.length === devices.length && devices.length > 0"
                 class="rounded"
               />
             </th>
@@ -197,7 +197,7 @@
           <button
             v-for="page in paginationRange"
             :key="page"
-            @click="goToPage(page)"
+            @click="handlePageChange(page)"
             :class="[
               'px-3 py-2 rounded transition-colors',
               currentPage === page
@@ -221,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDevices } from '@/composables/useDevices'
 import toastService from '@services/toastService'
@@ -235,15 +235,18 @@ const {
   error,
   currentPage,
   totalPages,
-  hasNextPage,
+  totalCount,
   searchQuery,
   statusFilter,
   fetchDevices,
   setSearch,
   setStatusFilter,
   goToPage,
+  nextPage,
+  previousPage,
   refresh
 } = useDevices({ pageSize: 20, autoLoad: true })
+const itemsPerPage = 20
 
 // Selected devices for bulk actions
 const selectedDevices = computed<string[]>(() => {
@@ -292,9 +295,18 @@ const handleSearch = (query: string) => {
   fetchDevices(1)
 }
 
+const handleSearchInput = (event: Event) => {
+  if (event.target instanceof HTMLInputElement) handleSearch(event.target.value)
+}
+
 const handleStatusFilterChange = (status: string | null) => {
   setStatusFilter(status)
   fetchDevices(1)
+}
+
+const handleStatusFilterEvent = (event: Event) => {
+  if (event.target instanceof HTMLSelectElement)
+    handleStatusFilterChange(event.target.value || null)
 }
 
 const handlePageChange = (page: number | string) => {
@@ -353,32 +365,6 @@ const decommissionSelected = async () => {
     toastService.success(`${selectedDevices.value.length} device(s) decommissioned`)
     clearSelection()
     await refresh()
-  } catch (err) {
-    toastService.error('Failed to decommission devices')
-  }
-}
-
-const suspendSelected = async () => {
-  if (!confirm(`Suspend ${selectedDevices.value.length} device(s)?`)) return
-  
-  try {
-    // TODO: Call API to suspend devices
-    toastService.success(`${selectedDevices.value.length} device(s) suspended`)
-    clearSelection()
-    await refreshDevices()
-  } catch (err) {
-    toastService.error('Failed to suspend devices')
-  }
-}
-
-const decommissionSelected = async () => {
-  if (!confirm(`Decommission ${selectedDevices.value.length} device(s)? This cannot be undone.`)) return
-  
-  try {
-    // TODO: Call API to decommission devices
-    toastService.success(`${selectedDevices.value.length} device(s) decommissioned`)
-    clearSelection()
-    await refreshDevices()
   } catch (err) {
     toastService.error('Failed to decommission devices')
   }

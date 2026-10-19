@@ -225,7 +225,7 @@ function generateMockPaginatedAlerts(options: AlertQueryParams): PaginatedAlerts
     const search = options.search.toLowerCase()
     filtered = filtered.filter(a => 
       a.message.toLowerCase().includes(search) ||
-      a.deviceName.toLowerCase().includes(search)
+      (a.deviceName || '').toLowerCase().includes(search)
     )
   }
   if (options.deviceId) {
@@ -237,7 +237,10 @@ function generateMockPaginatedAlerts(options: AlertQueryParams): PaginatedAlerts
     const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3 }
     filtered.sort((a, b) => severityOrder[a.severity as keyof typeof severityOrder] - severityOrder[b.severity as keyof typeof severityOrder])
   } else {
-    filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    filtered.sort((a, b) =>
+      new Date(b.timestamp || b.createdAt || 0).getTime() -
+      new Date(a.timestamp || a.createdAt || 0).getTime()
+    )
   }
 
   if (options.sortOrder === 'asc') {

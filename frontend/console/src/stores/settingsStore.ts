@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiClient } from '@/api/client'
-import { API_ENDPOINTS } from '@/api/endpoints'
-
 export interface SettingCategory {
   id: string
   name: string

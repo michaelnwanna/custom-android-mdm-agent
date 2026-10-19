@@ -25,6 +25,7 @@ class SignalRService {
   private reconnectDelay = 1000; // 1 second
   private useMockData = true; // Use mock hub when backend not available
   private mockDataInterval: ReturnType<typeof setInterval> | null = null;
+  private mockPolicyInterval: ReturnType<typeof setInterval> | null = null;
   private mockTelemetryIntervals: Map<string, ReturnType<typeof setInterval>> = new Map();
   private callbacks: SignalRServiceCallbacks = {};
   private subscribedDeviceIds: Set<string> = new Set();
@@ -216,7 +217,7 @@ class SignalRService {
     }, 8000); // Check every 8 seconds
 
     // Simulate periodic policy compliance changes
-    const policyInterval = setInterval(() => {
+    this.mockPolicyInterval = setInterval(() => {
       if (Math.random() > 0.8) { // 20% chance
         const policyId = `policy-${Math.floor(Math.random() * 10)}`;
         const compliancePercentage = Math.floor(Math.random() * 30) + 70;
@@ -378,17 +379,25 @@ class SignalRService {
     }
 
     const interval = setInterval(() => {
+      const storageUsageMB = Math.floor(Math.random() * 40000) + 10000;
+      const memoryUsageMB = Math.floor(Math.random() * 3000) + 1000;
       const mockTelemetry: DeviceTelemetry = {
         deviceId,
         batteryPercentage: Math.max(5, Math.floor(Math.random() * 100 - Math.random() * 10)),
         batteryHealth: ['Good', 'Fair', 'Poor'][Math.floor(Math.random() * 3)],
-        storageUsageMB: Math.floor(Math.random() * 40000) + 10000,
+        batteryStatus: 'Discharging',
+        storageUsageMB,
         totalStorageMB: 64000,
-        memoryUsageMB: Math.floor(Math.random() * 3000) + 1000,
+        storageAvailableMB: Math.max(0, 64000 - storageUsageMB),
+        memoryUsageMB,
         totalMemoryMB: 8000,
+        memoryAvailableMB: Math.max(0, 8000 - memoryUsageMB),
         cpuUsagePercentage: Math.floor(Math.random() * 80),
         temperature: Math.floor(Math.random() * 20) + 30,
         signalStrength: Math.floor(Math.random() * -30) - 50,
+        wifiSignalStrength: -60,
+        cellularSignalStrength: -70,
+        connectivity: 'WiFi',
         timestamp: new Date().toISOString(),
       };
 
@@ -468,6 +477,10 @@ class SignalRService {
     if (this.mockDataInterval) {
       clearInterval(this.mockDataInterval);
       this.mockDataInterval = null;
+    }
+    if (this.mockPolicyInterval) {
+      clearInterval(this.mockPolicyInterval);
+      this.mockPolicyInterval = null;
     }
 
     // Clean up all device telemetry streams

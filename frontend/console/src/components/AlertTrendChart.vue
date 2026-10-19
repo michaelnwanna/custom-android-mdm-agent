@@ -25,13 +25,13 @@
       <!-- Grid lines -->
       <div class="absolute inset-0 flex flex-col-reverse justify-between pointer-events-none">
         <div
-          v-for="(line, index) in 5"
+          v-for="index in 5"
           :key="index"
           class="border-t border-gray-200 dark:border-gray-700"
           :style="{ width: '100%' }"
         >
           <span class="text-xs text-gray-500 dark:text-gray-400 absolute -left-8">
-            {{ index * 20 }}
+            {{ (index - 1) * 20 }}
           </span>
         </div>
       </div>

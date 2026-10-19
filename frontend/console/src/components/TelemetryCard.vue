@@ -96,17 +96,17 @@ const progressBarClass = computed(() => {
 const icon = computed(() => {
   switch (props.type) {
     case 'battery':
-      return 'BatteryIcon'
+      return BatteryIcon
     case 'storage':
-      return 'StorageIcon'
+      return StorageIcon
     case 'memory':
-      return 'MemoryIcon'
+      return MemoryIcon
     case 'cpu':
-      return 'CpuIcon'
+      return CpuIcon
     case 'signal':
-      return 'SignalIcon'
+      return SignalIcon
     default:
-      return 'InfoIcon'
+      return InfoIcon
   }
 })
 
@@ -139,10 +139,7 @@ const lastUpdated = computed(() => {
   
   return date.toLocaleDateString()
 })
-</script>
 
-<!-- Icon components embedded -->
-<script setup lang="ts">
 const BatteryIcon = { 
   template: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M17 4h-1V2h-4v2H7c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 12H7V6h10v10z"/></svg>`
 }

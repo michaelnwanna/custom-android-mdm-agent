@@ -391,7 +391,7 @@ const telemetryHistory = ref<DeviceTelemetry[]>([])
 const telemetryLoading = ref(false)
 const telemetryAutoRefresh = ref(true)
 const telemetryRefreshInterval = ref(5) // seconds
-const telemetryRefreshTimer = ref<NodeJS.Timer | null>(null)
+const telemetryRefreshTimer = ref<number | null>(null)
 const deviceAlerts = ref<any[]>([])
 const commandHistory = ref<any[]>([])
 const executing = ref(false)
@@ -464,16 +464,16 @@ const toggleTelemetryAutoRefresh = () => {
 
 const startTelemetryAutoRefresh = () => {
   if (telemetryRefreshTimer.value) {
-    clearInterval(telemetryRefreshTimer.value)
+    window.clearInterval(telemetryRefreshTimer.value)
   }
-  telemetryRefreshTimer.value = setInterval(() => {
+  telemetryRefreshTimer.value = window.setInterval(() => {
     fetchTelemetry()
   }, telemetryRefreshInterval.value * 1000)
 }
 
 const stopTelemetryAutoRefresh = () => {
   if (telemetryRefreshTimer.value) {
-    clearInterval(telemetryRefreshTimer.value)
+    window.clearInterval(telemetryRefreshTimer.value)
     telemetryRefreshTimer.value = null
   }
 }

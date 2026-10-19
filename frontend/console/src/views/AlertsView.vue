@@ -28,7 +28,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
           <input
             :value="search"
-            @input="updateSearch($event.target.value)"
+            @input="handleSearchInput"
             type="text"
             placeholder="Search by device name or message..."
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -40,7 +40,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
           <select
             :value="status"
-            @change="updateStatus($event.target.value)"
+            @change="handleStatusEvent"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Statuses</option>
@@ -55,7 +55,7 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Severity</label>
           <select
             :value="severity"
-            @change="updateSeverity($event.target.value)"
+            @change="handleSeverityEvent"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Levels</option>
@@ -232,13 +232,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAlerts } from '@/composables/useAlerts'
 import toastService from '@services/toastService'
 import signalRService from '@services/signalRService'
 import type { HealthAlert } from '@types'
-
-const router = useRouter()
 
 const {
   alerts,
@@ -263,7 +260,8 @@ const {
   reopenAlert,
   deleteAlert,
   bulkResolveAlerts,
-  addAlert
+  addAlert,
+  updateAlert
 } = useAlerts({ pageSize: 20, autoLoad: true })
 
 const selectedAlerts = ref<string[]>([])
@@ -276,6 +274,18 @@ const isFilterActive = computed(() => search.value || severity.value || status.v
 
 const refreshAlerts = async () => {
   await fetchAlerts()
+}
+
+const handleSearchInput = (event: Event) => {
+  if (event.target instanceof HTMLInputElement) updateSearch(event.target.value)
+}
+
+const handleStatusEvent = (event: Event) => {
+  if (event.target instanceof HTMLSelectElement) updateStatus(event.target.value)
+}
+
+const handleSeverityEvent = (event: Event) => {
+  if (event.target instanceof HTMLSelectElement) updateSeverity(event.target.value)
 }
 
 const handleResolveAlert = async (alertId: string) => {
@@ -374,7 +384,8 @@ const severityBadgeClass = (sev: string) => {
   }
 }
 
-const formatTime = (dateString: string): string => {
+const formatTime = (dateString?: string | null): string => {
+  if (!dateString) return 'Unknown'
   const date = new Date(dateString)
   const now = new Date()
   const diff = now.getTime() - date.getTime()
@@ -394,13 +405,13 @@ onMounted(async () => {
   await signalRService.connect({
     onAlertReceived: (alert: HealthAlert) => {
       addAlert(alert)
-      toastService.warning(`New ${alert.severity} alert from ${alert.deviceName}`)
+      toastService.warning(`New ${alert.severity} alert from ${alert.deviceName || 'an unknown device'}`)
     },
     onAlertUpdated: (alert: HealthAlert) => {
       updateAlert(alert.alertId, alert)
       toastService.info(`Alert updated: ${alert.message}`)
     },
-    onAlertResolved: (alertId: string) => {
+    onAlertResolved: (_alertId: string) => {
       // Refresh alerts to reflect resolution
       fetchAlerts()
       toastService.success('Alert resolved')

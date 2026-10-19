@@ -16,24 +16,30 @@ export interface DeviceTelemetry {
   deviceId: string
   timestamp: string
   batteryPercentage: number
+  batteryHealth?: string
   batteryStatus: 'Charging' | 'Discharging' | 'Unknown'
   storageUsageMB: number
+  totalStorageMB?: number
   storageAvailableMB: number
   memoryUsageMB: number
+  totalMemoryMB?: number
   memoryAvailableMB: number
   cpuUsagePercentage: number
   wifiSignalStrength: number
   cellularSignalStrength: number
+  signalStrength?: number
+  temperature?: number
   connectivity: 'WiFi' | 'Cellular' | 'None'
 }
 
 export interface HealthAlert {
   id?: string // For mock data
-  alertId?: string
+  alertId: string
   deviceId: string
   deviceName?: string // For mock data
   alertType?: string
   type?: string // For mock data
+  description?: string
   severity: 'Critical' | 'High' | 'Medium' | 'Low'
   message: string
   createdAt?: string

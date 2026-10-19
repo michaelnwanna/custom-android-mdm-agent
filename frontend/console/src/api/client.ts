@@ -1,11 +1,9 @@
-import type { ApiResponse, AuthError } from '@/types'
+import type { AuthError } from '@/types'
 
 export class ApiClient {
-  private baseURL: string
   private defaultHeaders: Record<string, string>
 
-  constructor(baseURL: string = '') {
-    this.baseURL = baseURL
+  constructor() {
     this.defaultHeaders = {
       'Content-Type': 'application/json'
     }

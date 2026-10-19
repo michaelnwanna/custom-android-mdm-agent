@@ -34,7 +34,7 @@
     </div>
 
     <!-- Release Form -->
-    <div v-else class="space-y-6">
+    <div v-else-if="release" class="space-y-6">
       <!-- Status & Priority -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Status -->

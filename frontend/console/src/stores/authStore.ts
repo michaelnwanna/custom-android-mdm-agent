@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { AuthToken, AuthUser, LoginRequest, LoginResponse } from '@/types'
+import type { AuthUser, LoginRequest, LoginResponse } from '@/types'
 import { apiClient } from '@/api/client'
 import { API_ENDPOINTS } from '@/api/endpoints'
 import { parseApiError } from '@/api/handlers'
@@ -13,10 +13,8 @@ const TOKEN_EXPIRY_KEY = 'auth_token_expiry'
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem(TOKEN_KEY))
   const refreshToken = ref<string | null>(localStorage.getItem(REFRESH_TOKEN_KEY))
-  const user = ref<AuthUser | null>(() => {
-    const stored = localStorage.getItem(USER_KEY)
-    return stored ? JSON.parse(stored) : null
-  })
+  const storedUser = localStorage.getItem(USER_KEY)
+  const user = ref<AuthUser | null>(storedUser ? JSON.parse(storedUser) as AuthUser : null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -28,25 +26,6 @@ export const useAuthStore = defineStore('auth', () => {
     if (!expiry) return false
     return Date.now() > parseInt(expiry)
   })
-
-  /**
-   * Parse JWT token to get expiration time
-   */
-  function parseJwt(token: string): unknown {
-    try {
-      const base64Url = token.split('.')[1]
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      )
-      return JSON.parse(jsonPayload)
-    } catch {
-      return null
-    }
-  }
 
   /**
    * Set token and calculate expiry

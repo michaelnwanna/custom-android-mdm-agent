@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiClient } from '@/api/client'
-import { API_ENDPOINTS } from '@/api/endpoints'
 import type { Tag } from '@/types'
 
 export const useTagStore = defineStore('tags', () => {
@@ -46,9 +44,6 @@ export const useTagStore = defineStore('tags', () => {
 
     for (let i = 1; i <= count; i++) {
       const tagType = tagTypes[Math.floor(Math.random() * tagTypes.length)]
-      const isUrgent = Math.random() > 0.7
-      const isCompliance = Math.random() > 0.8
-      
       mockTags.push({
         tagId: `tag-${String(i).padStart(3, '0')}`,
         name: `${tagType}-${Math.floor(Math.random() * 100)}`,
