@@ -152,6 +152,11 @@
       </div>
     </div>
 
+    <!-- Compliance Trend Chart -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <ComplianceChart :is-dark-mode="isDarkMode" />
+    </div>
+
     <!-- Device Compliance Table -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
       <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -246,6 +251,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import ComplianceGauge from '@components/ComplianceGauge.vue'
+import ComplianceChart from '@components/ComplianceChart.vue'
 import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
 import type { Policy } from '@types'
