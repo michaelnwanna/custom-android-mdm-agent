@@ -1,83 +1,220 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiClient } from '@/api/client'
-import { API_ENDPOINTS } from '@/api/endpoints'
+import * as policyApi from '@/api/policyApi'
 import type { Policy } from '@types'
 
-export interface PolicyDetails extends Policy {
-  rules?: string[]
-  targetDevices?: string[]
-  description: string
-  enforcementLevel: 'Strict' | 'Standard' | 'Permissive'
-  isActive: boolean
-  deviceCount: number
-  lastModified: string
-}
+export const usePolicyStore = defineStore('policy', () => {
+  const policies = ref<Policy[]>([])
+  const selectedPolicy = ref<Policy | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-function generateMockPolicies(count: number = 30): PolicyDetails[] {
-  const policyNames = [
-    'Device Encryption',
-    'Password Requirements',
-    'Screen Lock Timeout',
-    'Camera Access Control',
-    'USB Debugging Prevention',
-    'Biometric Authentication',
-    'VPN Requirement',
-    'App Installation Control',
-    'Browser Restrictions',
-    'Storage Access Control',
-    'GPS Tracking Enable',
-    'Mobile Device Firewall',
-    'Certificate Pinning',
-    'Threat Detection',
-    'Data Loss Prevention'
-  ]
+  const activePolicies = computed(() =>
+    policies.value.filter(p => p.status === 'Active')
+  )
 
-  const descriptions: Record<string, string> = {
-    'Device Encryption': 'Require full device encryption for data protection at rest',
-    'Password Requirements': 'Enforce strong password policies with complexity rules',
-    'Screen Lock Timeout': 'Set automatic screen lock after inactivity period',
-    'Camera Access Control': 'Restrict or disable camera access on devices',
-    'USB Debugging Prevention': 'Prevent USB debugging to protect device security',
-    'Biometric Authentication': 'Require biometric authentication for sensitive apps',
-    'VPN Requirement': 'Require VPN connection for network access',
-    'App Installation Control': 'Control which apps can be installed on devices',
-    'Browser Restrictions': 'Restrict browser access to specific websites only',
-    'Storage Access Control': 'Control device storage access and external media',
-    'GPS Tracking Enable': 'Enable GPS tracking for device location',
-    'Mobile Device Firewall': 'Apply firewall rules to device network traffic',
-    'Certificate Pinning': 'Pin certificates for secure communication',
-    'Threat Detection': 'Enable real-time threat detection and response',
-    'Data Loss Prevention': 'Prevent sensitive data from leaving the device'
+  const policiesByType = computed(() => {
+    const grouped: Record<string, Policy[]> = {}
+    policies.value.forEach(policy => {
+      const key = policy.type || 'Unknown'
+      if (!grouped[key]) {
+        grouped[key] = []
+      }
+      grouped[key].push(policy)
+    })
+    return grouped
+  })
+
+  const policiesByStatus = computed(() => {
+    const grouped: Record<string, Policy[]> = {
+      'Active': [],
+      'Draft': [],
+      'Archived': []
+    }
+    policies.value.forEach(policy => {
+      grouped[policy.status].push(policy)
+    })
+    return grouped
+  })
+
+  const totalDevicesDeployed = computed(() =>
+    policies.value.reduce((sum, p) => sum + (p.deviceCount || 0), 0)
+  )
+
+  const averageCompliance = computed(() => {
+    if (policies.value.length === 0) return 0
+    const total = policies.value.reduce((sum, p) => sum + (p.compliancePercentage || 0), 0)
+    return Math.round(total / policies.value.length)
+  })
+
+  async function fetchPolicies() {
+    loading.value = true
+    error.value = null
+    
+    try {
+      const result = await policyApi.fetchPolicies({ page: 1, pageSize: 100 })
+      policies.value = result.items
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to fetch policies'
+      console.error('Fetch policies error:', err)
+    } finally {
+      loading.value = false
+    }
   }
 
-  const rules: Record<string, string[]> = {
-    'Device Encryption': ['AES-256 encryption', 'Full disk encryption', 'File-level encryption'],
-    'Password Requirements': ['Min 12 characters', 'Uppercase + Lowercase', 'Numbers + Symbols'],
-    'Screen Lock Timeout': ['15 minutes inactivity', 'Lock before sleep', 'Require unlock after wakeup'],
-    'Camera Access Control': ['Disable front camera', 'Disable rear camera', 'Alert on camera use'],
-    'USB Debugging Prevention': ['Disable USB debugging', 'Prevent developer mode', 'Alert on modifications'],
-    'Biometric Authentication': ['Fingerprint required', 'Face recognition', 'Fallback to PIN'],
-    'VPN Requirement': ['Always-on VPN', 'Corporate VPN only', 'Split tunneling disabled'],
-    'App Installation Control': ['Whitelist only', 'Blacklist apps', 'Require approval'],
-    'Browser Restrictions': ['Whitelist domains', 'Block known threats', 'HTTPS only'],
-    'Storage Access Control': ['Disable SD card', 'Disable USB storage', 'Encrypt external storage'],
-    'GPS Tracking Enable': ['Real-time tracking', 'Location logging', 'Geofencing enabled'],
-    'Mobile Device Firewall': ['Block malicious IPs', 'Port filtering', 'Protocol inspection'],
-    'Certificate Pinning': ['Pin CA certificate', 'Pin leaf certificate', 'Automatic updates'],
-    'Threat Detection': ['Real-time scanning', 'Behavioral analysis', 'Ransomware detection'],
-    'Data Loss Prevention': ['Prevent USB export', 'Block cloud sync', 'Email encryption']
+  async function fetchPolicyById(policyId: string) {
+    try {
+      const policy = await policyApi.fetchPolicyById(policyId)
+      if (policy) {
+        selectedPolicy.value = policy
+        return policy
+      }
+      return null
+    } catch (err) {
+      console.error(`Fetch policy error for ${policyId}:`, err)
+      return null
+    }
   }
 
-  const policies: PolicyDetails[] = []
-  for (let i = 0; i < count; i++) {
-    const name = policyNames[i % policyNames.length]
-    const status = Math.random() < 0.7 ? 'Active' : Math.random() < 0.5 ? 'Draft' : 'Archived'
-    const enforcementLevel = ['Strict', 'Standard', 'Permissive'][Math.floor(Math.random() * 3)] as 'Strict' | 'Standard' | 'Permissive'
-    const createdDate = new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000)
-    const lastModifiedDate = new Date(createdDate.getTime() + Math.random() * 60 * 24 * 60 * 60 * 1000)
+  async function createPolicy(policy: any) {
+    try {
+      const newPolicy = await policyApi.createPolicy(policy)
+      policies.value.unshift(newPolicy)
+      return newPolicy
+    } catch (err) {
+      console.error('Create policy error:', err)
+      throw err
+    }
+  }
 
-    policies.push({
+  async function updatePolicy(policyId: string, updates: any) {
+    try {
+      const policy = await policyApi.updatePolicy(policyId, updates)
+      const index = policies.value.findIndex(p => p.policyId === policyId)
+      if (index > -1) {
+        policies.value[index] = policy
+      }
+      if (selectedPolicy.value?.policyId === policyId) {
+        selectedPolicy.value = policy
+      }
+      return policy
+    } catch (err) {
+      console.error('Update policy error:', err)
+      throw err
+    }
+  }
+
+  async function deletePolicy(policyId: string) {
+    try {
+      await policyApi.deletePolicy(policyId)
+      policies.value = policies.value.filter(p => p.policyId !== policyId)
+      if (selectedPolicy.value?.policyId === policyId) {
+        selectedPolicy.value = null
+      }
+    } catch (err) {
+      console.error('Delete policy error:', err)
+      throw err
+    }
+  }
+
+  async function assignPolicy(policyId: string, deviceIds: string[]) {
+    try {
+      await policyApi.assignPolicy(policyId, { deviceIds })
+      const policy = policies.value.find(p => p.policyId === policyId)
+      if (policy) {
+        policy.deviceCount = (policy.deviceCount || 0) + deviceIds.length
+      }
+    } catch (err) {
+      console.error('Assign policy error:', err)
+      throw err
+    }
+  }
+
+  async function revokePolicy(policyId: string, deviceIds: string[]) {
+    try {
+      await policyApi.revokePolicy(policyId, deviceIds)
+      const policy = policies.value.find(p => p.policyId === policyId)
+      if (policy) {
+        policy.deviceCount = Math.max(0, (policy.deviceCount || 0) - deviceIds.length)
+      }
+    } catch (err) {
+      console.error('Revoke policy error:', err)
+      throw err
+    }
+  }
+
+  async function rollbackPolicy(policyId: string, versionId: string) {
+    try {
+      const policy = await policyApi.rollbackPolicy(policyId, versionId)
+      const index = policies.value.findIndex(p => p.policyId === policyId)
+      if (index > -1) {
+        policies.value[index] = policy
+      }
+      if (selectedPolicy.value?.policyId === policyId) {
+        selectedPolicy.value = policy
+      }
+      return policy
+    } catch (err) {
+      console.error('Rollback policy error:', err)
+      throw err
+    }
+  }
+
+  async function getPolicyCompliance(policyId: string) {
+    try {
+      return await policyApi.getPolicyCompliance(policyId)
+    } catch (err) {
+      console.error('Get compliance error:', err)
+      return null
+    }
+  }
+
+  async function getPolicyVersions(policyId: string) {
+    try {
+      return await policyApi.getPolicyVersions(policyId)
+    } catch (err) {
+      console.error('Get versions error:', err)
+      return []
+    }
+  }
+
+  function clearError() {
+    error.value = null
+  }
+
+  function clearSelectedPolicy() {
+    selectedPolicy.value = null
+  }
+
+  return {
+    // State
+    policies,
+    selectedPolicy,
+    loading,
+    error,
+    
+    // Computed
+    activePolicies,
+    policiesByType,
+    policiesByStatus,
+    totalDevicesDeployed,
+    averageCompliance,
+    
+    // Methods
+    fetchPolicies,
+    fetchPolicyById,
+    createPolicy,
+    updatePolicy,
+    deletePolicy,
+    assignPolicy,
+    revokePolicy,
+    rollbackPolicy,
+    getPolicyCompliance,
+    getPolicyVersions,
+    clearError,
+    clearSelectedPolicy
+  }
+})
       policyId: `policy-${String(i + 1).padStart(6, '0')}`,
       name: `${name}${i > 14 ? ` (${i})` : ''}`,
       description: descriptions[name] || `Policy configuration for ${name}`,
