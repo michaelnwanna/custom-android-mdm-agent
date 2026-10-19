@@ -150,6 +150,110 @@ namespace FleetManagement.Persistence.Migrations
                     b.ToTable("Devices", (string)null);
                 });
 
+            modelBuilder.Entity("FleetManagement.Devices.DeviceReconciliationAuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConflictDetails")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("ConflictTypesString")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("ConflictTypes");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("DesiredPolicyIdsString")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("DesiredPolicyIds");
+
+                    b.Property<Guid?>("DesiredReleaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DesiredTagIdsString")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("DesiredTagIds");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("DurationMilliseconds")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("GeneratedCommandIdsString")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("GeneratedCommandIds");
+
+                    b.Property<string>("ObservedPolicyIdsString")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("ObservedPolicyIds");
+
+                    b.Property<Guid?>("ObservedReleaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ObservedTagIdsString")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("ObservedTagIds");
+
+                    b.Property<string>("ReconciliationStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ReconciliationTimestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReconciliationType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_CreatedAt");
+
+                    b.HasIndex("DeviceId")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_DeviceId");
+
+                    b.HasIndex("EnrollmentId")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_EnrollmentId");
+
+                    b.HasIndex("ReconciliationStatus")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_Status");
+
+                    b.HasIndex("ReconciliationTimestamp")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_ReconciliationTimestamp");
+
+                    b.HasIndex("DeviceId", "ReconciliationTimestamp")
+                        .HasDatabaseName("IX_DeviceReconciliationAuditLogs_DeviceId_Timestamp");
+
+                    b.ToTable("DeviceReconciliationAuditLogs", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Devices.DeviceTag", b =>
                 {
                     b.Property<Guid>("TagId")

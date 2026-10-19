@@ -166,3 +166,89 @@ public class ReconciliationResultDto
         };
     }
 }
+
+/// <summary>
+/// DTO for device reconciliation audit log.
+/// </summary>
+public class DeviceReconciliationAuditLogDto
+{
+    /// <summary>Audit log ID.</summary>
+    public Guid Id { get; set; }
+
+    /// <summary>Device ID.</summary>
+    public Guid DeviceId { get; set; }
+
+    /// <summary>Enrollment ID.</summary>
+    public Guid EnrollmentId { get; set; }
+
+    /// <summary>When reconciliation was performed.</summary>
+    public DateTime ReconciliationTimestamp { get; set; }
+
+    /// <summary>Type of reconciliation event.</summary>
+    public string ReconciliationType { get; set; } = string.Empty;
+
+    /// <summary>Overall reconciliation result.</summary>
+    public string ReconciliationStatus { get; set; } = string.Empty;
+
+    /// <summary>Desired policies at time of reconciliation.</summary>
+    public List<Guid> DesiredPolicyIds { get; set; } = new();
+
+    /// <summary>Observed policies reported by device.</summary>
+    public List<Guid> ObservedPolicyIds { get; set; } = new();
+
+    /// <summary>Desired release.</summary>
+    public Guid? DesiredReleaseId { get; set; }
+
+    /// <summary>Observed release.</summary>
+    public Guid? ObservedReleaseId { get; set; }
+
+    /// <summary>Desired tags.</summary>
+    public List<Guid> DesiredTagIds { get; set; } = new();
+
+    /// <summary>Observed tags.</summary>
+    public List<Guid> ObservedTagIds { get; set; } = new();
+
+    /// <summary>Detected conflict types.</summary>
+    public List<string> ConflictTypes { get; set; } = new();
+
+    /// <summary>Conflict details.</summary>
+    public string ConflictDetails { get; set; } = string.Empty;
+
+    /// <summary>Reconciliation duration in milliseconds.</summary>
+    public long DurationMilliseconds { get; set; }
+
+    /// <summary>Error message if reconciliation failed.</summary>
+    public string? ErrorMessage { get; set; }
+
+    /// <summary>Generated commands.</summary>
+    public List<Guid> GeneratedCommandIds { get; set; } = new();
+
+    /// <summary>When audit log was created.</summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>Factory: Create DTO from domain model.</summary>
+    public static DeviceReconciliationAuditLogDto FromDomain(DeviceReconciliationAuditLog domain)
+    {
+        return new DeviceReconciliationAuditLogDto
+        {
+            Id = domain.Id,
+            DeviceId = domain.DeviceId,
+            EnrollmentId = domain.EnrollmentId,
+            ReconciliationTimestamp = domain.ReconciliationTimestamp,
+            ReconciliationType = domain.ReconciliationType.ToString(),
+            ReconciliationStatus = domain.ReconciliationStatus.ToString(),
+            DesiredPolicyIds = domain.GetDesiredPolicyIds(),
+            ObservedPolicyIds = domain.GetObservedPolicyIds(),
+            DesiredReleaseId = domain.DesiredReleaseId,
+            ObservedReleaseId = domain.ObservedReleaseId,
+            DesiredTagIds = domain.GetDesiredTagIds(),
+            ObservedTagIds = domain.GetObservedTagIds(),
+            ConflictTypes = domain.GetConflictTypes().Select(x => x.ToString()).ToList(),
+            ConflictDetails = domain.ConflictDetails,
+            DurationMilliseconds = domain.DurationMilliseconds,
+            ErrorMessage = domain.ErrorMessage,
+            GeneratedCommandIds = domain.GetGeneratedCommandIds(),
+            CreatedAt = domain.CreatedAt
+        };
+    }
+}

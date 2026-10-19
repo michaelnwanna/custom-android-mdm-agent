@@ -23,6 +23,7 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
     public DbSet<DeviceTag> DeviceTags => Set<DeviceTag>();
     public DbSet<DeviceTagAssignment> DeviceTagAssignments => Set<DeviceTagAssignment>();
     public DbSet<DesiredDeviceState> DesiredDeviceStates => Set<DesiredDeviceState>();
+    public DbSet<DeviceReconciliationAuditLog> DeviceReconciliationAuditLogs => Set<DeviceReconciliationAuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -154,6 +155,7 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
         modelBuilder.ApplyConfiguration(new DeviceTagConfiguration());
         modelBuilder.ApplyConfiguration(new DeviceTagAssignmentConfiguration());
         modelBuilder.ApplyConfiguration(new DesiredDeviceStateConfiguration());
+        modelBuilder.ApplyConfiguration(new DeviceReconciliationAuditLogConfiguration());
     }
 }
 

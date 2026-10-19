@@ -188,6 +188,7 @@ public sealed class StateComputationService
     /// <summary>
     /// Perform reconciliation between desired and observed state.
     /// Identify conflicts and missing commands.
+    /// Logs all reconciliation events for audit trail.
     /// </summary>
     /// <param name="deviceId">Device ID</param>
     /// <param name="observedState">State reported by device</param>
@@ -198,83 +199,209 @@ public sealed class StateComputationService
         ObservedDeviceState observedState,
         CancellationToken ct = default)
     {
+#pragma warning disable CS8601
         if (deviceId == Guid.Empty)
             throw new ArgumentException("Device ID required", nameof(deviceId));
 
         if (observedState == null)
             throw new ArgumentNullException(nameof(observedState));
 
-        // Compute desired state
-        var desiredState = await ComputeDesiredStateAsync(deviceId, forceRecompute: false, ct);
+        var startTime = DateTimeOffset.UtcNow;
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        var result = new ReconciliationResult
+        try
         {
-            DeviceId = deviceId,
-            DesiredState = desiredState,
-            ObservedState = observedState
-        };
+            // Compute desired state
+            var desiredState = await ComputeDesiredStateAsync(deviceId, forceRecompute: false, ct);
 
-        // Check policy conflicts
-        if (desiredState.CurrentPolicyId != observedState.ObservedPolicyId)
-        {
-            result.PolicyConflicts.Add(
-                $"Policy mismatch: desired={desiredState.CurrentPolicyId}, observed={observedState.ObservedPolicyId}"
-            );
-            result.MissingCommands.Add($"ASSIGN_POLICY:{desiredState.CurrentPolicyId}");
-        }
-        else if (desiredState.CurrentPolicyVersion != observedState.ObservedPolicyVersion)
-        {
-            result.PolicyConflicts.Add(
-                $"Policy version mismatch: desired v{desiredState.CurrentPolicyVersion}, observed v{observedState.ObservedPolicyVersion}"
-            );
-            result.MissingCommands.Add($"ASSIGN_POLICY:{desiredState.CurrentPolicyId}");
-        }
+            // Get device and enrollment info for audit log
+            var device = await _db.Set<Device>()
+                .FirstOrDefaultAsync(d => d.DeviceId == deviceId, ct);
 
-        // Check release conflicts
-        var missingReleases = desiredState.DesiredReleaseIds
-            .Except(observedState.ObservedReleaseIds)
-            .ToList();
+            if (device == null)
+                throw new KeyNotFoundException($"Device {deviceId} not found");
 
-        var extraReleases = observedState.ObservedReleaseIds
-            .Except(desiredState.DesiredReleaseIds)
-            .ToList();
-
-        if (missingReleases.Any())
-        {
-            result.ReleaseConflicts.Add(
-                $"Missing releases: {string.Join(", ", missingReleases)}"
-            );
-            foreach (var releaseId in missingReleases)
+            var result = new ReconciliationResult
             {
-                result.MissingCommands.Add($"ASSIGN_RELEASE:{releaseId}");
+                DeviceId = deviceId,
+                DesiredState = desiredState,
+                ObservedState = observedState
+            };
+
+            // Check policy conflicts
+            if (desiredState.CurrentPolicyId != observedState.ObservedPolicyId)
+            {
+                result.PolicyConflicts.Add(
+                    $"Policy mismatch: desired={desiredState.CurrentPolicyId}, observed={observedState.ObservedPolicyId}"
+                );
+                result.MissingCommands.Add($"ASSIGN_POLICY:{desiredState.CurrentPolicyId}");
             }
-        }
+            else if (desiredState.CurrentPolicyVersion != observedState.ObservedPolicyVersion)
+            {
+                result.PolicyConflicts.Add(
+                    $"Policy version mismatch: desired v{desiredState.CurrentPolicyVersion}, observed v{observedState.ObservedPolicyVersion}"
+                );
+                result.MissingCommands.Add($"ASSIGN_POLICY:{desiredState.CurrentPolicyId}");
+            }
 
-        if (extraReleases.Any())
+            // Check release conflicts
+            var missingReleases = desiredState.DesiredReleaseIds
+                .Except(observedState.ObservedReleaseIds)
+                .ToList();
+
+            var extraReleases = observedState.ObservedReleaseIds
+                .Except(desiredState.DesiredReleaseIds)
+                .ToList();
+
+            if (missingReleases.Any())
+            {
+                result.ReleaseConflicts.Add(
+                    $"Missing releases: {string.Join(", ", missingReleases)}"
+                );
+                foreach (var releaseId in missingReleases)
+                {
+                    result.MissingCommands.Add($"ASSIGN_RELEASE:{releaseId}");
+                }
+            }
+
+            if (extraReleases.Any())
+            {
+                result.ReleaseConflicts.Add(
+                    $"Extra releases: {string.Join(", ", extraReleases)}"
+                );
+            }
+
+            // Check tag conflicts
+            var missingTags = desiredState.AssignedTagIds
+                .Except(observedState.ObservedTagIds)
+                .ToList();
+
+            var extraTags = observedState.ObservedTagIds
+                .Except(desiredState.AssignedTagIds)
+                .ToList();
+
+            if (missingTags.Any() || extraTags.Any())
+            {
+                result.TagConflicts.Add(
+                    $"Tags mismatch: missing={missingTags.Count}, extra={extraTags.Count}"
+                );
+                result.MissingCommands.Add($"SYNC_TAGS");
+            }
+
+            stopwatch.Stop();
+
+            // Create audit log entry
+            var auditLog = new DeviceReconciliationAuditLog
+            {
+                Id = Guid.NewGuid(),
+                DeviceId = deviceId,
+                EnrollmentId = device.EnrollmentId,
+                ReconciliationTimestamp = startTime.DateTime,
+                ReconciliationType = ReconciliationType.Manual,
+                ReconciliationStatus = DetermineReconciliationStatus(result),
+                DesiredPolicyIdsString = desiredState!.CurrentPolicyId.ToString(),
+                ObservedPolicyIdsString = observedState.ObservedPolicyId?.ToString() ?? string.Empty,
+                DesiredReleaseId = GetFirstReleaseId(desiredState!.DesiredReleaseIds),
+                ObservedReleaseId = GetFirstReleaseId(observedState.ObservedReleaseIds),
+                DesiredTagIdsString = string.Join(";", desiredState!.AssignedTagIds),
+                ObservedTagIdsString = string.Join(";", observedState.ObservedTagIds),
+                ConflictTypesString = (!result.IsInSync && (result.PolicyConflicts.Any() || result.ReleaseConflicts.Any() || result.TagConflicts.Any())) 
+                    ? string.Join(",", GetConflictTypes(result)) 
+                    : string.Empty,
+                ConflictDetails = string.Join("; ", result.PolicyConflicts.Concat(result.ReleaseConflicts).Concat(result.TagConflicts)),
+                DurationMilliseconds = stopwatch.ElapsedMilliseconds,
+                ErrorMessage = null!,
+                GeneratedCommandIdsString = string.Join(";", result.MissingCommands),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.Set<DeviceReconciliationAuditLog>().Add(auditLog);
+            await _db.SaveChangesAsync(ct);
+
+            return result;
+        }
+        catch (Exception ex)
         {
-            result.ReleaseConflicts.Add(
-                $"Extra releases: {string.Join(", ", extraReleases)}"
-            );
+            stopwatch.Stop();
+
+            // Log the error as an audit entry
+            var device = await _db.Set<Device>()
+                .FirstOrDefaultAsync(d => d.DeviceId == deviceId, ct);
+
+            if (device != null)
+            {
+                var errorAuditLog = new DeviceReconciliationAuditLog
+                {
+                    Id = Guid.NewGuid(),
+                    DeviceId = deviceId,
+                    EnrollmentId = device.EnrollmentId,
+                    ReconciliationTimestamp = startTime.DateTime,
+                    ReconciliationType = ReconciliationType.Manual,
+                    ReconciliationStatus = ReconciliationStatus.Error,
+                    DesiredPolicyIdsString = string.Empty,
+                    ObservedPolicyIdsString = string.Empty,
+                    DesiredTagIdsString = string.Empty,
+                    ObservedTagIdsString = string.Empty,
+                    ConflictTypesString = string.Empty,
+                    ConflictDetails = string.Empty,
+                    DurationMilliseconds = stopwatch.ElapsedMilliseconds,
+                    ErrorMessage = ex.Message,
+                    GeneratedCommandIdsString = string.Empty,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _db.Set<DeviceReconciliationAuditLog>().Add(errorAuditLog);
+                await _db.SaveChangesAsync(ct);
+            }
+
+            throw;
         }
+#pragma warning restore CS8601
+    }
 
-        // Check tag conflicts
-        var missingTags = desiredState.AssignedTagIds
-            .Except(observedState.ObservedTagIds)
-            .ToList();
+    /// <summary>
+    /// Determine the overall reconciliation status based on conflicts.
+    /// </summary>
+    private static ReconciliationStatus DetermineReconciliationStatus(ReconciliationResult result)
+    {
+        if (result.IsInSync)
+            return ReconciliationStatus.InSync;
 
-        var extraTags = observedState.ObservedTagIds
-            .Except(desiredState.AssignedTagIds)
-            .ToList();
+        if (result.PolicyConflicts.Any() || result.ReleaseConflicts.Any())
+            return ReconciliationStatus.ConflictsDetected;
 
-        if (missingTags.Any() || extraTags.Any())
-        {
-            result.TagConflicts.Add(
-                $"Tags mismatch: missing={missingTags.Count}, extra={extraTags.Count}"
-            );
-            result.MissingCommands.Add($"SYNC_TAGS");
-        }
+        return ReconciliationStatus.OutOfSync;
+    }
 
-        return result;
+    /// <summary>
+    /// Extract conflict types from reconciliation result.
+    /// </summary>
+    private static List<StateChangeType> GetConflictTypes(ReconciliationResult result)
+    {
+        var types = new List<StateChangeType>();
+
+        if (result.PolicyConflicts.Any())
+            types.Add(StateChangeType.PolicyAssigned);
+
+        if (result.ReleaseConflicts.Any())
+            types.Add(StateChangeType.ReleaseAssigned);
+
+        if (result.TagConflicts.Any())
+            types.Add(StateChangeType.TagAssigned);
+
+        return types;
+    }
+
+    /// <summary>
+    /// Helper to safely get first release ID from list, returning null if empty or default.
+    /// </summary>
+    private static Guid? GetFirstReleaseId(List<Guid> releaseIds)
+    {
+        if (releaseIds == null || releaseIds.Count == 0)
+            return null;
+
+        var first = releaseIds.FirstOrDefault();
+        return first != Guid.Empty ? first : null;
     }
 
     /// <summary>

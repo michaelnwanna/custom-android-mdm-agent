@@ -229,4 +229,92 @@ public class DeviceStateController : ControllerBase
             );
         }
     }
+
+    /// <summary>
+    /// Get reconciliation audit history for a device.
+    /// 
+    /// Returns all reconciliation events ordered by most recent first.
+    /// Supports pagination via limit and offset parameters.
+    /// 
+    /// Endpoint: GET /api/v1/devices/{enrollmentId}/reconciliation-history
+    /// </summary>
+    /// <param name="enrollmentId">The device's enrollment ID.</param>
+    /// <param name="limit">Maximum number of records to return (default 50, max 500).</param>
+    /// <param name="offset">Number of records to skip (default 0).</param>
+    /// <returns>List of audit log entries.</returns>
+    [HttpGet("{enrollmentId:guid}/reconciliation-history")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetReconciliationHistory(Guid enrollmentId, [FromQuery] int limit = 50, [FromQuery] int offset = 0)
+    {
+        // Clamp limit to reasonable range
+        limit = Math.Min(Math.Max(limit, 1), 500);
+        offset = Math.Max(offset, 0);
+
+        // Verify device exists
+        var device = await _context.Devices
+            .FirstOrDefaultAsync(d => d.EnrollmentId == enrollmentId);
+        
+        if (device == null)
+        {
+            return NotFound(new { error = $"Device with enrollment ID {enrollmentId} not found." });
+        }
+
+        try
+        {
+            var auditLogs = await _context.DeviceReconciliationAuditLogs
+                .Where(a => a.DeviceId == device.DeviceId)
+                .OrderByDescending(a => a.ReconciliationTimestamp)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
+            var dtos = auditLogs.Select(DeviceReconciliationAuditLogDto.FromDomain).ToList();
+
+            return Ok(new { count = dtos.Count, offset = offset, limit = limit, records = dtos });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { error = "Failed to retrieve reconciliation history.", detail = ex.Message }
+            );
+        }
+    }
+
+    /// <summary>
+    /// Get a specific reconciliation audit log entry by ID.
+    /// 
+    /// Endpoint: GET /api/v1/devices/reconciliation-history/{auditLogId}
+    /// </summary>
+    /// <param name="auditLogId">The audit log entry ID.</param>
+    /// <returns>The audit log entry, or 404 if not found.</returns>
+    [HttpGet("reconciliation-history/{auditLogId:guid}", Name = "GetReconciliationAuditLog")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetReconciliationAuditLog(Guid auditLogId)
+    {
+        try
+        {
+            var auditLog = await _context.DeviceReconciliationAuditLogs
+                .FirstOrDefaultAsync(a => a.Id == auditLogId);
+
+            if (auditLog == null)
+            {
+                return NotFound(new { error = $"Audit log entry {auditLogId} not found." });
+            }
+
+            var dto = DeviceReconciliationAuditLogDto.FromDomain(auditLog);
+            return Ok(dto);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { error = "Failed to retrieve audit log entry.", detail = ex.Message }
+            );
+        }
+    }
 }
