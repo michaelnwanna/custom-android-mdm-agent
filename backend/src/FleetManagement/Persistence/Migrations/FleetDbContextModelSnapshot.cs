@@ -150,6 +150,73 @@ namespace FleetManagement.Persistence.Migrations
                     b.ToTable("Devices", (string)null);
                 });
 
+            modelBuilder.Entity("FleetManagement.Devices.DeviceHealthAlert", b =>
+                {
+                    b.Property<Guid>("AlertId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("alert_id");
+
+                    b.Property<int>("AlertType")
+                        .HasColumnType("integer")
+                        .HasColumnName("alert_type");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("device_id");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("message");
+
+                    b.Property<string>("ResolutionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("resolution_reason");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("resolved_at");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer")
+                        .HasColumnName("severity");
+
+                    b.Property<Guid?>("TelemetryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("telemetry_id");
+
+                    b.HasKey("AlertId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_device_health_alerts_created");
+
+                    b.HasIndex("ResolvedAt")
+                        .HasDatabaseName("ix_device_health_alerts_resolved");
+
+                    b.HasIndex("TelemetryId");
+
+                    b.HasIndex("AlertType", "ResolvedAt")
+                        .HasDatabaseName("ix_device_health_alerts_type_active");
+
+                    b.HasIndex("DeviceId", "CreatedAt")
+                        .HasDatabaseName("ix_device_health_alerts_device_created");
+
+                    b.HasIndex("DeviceId", "ResolvedAt")
+                        .HasDatabaseName("ix_device_health_alerts_device_active");
+
+                    b.HasIndex("Severity", "ResolvedAt")
+                        .HasDatabaseName("ix_device_health_alerts_severity_active");
+
+                    b.ToTable("device_health_alerts", (string)null);
+                });
+
             modelBuilder.Entity("FleetManagement.Devices.DeviceReconciliationAuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -345,6 +412,93 @@ namespace FleetManagement.Persistence.Migrations
                         .HasDatabaseName("IX_DeviceTagAssignments_Device_Tag_Active");
 
                     b.ToTable("DeviceTagAssignments", (string)null);
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTelemetry", b =>
+                {
+                    b.Property<Guid>("TelemetryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("telemetry_id");
+
+                    b.Property<long>("AvailableMemoryMb")
+                        .HasColumnType("bigint")
+                        .HasColumnName("available_memory_mb");
+
+                    b.Property<int>("BatteryLevel")
+                        .HasColumnType("integer")
+                        .HasColumnName("battery_level");
+
+                    b.Property<int?>("CellularSignalStrengthDbm")
+                        .HasColumnType("integer")
+                        .HasColumnName("cellular_signal_strength_dbm");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("integer")
+                        .HasColumnName("connectivity");
+
+                    b.Property<int>("CpuUsagePercent")
+                        .HasColumnType("integer")
+                        .HasColumnName("cpu_usage_percent");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("device_id");
+
+                    b.Property<bool>("IsCharging")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_charging");
+
+                    b.Property<DateTimeOffset>("LastCheckInAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_check_in_at");
+
+                    b.Property<DateTimeOffset>("SnapshotTakenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("snapshot_taken_at");
+
+                    b.Property<long>("StorageFreeMb")
+                        .HasColumnType("bigint")
+                        .HasColumnName("storage_free_mb");
+
+                    b.Property<long>("StorageTotalMb")
+                        .HasColumnType("bigint")
+                        .HasColumnName("storage_total_mb");
+
+                    b.Property<long>("StorageUsedMb")
+                        .HasColumnType("bigint")
+                        .HasColumnName("storage_used_mb");
+
+                    b.Property<long>("TotalMemoryMb")
+                        .HasColumnType("bigint")
+                        .HasColumnName("total_memory_mb");
+
+                    b.Property<int?>("WifiSignalStrengthDbm")
+                        .HasColumnType("integer")
+                        .HasColumnName("wifi_signal_strength_dbm");
+
+                    b.HasKey("TelemetryId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_device_telemetry_created");
+
+                    b.HasIndex("DeviceId", "BatteryLevel")
+                        .HasDatabaseName("ix_device_telemetry_battery");
+
+                    b.HasIndex("DeviceId", "Connectivity")
+                        .HasDatabaseName("ix_device_telemetry_connectivity");
+
+                    b.HasIndex("DeviceId", "CreatedAt")
+                        .HasDatabaseName("ix_device_telemetry_device_created");
+
+                    b.HasIndex("DeviceId", "SnapshotTakenAt")
+                        .HasDatabaseName("ix_device_telemetry_device_snapshot");
+
+                    b.ToTable("device_telemetry", (string)null);
                 });
 
             modelBuilder.Entity("FleetManagement.Devices.ReconciliationCommand", b =>
@@ -808,6 +962,26 @@ namespace FleetManagement.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FleetManagement.Devices.DeviceHealthAlert", b =>
+                {
+                    b.HasOne("FleetManagement.Devices.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_device_health_alerts_device");
+
+                    b.HasOne("FleetManagement.Devices.DeviceTelemetry", "Telemetry")
+                        .WithMany()
+                        .HasForeignKey("TelemetryId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_device_health_alerts_telemetry");
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Telemetry");
+                });
+
             modelBuilder.Entity("FleetManagement.Devices.DeviceTagAssignment", b =>
                 {
                     b.HasOne("FleetManagement.Devices.Device", "Device")
@@ -825,6 +999,18 @@ namespace FleetManagement.Persistence.Migrations
                     b.Navigation("Device");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("FleetManagement.Devices.DeviceTelemetry", b =>
+                {
+                    b.HasOne("FleetManagement.Devices.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_device_telemetry_device");
+
+                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("FleetManagement.Enrollment.EnrollmentProvisioningAudit", b =>

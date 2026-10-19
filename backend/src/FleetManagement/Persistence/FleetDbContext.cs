@@ -25,6 +25,8 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
     public DbSet<DesiredDeviceState> DesiredDeviceStates => Set<DesiredDeviceState>();
     public DbSet<DeviceReconciliationAuditLog> DeviceReconciliationAuditLogs => Set<DeviceReconciliationAuditLog>();
     public DbSet<ReconciliationCommand> ReconciliationCommands => Set<ReconciliationCommand>();
+    public DbSet<DeviceTelemetry> DeviceTelemetries => Set<DeviceTelemetry>();
+    public DbSet<DeviceHealthAlert> DeviceHealthAlerts => Set<DeviceHealthAlert>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -158,6 +160,11 @@ public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : D
         modelBuilder.ApplyConfiguration(new DesiredDeviceStateConfiguration());
         modelBuilder.ApplyConfiguration(new DeviceReconciliationAuditLogConfiguration());
         modelBuilder.ApplyConfiguration(new ReconciliationCommandConfiguration());
+        
+        // Apply telemetry configurations
+        var telemetryConfig = new TelemetryConfiguration();
+        modelBuilder.ApplyConfiguration<DeviceTelemetry>(telemetryConfig);
+        modelBuilder.ApplyConfiguration<DeviceHealthAlert>(telemetryConfig);
     }
 }
 
