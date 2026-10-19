@@ -1,0 +1,2 @@
+import{_ as s}from"./_plugin-vue_export-helper-c27b6911.js";import{o,c as a,b as t}from"./vue-vendor-cd84a1a1.js";const r={},n={class:"space-y-6"};function c(i,e){return o(),a("div",n,[...e[0]||(e[0]=[t("h1",{class:"text-3xl font-bold text-gray-900 dark:text-white"},"Settings",-1),t("div",{class:"bg-white dark:bg-gray-800 rounded-lg shadow p-6"},[t("p",{class:"text-gray-600 dark:text-gray-400"},"Settings view - Coming soon")],-1)])])}const l=s(r,[["render",c]]);export{l as default};
+//# sourceMappingURL=SettingsView-bfcaaac0.js.map

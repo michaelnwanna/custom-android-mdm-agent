@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #2563EB;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #06B6D4;
+}
+
+body {
+  @apply font-sans text-gray-900 dark:text-gray-100;
+}
+
+a {
+  @apply text-primary hover:underline;
+}
+
+button {
+  @apply transition-colors duration-200;
+}
+
+.container {
+  @apply max-w-7xl;
+}

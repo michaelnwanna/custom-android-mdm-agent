@@ -1,0 +1,42 @@
+{
+  "name": "mdm-console",
+  "private": true,
+  "version": "2.10.0",
+  "type": "module",
+  "description": "MDM Management Console - Real-time device fleet monitoring",
+  "author": "MDM Team",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4",
+    "pinia": "^2.1.4",
+    "axios": "^1.5.0",
+    "@microsoft/signalr": "^8.0.0",
+    "chart.js": "^4.4.0",
+    "vue-chartjs": "^5.2.0",
+    "@headlessui/vue": "^1.7.15",
+    "tailwindcss": "^3.3.3",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "vite": "^4.4.9",
+    "vue-tsc": "^1.8.19",
+    "typescript": "~5.1.6",
+    "@types/node": "^20.6.2",
+    "eslint": "^8.49.0",
+    "@vue/eslint-config-typescript": "^11.0.3",
+    "prettier": "^3.0.3",
+    "vitest": "^0.34.4",
+    "@vitest/ui": "^0.34.4"
+  }
+}
