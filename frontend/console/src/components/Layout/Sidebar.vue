@@ -48,6 +48,7 @@ const navigationItems = ref([
   { name: 'Devices', path: '/devices', icon: 'svg-icon-devices' },
   { name: 'Alerts', path: '/alerts', icon: 'svg-icon-alerts' },
   { name: 'Policies', path: '/policies', icon: 'svg-icon-policies' },
+  { name: 'Compliance', path: '/compliance-report', icon: 'svg-icon-compliance' },
   { name: 'Releases', path: '/releases', icon: 'svg-icon-releases' },
   { name: 'Tags', path: '/tags', icon: 'svg-icon-tags' }
 ])

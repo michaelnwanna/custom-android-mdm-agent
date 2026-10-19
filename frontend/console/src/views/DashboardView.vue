@@ -34,6 +34,17 @@
       />
     </div>
 
+    <!-- Alerts & Policies Summary Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <AlertsSummaryCard />
+      <PoliciesSummaryCard />
+    </div>
+
+    <!-- Alert Trend Chart -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <AlertTrendChart :is-dark-mode="isDarkMode" />
+    </div>
+
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Battery Distribution Chart -->
@@ -59,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useTelemetryStore } from '@stores/telemetryStore'
 import { useAlertStore } from '@stores/alertStore'
 import MetricCard from '@components/Dashboard/MetricCard.vue'
@@ -68,12 +79,16 @@ import BatteryChart from '@components/Charts/BatteryChart.vue'
 import StorageChart from '@components/Charts/StorageChart.vue'
 import AtRiskDevices from '@components/Dashboard/AtRiskDevices.vue'
 import RecentAlerts from '@components/Dashboard/RecentAlerts.vue'
+import AlertsSummaryCard from '@components/AlertsSummaryCard.vue'
+import PoliciesSummaryCard from '@components/PoliciesSummaryCard.vue'
+import AlertTrendChart from '@components/AlertTrendChart.vue'
 
 const telemetryStore = useTelemetryStore()
 const alertStore = useAlertStore()
 
 const metrics = computed(() => telemetryStore.fleetMetrics)
 const healthScore = computed(() => telemetryStore.healthScore)
+const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 
 onMounted(async () => {
   await telemetryStore.fetchFleetMetrics()

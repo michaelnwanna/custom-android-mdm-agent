@@ -51,6 +51,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/compliance-report',
+    name: 'ComplianceReport',
+    component: () => import('@views/ComplianceReportView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/releases',
     name: 'Releases',
     component: () => import('@views/ReleasesView.vue'),

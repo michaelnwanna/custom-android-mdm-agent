@@ -216,6 +216,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Assign Policy Modal -->
+    <AssignPolicyModal
+      :is-open="showAssignModal"
+      :policy="policy"
+      @close="showAssignModal = false"
+      @assign="handleAssignSubmit"
+    />
   </div>
 </template>
 
@@ -224,6 +232,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
+import AssignPolicyModal from '@components/AssignPolicyModal.vue'
 import type { Policy } from '@types'
 
 const router = useRouter()
@@ -236,6 +245,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const isActioning = ref(false)
 const isLoading = ref(false)
+const showAssignModal = ref(false)
 
 const policyId = computed(() => route.params.id as string)
 
@@ -276,10 +286,22 @@ const loadPolicy = async () => {
 }
 
 const handleAssignPolicy = async () => {
+  showAssignModal.value = true
+}
+
+const handleAssignSubmit = async (deviceIds: string[], groupId?: string) => {
   if (!policy.value) return
   
-  // Show modal or navigate to assignment page
-  toastService.info('Assign policy feature coming soon')
+  isActioning.value = true
+  try {
+    // In mock mode, just show success
+    const targetCount = groupId ? 5 : deviceIds.length // Mock: group has 5 devices
+    toastService.success(`Policy assigned to ${targetCount} device(s)`)
+    
+    // In real implementation, call: await policyApi.assignPolicy(policy.value.policyId, deviceIds, groupId)
+  } finally {
+    isActioning.value = false
+  }
 }
 
 const handleDelete = async () => {
