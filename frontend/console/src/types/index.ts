@@ -106,6 +106,38 @@ export interface Tag {
   deviceCount: number
 }
 
+// Authentication types
+export interface AuthToken {
+  accessToken: string
+  refreshToken: string
+  expiresIn: number
+  tokenType: string
+}
+
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  role: 'Admin' | 'Manager' | 'User'
+  organizationId: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
+export interface LoginResponse {
+  token: AuthToken
+  user: AuthUser
+}
+
+export interface AuthError {
+  code: string
+  message: string
+  details?: string
+}
+
 // Pagination
 export interface PaginatedResult<T> {
   items: T[]
