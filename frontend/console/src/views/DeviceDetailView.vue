@@ -4,7 +4,30 @@
     <div class="flex items-center justify-between">
       <div>
         <router-link to="/devices" class="text-primary hover:underline text-sm mb-2">← Back to Devices</router-link>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mt-2">Device Details</h1>
+        <div class="flex items-center gap-3 mt-2">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Device Details</h1>
+          <!-- Device Online Status Badge -->
+          <span
+            v-if="deviceOnlineStatus !== 'unknown'"
+            :class="[
+              'inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold',
+              deviceOnlineStatus === 'online'
+                ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+            ]"
+          >
+            <span :class="['w-2 h-2 rounded-full', deviceOnlineStatus === 'online' ? 'bg-green-500' : 'bg-red-500']" />
+            {{ deviceOnlineStatus === 'online' ? 'Online' : 'Offline' }}
+          </span>
+          <!-- SignalR Connection Status -->
+          <span
+            v-if="signalRConnected"
+            class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+          >
+            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+            Live
+          </span>
+        </div>
       </div>
       <div class="flex gap-2">
         <button
@@ -352,6 +375,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useDeviceStore } from '@stores/deviceStore'
 import * as deviceApi from '@/api/deviceApi'
 import toastService from '@services/toastService'
+import signalRService from '@services/signalRService'
 import TelemetryCard from '@components/TelemetryCard.vue'
 import type { Device, DeviceTelemetry } from '@types'
 
@@ -371,6 +395,8 @@ const telemetryRefreshTimer = ref<NodeJS.Timer | null>(null)
 const deviceAlerts = ref<any[]>([])
 const commandHistory = ref<any[]>([])
 const executing = ref(false)
+const signalRConnected = ref(false)
+const deviceOnlineStatus = ref<'online' | 'offline' | 'unknown'>('unknown')
 
 // Computed
 const deviceId = computed(() => route.params.id as string)
@@ -623,9 +649,68 @@ onMounted(async () => {
   if (telemetryAutoRefresh.value) {
     startTelemetryAutoRefresh()
   }
+  
+  // Initialize SignalR connection for real-time updates
+  initializeSignalR()
 })
 
 onUnmounted(() => {
   stopTelemetryAutoRefresh()
+  // Unsubscribe from device-specific updates
+  signalRService.unsubscribeFromDevice(deviceId.value)
 })
+
+// SignalR Setup
+const initializeSignalR = async () => {
+  // Only connect if not already connected
+  if (signalRService.isConnected()) {
+    subscribeToDeviceUpdates()
+    return
+  }
+
+  try {
+    await signalRService.connect({
+      onDeviceTelemetryUpdate: (devId: string, tel: DeviceTelemetry) => {
+        if (devId === deviceId.value && telemetryAutoRefresh.value) {
+          // Keep history of last 20 readings
+          if (telemetry.value) {
+            telemetryHistory.value.unshift(telemetry.value)
+            if (telemetryHistory.value.length > 20) {
+              telemetryHistory.value.pop()
+            }
+          }
+          telemetry.value = tel
+        }
+      },
+      onDeviceOnlineStatusChanged: (devId: string, isOnline: boolean) => {
+        if (devId === deviceId.value) {
+          deviceOnlineStatus.value = isOnline ? 'online' : 'offline'
+          const message = isOnline 
+            ? '🟢 Device is now online' 
+            : '🔴 Device is now offline'
+          toastService.info(message)
+        }
+      },
+      onConnectionStateChanged: (state) => {
+        signalRConnected.value = state === 'connected'
+        console.log(`SignalR connection state: ${state}`)
+      },
+    })
+
+    signalRConnected.value = true
+    subscribeToDeviceUpdates()
+  } catch (err) {
+    console.error('Failed to initialize SignalR:', err)
+    // Gracefully continue without real-time updates
+  }
+}
+
+const subscribeToDeviceUpdates = async () => {
+  try {
+    await signalRService.subscribeToDevice(deviceId.value)
+    console.log(`Subscribed to updates for device ${deviceId.value}`)
+  } catch (err) {
+    console.error('Failed to subscribe to device updates:', err)
+  }
+}
 </script>

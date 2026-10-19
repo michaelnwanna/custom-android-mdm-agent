@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, HubConnectionState, HubConnection } from '@microsoft/signalr';
-import type { Device, HealthAlert, FleetHealthMetrics } from '@types';
+import type { Device, HealthAlert, FleetHealthMetrics, DeviceTelemetry } from '@types';
 
 export type ConnectionState = 'connected' | 'connecting' | 'disconnected' | 'failed';
 
@@ -7,7 +7,9 @@ export interface SignalRServiceCallbacks {
   onFleetMetricsUpdate?: (metrics: FleetHealthMetrics) => void;
   onAlertReceived?: (alert: HealthAlert) => void;
   onDeviceStatusChanged?: (device: Device) => void;
+  onDeviceTelemetryUpdate?: (deviceId: string, telemetry: DeviceTelemetry) => void;
   onConnectionStateChanged?: (state: ConnectionState) => void;
+  onDeviceOnlineStatusChanged?: (deviceId: string, isOnline: boolean) => void;
 }
 
 class SignalRService {
@@ -18,7 +20,9 @@ class SignalRService {
   private reconnectDelay = 1000; // 1 second
   private useMockData = true; // Use mock hub when backend not available
   private mockDataInterval: ReturnType<typeof setInterval> | null = null;
+  private mockTelemetryIntervals: Map<string, ReturnType<typeof setInterval>> = new Map();
   private callbacks: SignalRServiceCallbacks = {};
+  private subscribedDeviceIds: Set<string> = new Set();
 
   async connect(callbacks: SignalRServiceCallbacks = {}): Promise<void> {
     this.callbacks = callbacks;
@@ -32,7 +36,7 @@ class SignalRService {
 
     try {
       this.connection = new HubConnectionBuilder()
-        .withUrl('/signalr', {
+        .withUrl(import.meta.env.VITE_API_URL?.replace('http', 'ws') + '/deviceHub', {
           skipNegotiation: false,
           transport: 1, // WebSockets
         })
@@ -56,6 +60,17 @@ class SignalRService {
         this.callbacks.onDeviceStatusChanged?.(device);
       });
 
+      // New device-specific event handlers
+      this.connection.on('ReceiveDeviceTelemetry', (deviceId: string, telemetry: DeviceTelemetry) => {
+        console.log(`📊 Device ${deviceId} telemetry update:`, telemetry);
+        this.callbacks.onDeviceTelemetryUpdate?.(deviceId, telemetry);
+      });
+
+      this.connection.on('ReceiveDeviceOnlineStatusChange', (deviceId: string, isOnline: boolean) => {
+        console.log(`🟢 Device ${deviceId} online status: ${isOnline ? 'ONLINE' : 'OFFLINE'}`);
+        this.callbacks.onDeviceOnlineStatusChanged?.(deviceId, isOnline);
+      });
+
       // Connection lifecycle events
       this.connection.onreconnecting(() => {
         console.log('🔄 SignalR: Attempting to reconnect...');
@@ -66,6 +81,8 @@ class SignalRService {
         console.log('✅ SignalR: Reconnected successfully');
         this.reconnectAttempts = 0;
         this.setConnectionState('connected');
+        // Re-subscribe to devices after reconnection
+        this.resubscribeDevices();
       });
 
       this.connection.onclose(() => {
@@ -146,6 +163,111 @@ class SignalRService {
     }
   }
 
+  /**
+   * Subscribe to device-specific updates (telemetry, status changes)
+   * Sends a subscription request to the server via SignalR
+   */
+  async subscribeToDevice(deviceId: string): Promise<void> {
+    if (this.subscribedDeviceIds.has(deviceId)) {
+      return; // Already subscribed
+    }
+
+    this.subscribedDeviceIds.add(deviceId);
+    console.log(`📡 Subscribing to device ${deviceId} updates`);
+
+    if (this.useMockData) {
+      // Start mock telemetry stream for this device
+      this.startMockDeviceTelemetry(deviceId);
+    } else if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('SubscribeToDevice', deviceId);
+      } catch (error) {
+        console.error(`Failed to subscribe to device ${deviceId}:`, error);
+        this.subscribedDeviceIds.delete(deviceId);
+      }
+    }
+  }
+
+  /**
+   * Unsubscribe from device-specific updates
+   */
+  async unsubscribeFromDevice(deviceId: string): Promise<void> {
+    if (!this.subscribedDeviceIds.has(deviceId)) {
+      return;
+    }
+
+    this.subscribedDeviceIds.delete(deviceId);
+    console.log(`📡 Unsubscribing from device ${deviceId} updates`);
+
+    if (this.useMockData) {
+      // Stop mock telemetry stream
+      const interval = this.mockTelemetryIntervals.get(deviceId);
+      if (interval) {
+        clearInterval(interval);
+        this.mockTelemetryIntervals.delete(deviceId);
+      }
+    } else if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('UnsubscribeFromDevice', deviceId);
+      } catch (error) {
+        console.error(`Failed to unsubscribe from device ${deviceId}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Start mock telemetry data stream for a device
+   */
+  private startMockDeviceTelemetry(deviceId: string): void {
+    if (this.mockTelemetryIntervals.has(deviceId)) {
+      return; // Already streaming
+    }
+
+    const interval = setInterval(() => {
+      const mockTelemetry: DeviceTelemetry = {
+        deviceId,
+        batteryPercentage: Math.max(5, Math.floor(Math.random() * 100 - Math.random() * 10)),
+        batteryHealth: ['Good', 'Fair', 'Poor'][Math.floor(Math.random() * 3)],
+        storageUsageMB: Math.floor(Math.random() * 40000) + 10000,
+        totalStorageMB: 64000,
+        memoryUsageMB: Math.floor(Math.random() * 3000) + 1000,
+        totalMemoryMB: 8000,
+        cpuUsagePercentage: Math.floor(Math.random() * 80),
+        temperature: Math.floor(Math.random() * 20) + 30,
+        signalStrength: Math.floor(Math.random() * -30) - 50,
+        timestamp: new Date().toISOString(),
+      };
+
+      this.callbacks.onDeviceTelemetryUpdate?.(deviceId, mockTelemetry);
+
+      // Occasionally simulate online/offline status changes
+      if (Math.random() > 0.95) {
+        const isOnline = Math.random() > 0.5;
+        this.callbacks.onDeviceOnlineStatusChanged?.(deviceId, isOnline);
+      }
+    }, 5000); // Every 5 seconds
+
+    this.mockTelemetryIntervals.set(deviceId, interval);
+  }
+
+  /**
+   * Re-subscribe to all devices after reconnection
+   */
+  private async resubscribeDevices(): Promise<void> {
+    const deviceIds = Array.from(this.subscribedDeviceIds);
+    console.log(`🔄 Re-subscribing to ${deviceIds.length} devices after reconnection`);
+
+    for (const deviceId of deviceIds) {
+      if (!this.useMockData && this.connection?.state === HubConnectionState.Connected) {
+        try {
+          await this.connection.invoke('SubscribeToDevice', deviceId);
+        } catch (error) {
+          console.error(`Failed to re-subscribe to device ${deviceId}:`, error);
+        }
+      }
+    }
+  }
+
   private reconnectWithBackoff(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('❌ SignalR: Max reconnection attempts reached, falling back to mock hub');
@@ -194,6 +316,13 @@ class SignalRService {
       this.mockDataInterval = null;
     }
 
+    // Clean up all device telemetry streams
+    this.mockTelemetryIntervals.forEach((interval) => {
+      clearInterval(interval);
+    });
+    this.mockTelemetryIntervals.clear();
+    this.subscribedDeviceIds.clear();
+
     if (this.connection?.state === HubConnectionState.Connected) {
       try {
         await this.connection.stop();
@@ -217,6 +346,14 @@ class SignalRService {
 
   triggerMockDeviceStatusChange(device: Device): void {
     this.callbacks.onDeviceStatusChanged?.(device);
+  }
+
+  triggerMockDeviceTelemetry(deviceId: string, telemetry: DeviceTelemetry): void {
+    this.callbacks.onDeviceTelemetryUpdate?.(deviceId, telemetry);
+  }
+
+  triggerMockDeviceOnlineStatusChange(deviceId: string, isOnline: boolean): void {
+    this.callbacks.onDeviceOnlineStatusChanged?.(deviceId, isOnline);
   }
 }
 
