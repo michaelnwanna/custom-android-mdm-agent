@@ -249,12 +249,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import ComplianceGauge from '@components/ComplianceGauge.vue'
 import ComplianceChart from '@components/ComplianceChart.vue'
 import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
 import type { Policy } from '@types'
+import {
+  buildComplianceCsv,
+  buildCompliancePrintHtml,
+  formatComplianceDate
+} from '@/utils/complianceReportExport'
 
 interface ComplianceDevice {
   deviceId: string
@@ -287,14 +292,18 @@ const mockDevices: ComplianceDevice[] = Array.from({ length: 45 }, (_, i) => ({
 }))
 
 const filteredDevices = computed(() => {
+  const selectedPolicyName = policies.value.find(policy => policy.policyId === selectedPolicy.value)?.name
   return mockDevices.filter(device => {
-    if (selectedPolicy.value && device.policyName !== selectedPolicy.value) return false
+    if (selectedPolicy.value && device.policyName !== selectedPolicyName) return false
     if (selectedStatus.value && device.status !== selectedStatus.value) return false
+    const checkedDate = new Date(device.lastChecked).toISOString().slice(0, 10)
+    if (startDate.value && checkedDate < startDate.value) return false
+    if (endDate.value && checkedDate > endDate.value) return false
     return true
   })
 })
 
-const totalDevices = computed(() => mockDevices.length)
+const totalDevices = computed(() => filteredDevices.value.length)
 const compliantDevices = computed(() => filteredDevices.value.filter(d => d.status === 'compliant').length)
 const nonCompliantDevices = computed(() => filteredDevices.value.filter(d => d.status === 'non-compliant').length)
 const complianceRate = computed(() => {
@@ -306,6 +315,10 @@ const totalPages = computed(() => Math.ceil(filteredDevices.value.length / items
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
 const endIndex = computed(() => startIndex.value + itemsPerPage)
 const paginatedDevices = computed(() => filteredDevices.value.slice(startIndex.value, endIndex.value))
+
+watch([startDate, endDate, selectedPolicy, selectedStatus], () => {
+  currentPage.value = 1
+})
 
 const complianceRateClass = computed(() => {
   if (complianceRate.value >= 90) return 'text-green-600 dark:text-green-400'
@@ -341,40 +354,48 @@ const getComplianceBarClass = (compliance: number) => {
   return 'bg-red-600 dark:bg-red-500'
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-}
-
 const exportReport = (format: 'csv' | 'pdf') => {
+  const reportDate = new Date().toISOString().split('T')[0]
   if (format === 'csv') {
-    const headers = ['Device ID', 'Device Name', 'Policy', 'Status', 'Compliance', 'Last Checked']
-    const rows = paginatedDevices.value.map(d => [
-      d.deviceId,
-      d.deviceName,
-      d.policyName,
-      d.status,
-      d.compliance + '%',
-      formatDate(d.lastChecked)
-    ])
-    
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n')
+    const csv = buildComplianceCsv(filteredDevices.value, formatComplianceDate)
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `compliance-report-${new Date().toISOString().split('T')[0]}.csv`
+    a.download = `compliance-report-${reportDate}.csv`
     a.click()
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 1000)
     toastService.success('Report exported as CSV')
   } else {
-    toastService.info('PDF export coming soon')
+    const reportWindow = window.open('', '_blank')
+    if (!reportWindow) {
+      toastService.error('Unable to open the print window. Allow pop-ups and try again.')
+      return
+    }
+
+    const html = buildCompliancePrintHtml(filteredDevices.value, {
+      complianceRate: complianceRate.value,
+      compliantDevices: compliantDevices.value,
+      nonCompliantDevices: nonCompliantDevices.value,
+      totalDevices: totalDevices.value,
+      startDate: startDate.value,
+      endDate: endDate.value
+    }, formatComplianceDate)
+    reportWindow.document.open()
+    reportWindow.document.write(html)
+    reportWindow.document.close()
+    reportWindow.setTimeout(() => {
+      reportWindow.focus()
+      reportWindow.print()
+    }, 250)
+    toastService.info('Choose “Save as PDF” in the print dialog to download the report.')
   }
 }
 
+const formatDate = formatComplianceDate
+
 onMounted(async () => {
   const result = await fetchPolicies()
-  if (result.success) {
-    policies.value = result.data || []
-  }
+  if (result.success) policies.value = result.data || []
 })
 </script>
