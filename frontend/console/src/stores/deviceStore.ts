@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import apiClient from '@services/apiClient'
+import { apiClient } from '@/api/client'
+import { API_ENDPOINTS } from '@/api/endpoints'
 import type { Device, PaginatedResult } from '@types'
 
 export const useDeviceStore = defineStore('device', () => {
@@ -44,16 +45,18 @@ export const useDeviceStore = defineStore('device', () => {
     error.value = null
     
     try {
-      // Try real API first
       const response = await apiClient.get<PaginatedResult<Device>>(
-        `/devices?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        API_ENDPOINTS.DEVICES.LIST,
+        {
+          params: { pageNumber, pageSize }
+        }
       )
-      devices.value = response.data.items
+      devices.value = response.items
       pagination.value = {
-        pageNumber: response.data.pageNumber,
-        pageSize: response.data.pageSize,
-        totalCount: response.data.totalCount,
-        hasNextPage: response.data.hasNextPage
+        pageNumber: response.pageNumber,
+        pageSize: response.pageSize,
+        totalCount: response.totalCount,
+        hasNextPage: response.hasNextPage
       }
     } catch (err) {
       // Fallback to mock data
@@ -75,10 +78,11 @@ export const useDeviceStore = defineStore('device', () => {
     error.value = null
     
     try {
-      // Try real API first
-      const response = await apiClient.get<Device>(`/devices/${deviceId}`)
-      selectedDevice.value = response.data
-      return response.data
+      const response = await apiClient.get<Device>(
+        API_ENDPOINTS.DEVICES.GET(deviceId)
+      )
+      selectedDevice.value = response
+      return response
     } catch (err) {
       // Fallback to mock device
       const mockDevices = generateMockDevices(1, 0)

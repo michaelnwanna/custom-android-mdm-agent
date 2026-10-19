@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import apiClient from '@services/apiClient'
+import { apiClient } from '@/api/client'
+import { API_ENDPOINTS } from '@/api/endpoints'
 import type { Release } from '@types'
 
 export interface ReleaseDetails extends Release {
@@ -136,8 +137,8 @@ export const useReleaseStore = defineStore('release', () => {
     error.value = null
     
     try {
-      const response = await apiClient.get<ReleaseDetails[]>('/releases')
-      releases.value = response.data
+      const response = await apiClient.get<ReleaseDetails[]>(API_ENDPOINTS.RELEASES.LIST)
+      releases.value = response
     } catch (err) {
       // Fallback to mock data
       releases.value = generateMockReleases(25)
@@ -149,10 +150,9 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function createRelease(release: Omit<ReleaseDetails, 'releaseId' | 'releaseDate'>) {
     try {
-      // TODO: API endpoint - POST /releases
-      const response = await apiClient.post<ReleaseDetails>('/releases', release)
-      releases.value.push(response.data)
-      return response.data
+      const response = await apiClient.post<ReleaseDetails>(API_ENDPOINTS.RELEASES.CREATE, release)
+      releases.value.push(response)
+      return response
     } catch (err) {
       // Fallback: create locally
       const newRelease: ReleaseDetails = {
@@ -167,8 +167,7 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function updateRelease(releaseId: string, updates: Partial<ReleaseDetails>) {
     try {
-      // TODO: API endpoint - PUT /releases/{releaseId}
-      await apiClient.put(`/releases/${releaseId}`, updates)
+      await apiClient.put(API_ENDPOINTS.RELEASES.UPDATE(releaseId), updates)
       const release = releases.value.find(r => r.releaseId === releaseId)
       if (release) {
         Object.assign(release, updates)
@@ -184,8 +183,7 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function deleteRelease(releaseId: string) {
     try {
-      // TODO: API endpoint - DELETE /releases/{releaseId}
-      await apiClient.delete(`/releases/${releaseId}`)
+      await apiClient.delete(API_ENDPOINTS.RELEASES.DELETE(releaseId))
       const index = releases.value.findIndex(r => r.releaseId === releaseId)
       if (index > -1) {
         releases.value.splice(index, 1)
@@ -201,8 +199,7 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function publishRelease(releaseId: string) {
     try {
-      // TODO: API endpoint - POST /releases/{releaseId}/publish
-      await apiClient.post(`/releases/${releaseId}/publish`, {})
+      await apiClient.post(API_ENDPOINTS.RELEASES.PUBLISH(releaseId), {})
       const release = releases.value.find(r => r.releaseId === releaseId)
       if (release) {
         release.status = 'Published'
@@ -220,8 +217,7 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function deprecateRelease(releaseId: string) {
     try {
-      // TODO: API endpoint - POST /releases/{releaseId}/deprecate
-      await apiClient.post(`/releases/${releaseId}/deprecate`, {})
+      await apiClient.post(API_ENDPOINTS.RELEASES.DEPRECATE(releaseId), {})
       const release = releases.value.find(r => r.releaseId === releaseId)
       if (release) {
         release.status = 'Deprecated'
@@ -237,8 +233,7 @@ export const useReleaseStore = defineStore('release', () => {
 
   async function deployRelease(releaseId: string, targetGroups?: string[]) {
     try {
-      // TODO: API endpoint - POST /releases/{releaseId}/deploy
-      await apiClient.post(`/releases/${releaseId}/deploy`, { targetGroups })
+      await apiClient.post(`${API_ENDPOINTS.RELEASES.GET(releaseId)}/deploy`, { targetGroups })
       const release = releases.value.find(r => r.releaseId === releaseId)
       if (release) {
         release.deploymentStatus = 'In Progress'

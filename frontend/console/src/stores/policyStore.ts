@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import apiClient from '@services/apiClient'
+import { apiClient } from '@/api/client'
+import { API_ENDPOINTS } from '@/api/endpoints'
 import type { Policy } from '@types'
 
 export interface PolicyDetails extends Policy {
@@ -128,8 +129,8 @@ export const usePolicyStore = defineStore('policy', () => {
     error.value = null
     
     try {
-      const response = await apiClient.get<PolicyDetails[]>('/policies')
-      policies.value = response.data
+      const response = await apiClient.get<PolicyDetails[]>(API_ENDPOINTS.POLICIES.LIST)
+      policies.value = response
     } catch (err) {
       // Fallback to mock data
       policies.value = generateMockPolicies(30)
@@ -141,10 +142,9 @@ export const usePolicyStore = defineStore('policy', () => {
 
   async function createPolicy(policy: Omit<PolicyDetails, 'policyId' | 'createdAt' | 'updatedAt'>) {
     try {
-      // TODO: API endpoint - POST /policies
-      const response = await apiClient.post<PolicyDetails>('/policies', policy)
-      policies.value.push(response.data)
-      return response.data
+      const response = await apiClient.post<PolicyDetails>(API_ENDPOINTS.POLICIES.CREATE, policy)
+      policies.value.push(response)
+      return response
     } catch (err) {
       // Fallback: create locally
       const newPolicy: PolicyDetails = {
@@ -160,8 +160,7 @@ export const usePolicyStore = defineStore('policy', () => {
 
   async function updatePolicy(policyId: string, updates: Partial<PolicyDetails>) {
     try {
-      // TODO: API endpoint - PUT /policies/{policyId}
-      await apiClient.put(`/policies/${policyId}`, updates)
+      await apiClient.put(API_ENDPOINTS.POLICIES.UPDATE(policyId), updates)
       const policy = policies.value.find(p => p.policyId === policyId)
       if (policy) {
         Object.assign(policy, updates)
@@ -179,8 +178,7 @@ export const usePolicyStore = defineStore('policy', () => {
 
   async function deletePolicy(policyId: string) {
     try {
-      // TODO: API endpoint - DELETE /policies/{policyId}
-      await apiClient.delete(`/policies/${policyId}`)
+      await apiClient.delete(API_ENDPOINTS.POLICIES.DELETE(policyId))
       const index = policies.value.findIndex(p => p.policyId === policyId)
       if (index > -1) {
         policies.value.splice(index, 1)
@@ -196,8 +194,7 @@ export const usePolicyStore = defineStore('policy', () => {
 
   async function activatePolicy(policyId: string) {
     try {
-      // TODO: API endpoint - POST /policies/{policyId}/activate
-      await apiClient.post(`/policies/${policyId}/activate`, {})
+      await apiClient.post(API_ENDPOINTS.POLICIES.ACTIVATE(policyId), {})
       const policy = policies.value.find(p => p.policyId === policyId)
       if (policy) {
         policy.status = 'Active'
@@ -217,8 +214,7 @@ export const usePolicyStore = defineStore('policy', () => {
 
   async function deactivatePolicy(policyId: string) {
     try {
-      // TODO: API endpoint - POST /policies/{policyId}/deactivate
-      await apiClient.post(`/policies/${policyId}/deactivate`, {})
+      await apiClient.post(API_ENDPOINTS.POLICIES.DEACTIVATE(policyId), {})
       const policy = policies.value.find(p => p.policyId === policyId)
       if (policy) {
         policy.status = 'Draft'

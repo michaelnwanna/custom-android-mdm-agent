@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import apiClient from '@services/apiClient'
+import { apiClient } from '@/api/client'
+import { API_ENDPOINTS } from '@/api/endpoints'
 import type { HealthAlert } from '@types'
 import { useDeviceStore } from './deviceStore'
 
@@ -103,8 +104,8 @@ export const useAlertStore = defineStore('alert', () => {
     error.value = null
     
     try {
-      const response = await apiClient.get<HealthAlert[]>('/alerts')
-      alerts.value = response.data
+      const response = await apiClient.get<HealthAlert[]>(API_ENDPOINTS.ALERTS.LIST)
+      alerts.value = response
     } catch (err) {
       // Fallback to mock data
       alerts.value = generateMockAlerts(50)
@@ -116,8 +117,11 @@ export const useAlertStore = defineStore('alert', () => {
 
   async function fetchDeviceAlerts(deviceId: string) {
     try {
-      const response = await apiClient.get<HealthAlert[]>(`/devices/${deviceId}/health/alerts`)
-      return response.data
+      const response = await apiClient.get<HealthAlert[]>(
+        API_ENDPOINTS.ALERTS.LIST,
+        { params: { deviceId } }
+      )
+      return response
     } catch (err) {
       // Fallback to mock data filtered by device
       return generateMockAlerts(50).filter(a => a.deviceId === deviceId)
@@ -126,8 +130,7 @@ export const useAlertStore = defineStore('alert', () => {
 
   async function resolveAlert(alertId: string) {
     try {
-      // TODO: API endpoint - POST /health/alerts/{alertId}/resolve
-      await apiClient.post(`/health/alerts/${alertId}/resolve`, {})
+      await apiClient.post(API_ENDPOINTS.ALERTS.RESOLVE(alertId), {})
       const alert = alerts.value.find(a => a.alertId === alertId)
       if (alert) {
         alert.resolvedAt = new Date().toISOString()
@@ -143,8 +146,7 @@ export const useAlertStore = defineStore('alert', () => {
 
   async function resolveBulkAlerts(alertIds: string[]) {
     try {
-      // TODO: API endpoint - POST /health/alerts/bulk/resolve
-      await apiClient.post('/health/alerts/bulk/resolve', { alertIds })
+      await apiClient.post(API_ENDPOINTS.ALERTS.BULK_RESOLVE, { alertIds })
       alertIds.forEach(id => {
         const alert = alerts.value.find(a => a.alertId === id)
         if (alert) {
