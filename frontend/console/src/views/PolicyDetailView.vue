@@ -1,18 +1,18 @@
 <template>
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <router-link
-          to="/policies"
-          class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-        >
-          ← Back to Policies
-        </router-link>
-        <span class="text-gray-400">/</span>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          {{ isNew ? 'Create Policy' : 'Policy Details' }}
-        </h1>
+    <!-- Header with Back Button -->
+    <div class="flex items-center gap-4">
+      <button
+        @click="router.back()"
+        class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+      >
+        <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Policy Details</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" v-if="policy">v{{ policy.version || 1 }} · {{ policy.type }}</p>
       </div>
     </div>
 
@@ -24,406 +24,344 @@
       <p class="text-gray-600 dark:text-gray-400">Loading policy...</p>
     </div>
 
-    <!-- Not Found State -->
-    <div v-else-if="!isNew && !policy" class="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+    <!-- Error State -->
+    <div v-else-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <h3 class="font-medium text-red-900 dark:text-red-200">Error loading policy</h3>
+          <p class="text-sm text-red-700 dark:text-red-300 mt-1">{{ error }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Not Found -->
+    <div v-else-if="!policy" class="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
       <svg class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Policy not found</h3>
-      <p class="text-gray-600 dark:text-gray-400">The policy you're looking for doesn't exist.</p>
+      <p class="text-gray-600 dark:text-gray-400">This policy may have been deleted or is no longer available.</p>
     </div>
 
-    <!-- Policy Form -->
-    <div v-else class="space-y-6">
-      <!-- Status & Enforcement -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Status -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-4">Status</h3>
-          <span :class="[
-            'px-4 py-2 rounded-full text-sm font-bold inline-block',
-            policy.status === 'Active' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' :
-            policy.status === 'Draft' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200' :
-            'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-          ]">
-            {{ policy.status }}
-          </span>
-        </div>
+    <!-- Policy Details -->
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Policy Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+          <!-- Header -->
+          <div :class="['px-6 py-4 border-b border-gray-200 dark:border-gray-700', getTypeBgClass(policy.type)]">
+            <div class="flex items-start justify-between">
+              <div>
+                <h2 class="text-2xl font-bold">{{ policy.name }}</h2>
+                <p class="text-sm mt-1">{{ policy.description }}</p>
+              </div>
+              <span :class="['px-4 py-2 rounded-full text-sm font-semibold', getStatusBadgeClass(policy.status)]">
+                {{ policy.status || 'Draft' }}
+              </span>
+            </div>
+          </div>
 
-        <!-- Enforcement Level -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-4">Enforcement Level</label>
-          <select
-            v-model="editForm.enforcementLevel"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="Strict">Strict</option>
-            <option value="Standard">Standard</option>
-            <option value="Permissive">Permissive</option>
-          </select>
-        </div>
+          <!-- Details -->
+          <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Policy ID</p>
+                <p class="font-mono text-sm text-gray-900 dark:text-white break-all">{{ policy.policyId }}</p>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Type</p>
+                <p class="text-sm text-gray-900 dark:text-white font-medium">{{ policy.type || 'Policy' }}</p>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Version</p>
+                <p class="text-sm text-gray-900 dark:text-white font-medium">v{{ policy.version || 1 }}</p>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Created</p>
+                <p class="text-sm text-gray-900 dark:text-white font-medium">{{ formatDate(policy.createdAt) }}</p>
+              </div>
+            </div>
 
-        <!-- Device Count -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-4">Devices Affected</h3>
-          <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ policy.deviceCount }}</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">devices will receive this policy</p>
-        </div>
-      </div>
+            <!-- Deployment Stats -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Deployment</h3>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Devices</p>
+                  <p class="text-2xl font-bold text-blue-900 dark:text-blue-200">{{ policy.deviceCount || 0 }}</p>
+                </div>
+                <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                  <p class="text-xs text-green-600 dark:text-green-400 font-medium">Compliant</p>
+                  <p class="text-2xl font-bold text-green-900 dark:text-green-200">{{ policy.compliantDeviceCount || 0 }}</p>
+                </div>
+                <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                  <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">Compliance</p>
+                  <p :class="['text-2xl font-bold', getComplianceColorClass(policy.compliancePercentage)]">
+                    {{ policy.compliancePercentage || 0 }}%
+                  </p>
+                </div>
+              </div>
 
-      <!-- Policy Information -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Policy Information</h3>
+              <!-- Compliance Bar -->
+              <div class="mt-4 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                <div
+                  :style="{ width: `${policy.compliancePercentage || 0}%` }"
+                  :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage)]"
+                />
+              </div>
+            </div>
 
-        <!-- Policy Name -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Policy Name</label>
-          <input
-            v-model="editForm.name"
-            type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        <!-- Description -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
-          <textarea
-            v-model="editForm.description"
-            rows="4"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        <!-- Policy ID (read-only) -->
-        <div v-if="!isNew">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Policy ID</label>
-          <input
-            :value="policy.policyId"
-            type="text"
-            disabled
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-mono text-sm cursor-not-allowed"
-          />
-        </div>
-      </div>
-
-      <!-- Rules -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-gray-900 dark:text-white">Policy Rules</h3>
-          <button
-            @click="addRule"
-            class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm flex items-center gap-1"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Rule
-          </button>
-        </div>
-
-        <div v-if="editForm.rules?.length === 0" class="text-center py-8">
-          <p class="text-gray-500 dark:text-gray-400 text-sm">No rules defined yet. Add your first rule.</p>
-        </div>
-
-        <div v-else class="space-y-2">
-          <div
-            v-for="(rule, idx) in editForm.rules"
-            :key="idx"
-            class="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
-          >
-            <span class="flex-1 text-gray-900 dark:text-white">{{ rule }}</span>
-            <button
-              @click="removeRule(idx)"
-              class="px-2 py-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm"
-            >
-              Remove
-            </button>
+            <!-- Configuration -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Configuration</h3>
+              <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg font-mono text-sm text-gray-800 dark:text-gray-200 max-h-64 overflow-y-auto">
+                <pre>{{ JSON.stringify(policy.configuration || {}, null, 2) }}</pre>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Add Rule Input -->
-        <div v-if="showAddRule" class="mt-4 flex gap-2">
-          <input
-            v-model="newRule"
-            type="text"
-            placeholder="Enter rule description..."
-            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            @keyup.enter="confirmAddRule"
-          />
-          <button
-            @click="confirmAddRule"
-            class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm"
-          >
-            Add
-          </button>
-          <button
-            @click="cancelAddRule"
-            class="px-3 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition text-sm"
-          >
-            Cancel
-          </button>
+        <!-- Version History -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Version History</h3>
+          </div>
+          <div class="p-6">
+            <div v-if="versionHistory.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-8">
+              No version history available
+            </div>
+            <div v-else class="space-y-2">
+              <div v-for="(version, idx) in versionHistory" :key="idx" class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <span class="font-medium text-gray-900 dark:text-white">v{{ version }}</span>
+                <button
+                  v-if="idx > 0"
+                  @click="handleRollback(version)"
+                  :disabled="isActioning"
+                  class="px-3 py-1 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 disabled:bg-gray-400 transition"
+                >
+                  Rollback
+                </button>
+                <span v-else class="text-xs text-gray-600 dark:text-gray-400">Current</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Target Devices -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Target Devices</h3>
-        <div class="space-y-3">
-          <div class="flex items-center">
-            <input
-              type="radio"
-              id="allDevices"
-              v-model="deviceTargetMode"
-              value="all"
-              class="rounded"
-            />
-            <label for="allDevices" class="ml-2 text-gray-700 dark:text-gray-300">
-              Apply to all devices
-            </label>
-          </div>
-          <div class="flex items-center">
-            <input
-              type="radio"
-              id="selectedDevices"
-              v-model="deviceTargetMode"
-              value="selected"
-              class="rounded"
-            />
-            <label for="selectedDevices" class="ml-2 text-gray-700 dark:text-gray-300">
-              Apply to selected devices only
-            </label>
-          </div>
-        </div>
+      <!-- Sidebar Actions -->
+      <div class="lg:col-span-1">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 sticky top-20 space-y-4">
+          <h3 class="font-semibold text-gray-900 dark:text-white">Actions</h3>
 
-        <div v-if="deviceTargetMode === 'selected'" class="mt-4">
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            {{ editForm.targetDevices?.length || 0 }} device(s) selected
-          </p>
-          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 max-h-60 overflow-y-auto">
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              Device selection UI can be expanded here to show device list and filtering options.
+          <!-- Primary Actions -->
+          <button
+            @click="handleAssignPolicy"
+            :disabled="isActioning"
+            class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition font-medium"
+          >
+            Assign Policy
+          </button>
+
+          <!-- Edit -->
+          <router-link
+            :to="`/policies/${policy.policyId}/edit`"
+            class="block text-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition font-medium"
+          >
+            Edit
+          </router-link>
+
+          <!-- Delete -->
+          <button
+            @click="handleDelete"
+            :disabled="isActioning"
+            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 transition font-medium"
+          >
+            {{ isActioning ? 'Deleting...' : 'Delete Policy' }}
+          </button>
+
+          <!-- Refresh -->
+          <button
+            @click="loadPolicy"
+            :disabled="isLoading"
+            class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition font-medium"
+          >
+            Refresh
+          </button>
+
+          <!-- Status -->
+          <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Status</p>
+            <p :class="['px-3 py-2 rounded-lg text-sm font-medium text-center', getStatusBadgeClass(policy.status)]">
+              {{ policy.status || 'Draft' }}
+            </p>
+          </div>
+
+          <!-- Compliance Indicator -->
+          <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <p class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Overall Compliance</p>
+            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 mb-2">
+              <div
+                :style="{ width: `${policy.compliancePercentage || 0}%` }"
+                :class="['h-full rounded-full transition-all', getComplianceBarClass(policy.compliancePercentage)]"
+              />
+            </div>
+            <p :class="['text-sm font-bold', getComplianceColorClass(policy.compliancePercentage)]">
+              {{ policy.compliancePercentage || 0 }}% Compliant
             </p>
           </div>
         </div>
-      </div>
-
-      <!-- Timestamps -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Created -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Created</h3>
-          <p class="text-gray-900 dark:text-white">{{ formatDateTime(policy.createdAt) }}</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ formatTimeAgo(policy.createdAt) }}</p>
-        </div>
-
-        <!-- Last Modified -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Last Modified</h3>
-          <p class="text-gray-900 dark:text-white">{{ formatDateTime(policy.updatedAt) }}</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ formatTimeAgo(policy.updatedAt) }}</p>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex gap-3 justify-end">
-        <router-link
-          to="/policies"
-          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition"
-        >
-          Cancel
-        </router-link>
-        <button
-          @click="savePolicyChanges"
-          :disabled="saving"
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition"
-        >
-          {{ saving ? 'Saving...' : isNew ? 'Create Policy' : 'Save Changes' }}
-        </button>
-        <button
-          v-if="!isNew && policy.status === 'Draft'"
-          @click="activatePolicy"
-          :disabled="saving"
-          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition flex items-center gap-2"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          {{ saving ? 'Activating...' : 'Activate' }}
-        </button>
-        <button
-          v-else-if="!isNew && policy.status === 'Active'"
-          @click="deactivatePolicy"
-          :disabled="saving"
-          class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-gray-400 transition flex items-center gap-2"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          {{ saving ? 'Deactivating...' : 'Deactivate' }}
-        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { usePolicyStore, type PolicyDetails } from '@stores/policyStore'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { usePolicies } from '@/composables/usePolicies'
+import toastService from '@services/toastService'
+import type { Policy } from '@types'
 
-const route = useRoute()
 const router = useRouter()
-const policyStore = usePolicyStore()
+const route = useRoute()
 
-const loading = ref(false)
-const saving = ref(false)
-const showAddRule = ref(false)
-const newRule = ref('')
-const deviceTargetMode = ref('all')
+const { fetchPolicyById, deletePolicy, rollbackPolicy } = usePolicies()
+
+const policy = ref<Policy | null>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
+const isActioning = ref(false)
+const isLoading = ref(false)
 
 const policyId = computed(() => route.params.id as string)
-const isNew = computed(() => policyId.value === 'new')
 
-const policy = computed(() => {
-  if (isNew.value) {
-    return {
-      policyId: 'new',
-      name: '',
-      description: '',
-      status: 'Draft',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      enforcementLevel: 'Standard' as const,
-      isActive: false,
-      deviceCount: 0,
-      rules: [],
-      targetDevices: []
-    } as PolicyDetails
-  }
-  return policyStore.getPolicyById(policyId.value)
-})
-
-const editForm = reactive<Partial<PolicyDetails>>({
-  name: '',
-  description: '',
-  enforcementLevel: 'Standard',
-  rules: [],
-  targetDevices: []
-})
-
-function initializeForm() {
-  if (!isNew.value && policy.value) {
-    editForm.name = policy.value.name
-    editForm.description = policy.value.description
-    editForm.enforcementLevel = policy.value.enforcementLevel
-    editForm.rules = [...(policy.value.rules || [])]
-    editForm.targetDevices = [...(policy.value.targetDevices || [])]
-  }
-}
-
-function addRule() {
-  showAddRule.value = true
-}
-
-function confirmAddRule() {
-  if (newRule.value.trim()) {
-    if (!editForm.rules) editForm.rules = []
-    editForm.rules.push(newRule.value.trim())
-    newRule.value = ''
-    showAddRule.value = false
-  }
-}
-
-function cancelAddRule() {
-  newRule.value = ''
-  showAddRule.value = false
-}
-
-function removeRule(idx: number) {
-  if (editForm.rules) {
-    editForm.rules.splice(idx, 1)
-  }
-}
-
-async function savePolicyChanges() {
-  if (!editForm.name || !editForm.description) {
-    return
-  }
-
-  saving.value = true
-  try {
-    if (isNew.value) {
-      await policyStore.createPolicy({
-        name: editForm.name,
-        description: editForm.description,
-        status: 'Draft',
-        enforcementLevel: editForm.enforcementLevel || 'Standard',
-        isActive: false,
-        deviceCount: 0,
-        rules: editForm.rules || [],
-        targetDevices: editForm.targetDevices || []
-      })
-    } else if (policy.value) {
-      await policyStore.updatePolicy(policy.value.policyId, {
-        name: editForm.name,
-        description: editForm.description,
-        enforcementLevel: editForm.enforcementLevel,
-        rules: editForm.rules,
-        targetDevices: editForm.targetDevices
-      })
+const versionHistory = computed(() => {
+  if (!policy.value) return []
+  const versions = [policy.value.version || 1]
+  
+  // Add previous versions (mock)
+  for (let i = 1; i < 3; i++) {
+    const prevVersion = (policy.value.version || 1) - i
+    if (prevVersion > 0) {
+      versions.push(prevVersion)
     }
-    router.push('/policies')
-  } finally {
-    saving.value = false
   }
-}
+  
+  return versions
+})
 
-async function activatePolicy() {
-  if (!policy.value) return
-  saving.value = true
+const loadPolicy = async () => {
+  isLoading.value = true
+  loading.value = true
   try {
-    await policyStore.activatePolicy(policy.value.policyId)
+    const data = await fetchPolicyById(policyId.value)
+    if (data) {
+      policy.value = data
+      error.value = null
+    } else {
+      policy.value = null
+      error.value = 'Policy not found'
+    }
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load policy'
+    policy.value = null
   } finally {
-    saving.value = false
+    loading.value = false
+    isLoading.value = false
   }
 }
 
-async function deactivatePolicy() {
+const handleAssignPolicy = async () => {
   if (!policy.value) return
-  saving.value = true
+  
+  // Show modal or navigate to assignment page
+  toastService.info('Assign policy feature coming soon')
+}
+
+const handleDelete = async () => {
+  if (!policy.value || !confirm('Are you sure you want to delete this policy?')) return
+  
+  isActioning.value = true
   try {
-    await policyStore.deactivatePolicy(policy.value.policyId)
+    const success = await deletePolicy(policy.value.policyId)
+    if (success) {
+      toastService.success('Policy deleted')
+      router.push('/policies')
+    } else {
+      toastService.error('Failed to delete policy')
+    }
   } finally {
-    saving.value = false
+    isActioning.value = false
   }
 }
 
-function formatDateTime(timestamp: string): string {
-  return new Date(timestamp).toLocaleString()
+const handleRollback = async (version: number) => {
+  if (!policy.value) return
+  if (!confirm(`Rollback to version ${version}?`)) return
+  
+  isActioning.value = true
+  try {
+    const success = await rollbackPolicy(policy.value.policyId, version)
+    if (success) {
+      toastService.success(`Rolled back to version ${version}`)
+      await loadPolicy()
+    } else {
+      toastService.error('Failed to rollback policy')
+    }
+  } finally {
+    isActioning.value = false
+  }
 }
 
-function formatTimeAgo(timestamp: string): string {
-  const date = new Date(timestamp)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / 86400000)
+const getTypeBgClass = (policyType: string) => {
+  switch (policyType) {
+    case 'Security':
+      return 'bg-red-50 dark:bg-red-900/20'
+    case 'Compliance':
+      return 'bg-blue-50 dark:bg-blue-900/20'
+    case 'Performance':
+      return 'bg-purple-50 dark:bg-purple-900/20'
+    default:
+      return 'bg-gray-50 dark:bg-gray-700/50'
+  }
+}
 
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 30) return `${diffDays} days ago`
-  return `${Math.floor(diffDays / 30)} months ago`
+const getStatusBadgeClass = (policyStatus: string) => {
+  switch (policyStatus) {
+    case 'Active':
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+    case 'Draft':
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
+    case 'Archived':
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+    default:
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+  }
+}
+
+const getComplianceColorClass = (compliance: number) => {
+  if (compliance >= 90) return 'text-green-600 dark:text-green-400'
+  if (compliance >= 70) return 'text-yellow-600 dark:text-yellow-400'
+  return 'text-red-600 dark:text-red-400'
+}
+
+const getComplianceBarClass = (compliance: number) => {
+  if (compliance >= 90) return 'bg-green-500'
+  if (compliance >= 70) return 'bg-yellow-500'
+  return 'bg-red-500'
+}
+
+const formatDate = (dateString: string): string => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  return date.toLocaleDateString()
 }
 
 onMounted(() => {
-  if (!isNew.value && !policyStore.policies.length) {
-    loading.value = true
-    policyStore.fetchPolicies().then(() => {
-      loading.value = false
-      initializeForm()
-    })
-  } else if (!isNew.value && policy.value) {
-    initializeForm()
-  }
+  loadPolicy()
 })
 </script>
