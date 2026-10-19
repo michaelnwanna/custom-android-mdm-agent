@@ -16,7 +16,8 @@
           <h2 class="text-xl font-bold text-white">Assign Policy</h2>
           <button
             @click="closeModal"
-            class="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition"
+            :disabled="isDeploying"
+            class="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -26,8 +27,71 @@
 
         <!-- Content -->
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Deployment Progress Section -->
+          <div v-if="isDeploying" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <h3 class="font-semibold text-gray-900 dark:text-white">Deployment in Progress...</h3>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2 overflow-hidden">
+              <div
+                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                :style="{ width: deploymentProgress + '%' }"
+              ></div>
+            </div>
+            
+            <!-- Progress Text -->
+            <div class="flex justify-between items-center text-sm mb-3">
+              <span class="text-gray-600 dark:text-gray-400">
+                {{ deployedCount }} of {{ totalTargets }} devices
+              </span>
+              <span class="font-medium text-gray-900 dark:text-white">
+                {{ deploymentProgress }}%
+              </span>
+            </div>
+
+            <!-- Deployment Status Items -->
+            <div class="space-y-1 text-xs max-h-32 overflow-y-auto">
+              <div
+                v-for="(status, index) in deploymentStatus"
+                :key="index"
+                class="flex items-center gap-2 text-gray-700 dark:text-gray-300"
+              >
+                <svg
+                  v-if="status.status === 'completed'"
+                  class="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <svg
+                  v-else-if="status.status === 'in-progress'"
+                  class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 animate-pulse"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" opacity="0.3" />
+                  <circle cx="12" cy="12" r="4" />
+                </svg>
+                <svg
+                  v-else
+                  class="w-4 h-4 text-gray-400 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" stroke-width="2" />
+                </svg>
+                <span class="truncate">{{ status.device }}: {{ status.message }}</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Policy Info -->
-          <div v-if="policy" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div v-if="policy && !isDeploying" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
             <h3 class="font-semibold text-gray-900 dark:text-white mb-1">{{ policy.name }}</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">{{ policy.description }}</p>
             <div class="flex gap-4 mt-2 text-xs">
@@ -37,7 +101,7 @@
           </div>
 
           <!-- Device Selection Tabs -->
-          <div class="border-b border-gray-200 dark:border-gray-700">
+          <div v-if="!isDeploying" class="border-b border-gray-200 dark:border-gray-700">
             <div class="flex gap-4">
               <button
                 @click="selectionMode = 'individual'"
@@ -65,7 +129,7 @@
           </div>
 
           <!-- Individual Device Selection -->
-          <div v-if="selectionMode === 'individual'" class="space-y-4">
+          <div v-if="selectionMode === 'individual' && !isDeploying" class="space-y-4">
             <!-- Search -->
             <div>
               <input
@@ -150,19 +214,20 @@
         <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex gap-3 justify-end">
           <button
             @click="closeModal"
-            class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition font-medium"
+            :disabled="isDeploying"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Cancel
+            {{ isDeploying ? 'Wait...' : 'Cancel' }}
           </button>
           <button
             @click="handleAssign"
-            :disabled="isAssigning || (selectionMode === 'individual' && selectedDevices.length === 0) || (selectionMode === 'group' && !selectedGroup)"
+            :disabled="isDeploying || isAssigning || (selectionMode === 'individual' && selectedDevices.length === 0) || (selectionMode === 'group' && !selectedGroup)"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition font-medium flex items-center gap-2"
           >
-            <svg v-if="isAssigning" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-if="isAssigning || isDeploying" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            {{ isAssigning ? 'Assigning...' : 'Assign Policy' }}
+            {{ isDeploying ? 'Deploying...' : (isAssigning ? 'Assigning...' : 'Assign Policy') }}
           </button>
         </div>
       </div>
@@ -192,6 +257,11 @@ const selectedGroup = ref<string>('')
 const searchQuery = ref('')
 const selectionMode = ref<'individual' | 'group'>('individual')
 const isAssigning = ref(false)
+const isDeploying = ref(false)
+const deploymentProgress = ref(0)
+const deployedCount = ref(0)
+const totalTargets = ref(0)
+const deploymentStatus = ref<Array<{ device: string; message: string; status: 'pending' | 'in-progress' | 'completed' }>>([])
 
 // Mock device data
 const mockDevices: Device[] = Array.from({ length: 20 }, (_, i) => ({
@@ -267,12 +337,65 @@ const closeModal = () => {
 const handleAssign = async () => {
   isAssigning.value = true
   try {
+    // Emit assignment event to parent
     if (selectionMode.value === 'individual') {
       emit('assign', selectedDevices.value)
+      totalTargets.value = selectedDevices.value.length
     } else {
       emit('assign', [], selectedGroup.value)
+      totalTargets.value = selectedGroupDeviceCount.value
     }
-    closeModal()
+    
+    // Simulate deployment progress
+    isDeploying.value = true
+    deployedCount.value = 0
+    deploymentProgress.value = 0
+    deploymentStatus.value = []
+    
+    // Get target devices for simulation
+    const targetDevices = selectionMode.value === 'individual' 
+      ? selectedDevices.value 
+      : Array.from({ length: selectedGroupDeviceCount.value }, (_, i) => `group-dev-${i + 1}`)
+    
+    // Simulate deployment to each device
+    for (let i = 0; i < targetDevices.length; i++) {
+      const deviceId = targetDevices[i]
+      
+      // Add status entry
+      deploymentStatus.value.push({
+        device: `Device ${i + 1}`,
+        message: 'Preparing deployment...',
+        status: 'pending'
+      })
+      
+      // Simulate in-progress
+      await new Promise(resolve => setTimeout(resolve, 200))
+      const statusItem = deploymentStatus.value[i]
+      if (statusItem) {
+        statusItem.status = 'in-progress'
+        statusItem.message = 'Deploying policy...'
+      }
+      
+      // Simulate completion
+      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000))
+      if (statusItem) {
+        statusItem.status = 'completed'
+        statusItem.message = 'Policy deployed successfully'
+      }
+      
+      // Update progress
+      deployedCount.value = i + 1
+      deploymentProgress.value = Math.round((deployedCount.value / totalTargets.value) * 100)
+    }
+    
+    // Wait 1 second before closing
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Show completion toast via parent
+    setTimeout(() => {
+      isDeploying.value = false
+      closeModal()
+    }, 500)
   } finally {
     isAssigning.value = false
   }
