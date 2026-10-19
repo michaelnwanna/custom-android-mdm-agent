@@ -153,6 +153,10 @@ public static class FleetApi
         builder.Services.AddScoped<DeviceTagService>();
         builder.Services.AddScoped<StateComputationService>();
         builder.Services.AddScoped<ReconciliationCommandService>();
+        
+        // Telemetry services
+        builder.Services.AddSingleton(new TelemetryThresholdSettings());
+        builder.Services.AddScoped<TelemetryCollectionService>();
 
         // MQTT services
         builder.Services.AddSingleton<MqttHostedService>();
