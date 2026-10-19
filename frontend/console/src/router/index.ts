@@ -22,6 +22,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@views/AlertsView.vue')
   },
   {
+    path: '/alerts/:id',
+    name: 'AlertDetail',
+    component: () => import('@views/AlertDetailView.vue')
+  },
+  {
     path: '/policies',
     name: 'Policies',
     component: () => import('@views/PoliciesView.vue')
