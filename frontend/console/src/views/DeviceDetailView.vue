@@ -127,29 +127,144 @@
             </div>
           </div>
 
-          <!-- Device Telemetry -->
+          <!-- Device Telemetry Section -->
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Device Telemetry</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Battery</div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ telemetry?.batteryPercentage || 'N/A' }}%</div>
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Device Telemetry</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Real-time device metrics
+                  <span v-if="telemetryAutoRefresh" class="ml-2 inline-flex items-center gap-1">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    Auto-refresh: {{ telemetryRefreshInterval }}s
+                  </span>
+                </p>
               </div>
-              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Storage Used</div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-white">
-                  {{ telemetry?.storageUsageMB ? formatStorage(telemetry.storageUsageMB) : 'N/A' }}
+              <div class="flex gap-2">
+                <button
+                  @click="toggleTelemetryAutoRefresh"
+                  :class="[
+                    'px-3 py-1 rounded text-sm font-medium transition-colors',
+                    telemetryAutoRefresh
+                      ? 'bg-green-500 text-white hover:bg-green-600'
+                      : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+                  ]"
+                >
+                  {{ telemetryAutoRefresh ? 'Auto-refresh On' : 'Auto-refresh Off' }}
+                </button>
+                <button
+                  @click="fetchTelemetry"
+                  :disabled="telemetryLoading"
+                  class="px-3 py-1 rounded text-sm font-medium bg-primary text-white hover:bg-blue-600 disabled:opacity-50"
+                >
+                  {{ telemetryLoading ? 'Loading...' : 'Refresh Now' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Loading skeleton for telemetry -->
+            <div v-if="telemetryLoading && !telemetry" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="i in 4" :key="i" class="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+            </div>
+
+            <!-- Telemetry Cards -->
+            <div v-else-if="telemetry" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Battery -->
+              <TelemetryCard
+                label="Battery"
+                :value="telemetry.batteryPercentage || 0"
+                unit="%"
+                type="battery"
+                :isPercentage="true"
+                :lastUpdatedAt="telemetry.timestamp"
+                :subtext="`${telemetry.batteryHealth || 'Unknown'} health`"
+              />
+
+              <!-- Storage -->
+              <TelemetryCard
+                label="Storage Used"
+                :value="calculateStoragePercent"
+                unit="%"
+                type="storage"
+                :isPercentage="true"
+                :lastUpdatedAt="telemetry.timestamp"
+                :subtext="`${formatStorage(telemetry.storageUsageMB || 0)} / ${formatStorage(telemetry.totalStorageMB || 0)}`"
+              />
+
+              <!-- Memory -->
+              <TelemetryCard
+                label="Memory Used"
+                :value="calculateMemoryPercent"
+                unit="%"
+                type="memory"
+                :isPercentage="true"
+                :lastUpdatedAt="telemetry.timestamp"
+                :subtext="`${formatStorage(telemetry.memoryUsageMB || 0)} / ${formatStorage(telemetry.totalMemoryMB || 0)}`"
+              />
+
+              <!-- CPU -->
+              <TelemetryCard
+                label="CPU Usage"
+                :value="telemetry.cpuUsagePercentage || 0"
+                unit="%"
+                type="cpu"
+                :isPercentage="true"
+                :lastUpdatedAt="telemetry.timestamp"
+              />
+
+              <!-- Signal Strength (if available) -->
+              <TelemetryCard
+                v-if="telemetry.signalStrength"
+                label="Signal Strength"
+                :value="telemetry.signalStrength"
+                unit="dBm"
+                type="signal"
+                :lastUpdatedAt="telemetry.timestamp"
+                :subtext="getSignalQuality(telemetry.signalStrength)"
+              />
+
+              <!-- Temperature (if available) -->
+              <TelemetryCard
+                v-if="telemetry.temperature"
+                label="Device Temperature"
+                :value="telemetry.temperature"
+                unit="°C"
+                type="cpu"
+                :lastUpdatedAt="telemetry.timestamp"
+                :subtext="`${getTemperatureStatus(telemetry.temperature)} temperature`"
+              />
+            </div>
+
+            <!-- No Data State -->
+            <div v-else class="text-center py-12 text-gray-500 dark:text-gray-400">
+              <p>No telemetry data available</p>
+              <button
+                @click="fetchTelemetry"
+                class="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-blue-600"
+              >
+                Load Telemetry
+              </button>
+            </div>
+
+            <!-- Telemetry History Chart (future enhancement) -->
+            <div v-if="telemetryHistory.length > 0" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Telemetry History</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Last {{ telemetryHistory.length }} readings ({{ (telemetryHistory.length * telemetryRefreshInterval) }}s window)
+              </p>
+              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Battery Trend</p>
+                  <p class="text-xl font-bold text-gray-900 dark:text-white">
+                    {{ telemetryHistory[0]?.batteryPercentage || 0 }}% → {{ telemetry?.batteryPercentage || 0 }}%
+                  </p>
                 </div>
-              </div>
-              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Memory Used</div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-white">
-                  {{ telemetry?.memoryUsageMB ? formatStorage(telemetry.memoryUsageMB) : 'N/A' }}
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">CPU Average</p>
+                  <p class="text-xl font-bold text-gray-900 dark:text-white">
+                    {{ calculateAverageCPU }}%
+                  </p>
                 </div>
-              </div>
-              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">CPU Usage</div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ telemetry?.cpuUsagePercentage || 'N/A' }}%</div>
               </div>
             </div>
           </div>
@@ -232,11 +347,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDeviceStore } from '@stores/deviceStore'
 import * as deviceApi from '@/api/deviceApi'
 import toastService from '@services/toastService'
+import TelemetryCard from '@components/TelemetryCard.vue'
 import type { Device, DeviceTelemetry } from '@types'
 
 const route = useRoute()
@@ -247,6 +363,11 @@ const deviceStore = useDeviceStore()
 const editMode = ref(false)
 const editedDevice = ref<Partial<Device>>({})
 const telemetry = ref<DeviceTelemetry | null>(null)
+const telemetryHistory = ref<DeviceTelemetry[]>([])
+const telemetryLoading = ref(false)
+const telemetryAutoRefresh = ref(true)
+const telemetryRefreshInterval = ref(5) // seconds
+const telemetryRefreshTimer = ref<NodeJS.Timer | null>(null)
 const deviceAlerts = ref<any[]>([])
 const commandHistory = ref<any[]>([])
 const executing = ref(false)
@@ -256,6 +377,22 @@ const deviceId = computed(() => route.params.id as string)
 const device = computed(() => deviceStore.selectedDevice)
 const loading = computed(() => deviceStore.loading)
 const error = computed(() => deviceStore.error)
+
+const calculateStoragePercent = computed(() => {
+  if (!telemetry.value || !telemetry.value.totalStorageMB) return 0
+  return (telemetry.value.storageUsageMB / telemetry.value.totalStorageMB) * 100
+})
+
+const calculateMemoryPercent = computed(() => {
+  if (!telemetry.value || !telemetry.value.totalMemoryMB) return 0
+  return (telemetry.value.memoryUsageMB / telemetry.value.totalMemoryMB) * 100
+})
+
+const calculateAverageCPU = computed(() => {
+  if (telemetryHistory.value.length === 0) return 0
+  const sum = telemetryHistory.value.reduce((acc, t) => acc + (t.cpuUsagePercentage || 0), 0)
+  return (sum / telemetryHistory.value.length).toFixed(1)
+})
 
 // Methods
 const refreshDevice = async () => {
@@ -271,10 +408,63 @@ const refreshDevice = async () => {
 
 const fetchTelemetry = async () => {
   try {
-    telemetry.value = await deviceApi.fetchDeviceTelemetry(deviceId.value)
+    telemetryLoading.value = true
+    const newTelemetry = await deviceApi.fetchDeviceTelemetry(deviceId.value)
+    if (newTelemetry) {
+      // Keep history of last 20 readings
+      if (telemetry.value) {
+        telemetryHistory.value.unshift(telemetry.value)
+        if (telemetryHistory.value.length > 20) {
+          telemetryHistory.value.pop()
+        }
+      }
+      telemetry.value = newTelemetry
+    }
   } catch (err) {
     console.error('Failed to fetch telemetry:', err)
+  } finally {
+    telemetryLoading.value = false
   }
+}
+
+const toggleTelemetryAutoRefresh = () => {
+  telemetryAutoRefresh.value = !telemetryAutoRefresh.value
+  if (telemetryAutoRefresh.value) {
+    startTelemetryAutoRefresh()
+  } else {
+    stopTelemetryAutoRefresh()
+  }
+}
+
+const startTelemetryAutoRefresh = () => {
+  if (telemetryRefreshTimer.value) {
+    clearInterval(telemetryRefreshTimer.value)
+  }
+  telemetryRefreshTimer.value = setInterval(() => {
+    fetchTelemetry()
+  }, telemetryRefreshInterval.value * 1000)
+}
+
+const stopTelemetryAutoRefresh = () => {
+  if (telemetryRefreshTimer.value) {
+    clearInterval(telemetryRefreshTimer.value)
+    telemetryRefreshTimer.value = null
+  }
+}
+
+const getSignalQuality = (signalStrength: number): string => {
+  if (signalStrength >= -50) return 'Excellent'
+  if (signalStrength >= -60) return 'Very Good'
+  if (signalStrength >= -70) return 'Good'
+  if (signalStrength >= -80) return 'Fair'
+  return 'Poor'
+}
+
+const getTemperatureStatus = (temp: number): string => {
+  if (temp < 30) return 'Cool'
+  if (temp < 40) return 'Normal'
+  if (temp < 50) return 'Warm'
+  return 'Hot'
 }
 
 const fetchCommandHistory = async () => {
@@ -418,8 +608,24 @@ const formatStorage = (mb: number): string => {
   return `${(mb / 1024).toFixed(1)} GB`
 }
 
+// Watchers
+watch(telemetryAutoRefresh, (newVal) => {
+  if (newVal) {
+    startTelemetryAutoRefresh()
+  } else {
+    stopTelemetryAutoRefresh()
+  }
+})
+
 // Lifecycle
 onMounted(async () => {
   await refreshDevice()
+  if (telemetryAutoRefresh.value) {
+    startTelemetryAutoRefresh()
+  }
+})
+
+onUnmounted(() => {
+  stopTelemetryAutoRefresh()
 })
 </script>
