@@ -19,11 +19,16 @@ public class TelemetryController : ControllerBase
 {
     private readonly FleetDbContext _context;
     private readonly TelemetryCollectionService _telemetryService;
+    private readonly TelemetryCacheService _cacheService;
 
-    public TelemetryController(FleetDbContext context, TelemetryCollectionService telemetryService)
+    public TelemetryController(
+        FleetDbContext context, 
+        TelemetryCollectionService telemetryService,
+        TelemetryCacheService cacheService)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _telemetryService = telemetryService ?? throw new ArgumentNullException(nameof(telemetryService));
+        _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
     }
 
     /// <summary>
@@ -319,6 +324,137 @@ public class TelemetryController : ControllerBase
             InfoCount = activeAlerts.Count(a => a.Severity == AlertSeverity.Info),
             TotalActiveAlerts = activeAlerts.Count
         };
+    }
+
+    /// <summary>
+    /// Get comprehensive fleet health metrics (optimized with caching).
+    /// GET /api/fleet/health/metrics
+    /// Returns cached result if available, with cache info included.
+    /// </summary>
+    [HttpGet("/api/fleet/health/metrics")]
+    public async Task<ActionResult<FleetHealthMetrics>> GetFleetHealthMetricsAsync()
+    {
+        var cacheKey = TelometryCacheKeys.FleetHealthMetrics();
+
+        // Check cache first
+        if (_cacheService.TryGetValue<FleetHealthMetrics>(cacheKey, out var cachedMetrics) && cachedMetrics != null)
+        {
+            // Include cache info when returning cached result
+            if (cachedMetrics.CacheInfo != null)
+                cachedMetrics.CacheInfo.FromCache = true;
+            
+            return Ok(cachedMetrics);
+        }
+
+        // Compute fresh metrics
+        var totalDevices = await _context.Devices.CountAsync();
+        var latestTelemetries = await _context.DeviceTelemetries
+            .GroupBy(t => t.DeviceId)
+            .Select(g => g.OrderByDescending(t => t.CreatedAt).First())
+            .ToListAsync();
+
+        if (latestTelemetries.Count == 0)
+        {
+            var emptyMetrics = new FleetHealthMetrics
+            {
+                ComputedAt = DateTimeOffset.UtcNow,
+                TotalDevices = totalDevices,
+                OnlineDevices = 0,
+                OfflineDevices = 0,
+                OnlinePercentage = 0,
+                AverageBatteryLevel = 0
+            };
+            return Ok(emptyMetrics);
+        }
+
+        var onlineDevices = latestTelemetries.Count(t => t.Connectivity != ConnectivityStatus.Offline);
+        var offlineDevices = totalDevices - onlineDevices;
+
+        var avgBattery = (int)latestTelemetries.Average(t => t.BatteryLevel);
+        var lowBatteryDevices = latestTelemetries.Count(t => t.BatteryLevel <= 20);
+        var criticalBatteryDevices = latestTelemetries.Count(t => t.BatteryLevel <= 5);
+
+        var avgStorageUsed = latestTelemetries.Average(t => 
+            t.StorageTotalMb > 0 ? (t.StorageUsedMb * 100.0) / t.StorageTotalMb : 0);
+        var avgMemoryUsed = latestTelemetries.Average(t => 
+            t.TotalMemoryMb > 0 ? ((t.TotalMemoryMb - t.AvailableMemoryMb) * 100.0) / t.TotalMemoryMb : 0);
+        var avgCpuUsage = (int)latestTelemetries.Average(t => t.CpuUsagePercent);
+
+        var lowStorageDevices = latestTelemetries.Count(t => 
+            t.StorageTotalMb > 0 && (t.StorageFreeMb * 100.0) / t.StorageTotalMb <= 10);
+
+        var connectivityMetrics = new ConnectivityBreakdownMetrics
+        {
+            WiFiDevices = latestTelemetries.Count(t => t.Connectivity == ConnectivityStatus.WiFi),
+            CellularDevices = latestTelemetries.Count(t => t.Connectivity == ConnectivityStatus.Cellular),
+            OfflineDevices = latestTelemetries.Count(t => t.Connectivity == ConnectivityStatus.Offline),
+            AirplaneModeDevices = latestTelemetries.Count(t => t.Connectivity == ConnectivityStatus.AirplaneMode),
+            UnknownDevices = latestTelemetries.Count(t => t.Connectivity == ConnectivityStatus.Unknown)
+        };
+
+        // Calculate percentages
+        if (latestTelemetries.Count > 0)
+        {
+            connectivityMetrics.WiFiPercentage = (connectivityMetrics.WiFiDevices * 100.0) / latestTelemetries.Count;
+            connectivityMetrics.CellularPercentage = (connectivityMetrics.CellularDevices * 100.0) / latestTelemetries.Count;
+            connectivityMetrics.OfflinePercentage = (connectivityMetrics.OfflineDevices * 100.0) / latestTelemetries.Count;
+            connectivityMetrics.AirplaneModePercentage = (connectivityMetrics.AirplaneModeDevices * 100.0) / latestTelemetries.Count;
+            connectivityMetrics.UnknownPercentage = (connectivityMetrics.UnknownDevices * 100.0) / latestTelemetries.Count;
+        }
+
+        // Get active alerts
+        var activeAlerts = await _context.DeviceHealthAlerts
+            .Where(a => a.ResolvedAt == null)
+            .ToListAsync();
+
+        var devicesWithAlerts = activeAlerts.Select(a => a.DeviceId).Distinct().Count();
+        var totalAlerts = activeAlerts.Count;
+
+        var alertMetrics = new HealthAlertMetrics
+        {
+            CriticalAlerts = activeAlerts.Count(a => a.Severity == AlertSeverity.Critical),
+            WarningAlerts = activeAlerts.Count(a => a.Severity == AlertSeverity.Warning),
+            InfoAlerts = activeAlerts.Count(a => a.Severity == AlertSeverity.Info),
+            TotalActiveAlerts = totalAlerts,
+            DevicesWithCriticalAlerts = activeAlerts.Where(a => a.Severity == AlertSeverity.Critical).Select(a => a.DeviceId).Distinct().Count(),
+            DevicesWithAnyAlert = devicesWithAlerts
+        };
+
+        if (totalAlerts > 0)
+        {
+            alertMetrics.CriticalAlertsPercentage = (alertMetrics.CriticalAlerts * 100.0) / totalAlerts;
+            alertMetrics.WarningAlertsPercentage = (alertMetrics.WarningAlerts * 100.0) / totalAlerts;
+            alertMetrics.InfoAlertsPercentage = (alertMetrics.InfoAlerts * 100.0) / totalAlerts;
+        }
+
+        // Calculate health score (0-100, where 100 = no alerts)
+        var healthScore = 100 - Math.Min(100, (devicesWithAlerts * 100) / Math.Max(1, totalDevices));
+        alertMetrics.HealthScore = Math.Max(0, healthScore);
+
+        var metrics = new FleetHealthMetrics
+        {
+            ComputedAt = DateTimeOffset.UtcNow,
+            TotalDevices = totalDevices,
+            OnlineDevices = onlineDevices,
+            OfflineDevices = offlineDevices,
+            OnlinePercentage = totalDevices > 0 ? (onlineDevices * 100.0) / totalDevices : 0,
+            AverageBatteryLevel = avgBattery,
+            LowBatteryDevices = lowBatteryDevices,
+            LowBatteryPercentage = latestTelemetries.Count > 0 ? (lowBatteryDevices * 100.0) / latestTelemetries.Count : 0,
+            CriticalBatteryDevices = criticalBatteryDevices,
+            AverageStorageUsedPercent = (int)avgStorageUsed,
+            LowStorageDevices = lowStorageDevices,
+            AverageMemoryUsedPercent = (int)avgMemoryUsed,
+            AverageCpuUsagePercent = avgCpuUsage,
+            Connectivity = connectivityMetrics,
+            Alerts = alertMetrics
+        };
+
+        // Cache the metrics
+        var ttlSeconds = 300; // 5 minutes default
+        _cacheService.Set(cacheKey, metrics, ttlSeconds);
+
+        return Ok(metrics);
     }
 }
 

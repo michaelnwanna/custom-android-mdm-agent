@@ -156,6 +156,8 @@ public static class FleetApi
         
         // Telemetry services
         builder.Services.AddSingleton(new TelemetryThresholdSettings());
+        builder.Services.AddSingleton(new TelemetryCacheSettings());
+        builder.Services.AddSingleton<TelemetryCacheService>();
         builder.Services.AddScoped<TelemetryCollectionService>();
 
         // MQTT services
