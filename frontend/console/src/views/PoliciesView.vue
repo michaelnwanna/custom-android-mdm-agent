@@ -254,10 +254,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePolicies } from '@/composables/usePolicies'
 import toastService from '@services/toastService'
+import signalRService from '@services/signalRService'
+import type { Policy } from '@types'
 
 const router = useRouter()
 
@@ -381,4 +383,32 @@ const getComplianceBarClass = (compliance: number) => {
   if (compliance >= 70) return 'bg-yellow-500'
   return 'bg-red-500'
 }
+
+onMounted(async () => {
+  await signalRService.connect({
+    onPolicyUpdated: (policy: Policy) => {
+      // Update policy in the list
+      const idx = policies.value.findIndex(p => p.policyId === policy.policyId)
+      if (idx !== -1) {
+        policies.value[idx] = policy
+      } else {
+        policies.value.unshift(policy)
+      }
+      toastService.info(`Policy "${policy.name}" updated`)
+    },
+    onPolicyDeployed: (policyId: string, deviceIds: string[]) => {
+      toastService.success(`Policy deployed to ${deviceIds.length} device(s)`)
+      refreshPolicies()
+    },
+    onPolicyComplianceChanged: (policyId: string, compliancePercentage: number) => {
+      const policy = policies.value.find(p => p.policyId === policyId)
+      if (policy) {
+        policy.compliancePercentage = compliancePercentage
+      }
+    }
+  })
+
+  // Subscribe to real-time policy updates
+  await signalRService.subscribeToPolicies()
+})
 </script>

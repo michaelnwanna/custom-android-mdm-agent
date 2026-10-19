@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, HubConnectionState, HubConnection } from '@microsoft/signalr';
-import type { Device, HealthAlert, FleetHealthMetrics, DeviceTelemetry } from '@types';
+import type { Device, HealthAlert, FleetHealthMetrics, DeviceTelemetry, Policy } from '@types';
 
 export type ConnectionState = 'connected' | 'connecting' | 'disconnected' | 'failed';
 
@@ -10,6 +10,11 @@ export interface SignalRServiceCallbacks {
   onDeviceTelemetryUpdate?: (deviceId: string, telemetry: DeviceTelemetry) => void;
   onConnectionStateChanged?: (state: ConnectionState) => void;
   onDeviceOnlineStatusChanged?: (deviceId: string, isOnline: boolean) => void;
+  onAlertUpdated?: (alert: HealthAlert) => void;
+  onAlertResolved?: (alertId: string) => void;
+  onPolicyUpdated?: (policy: Policy) => void;
+  onPolicyDeployed?: (policyId: string, deviceIds: string[]) => void;
+  onPolicyComplianceChanged?: (policyId: string, compliancePercentage: number) => void;
 }
 
 class SignalRService {
@@ -69,6 +74,33 @@ class SignalRService {
       this.connection.on('ReceiveDeviceOnlineStatusChange', (deviceId: string, isOnline: boolean) => {
         console.log(`🟢 Device ${deviceId} online status: ${isOnline ? 'ONLINE' : 'OFFLINE'}`);
         this.callbacks.onDeviceOnlineStatusChanged?.(deviceId, isOnline);
+      });
+
+      // Real-time alert event handlers
+      this.connection.on('ReceiveAlertUpdated', (alert: HealthAlert) => {
+        console.log('📢 Alert updated:', alert);
+        this.callbacks.onAlertUpdated?.(alert);
+      });
+
+      this.connection.on('ReceiveAlertResolved', (alertId: string) => {
+        console.log(`✅ Alert ${alertId} resolved`);
+        this.callbacks.onAlertResolved?.(alertId);
+      });
+
+      // Real-time policy event handlers
+      this.connection.on('ReceivePolicyUpdated', (policy: Policy) => {
+        console.log('📋 Policy updated:', policy);
+        this.callbacks.onPolicyUpdated?.(policy);
+      });
+
+      this.connection.on('ReceivePolicyDeployed', (policyId: string, deviceIds: string[]) => {
+        console.log(`🚀 Policy ${policyId} deployed to ${deviceIds.length} devices`);
+        this.callbacks.onPolicyDeployed?.(policyId, deviceIds);
+      });
+
+      this.connection.on('ReceivePolicyComplianceChanged', (policyId: string, compliancePercentage: number) => {
+        console.log(`📊 Policy ${policyId} compliance: ${compliancePercentage}%`);
+        this.callbacks.onPolicyComplianceChanged?.(policyId, compliancePercentage);
       });
 
       // Connection lifecycle events
@@ -139,23 +171,67 @@ class SignalRService {
       this.callbacks.onFleetMetricsUpdate?.(mockMetrics);
     }, 15000); // Update every 15 seconds
 
-    // Simulate periodic alert arrivals
+    // Simulate periodic alert arrivals and updates
     const alertInterval = setInterval(() => {
       if (Math.random() > 0.7) { // 30% chance
         const mockAlert: HealthAlert = {
+          alertId: `alert-${Date.now()}`,
           id: `alert-${Date.now()}`,
           deviceId: `dev-${Math.floor(Math.random() * 10).toString().padStart(3, '0')}`,
           deviceName: `Device ${Math.floor(Math.random() * 50)}`,
-          severity: ['critical', 'high', 'medium'][Math.floor(Math.random() * 3)] as any,
+          severity: ['Critical', 'High', 'Medium'][Math.floor(Math.random() * 3)] as any,
           type: ['battery', 'storage', 'connectivity', 'compliance'][Math.floor(Math.random() * 4)] as any,
           message: 'Mock alert from SignalR',
           timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           resolved: false,
         };
 
         this.callbacks.onAlertReceived?.(mockAlert);
       }
-    }, 10000); // Check every 10 seconds
+
+      // Simulate alert resolution
+      if (Math.random() > 0.85) { // 15% chance
+        const mockAlertId = `alert-${Date.now() - Math.random() * 100000}`;
+        this.callbacks.onAlertResolved?.(mockAlertId);
+      }
+
+      // Simulate alert updates
+      if (Math.random() > 0.9) { // 10% chance
+        const updatedAlert: HealthAlert = {
+          alertId: `alert-${Date.now() - Math.random() * 50000}`,
+          id: `alert-${Date.now() - Math.random() * 50000}`,
+          deviceId: `dev-${Math.floor(Math.random() * 10).toString().padStart(3, '0')}`,
+          deviceName: `Device ${Math.floor(Math.random() * 50)}`,
+          severity: ['Critical', 'High', 'Medium'][Math.floor(Math.random() * 3)] as any,
+          type: ['battery', 'storage', 'connectivity', 'compliance'][Math.floor(Math.random() * 4)] as any,
+          message: 'Alert status updated',
+          timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          resolved: Math.random() > 0.5,
+        };
+
+        this.callbacks.onAlertUpdated?.(updatedAlert);
+      }
+    }, 8000); // Check every 8 seconds
+
+    // Simulate periodic policy compliance changes
+    const policyInterval = setInterval(() => {
+      if (Math.random() > 0.8) { // 20% chance
+        const policyId = `policy-${Math.floor(Math.random() * 10)}`;
+        const compliancePercentage = Math.floor(Math.random() * 30) + 70;
+        this.callbacks.onPolicyComplianceChanged?.(policyId, compliancePercentage);
+      }
+
+      // Simulate policy deployment
+      if (Math.random() > 0.9) { // 10% chance
+        const policyId = `policy-${Math.floor(Math.random() * 10)}`;
+        const deviceIds = Array.from({ length: Math.floor(Math.random() * 10) + 1 }, (_, i) =>
+          `dev-${(i + 1).toString().padStart(3, '0')}`
+        );
+        this.callbacks.onPolicyDeployed?.(policyId, deviceIds);
+      }
+    }, 12000); // Check every 12 seconds
 
     // Cleanup interval reference (store it)
     if (!this.mockDataInterval) {
@@ -211,6 +287,84 @@ class SignalRService {
         await this.connection.invoke('UnsubscribeFromDevice', deviceId);
       } catch (error) {
         console.error(`Failed to unsubscribe from device ${deviceId}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Subscribe to real-time alert updates
+   */
+  async subscribeToAlerts(): Promise<void> {
+    console.log('📡 Subscribing to alert updates');
+
+    if (this.useMockData) {
+      // Mock alert events already started in startMockHub
+      return;
+    }
+
+    if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('SubscribeToAlerts');
+      } catch (error) {
+        console.error('Failed to subscribe to alerts:', error);
+      }
+    }
+  }
+
+  /**
+   * Unsubscribe from alert updates
+   */
+  async unsubscribeFromAlerts(): Promise<void> {
+    console.log('📡 Unsubscribing from alert updates');
+
+    if (this.useMockData) {
+      return;
+    }
+
+    if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('UnsubscribeFromAlerts');
+      } catch (error) {
+        console.error('Failed to unsubscribe from alerts:', error);
+      }
+    }
+  }
+
+  /**
+   * Subscribe to real-time policy updates
+   */
+  async subscribeToPolicies(): Promise<void> {
+    console.log('📡 Subscribing to policy updates');
+
+    if (this.useMockData) {
+      // Mock policy events will be simulated
+      return;
+    }
+
+    if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('SubscribeToPolicies');
+      } catch (error) {
+        console.error('Failed to subscribe to policies:', error);
+      }
+    }
+  }
+
+  /**
+   * Unsubscribe from policy updates
+   */
+  async unsubscribeFromPolicies(): Promise<void> {
+    console.log('📡 Unsubscribing from policy updates');
+
+    if (this.useMockData) {
+      return;
+    }
+
+    if (this.connection?.state === HubConnectionState.Connected) {
+      try {
+        await this.connection.invoke('UnsubscribFromPolicies');
+      } catch (error) {
+        console.error('Failed to unsubscribe from policies:', error);
       }
     }
   }
@@ -354,6 +508,26 @@ class SignalRService {
 
   triggerMockDeviceOnlineStatusChange(deviceId: string, isOnline: boolean): void {
     this.callbacks.onDeviceOnlineStatusChanged?.(deviceId, isOnline);
+  }
+
+  triggerMockAlertUpdated(alert: HealthAlert): void {
+    this.callbacks.onAlertUpdated?.(alert);
+  }
+
+  triggerMockAlertResolved(alertId: string): void {
+    this.callbacks.onAlertResolved?.(alertId);
+  }
+
+  triggerMockPolicyUpdated(policy: Policy): void {
+    this.callbacks.onPolicyUpdated?.(policy);
+  }
+
+  triggerMockPolicyDeployed(policyId: string, deviceIds: string[]): void {
+    this.callbacks.onPolicyDeployed?.(policyId, deviceIds);
+  }
+
+  triggerMockPolicyComplianceChanged(policyId: string, compliancePercentage: number): void {
+    this.callbacks.onPolicyComplianceChanged?.(policyId, compliancePercentage);
   }
 }
 

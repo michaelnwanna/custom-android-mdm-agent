@@ -395,7 +395,19 @@ onMounted(async () => {
     onAlertReceived: (alert: HealthAlert) => {
       addAlert(alert)
       toastService.warning(`New ${alert.severity} alert from ${alert.deviceName}`)
+    },
+    onAlertUpdated: (alert: HealthAlert) => {
+      updateAlert(alert.alertId, alert)
+      toastService.info(`Alert updated: ${alert.message}`)
+    },
+    onAlertResolved: (alertId: string) => {
+      // Refresh alerts to reflect resolution
+      fetchAlerts()
+      toastService.success('Alert resolved')
     }
   })
+
+  // Subscribe to real-time alert updates
+  await signalRService.subscribeToAlerts()
 })
 </script>
