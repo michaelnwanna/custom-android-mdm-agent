@@ -7,11 +7,16 @@ public static class AdministratorAuthentication
 {
     public const string Scheme = "administrator";
     public const string ProvisionPolicy = "provision-enrollment";
+    public const string EntraEnrollmentPermission = "Enrollments.Create";
 
     public static void AddAdministratorAuthentication(this WebApplicationBuilder builder)
     {
         var authority = builder.Configuration["Administrator:Authority"];
         var audience = builder.Configuration["Administrator:Audience"];
+        var profile = builder.Configuration["Administrator:TokenProfile"];
+        var entra = string.Equals(profile, "Entra", StringComparison.Ordinal);
+        if (!string.IsNullOrEmpty(profile) && !entra && !string.Equals(profile, "Generic", StringComparison.Ordinal))
+            throw new InvalidOperationException("Administrator token profile must be Generic or Entra.");
         if (!string.IsNullOrWhiteSpace(authority) || !string.IsNullOrWhiteSpace(audience))
         {
             if (!Uri.TryCreate(authority, UriKind.Absolute, out var address) ||
@@ -37,7 +42,8 @@ public static class AdministratorAuthentication
                 RequireSignedTokens = true,
                 ValidateIssuerSigningKey = true,
                 ClockSkew = TimeSpan.FromSeconds(30),
-                ValidTypes = ["at+jwt"],
+                // Entra ID access tokens use typ JWT; audience and the required scp claim reject ID tokens.
+                ValidTypes = entra ? ["JWT"] : ["at+jwt"],
                 ValidAlgorithms = [SecurityAlgorithms.RsaSha256, SecurityAlgorithms.EcdsaSha256]
             };
             options.Events = new JwtBearerEvents
@@ -54,7 +60,15 @@ public static class AdministratorAuthentication
         builder.Services.AddAuthorization(options => options.AddPolicy(ProvisionPolicy, policy =>
         {
             policy.AddAuthenticationSchemes(Scheme).RequireAuthenticatedUser();
-            policy.RequireClaim("permission", "enrollments:create");
+            if (entra)
+            {
+                policy.RequireAssertion(context =>
+                    HasEntraValue(context.User, "scp", ' ') && HasEntraValue(context.User, "roles", null));
+            }
+            else
+            {
+                policy.RequireClaim("permission", "enrollments:create");
+            }
             policy.RequireAssertion(context =>
                 context.User.FindAll("sub").Count() == 1 &&
                 !string.IsNullOrWhiteSpace(context.User.FindFirst("sub")!.Value) &&
@@ -63,4 +77,9 @@ public static class AdministratorAuthentication
                 context.User.FindFirst("iss")!.Value is { Length: > 0 and <= 2048 });
         }));
     }
+
+    private static bool HasEntraValue(System.Security.Claims.ClaimsPrincipal user, string type, char? separator) =>
+        user.FindAll(type).Any(claim => separator is { } value
+            ? claim.Value.Split(value, StringSplitOptions.RemoveEmptyEntries).Contains(EntraEnrollmentPermission, StringComparer.Ordinal)
+            : string.Equals(claim.Value, EntraEnrollmentPermission, StringComparison.Ordinal));
 }

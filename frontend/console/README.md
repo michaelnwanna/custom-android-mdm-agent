@@ -341,7 +341,7 @@ VITE_SIGNALR_URL=http://localhost:5000/hub
    - Audit trail and compliance reports
 
 3. **Phase 2.13: Mobile Companion**
-   - React Native iOS/Android app
+   - Flutter iOS/Android app with Microsoft Entra ID sign-in (foundation in `mobile/companion`)
    - Push notifications
    - QR code device enrollment
    - Mobile-optimized UI
