@@ -6,6 +6,7 @@ import 'auth/auth_service.dart';
 import 'enrollment/enrollment_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   const config = AppConfig.fromEnvironment();
   final authService = config.isComplete
       ? EntraCompanionAuthService(config)
