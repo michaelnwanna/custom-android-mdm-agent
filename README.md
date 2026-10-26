@@ -1,282 +1,235 @@
 # Offline-First Android Fleet Management
 
-A Kotlin Android Device Policy Controller with a C# / ASP.NET Core enrollment lab and a planned fleet control plane and React management console for intermittently connected device fleets.
+A custom Android Device Policy Controller (DPC), ASP.NET Core control plane, Vue management console, and Flutter administrator companion for dedicated devices on unreliable networks.
 
-## Status
+The goal is an end-to-end fleet workflow: keep a device in genuine kiosk mode while offline, safely resume an interrupted application update, and reconcile policy, installation outcomes, and queued events after reconnecting.
 
-Implementation has started with a minimal Android feasibility lab: a test-only Device Owner agent, a separate versioned sample app, and a prerequisite checker. Both debug APKs compile and pass Android lint with the checksum-pinned Gradle 8.9 wrapper. Device Owner provisioning, genuine lock task mode, Home/Recents containment, and visible lab recovery passed on a reset API 34 emulator. See the [runtime verification record](docs/android-runtime-verification.md) for evidence and limits.
+## Current Status
 
-Phase 1 is accepted for API 34 development feasibility under the [revised acceptance scope](docs/phase-one-acceptance.md); Phase 2 foundation work may proceed. Current-stable compatibility is deferred to hardening and remains required before broader support or production-readiness claims. Selected settings restrictions and per-device P-256 ECDSA signed maintenance exit are implemented; no unauthenticated UI exit remains. Debug/ADB pairing is still trusted lab only, not production maintenance; preserve the paired operator key securely, since key loss requires authorized trusted-emulator ADB reprovisioning, not a UI bypass. The [latest five-checkpoint maintenance replay](artifacts/android/20261016T110746.710228Z-phase-one/replay.html) and [manifest](artifacts/android/20261016T110746.710228Z-phase-one/manifest.json) passed restriction application/cleanup and unsigned, tampered, and consumed-challenge rejection, plus build/lint and native video validation. Eight JVM MaintenanceProof tests and thirty-one Python tests passed, including four new operator-pairing regression tests. The [seven-checkpoint MQTT lifecycle replay](artifacts/android/20261016T104119.390614Z-mqtt-lifecycle/replay.html) and [manifest](artifacts/android/20261016T104119.390614Z-mqtt-lifecycle/manifest.json) verify TLS roundtrip, receive/ack while the sample was foreground and LOCKED, broker-offline containment, reconnect with a fresh ACK, process-death containment without an immortal socket, explicit restart, and explicit stop. This is a test-only, user-started `START_NOT_STICKY` foreground diagnostic using anonymous synthetic probes over loopback aMQTT TLS, not production transport.
+The repository has progressed beyond the initial Android feasibility lab. It now contains a running API host, PostgreSQL persistence, Android enrollment and durable event delivery, HTTPS policy and signed-release reconciliation, a Vue 3 console, and a Flutter companion with Entra sign-in, QR enrollment, and Firebase push integration.
 
-A locally staged, agent-driven sample v1-to-v2 PackageInstaller update is verified on API 34, including negative identity/version/signer/invalid-APK checks and v2 kiosk relaunch. The [fresh sixteen-checkpoint update replay](artifacts/android/20261016T104623.288748Z-update/replay.html) and [manifest](artifacts/android/20261016T104623.288748Z-update/manifest.json) passed current build/lint invocations, twenty-seven Python tests, restrictions, and signed maintenance recovery. Persisted kiosk intent restored enabled and disabled state across non-wiping cold boots; the [six-checkpoint warm-reboot replay](artifacts/android/20261016T104301.613674Z-reboot/replay.html) and [manifest](artifacts/android/20261016T104301.613674Z-reboot/manifest.json) now verify two genuine warm reboots, automatic enabled restoration/Home containment, then disabled no-restoration/persisted exit. All four new bundles passed native video validation. The [earlier warm-reboot failure](artifacts/android/20261016T093407.811439Z-reboot/replay.html) remains failed; [recorded tests](docs/test-evidence.md) preserve it and other failures. These API 34 results do not establish physical-device/OEM reliability or current-stable compatibility. Production MQTT transport, signed release delivery, durable synchronization, backend services, and the web console remain planned.
+**This is an actively developed portfolio MVP, not a production-ready MDM platform or a fully accepted end-to-end system.** The latest documented acceptance checkpoint is **2026-10-21**. Component tests and isolated API 34 runtime scenarios pass, but the combined console/backend/device offline-reboot-reconnect demonstration, live identity-provider/cloud verification, and current-stable Android hardening remain open.
 
-### Phase 2 Contract Foundation
+| Area | Implemented | Verification boundary / remaining work |
+| --- | --- | --- |
+| Device Owner and kiosk | Kotlin DPC, separate sample app, genuine lock task, selected settings restrictions, persisted kiosk intent, boot restoration, signed maintenance exit | API 34 emulator evidence; physical-device/OEM reliability and current-stable compatibility are not established |
+| Enrollment and identity | Bootstrap-token/CSR enrollment, PostgreSQL claim/completion recovery, lab CA signer, Android Keystore identity, pinned HTTPS and device mTLS | Combined API 34/Kestrel/PostgreSQL lab verified; production CA, renewal/rotation and complete revocation remain open |
+| Durable events | Strict shared contracts, Room command inbox/event outbox, bounded WorkManager retry, durable backend ingestion and exact acknowledgement before local deletion | Process/reboot recovery checks have explicit lab limits; they do not prove autonomous delivery in every OS lifecycle state |
+| Policy reconciliation | Authenticated device-bound HTTPS retrieval, Room persistence before effects, kiosk enforcement and applied-version acknowledgement | Supported policy is intentionally limited to kiosk enable/disable; combined console/backend/device acceptance remains open |
+| Application updates | Signed metadata, pinned-mTLS resumable APK transfer, integrity/identity checks, persisted PackageInstaller state and authenticated outcomes | API 34 mock-server test verifies silent v1-to-v2 install, resume, health and lost-ack replay; actual-backend/device and install process-death/reboot acceptance remain open |
+| Control plane | ASP.NET Core API, EF Core/Npgsql persistence, administrator authorization, policy/release workflows, telemetry and health-alert components | Endpoint and database tests are not proof of complete console/API compatibility or production deployment |
+| Web console | Vue 3/TypeScript UI, OIDC authorization code + PKCE, server-authorized viewer/admin sessions, policy management, signed-release import and deployment outcomes, compliance reports | Some historical device/tag/settings actions still target unavailable endpoints and fail visibly; no simulated success or real-time fallback |
+| Mobile companion | Flutter app, native MSAL Entra sign-in/session handling, QR provisioning payloads, FCM registration and generic health alerts | Local analysis/tests and iOS simulator build recorded; native app responsiveness, live Entra, Firebase/APNs and QR provisioning end-to-end remain unverified |
+| MQTT | TLS diagnostics, device mTLS/ACL labs and command/publication components | Managed wake-up integration is incomplete; the legacy Android MQTT `INSTALL_RELEASE` branch is not implemented |
 
-The [enrolled event reboot-recovery lab](docs/android-event-reboot-recovery.md) now verifies the same test Keystore identity and exact Room event after an actual API 34 reboot and explicit resume, with changed kernel boot ID and increased Android boot count. Original acknowledgement recovery, rollback/deletion, inbox retention and disabled-event retention pass, alongside same-boot regression, 42 JVM tests/build/lint and 82 tooling tests. This is worker-body recovery, not autonomous boot dispatch or OS-scheduled retry; earlier reboot exclusions below retain their milestone scope.
+See the [project acceptance checkpoint](PROJECT_PLAN.md#resumed-implementation-checkpoint-2026-10-21) for remaining MVP gates and [recorded test evidence](docs/test-evidence.md) for passing runs, retained failures, exact inputs and limitations. Historical phase-completion summaries are not acceptance of the entire MVP.
 
-The [enrolled event process-recovery lab](docs/android-event-process-recovery.md) now verifies a persisted Room event and the same enrolled Keystore identity after host force-stop and explicit new-process relaunch. Worker-body replay recovers the original committed acknowledgement, verifies delete rollback, deletes the exact event and retains the inbox; disabled-event retention still passes. The new combined run and single-process regression, 42 JVM tests/build/lint and all 80 tooling tests pass. This is not autonomous scheduling, a crash during upload or event recovery across reboot; earlier limits below retain their milestone scope.
+## Technology Stack
 
-The [persisted reboot probe](docs/android-scheduler-reboot.md) now verifies an actual non-wiping API 34 reboot with changed kernel boot ID and increased Android boot count, then same-work-ID completion after explicit relaunch. Reboot and same-boot recovery modes, 42 JVM tests/build/lint and all 78 tooling tests pass. This is debug-probe persistence, not automatic boot dispatch or real event recovery; older reboot limits below retain their milestone scope.
+| Component | Stack |
+| --- | --- |
+| Android agent and managed sample | Kotlin, Android DevicePolicyManager, Room, WorkManager, PackageInstaller, HiveMQ MQTT client |
+| Backend | C# / ASP.NET Core on .NET 10, EF Core, Npgsql, PostgreSQL |
+| Management console | Vue 3, TypeScript, Vite, Pinia, Tailwind CSS, Chart.js, `oidc-client-ts` |
+| Administrator companion | Flutter/Dart, native MSAL (`msal_auth`), Firebase Cloud Messaging |
+| Contracts and verification | JSON Schema, OpenAPI 3.1, Python evidence runners, .NET/JVM/Android/browser-component tests |
 
-The [persisted WorkManager recovery probe](docs/android-scheduler-recovery.md) now survives a host-issued app force-stop with verified old-PID absence, then completes the same work ID in an explicitly relaunched new process with real first-backoff timing. Three recovery phases, both prior scheduler scenarios, 42 JVM tests/build/lint and all 76 tooling tests pass. This debug-only no-credential proof is not autonomous dead-process/JobScheduler-only delivery, reboot recovery or real event recovery; earlier paragraphs retain their milestone scope.
-
-The [actual WorkManager scheduler probe](docs/android-event-scheduler.md) now verifies first-backoff retry timing with the same persisted work ID, unique `KEEP` deduplication and delayed-work cancellation on API 34. Both scheduler scenarios, all six worker regressions, 42 JVM tests/build/lint and 74 tooling tests pass. The debug-only probe never accesses enrollment keys or the event journal. Foreground instrumentation permits GreedyScheduler; JobScheduler-only event delivery, constraint transitions and reboot recovery remain unverified.
-
-The [bounded background event worker](docs/android-event-worker.md) now uses unique connected-network WorkManager jobs, twenty-event batches, five attempts with exponential backoff, a fifteen-second request cancellation deadline and authenticated deletion. Six API 34 worker-body/TLS scenarios, a real Keystore/PostgreSQL worker-body replay and five acknowledgement regressions pass; all 42 JVM and 74 tooling tests pass. Scheduling/enrollment/startup hooks are implemented, but actual OS backoff, stop/resume and reboot dispatch remain unverified. Earlier absent-worker statements below describe historical milestones.
-
-The [authenticated acknowledgement operation](docs/android-event-acknowledgement.md) now uploads through the pinned enrolled HTTPS identity and transactionally deletes only the unchanged matching outbox event, retaining the command inbox. Five API 34 SQLite/TLS tests and a real Keystore/Room/HTTPS/PostgreSQL run verify rejection retention, delete rollback/retry, reopen/deduplication and concurrent uploads; the retention-only and six original journal scenarios still pass. All 37 JVM and 73 tooling tests pass. No worker, actual network-loss/process-crash proof or complete fleet workflow is introduced. The paragraphs below record earlier milestone boundaries; their absent-deletion statements describe those earlier snapshots.
-
-The [combined Android event replay lab](docs/android-event-replay.md) now verifies real API 34 Keystore/Room/HTTPS/PostgreSQL upload, a test-only 503 after commit, unchanged event recovery after Room reopen, original acknowledgement replay and disabled-device rejection. The run passes 37 JVM tests/build/lint and one instrumentation scenario; all 72 tooling tests pass. Events remain retained even after valid acknowledgement. This is not a real network-disconnect/process-crash test or an enabled deletion/worker path.
-
-The [Android event upload component](docs/android-event-upload.md) now posts one stored event using the enrolled HTTPS key manager and pinned root, then strictly validates the acknowledgement's device/event binding. Five new JVM tests bring the snapshot to 37 with APK build/lint passing; all 71 tooling tests pass. It is not wired to a scheduler or Room mutation; Android Keystore-to-backend event runtime and outbox deletion remain unverified.
-
-The [certificate-authenticated event HTTPS endpoint](docs/command-event-http.md) now accepts one bounded command-state event and delivers its exact committed acknowledgement. Real loopback Kestrel TLS/PostgreSQL tests verify enrolled certificate membership, duplicate recovery, rollback/retry and disabled access. Final verification passes 158 component tests, 15 PostgreSQL tests, ten contract checks and 70 tooling tests. Android upload/acknowledgement validation and outbox deletion remain planned; this is not MQTT ingestion or full fleet acceptance.
-
-The [durable backend event library](docs/backend-event-ingestion.md) now verifies trusted command ownership, commits each event with its original acknowledgement, and recovers that exact acknowledgement on duplicate delivery and actual PostgreSQL restart. All six migrations are required. Final local verification passes 15 PostgreSQL tests, 154 component tests and 69 tooling tests. Network ingestion, acknowledgement delivery, Android outbox deletion and command lifecycle projection remain unimplemented.
-
-The [backend event decoder](docs/backend-command-events.md) now validates shared command-state events, exact state/error shapes, timestamps, identifiers and authenticated-caller device binding. Five new checks bring the backend suite to 154 passing tests. This is a parser only, not command ownership verification, durable ingestion or acknowledgement generation.
-
-The [authenticated MQTT-to-Room follow-up](docs/android-mqtt-enrollment.md#durable-receipt-follow-up) now verifies two enrolled-key command deliveries produce one committed receipt event, recoverable after database reopen. The combined API 34 run passes 32 JVM tests/build/lint and the existing PostgreSQL disable checks; six isolated journal scenarios also pass. This is test-only command delivery, not production execution, backend event ingestion or acknowledgement deletion.
-
-The [Android command journal](docs/android-command-journal.md) now atomically records a command and its initial receipt event in Room. Six API 34 SQLite tests verify close/reopen, duplicate/conflict handling, rollback, concurrent delivery, expiry and scoped outbox reads; 32 JVM tests/build/lint also pass. It is not connected to live MQTT, execution, event publishing or acknowledgement deletion.
-
-The [Android command decoder](docs/android-command-decoding.md) now validates shared command v1 fixtures, exact payloads, safe integers, timestamps and enrolled-device binding. Five new decoder tests bring the recorded JVM suite to 30, with APK build/lint passing. It is not yet connected to MQTT intake, Room, execution or acknowledgements.
-
-The [enrolled Android MQTT follow-up](docs/android-mqtt-enrollment.md) now passes a real API 34 Keystore mTLS roundtrip against the device-scoped broker, including cross-device/wildcard denials and rejected subscription/reconnect after committed PostgreSQL disable. Its single-device local-file membership bridge is test-only, not production synchronization or forced session termination. The combined replay records 25 JVM tests, build/lint and one instrumentation scenario; older host-only MQTT limits below retain their historical scope.
-
-The separate [device MQTT authentication lab](docs/mqtt-device-lab.md) verifies mandatory mTLS, exact enabled certificate membership and directional per-device topic ACLs over real loopback MQTT. Fourteen host-side broker/probe tests pass, including cross-device/wildcard denial, forged-client-ID isolation, live disable checks and retained suppression. These software-key checks remain separate from the combined Android test-bridge proof above; production transport and lifecycle work remain open. The original anonymous Android probe diagnostic is unchanged.
-
-The [HTTPS mTLS identity lab](docs/device-mtls.md) now authenticates Android using its enrolled Keystore key, exact completed certificate and current PostgreSQL enabled state. API 34 instrumentation passed a real mTLS request and rejection after persisted disable. A fifth migration is required. Earlier paragraphs about unverified mTLS describe prior milestones: HTTPS identity is now scoped lab-verified; MQTT mTLS, full revocation, secure production provisioning and the fleet workflow remain open.
-
-The [Android enrollment client](docs/android-enrollment.md) prepares a non-exportable P-256 Keystore identity, reuses its exact CSR for retries, and validates pinned HTTPS/certificate responses before installation. A [combined API 34 run](artifacts/android-backend/20261017T071554.735623Z/replay.html) passed real Kestrel HTTPS enrollment against PostgreSQL and the lab signer, including authorized administrator provisioning, exact response recovery, invalid-token/conflicting-CSR rejection and key-possession proof. Twenty JVM tests and APK build/lint also passed. The UI staging action, live identity-provider integration, secure production bootstrap delivery and mTLS remain unverified.
-
-The [administrator provisioning route](docs/administrator-enrollment.md) now validates issuer-signed API access tokens, requires `enrollments:create`, and atomically saves the pending credential digest and issuer/subject audit before one-time bootstrap-secret delivery. This uses a fourth database migration. It is not browser login, production identity-provider integration or secure Android token transfer; those boundaries remain unverified.
-
-The [enrollment HTTP lab](docs/enrollment-http.md) implements strict bounded JSON requests, bootstrap bearer authentication, process-local rate limits and durable certificate-response recovery. Separate regression suites cover TLS and PostgreSQL behavior, with combined Android lab verification cited above; production deployment remains unverified. The backend solution also includes a test-only Android enrollment host, not a production API or credential bypass.
-
-The final local foundation regression passed [six contract checks](artifacts/contracts/20261016T215343.214977Z/replay.html), [sixty-six .NET component tests and ten tooling tests](artifacts/backend/20261016T215353.237189Z/replay.html), and [twelve PostgreSQL integration tests and ten tooling tests](artifacts/postgres/20261016T215647.644582Z/replay.html), including controlled database restart. The [foundation CI workflow and remaining MVP work](docs/foundation-ci.md) distinguish local verification from hosted CI and production readiness. For C# editing, open the four-project [backend solution](backend/FleetManagement.slnx), not the historical artifact snapshots.
-
-The [versioned contracts](contracts/README.md) define strict command, command-state event, durable-ingestion acknowledgement and enrollment HTTP shapes. The [OpenAPI enrollment contract](contracts/openapi.json) and [enrollment rules](contracts/enrollment.md) specify bootstrap-token/CSR boundaries, server-assigned identity and safe response recovery. The [latest recorded contract check](artifacts/contracts/20261016T125637.174195Z/replay.html) passed six unittest checks covering thirteen valid and fifty-eight rejection fixtures, OpenAPI declarations and size/chain boundaries, with exact input snapshots, hashes and dependency versions retained. The [first messaging-only run](artifacts/contracts/20261016T124733.464095Z/replay.html) remains historical evidence. Contracts alone do not establish authentication, lifecycle ordering or durable delivery.
-
-The [.NET enrollment foundation](backend/README.md) verifies PKCS#10 proof of possession, enrollment-bound tokens and certificate results, and includes EF Core/Npgsql claim/completion storage fixing server identity and CSR digest. A lookup-first [signing coordinator](backend/README.md#signing-coordination) records one issuance attempt before signer I/O and reconciles an existing result without blind reissuance. Signer recovery tests use an in-memory double, not a production CA. Authenticated exact-CSR retries recover the stored response only within the original token deadline. The [latest PostgreSQL 17.11 run](artifacts/postgres/20261016T210746.713204Z/replay.html) passed eleven integration tests, including signer fault simulations and attempt/completion persistence across controlled fast restart. The [component regression](artifacts/backend/20261016T210912.183008Z/replay.html) passed fifty-nine .NET tests and ten tooling tests. Sources, dependencies, hashes and TRX results are retained. The [private database workflow](docs/postgres-lab.md) uses a Unix socket without TCP and stopped its server after testing; Docker and emulators were not used or managed. A real CA adapter with durable lookup/deduplication, hosted scheduling, operator recovery for permanently uncertain operations, power-loss recovery, HTTP authentication, revocation and functional enrollment remain pending.
-
-The backend's [controlled fast-restart check](artifacts/postgres/20261016T154700.897152Z/replay.html) additionally passed two integration tests and ten tooling tests, verifying committed claim identity/digest/expiry after an actual PostgreSQL restart. The [component regression](artifacts/backend/20261016T155007.896710Z/replay.html) passed forty-six .NET tests and ten tooling tests. Power-loss and uncertain-signing recovery remain pending; see [database verification limits](docs/postgres-lab.md#verification-limits).
-
-The [certificate completion verifier](backend/README.md#certificate-completion-boundary) checks prospective signer output against the claimed key, server-assigned device URI, configured root, client-auth usage and bounded certificate validity. Its [initial recorded component run](artifacts/backend/20261016T203514.246584Z/replay.html) passed fifty-seven .NET tests and ten tooling tests. The subsequent [durable completion transaction](backend/README.md#durable-completion) now stores that validated result without replacing it on retries. Production CA integration, byte-for-byte HTTP replay and revocation enforcement remain pending.
-
-The [lab signer adapter](backend/README.md#lab-signer-adapter) now signs real client certificates with a caller-supplied test CA and retains operation bindings/results in a private local file ledger. Reopen returns the original certificate; reserved-but-unresolved operations cannot reissue. The [latest component replay](artifacts/backend/20261016T212101.120832Z/replay.html) passed sixty-four .NET tests and ten tooling tests. The [latest database replay](artifacts/postgres/20261016T211929.191670Z/replay.html) passed twelve integration tests and ten tooling tests, including new adapter/context recovery after a forced completion-save failure. PostgreSQL stopped with zero remaining test schemas. This is same-process adapter recreation, not signer-process restart, power-loss safety or production CA integration. Keys remain caller-owned and outside the ledger; the prospective project plan is unchanged.
-
-The latest [lab signer process-recovery check](backend/README.md#signer-process-recovery) passed [sixty-six .NET tests and ten tooling tests](artifacts/backend/20261016T213802.187970Z/replay.html). Fresh signer processes recovered the exact published certificate after both normal exit and forced termination after publication. Test CA keys were transferred only through an in-memory pipe. Mid-signing crashes, power loss and combined database/signer restart remain unverified; this does not add production CA integration. Earlier adapter-recreation evidence above retains its narrower historical scope.
-
-### Current-Stable Compatibility Attempt
-
-Current-stable compatibility is a deferred hardening gate, not a Phase 2 blocker or a claimed pass. Official stable Android 17 / API 37.0 Google APIs x86_64 revision 6 (extension 22) was installed and booted on the separate `Fleet_Phase1_API37` AVD, serial `emulator-5556`, with emulator 37.2.12. SDK Command-line Tools 23 were installed with checksum verification on the Intel Mac. The original API 34 `Pixel_8` was shut down intact, without a wipe; its thirty-one Python/eight JVM passes and runtime evidence are unchanged.
-
-Earlier API 37 provisioning and media failures remain preserved in the [evidence guide](docs/test-evidence.md#android-17-current-stable-compatibility-attempt). A later [standard provisioning retry succeeded](artifacts/android/20261016T120217.950135Z-api37-platform-diagnostics/manifest.json), and Device Owner state was confirmed. After an explicitly recorded System UI ANR recovery, the [maintenance attempt](artifacts/android/20261016T120711.924506Z-phase-one/replay.html) passed restriction application, unsigned exit denial, and tampered-signature denial, then failed when UI capture exited 137 and recording finalization timed out. Android subsequently lost Activity Manager; [signed recovery failed](artifacts/android/20261016T121330.133823Z-recover/manifest.json). The AVD was stopped without wiping; authenticated exit is unconfirmed and enabled kiosk intent may restore next boot. Complete API 37 maintenance, reboot, update, MQTT, and validated-video coverage remain unverified. No root, hidden API, account/setup-check bypass, or device wipe was used; the initialization failure's cause is not proven.
-
-Further [recovery experiments](docs/test-evidence.md#controlled-recovery-experiments) found that four CPUs did not eliminate software-rendered ANRs. Host rendering exposed GLES 3.0, below the emulator's API 37 GLES 3.1 requirement, so no acceptance suites ran in that configuration. The later retained state was Device Owner present, kiosk intent disabled, and lock task `NONE`; this supersedes the earlier unknown intent warning, not the failed signed-recovery result. Both emulators are stopped. Completing the deferred hardening gate requires a stable supported current-stable runtime.
+The Android agent currently targets/compiles against API 34 with minimum API 30. API 34 is the recorded runtime baseline, not a claim that every Android version from API 30 onward has been tested. The backend SDK is pinned in [global.json](backend/global.json).
 
 ## Architecture
 
-This diagram separates implemented API 34 diagnostics and the verified combined Android/backend enrollment lab from the planned end-to-end fleet system. The isolated loopback MQTT probe is not production transport. The numbered flow below describes the target fleet design, not an implemented fleet-management integration.
+Solid arrows show implemented interfaces or local workflows, not acceptance of every combined path. Dashed arrows identify incomplete or optional integration.
 
 ```mermaid
 flowchart TB
-	Admin[Administrator]
+    Admin[Administrator]
 
-	subgraph EventLibrary["Event ingestion - local HTTPS mTLS and PostgreSQL verified"]
-		EventHttp[Certificate-authenticated HTTPS event endpoint] --> EventDecode
-		OwnedCommands[Trusted command ownership registration] --> EventStore[(Owned events and original acknowledgements)]
-		EventDecode[Strict device-bound event decoder] --> EventStore
-		EventStore --> RecoveredAck[Return only after commit / recover original on retry]
-		RecoveredAck --> EventHttp
-		AndroidEventUpload[Android uploader and matching ack decoder - API 34 replay lab verified] --> EventHttp
-		WorkerSchedule[Unique connected WorkManager scheduling - configured; first-backoff debug probe verified] --> EventWorker[Bounded worker body - API 34 and Keystore/PostgreSQL verified]
-		RecoveryProbe[Debug probe only - same-ID work after force-stop and explicit new-process relaunch verified] -.-> WorkerSchedule
-		RebootProbe[Debug probe only - actual reboot persistence and explicit resume verified; not autonomous boot dispatch] -.-> RecoveryProbe
-		EventWorker --> AndroidEventUpload
-		EventProcessRecovery[Isolated real identity and event recovery - force-stop and explicit new-process worker body verified] -.-> EventWorker
-		EventRebootRecovery[Isolated enrolled event reboot persistence - explicit resume verified; not autonomous boot delivery] -.-> EventProcessRecovery
-		EventHttp --> AndroidEventUpload
-		AndroidEventUpload --> JournalAck[Caller-driven journal acknowledgement - API 34 verified]
-		JournalAck --> ExactDelete[Transactional exact outbox deletion; retain inbox]
-	end
+    subgraph Management["Management clients"]
+        Console[Vue 3 web console]
+        Companion[Flutter companion]
+        Identity[Entra / OIDC provider]
+    end
 
-	subgraph EnrollmentLab["Enrollment lab - implemented and separately verified"]
-		EnrollmentClient[Synthetic HTTP test client]
-		OperatorToken[Operator API access token - synthetic issuer tested]
-		Provisioning[Authorized provisioning and atomic actor audit]
-		OperatorToken --> Provisioning
-		Provisioning --> EnrollmentDB
-		EnrollmentAPI[ASP.NET Core enrollment endpoint]
-		EnrollmentDB[(PostgreSQL claims and completion)]
-		LabSigner[Private ledger and caller-owned lab CA]
-		EnrollmentClient -->|Bootstrap bearer and strict CSR request| EnrollmentAPI
-		EnrollmentAPI --> EnrollmentDB
-		EnrollmentAPI --> LabSigner
-	end
+    subgraph Backend["ASP.NET Core control plane"]
+        API[Administrator and device HTTPS APIs]
+        DB[(PostgreSQL: enrollment, desired state, outcomes, audit)]
+        Signer[Private file-ledger lab CA signer]
+        Artifacts[Signed release metadata and APK storage]
+        Push[Optional Firebase health-alert sender]
+    end
 
-	subgraph Management["Management plane - planned"]
-		Console[React management console]
-		API[ASP.NET Core API]
-		DB[(PostgreSQL: desired state, commands, audit, outbox)]
-		Publisher[Durable command publisher]
-		Ingest[Telemetry and result ingestion]
-		Artifacts[Signed release metadata and immutable APK storage]
-	end
+    subgraph Device["Managed Android device"]
+        Agent[Kotlin Device Owner agent]
+        Key[Android Keystore identity]
+        Room[(Room: commands, events, policy and update state)]
+        Workers[WorkManager retry and HTTPS reconciliation]
+        Kiosk[DevicePolicyManager and persisted kiosk intent]
+        Installer[Verified download and PackageInstaller]
+        Sample[Separate managed sample app]
+    end
 
-	subgraph Transport["Production device transport - planned"]
-		Broker[MQTT broker with per-device access controls]
-	end
+    MQTT[MQTT mTLS / ACL labs and command components]
 
-	subgraph Diagnostics["MQTT diagnostics - implemented and API 34 verified"]
-		LabBroker[Loopback TLS amqtt synthetic probe broker]
-		LabService[HiveMQ client in user-started dataSync foreground service]
-	end
-
-	subgraph DeviceMqttLab["Device MQTT authentication - host and API 34 test-bridge labs verified"]
-		SoftwareClients[Ephemeral software-key test clients]
-		DeviceLabBroker[Mandatory mTLS and directional topic ACLs]
-		LabMembership[Explicit local membership - test-only PostgreSQL bridge]
-		SoftwareClients <--> DeviceLabBroker
-		LabMembership --> DeviceLabBroker
-	end
-
-	subgraph Device["Managed Android device - basic API 34 kiosk lab verified"]
-		Agent[Kotlin Device Owner agent]
-		DeviceEnrollment[Keystore enrollment client - combined API 34 lab verified]
-		Agent --> DeviceEnrollment
-		DeviceEnrollment -->|Pinned HTTPS - PostgreSQL lab verified| EnrollmentAPI
-		DeviceEnrollment -->|HTTPS mTLS - API 34 lab verified| DeviceIdentity[Device identity API and enabled-state check]
-		DeviceEnrollment -->|MQTT mTLS - API 34 test bridge verified| DeviceLabBroker
-		EnrollmentDB --> TestMembership[Test-only single-device membership propagation]
-		TestMembership --> LabMembership
-		Room[(Room receipt inbox / initial event outbox - API 34 verified; execution planned)]
-		CommandFixtures[Shared command fixtures] --> CommandDecoder[Strict typed decoder - JVM verified; no live intake]
-		CommandDecoder -->|Atomic receipt and event - no live intake| Room
-		DeviceLabBroker -->|Typed duplicate commands - test callback verified| CommandDecoder
-		EventFixtures[Shared command-state fixtures] --> EventDecoder[Backend event decoder - component verified; ingestion planned]
-		Policy[DevicePolicyManager: kiosk controls]
-		Boot[Persisted lab kiosk intent and post-unlock boot receiver]
-		Installer[PackageInstaller - local lab verified; release delivery planned]
-		Sample[Sample managed application]
-	end
-
-	Admin --> Console
-	LabBroker <-->|localhost:8883 via adb reverse; synthetic probe and ack only| LabService
-	Console -->|Authenticated HTTPS actions| API
-	API -->|Transactional state, audit, and outbox writes| DB
-	DB --> Publisher
-	Publisher -->|Command notifications| Broker
-	Broker -->|Device-scoped commands| Agent
-	Agent <-->|Durable pending work and results| Room
-	Agent -->|Apply policy| Policy
-	Agent -->|Persist enable or exit| Boot
-	Boot -->|Restore enabled intent after boot| Policy
-	Policy -->|Lock task mode| Sample
-	Agent -->|Verify and install release| Installer
-	Installer -->|Update APK| Sample
-	Agent -->|Authenticated HTTPS download| Artifacts
-	Agent -->|Telemetry and command results| Broker
-	Broker --> Ingest
-	Ingest -->|Persist before application acknowledgement| DB
-	Ingest -->|Durable-ingestion acknowledgements| Broker
-	Broker -->|Application acknowledgements| Agent
-	Agent <-->|HTTPS reconciliation and event retry| API
-	API -->|SSE status refresh| Console
+    Admin --> Console
+    Admin --> Companion
+    Console -->|OIDC code + PKCE| Identity
+    Companion -->|Native MSAL| Identity
+    Console -->|Bearer-authorized API requests| API
+    Companion -->|Enrollment and push registration| API
+    Companion -->|Sensitive provisioning QR payload| Agent
+    API --> DB
+    API --> Signer
+    API --> Artifacts
+    API --> Push
+    Push -.->|Best-effort cloud delivery; live verification pending| Companion
+    Agent --> Key
+    Agent --> Room
+    Agent --> Workers
+    Workers <-->|Pinned HTTPS / device mTLS| API
+    Workers -->|Verify metadata and resume APK transfer| Installer
+    Artifacts -->|Authenticated HTTPS APK bytes| Installer
+    Workers --> Kiosk
+    Kiosk -->|Genuine lock task| Sample
+    Installer -->|Install and verify cooperative health| Sample
+    API -.->|Managed notification integration incomplete| MQTT
+    MQTT -.->|Device-scoped command / wake-up integration incomplete| Agent
 ```
 
-### End-to-End Flow
+### Reliability and Security Boundaries
 
-1. An administrator assigns a policy or deployment through the console. The API commits desired state, audit history, and a publish-outbox record in one PostgreSQL transaction.
-2. A durable publisher notifies the agent through MQTT. The agent persists the command in Room before acknowledging receipt, then applies supported Android controls or performs the verified update workflow.
-3. APKs travel over authenticated HTTPS, not MQTT. The agent verifies signed metadata and APK identity/integrity before installation; observed version and application health determine deployment success.
-4. Telemetry and execution results remain in the device outbox until the backend acknowledges durable ingestion. Retries use event IDs and idempotent processing to avoid duplicate history.
-5. After missed messages or network loss, HTTPS reconciliation restores convergence with desired state. The console refreshes from backend state through SSE; broker delivery alone never means a command succeeded.
+- **Desired state is not observed success.** Policy assignment, command publication and deployment targeting do not prove enforcement or installation. The agent reports validated outcomes through authenticated interfaces.
+- **Persist before acknowledging.** Room retains pending device work; PostgreSQL commits accepted events and their original acknowledgements. The agent removes an outbox event only after validating the exact matching reply.
+- **HTTPS recovers missed work.** Policy and desired-release reconciliation use the enrolled identity, bounded requests and retry. MQTT is not an always-on execution guarantee.
+- **APKs do not travel over MQTT.** Release metadata signatures, content hash, package identity, APK signer, version and compatibility are independently checked before installation.
+- **Administrator and device identities are separate.** Console/companion access uses OIDC bearer authorization; device APIs use enrolled mTLS identities. Neither credential grants the other's privileges.
+- **The CA is a lab implementation.** The file ledger prevents blind reissuance after uncertainty within its documented boundary; it is not a production PKI or power-loss-safe signing service.
+- **Maintenance is authenticated.** Per-device P-256 ECDSA proofs authorize local kiosk exit. Debug/ADB pairing is trusted-lab-only; lost operator keys require authorized lab recovery, not an unauthenticated UI bypass.
 
-### Boundaries and Reliability
+## Repository Layout
 
-- PostgreSQL owns fleet desired state and durable backend work; Room owns device-local pending work and unacknowledged results.
-- The target design uses device mTLS identities and per-device broker permissions. Console authentication and authorization are separate; the browser receives no device or broker credentials.
-- Device Owner provisioning is separate from backend enrollment. Only authorized disposable lab devices should be provisioned during feasibility work.
-- Android scheduling and power restrictions still apply. MQTT improves responsiveness but does not guarantee continuous background execution; HTTPS recovery is deliberately part of the design.
+| Path | Purpose |
+| --- | --- |
+| [android/](android/) | Device Owner agent, sample managed app, Gradle wrapper and Android tests |
+| [backend/](backend/) | API host, domain/persistence services, migrations, .NET tests and HTTP examples |
+| [frontend/console/](frontend/console/) | Vue management console and component/service tests |
+| [mobile/companion/](mobile/companion/) | Flutter administrator app and platform configuration |
+| [contracts/](contracts/) | Versioned wire schemas, OpenAPI and shared acceptance/rejection fixtures |
+| [tools/](tools/) | Prerequisite checker, lab hosts and repeatable evidence runners |
+| [docs/](docs/) | Setup runbooks, behavior/verification boundaries and acceptance records |
+| [artifacts/](artifacts/) | Recorded replays, manifests and test evidence; historical failures are retained |
 
-## Documentation Standard
+## Getting Started
 
-Documentation is part of the implementation deliverable, not a final cleanup task. Changes to behavior, interfaces, setup, security, or deployment must update the relevant documentation in the same change. Keep this architecture diagram and end-to-end flow aligned with the code, label planned versus verified capabilities, and record validation results and known limitations without overstating them.
+There is no one-command production deployment. Start with the component you need and follow its trust/configuration runbook before connecting devices or exposing services.
 
-## Start Here
+### 1. Android lab
 
-- [Project plan](PROJECT_PLAN.md): scope, stack, roadmap, and acceptance gates.
-- [Android feasibility lab](docs/android-feasibility.md): prerequisites, build, disposable emulator provisioning, recovery, and remaining gates.
-- [Recorded tests](docs/test-evidence.md): screenshot/video replays, captured passing and failed runs, and repeatable commands.
+Prerequisites: JDK 17, Android SDK platform/build tools 34, platform-tools, and an explicitly authorized disposable API 34 emulator. The repository includes the checksum-pinned Gradle wrapper.
+
+From the repository root:
 
 ```sh
 sh tools/doctor.sh
 ```
 
-No device is provisioned, reset, or modified by the prerequisite checker.
+The checker does not provision, reset or modify a device. Build the agent and sample:
 
-## Phase 2 Progress
+```sh
+cd android
+./gradlew :agent:assembleDebug :sample-managed-app:assembleDebug \
+  :agent:lintDebug :sample-managed-app:lintDebug
+```
 
-### Phase 2.10 - Management Console (COMPLETE ✅)
+Follow the [Android feasibility runbook](docs/android-feasibility.md) for Device Owner provisioning and recovery, and [Android enrollment](docs/android-enrollment.md) for Keystore/backend enrollment. **Do not provision or reset a personal or shared device.** The default agent is test-only; Android Enterprise QR provisioning requires a separately signed, non-testOnly APK as described in the [companion QR setup](mobile/companion/README.md#qr-device-enrollment).
 
-The management console frontend is now **100% complete** with 7 production-ready CRUD pages and full mock data fallback system:
+### 2. Backend
 
-**Completed Pages:**
-- 🏠 **Dashboard** - Real-time metrics, charts (Chart.js), device telemetry visualization, fleet health status
-- 📱 **Devices** - List with pagination/search, detailed device view, bulk tagging, device telemetry
-- 🚨 **Alerts** - Alert list with severity/status filtering, alert investigation detail, bulk resolve actions
-- 📋 **Policies** - Policy grid with CRUD, policy rules management, device targeting, enforcement levels
-- 🔄 **Releases** - Release table with pagination, create/publish/deprecate, deployment groups, Android compatibility
-- 🏷️ **Tags** - Tag grid with color selection, device count filtering, create/edit/delete, device assignment
-- ⚙️ **Settings** - Tabbed settings UI, 6 categories (General/Security/Notifications/Deployment/Monitoring/Advanced), 25 system settings
+Install the exact .NET SDK from [backend/global.json](backend/global.json). For database-backed workflows, use an authorized PostgreSQL instance with the repository migrations applied.
 
-**Technical Implementation:**
-- **Framework**: Vue 3 + TypeScript (strict mode) + Vite + Tailwind CSS
-- **State Management**: Pinia with 7 stores (~2,500 LOC)
-- **Components**: 12 views (~3,500 LOC), 100% TypeScript
-- **Mock Data**: 150+ devices, 50 alerts, 30 policies, 25 releases, 25 tags - realistic data generation
-- **Features**: Search/filter, pagination (smart delta-range), bulk operations, dark mode, responsive design (mobile/tablet/desktop)
-- **Real-time Ready**: SignalR integration hooks prepared for production
-- **Router**: 12 routes configured (7 list + 5 detail routes) with dynamic imports
+```sh
+cd backend
+dotnet build FleetManagement.slnx
+dotnet run --project src/FleetManagement.Api/FleetManagement.Api.csproj --no-launch-profile
+```
 
-**API Fallback Pattern:**
-Each store implements try-catch: attempt real API call first, fall back to generated mock data on error. Allows seamless development without backend.
+The run command starts the host; it does **not** provision a usable fleet environment. Configure Kestrel HTTPS and the following boundaries first:
 
-**Recent Commits (Phase 2.10):**
-- `6e929871` Phase 2.10i: Settings CRUD Page (Final)
-- `f1932225` Phase 2.10h: Tags CRUD Page
-- `8248307d` Phase 2.10g: Releases CRUD Page
-- `d28ae8ea` Phase 2.10f: Policies CRUD Page
-- `509f1770` Phase 2.10e: Alerts CRUD Page
-- `b58b7aff` Phase 2.10d: Devices CRUD Page
-- `34539d10` Phase 2.10c: Real-time SignalR Integration
-- `73450276` Phase 2.10b: Dashboard Implementation
-- `0ff93d25` Phase 2.10a: Console Project Setup
+- [Enrollment HTTP configuration](docs/enrollment-http.md#configuration): database connection, digest key, lab CA certificate/private key and private signer ledger.
+- [Administrator authorization](docs/administrator-enrollment.md): trusted OIDC authority, dedicated API audience, and the Generic or Entra token profile.
+- [Device mTLS](docs/device-mtls.md): client-certificate trust, enrolled identity membership and access-disable behavior.
+- [Signed release publishing](docs/PHASE2-PLAN.md#signed-https-release-lab): trusted metadata public key and hosted APK artifacts.
+- [PostgreSQL lab](docs/postgres-lab.md): isolated local database verification and its limits.
 
-**Status**: ✅ **Frontend Production-Ready** | ⏳ Backend API Integration Pending
+The host rejects cleartext requests, does not automatically apply migrations, and does not generate operator credentials or CA secrets. Missing enrollment configuration leaves enrollment unavailable; partial configuration fails startup. Keep connection strings, private keys, digest keys, bootstrap tokens and Firebase service-account files outside Git.
 
-### Phase 2 Roadmap
+### 3. Web console
 
-Phase 1 (foundation) is complete. Phase 2 priorities are documented in [PHASE2-PLAN.md](docs/PHASE2-PLAN.md) and include:
+Use Node.js/npm; the latest documented local build used Node 22. Configure the public OIDC/API values using [the console setup guide](frontend/console/README.md#real-identity-provider-setup) and [.env.example](frontend/console/.env.example). A browser SPA registration and a server-authorized viewer/administrator are required; there is no bundled mock login.
 
-1. **Policy Delivery** ✅ - Administrators create versioned policies, assign to devices, track application
-2. **Application Updates** ✅ - Signed release metadata, resumable downloads, installation tracking
-3. **Management Console** ✅ - Vue 3 UI for fleet management, policy/deployment actions, real-time metrics
-4. **Telemetry Collection** ✅ - Device health metrics, battery, storage, connectivity, app versions
-5. **Backend API Integration** ⏳ - Connect frontend to .NET backend, JWT auth, real database
+```sh
+cd frontend/console
+npm ci
+npm run dev
+```
 
-**Next Phase (2.11)**: Backend API Integration
-- Replace TODO endpoints with actual .NET API routes
-- Implement JWT authentication and token refresh
-- Connect real API calls instead of mock data
-- SignalR real-time event updates
-- Database integration testing
+Configure the exact callback origins, API TLS trust, delegated scopes/app roles, and either the same-origin proxy or backend CORS origin. Leave the optional SignalR URL unset until a compatible authenticated backend hub exists. API/provider failures remain visible rather than falling back to fabricated fleet data.
 
-Each Phase 2 component will follow the same verification discipline: strict bounded input validation, transactional consistency, reproducible test evidence, and clear separation of "verified" from "planned" features.
+For signed APK imports, explicit enrollment targeting and confirmed manual promotion, follow the [signed release console workflow](frontend/console/README.md#signed-release-workflow). A staged percentage is metadata, not automatic fleet selection.
 
----
+### 4. Mobile companion
 
-**Timeline**: Phase 1 verified through October 18, 2026. Phase 2 implementation in progress. Phase 2.10 (Frontend Console) completed October 19, 2026.
+Use Flutter and follow the [companion setup guide](mobile/companion/README.md) for separate API/mobile Entra registrations, Android signature hashes and iOS signing/keychain requirements.
 
+```sh
+cd mobile/companion
+flutter pub get
+# After setting the Entra and API environment values from the setup guide:
+tool/flutter_entra.sh run
+```
+
+Firebase/APNs and QR enrollment require additional configuration. A provisioning QR contains a live bootstrap secret: display it only to the intended operator/device and never include it in screenshots, logs or retained evidence.
+
+## Verification
+
+These are repeatable entry points, not claims that every suite was rerun for this README update.
+
+| Scope | Command / runbook |
+| --- | --- |
+| Shared contracts | From the root: `python3 tools/check_contracts.py` after installing [contract validator requirements](tools/contracts-requirements.txt) |
+| Backend components | From the root: `python3 tools/check_backend.py`; uses the pinned backend SDK and retains evidence |
+| Real PostgreSQL | Follow [database setup and checks](docs/postgres-lab.md); isolated schemas and actual restart checks have explicit limits |
+| Android JVM | From `android`: `./gradlew :agent:testDebugUnitTest` |
+| Android runtime | Follow [recorded tests](docs/test-evidence.md) with an explicitly authorized emulator; build/JVM checks are not Device Owner runtime acceptance |
+| Console | From `frontend/console`: `npm run build` and `npm test -- --run --threads=false` |
+| Companion | From `mobile/companion`: `flutter analyze` and `flutter test` |
+| CI coverage | [Foundation workflow](.github/workflows/foundation.yml) and [CI scope](docs/foundation-ci.md) |
+
+The 2026-10-21 checkpoint records focused backend and console regressions, 19 real PostgreSQL tests, API 34 policy/event/update scenarios, Flutter analysis with 24 companion tests, and an iOS simulator build. These checks were performed at different slice boundaries, not as one complete fleet acceptance run. See the [project checkpoint](PROJECT_PLAN.md#resumed-implementation-checkpoint-2026-10-21), [release checkpoint](docs/PHASE2-PLAN.md#current-acceptance-checkpoint-2026-10-21) and [companion verification limits](mobile/companion/README.md#local-verification-2026-10-21).
+
+### Remaining Acceptance Gates
+
+- Demonstrate the actual console, backend and enrolled device together through offline policy/update work, reboot, reconnect and observed outcomes.
+- Complete managed MQTT notification integration and verify missed-message recovery without assuming an immortal Android connection.
+- Verify installation recovery across process death/reboot and retain failure-scenario evidence.
+- Finish console/API compatibility for remaining historical fleet-management screens and verify live OIDC login.
+- Verify native companion runtime behavior, real Entra sign-in, Firebase/APNs delivery and full QR provisioning.
+- Complete current-stable Android testing and physical-device/OEM hardening. The recorded API 37 attempt is **not a pass**; its provisioning/recovery/media failures remain in [test evidence](docs/test-evidence.md#android-17-current-stable-compatibility-attempt).
+- Address production CA/key lifecycle, audited recovery, complete revocation, deployment/operations and power-loss guarantees before making production-readiness claims.
+
+## Documentation Map
+
+- [Project plan and acceptance gates](PROJECT_PLAN.md)
+- [Phase 1 accepted scope](docs/phase-one-acceptance.md)
+- [Phase 2 implementation and signed-release runbook](docs/PHASE2-PLAN.md)
+- [Policy schema, enforcement and reconciliation](docs/android-policy-handler.md)
+- [Room command/event journal](docs/android-command-journal.md) and [bounded event worker](docs/android-event-worker.md)
+- [Device MQTT lab and integration limits](docs/android-mqtt-enrollment.md)
+- [Contracts and OpenAPI](contracts/README.md)
+- [Backend enrollment/signing internals](backend/README.md)
+- [Console setup and workflow limits](frontend/console/README.md)
+- [Companion Entra, push and QR setup](mobile/companion/README.md)
+- [Recorded passing and failed tests](docs/test-evidence.md)
+
+Some detailed documents retain chronological descriptions of earlier milestones; read their latest checkpoint and verification-boundary notes before interpreting older "planned" or "complete" statements.
+
+Documentation is part of each implementation change. Keep this overview, component setup instructions and verification limits aligned with behavior; do not treat an implementation checklist, build, assignment or broker delivery as proof of end-to-end success.
